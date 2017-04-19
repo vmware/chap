@@ -1,0 +1,5 @@
+This directory should have subdirectories with source for various programs 
+that run and crash.  These programs will be compiled for various
+platforms with various pointer sizes and run using various memory allocators,
+with the cores created as a result used as inputs for tests under
+expectedOutputTests.

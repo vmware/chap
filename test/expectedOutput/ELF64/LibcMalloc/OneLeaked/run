@@ -1,0 +1,103 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program.  In
+# this particular core there is a single used allocation at 601010 and it is
+# anchored both by registers and stack for the current thread.
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$1 core.20675 << DONE
+redirect on
+count used
+summarize used
+enumerate used
+list used
+show used
+count free
+summarize free
+enumerate free
+list free
+count leaked
+summarize leaked
+enumerate leaked
+list leaked
+show leaked
+count anchored
+summarize anchored
+enumerate anchored
+list anchored
+show anchored
+count staticanchored
+summarize staticanchored
+enumerate staticanchored
+list staticanchored
+show staticanchored
+count stackanchored
+summarize stackanchored
+enumerate stackanchored
+list stackanchored
+show stackanchored
+count registeranchored
+summarize registeranchored
+enumerate registeranchored
+list registeranchored
+show registeranchored
+count anchorpoints
+summarize anchorpoints
+enumerate anchorpoints
+list anchorpoints
+show anchorpoints
+count staticanchorpoints
+summarize staticanchorpoints
+enumerate staticanchorpoints
+list staticanchorpoints
+show staticanchorpoints
+count stackanchorpoints
+summarize stackanchorpoints
+enumerate stackanchorpoints
+list stackanchorpoints
+show stackanchorpoints
+count registeranchorpoints
+summarize registeranchorpoints
+enumerate registeranchorpoints
+list registeranchorpoints
+show registeranchorpoints
+count incoming 601010
+summarize incoming 601010
+enumerate incoming 601010
+list incoming 601010
+show incoming 601010
+count outgoing 601010
+count exactincoming 601010
+summarize exactincoming 601010
+enumerate exactincoming 601010
+list exactincoming 601010
+show exactincoming 601010
+count outgoing 601010
+summarize outgoing 601010
+enumerate outgoing 601010
+list outgoing 601010
+show outgoing 601010
+findptr 601010
+count incoming 601030
+summarize incoming 601030
+enumerate incoming 601030
+list incoming 601030
+show incoming 601030
+count outgoing 601030
+count exactincoming 601030
+summarize exactincoming 601030
+enumerate exactincoming 601030
+list exactincoming 601030
+show exactincoming 601030
+count outgoing 601030
+summarize outgoing 601030
+enumerate outgoing 601030
+list outgoing 601030
+show outgoing 601030
+findptr 601030
+DONE

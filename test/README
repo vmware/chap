@@ -1,0 +1,15 @@
+This directory is used for files used to test chap, including scripts, some
+sample input files (cores and such) and expected outputs, as well as source
+for some generator programs that can be used to create new cores.
+
+The most important testing done here is running commands from chap against
+existing cores to verify that the output is as expected, by verifying against
+previous runs.  If the output does not match, one must check why.  If the old
+output was simply less correct it can be replaced.  If the new output is wrong
+that indicates a regression that should be fixed.  Those tests can be found
+under expectedOutputTests.
+
+For generating cores to use as input, generally not needed unless one supports
+a new combination of file format, memory allocator and byte alignment, various
+source files are available under generators.  It is is desirable to add new 
+generators to extend the testing or add regression tests for recent bugs.

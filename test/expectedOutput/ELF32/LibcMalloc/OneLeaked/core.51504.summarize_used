@@ -1,0 +1,3 @@
+Unsigned allocations have 2 instances taking 0x18(24) bytes.
+   Unsigned allocations of size 0xc have 2 instances taking 0x18(24) bytes.
+2 allocations use 0x18 (24) bytes.

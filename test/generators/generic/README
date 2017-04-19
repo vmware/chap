@@ -1,0 +1,2 @@
+The tests under this subdirectory should not be specific to any particular 
+allocator or byte size or file format.

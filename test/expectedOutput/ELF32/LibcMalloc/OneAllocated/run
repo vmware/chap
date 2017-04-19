@@ -1,0 +1,86 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program. In
+# this particular core there is a single used allocation at 804a008 and it is
+# anchored by stack for the current thread.
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$chap core.2088 << DONE
+redirect on
+count used
+summarize used
+enumerate used
+list used
+show used
+count free
+summarize free
+enumerate free
+list free
+count leaked
+summarize leaked
+enumerate leaked
+list leaked
+show leaked
+count anchored
+summarize anchored
+enumerate anchored
+list anchored
+show anchored
+count staticanchored
+summarize staticanchored
+enumerate staticanchored
+list staticanchored
+show staticanchored
+count stackanchored
+summarize stackanchored
+enumerate stackanchored
+list stackanchored
+show stackanchored
+count registeranchored
+summarize registeranchored
+enumerate registeranchored
+list registeranchored
+show registeranchored
+count anchorpoints
+summarize anchorpoints
+enumerate anchorpoints
+list anchorpoints
+show anchorpoints
+count staticanchorpoints
+summarize staticanchorpoints
+enumerate staticanchorpoints
+list staticanchorpoints
+show staticanchorpoints
+count stackanchorpoints
+summarize stackanchorpoints
+enumerate stackanchorpoints
+list stackanchorpoints
+show stackanchorpoints
+count registeranchorpoints
+summarize registeranchorpoints
+enumerate registeranchorpoints
+list registeranchorpoints
+show registeranchorpoints
+count incoming 804a008
+summarize incoming 804a008
+enumerate incoming 804a008
+list incoming 804a008
+show incoming 804a008
+count outgoing 804a008
+count exactincoming 804a008
+summarize exactincoming 804a008
+enumerate exactincoming 804a008
+list exactincoming 804a008
+show exactincoming 804a008
+count outgoing 804a008
+summarize outgoing 804a008
+enumerate outgoing 804a008
+list outgoing 804a008
+show outgoing 804a008
+findptr 804a008
+DONE

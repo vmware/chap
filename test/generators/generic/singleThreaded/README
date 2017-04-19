@@ -1,0 +1,3 @@
+This is for generic tests that run on a single thread.  These are separated out
+because they are necessarily simpler than ones that run one one of several
+possible threading models.

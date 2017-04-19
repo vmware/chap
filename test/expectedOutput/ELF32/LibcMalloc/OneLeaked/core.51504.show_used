@@ -1,0 +1,7 @@
+Used allocation at 804a008 of size c
+      5c        0        0 
+
+Used allocation at 804a018 of size c
+      5d        0        0 
+
+2 allocations use 0x18 (24) bytes.
