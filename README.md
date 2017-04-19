@@ -6,6 +6,9 @@ catch leaks before they are committed. As an interactive tool, it helps explain
 memory growth, can identify some forms of corruption, and  supplements a
 debugger by giving the status of various memory locations.
 
+`chap` currently supports only glibc malloc. It does not support jemalloc or
+tcmalloc.
+
 ## Motivation
 
 Traditionally, memory analysis for C and C++ requires instrumentation. However,
@@ -18,7 +21,7 @@ leaks.
 
 ## Quick Start
 
-`chap` is distributed as source, so first build it (on Linux only):
+`chap` is distributed as source, so first build it (on 64-bit Linux):
 
 ```
 $ git clone https://github.com/vmware/chap.git
