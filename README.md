@@ -1,7 +1,7 @@
 # `chap`
 
 `chap` analyzes un-instrumented ELF core files for leaks, memory growth, and
-corruption. It is sufficiently reliable that it can be use in automation to
+corruption. It is sufficiently reliable that it can be used in automation to
 catch leaks before they are committed. As an interactive tool, it helps explain
 memory growth, can identify some forms of corruption, and  supplements a
 debugger by giving the status of various memory locations.
