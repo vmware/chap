@@ -1,4 +1,5 @@
-# `chap`
+
+<img alt="Harbor" src="doc/img/chap-logo-small.png">
 
 `chap` analyzes un-instrumented ELF core files for leaks, memory growth, and
 corruption. It is sufficiently reliable that it can be used in automation to
