@@ -608,8 +608,12 @@ class Runner {
           // There are no more commands to execute, but perhaps only in
           // the current script.
           if (_input.IsDone()) {
+            // There is no more input at all.  Leave the last prompt on
+            // its own line.
+            _error << "\n";
             return;
           } else {
+            // A script just finished.
             continue;
           }
         }
