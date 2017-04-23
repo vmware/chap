@@ -17,7 +17,6 @@ extern "C" {
 #include "../RangeMapper.h"
 #include "../ThreadMap.h"
 #include "../VirtualAddressMap.h"
-#include "LinuxProcessImage.h"
 
 namespace chap {
 namespace Linux {
@@ -181,13 +180,17 @@ class ELFImage {
     // _expectedMinimumFileSize.
     _isTruncated = (_fileSize < _minimumExpectedFileSize);
 
-    VisitNotes(std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
-                                   PRStatusRegInfo>::FindThreadsFromPRStatus,
-                         this, std::placeholders::_1, std::placeholders::_2,
-                         std::placeholders::_3, std::placeholders::_4));
-
-    _processImage.reset(
-        new LinuxProcessImage<Offset>(_virtualAddressMap, _threadMap));
+    try {
+      VisitNotes(
+          std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
+                              PRStatusRegInfo>::FindThreadsFromPRStatus,
+                    this, std::placeholders::_1, std::placeholders::_2,
+                    std::placeholders::_3, std::placeholders::_4));
+    } catch (...) {
+      if (!_isTruncated) {
+        std::cerr << "An error was found processing the PT_NOTE section.\n";
+      }
+    }
   }
 
   ~ELFImage() {}
@@ -307,14 +310,6 @@ class ELFImage {
 
   const ThreadMap<Offset> &GetThreadMap() const { return _threadMap; }
 
-  /*
-   * Normally this will return a non-null value but the value may be null
-   * if the core is ill formed.
-   */
-  const LinuxProcessImage<Offset> *GetLinuxProcessImage() const {
-    return _processImage.get();
-  }
-
   // TODO: correct access to below fields to private and provide methods to
   // access them as const.  After that VisitNotes and VisitProgramHeaders should
   // become const.
@@ -331,7 +326,6 @@ class ELFImage {
   AddrToOffsetMap _rangesMissingImages;
   VirtualAddressMap<Offset> _virtualAddressMap;
   ThreadMap<Offset> _threadMap;
-  std::auto_ptr<LinuxProcessImage<Offset> > _processImage;
   Offset _minimumExpectedFileSize;
   bool _isTruncated;
   size_t _numThreadsFound;
