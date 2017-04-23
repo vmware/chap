@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <memory>
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Finder.h"
@@ -51,7 +52,7 @@ class Subcommand : public Commands::Subcommand {
     }
     AllocationIndex numAllocations = allocationFinder->NumAllocations();
 
-    std::auto_ptr<Iterator> iterator;
+    std::unique_ptr<Iterator> iterator;
     iterator.reset(_iteratorFactory.MakeIterator(context, *_processImage,
                                                  *allocationFinder));
     if (iterator.get() == 0) {
@@ -99,7 +100,7 @@ class Subcommand : public Commands::Subcommand {
         }
       }
     }
-    std::auto_ptr<Visitor> visitor;
+    std::unique_ptr<Visitor> visitor;
     visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage,
                                               *allocationFinder));
     if (visitor.get() == 0) {
