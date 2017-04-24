@@ -12,10 +12,6 @@ include(CTest)
 
 # chap
 
-# Add an "$ORIGIN/" RPATH so that we can "cross compile" against an alternate
-# libstc++/libc++ as long as it is staged to the chap install directory.
-set(CMAKE_INSTALL_RPATH "$ORIGIN/")
-
 add_executable(chap src/FileAnalyzer.cpp)
 install(TARGETS chap DESTINATION bin)
 
