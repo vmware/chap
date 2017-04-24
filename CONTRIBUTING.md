@@ -30,7 +30,7 @@ any questions about the CLA process, please refer to our
 
 * __CMake__ - We require CMake 3.5.
 
-* __clang-foramt__ - We use clang-format's 'Google' style to format code.
+* __clang-format__ - We use clang-format's 'Google' style to format code.
 
 ### Building
 
