@@ -15,7 +15,7 @@ tcmalloc.
 Traditionally, memory analysis for C and C++ requires instrumentation. However,
 if an incident occurs using code that was not instrumented it may not be
 practical to reproduce the problem. For example, it may have been due to a rare
-execution path or resources required for the reproduction setup may not be
+execution path, or resources required for the reproduction setup may not be
 available. Instrumentation may also distort timing enough that it is not
 practical to run on a regular basis, or it may be incomplete and report false
 leaks.
@@ -93,4 +93,4 @@ any questions about the CLA process, please refer to our
 ## License
 
 `chap` is available under the GNU GENERAL PUBLIC LICENSE Version 2. Please see
-[LICENSE.md](LICENSE.md).
+[LICENSE.txt](LICENSE.txt).
