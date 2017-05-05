@@ -643,6 +643,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       Offset numHeapBytesFound =
           RescanForHeapsBasedOnKnownArenas(newlyFoundHeaps);
       if (!newlyFoundHeaps.empty()) {
+        totalHeapSizes += numHeapBytesFound;
         std::cerr << "Found " << std::dec << newlyFoundHeaps.size()
                   << " additional heaps at lower max heap size 0x" << std::hex
                   << _maxHeapSize << "." << std::endl;
@@ -1686,6 +1687,84 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     RecordAllocated(start + 2 * OFFSET_SIZE, size - 2 * OFFSET_SIZE);
   }
 
+  Offset SkipArenaCorruption(Offset arenaAddress, Offset corruptionPoint,
+                             Offset repairLimit) {
+    Offset pastArenaCorruption = 0;
+    repairLimit -= 6 * OFFSET_SIZE;
+
+    Offset expectClearMask = 2;
+    if (arenaAddress == _mainArenaAddress) {
+      expectClearMask = expectClearMask | 4;
+    }
+    if (OFFSET_SIZE == 8) {
+      expectClearMask = expectClearMask | 8;
+    }
+    Reader reader(_addressMap);
+    Offset fastBinLimit = arenaAddress + _arenaTopOffset;
+    for (Offset fastBinCheck = arenaAddress + 2 * sizeof(int);
+         fastBinCheck < fastBinLimit; fastBinCheck += OFFSET_SIZE) {
+      int loopGuard = 0;
+      try {
+        for (Offset listNode = reader.ReadOffset(fastBinCheck); listNode != 0;
+             listNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE)) {
+          if (++loopGuard == 10000000) {
+            break;
+          }
+          if (listNode > corruptionPoint && listNode <= repairLimit) {
+            Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE);
+            if (((sizeAndFlags & expectClearMask) == 0) &&
+                ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
+              if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
+                pastArenaCorruption = listNode;
+              }
+            }
+          }
+        }
+      } catch (NotMapped&) {
+      }
+    }
+    for (Offset listHeader =
+             arenaAddress + _arenaDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
+         ; listHeader += (2 * OFFSET_SIZE)) {
+      try {
+        Offset listNode = reader.ReadOffset(listHeader + 2 * OFFSET_SIZE);
+        if (listNode == listHeader) {
+          continue;
+        }
+        if (reader.ReadOffset(listNode + 3 * OFFSET_SIZE) != listHeader) {
+          break;
+        }
+        do {
+          if (listNode > corruptionPoint && listNode <= repairLimit) {
+            Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE);
+            if (((sizeAndFlags & expectClearMask) == 0) &&
+                ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
+              if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
+                pastArenaCorruption = listNode;
+              }
+            }
+          }
+          Offset nextNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE);
+          if (reader.ReadOffset(nextNode + 3 * OFFSET_SIZE) != listNode) {
+            break;
+          }
+          listNode = nextNode;
+        } while (listNode != listHeader);
+      } catch (NotMapped&) {
+      }
+    }
+    return pastArenaCorruption;
+  }
+
+  Offset HandleMainArenaCorruption(Offset corruptionPoint) {
+    std::cerr << "Corruption was found in main arena run near 0x" << std::hex
+              << corruptionPoint << "\n";
+    std::cerr << "Corrupt arena is at 0x" << std::hex << _mainArenaAddress
+              << "\n";
+    // TODO: This repairLimit is probably too cautious.
+    Offset repairLimit = (corruptionPoint & ~0xfff) + 0x2000;
+    return SkipArenaCorruption(_mainArenaAddress, corruptionPoint, repairLimit);
+  }
   /*
    * Note that the checks can be more strict here because the allocations
    * are known to be in the main arena.
@@ -1696,21 +1775,28 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Reader reader(_addressMap);
     Offset sizeAndFlags = reader.ReadOffset(base + OFFSET_SIZE);
     Offset chunkSize = 0;
-    for (Offset check = base; check != limit; check += chunkSize) {
+    Offset prevCheck = base;
+    for (Offset check = base; check != limit;
+         prevCheck = check, check += chunkSize) {
       if ((sizeAndFlags & (OFFSET_SIZE | 6)) != 0) {
-        /*
-         * TODO: Allow partial repair for corruption here.
-         * Free lists would be of use.
-         */
+        check = HandleMainArenaCorruption(prevCheck);
+        if (check != 0) {
+          chunkSize = 0;
+          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
+          continue;
+        }
         return;
       }
       chunkSize = sizeAndFlags & ~7;
 
       if ((chunkSize == 0) || (chunkSize >= 0x10000000) ||
           (chunkSize > (limit - check))) {
-        /*
-         * TODO: Allow partial repair for corruption here.
-         */
+        check = HandleMainArenaCorruption(prevCheck);
+        if (check != 0) {
+          chunkSize = 0;
+          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
+          continue;
+        }
         return;
       }
       Offset allocationSize = chunkSize - OFFSET_SIZE;
@@ -1729,6 +1815,18 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
   }
 
+  Offset HandleNonMainArenaCorruption(const Heap& heap,
+                                      Offset corruptionPoint) {
+    std::cerr << "Corruption was found in non-main arena run near 0x"
+              << std::hex << corruptionPoint << "\n";
+    Offset arenaAddress = heap._arenaAddress;
+    Offset heapAddress = heap._address;
+    std::cerr << "Corrupt heap is at 0x" << std::hex << heapAddress << "\n";
+    std::cerr << "Corrupt arena is at 0x" << std::hex << arenaAddress << "\n";
+    Offset heapLimit = heapAddress + heap._size;
+    return SkipArenaCorruption(arenaAddress, corruptionPoint, heapLimit);
+  }
+
   void AddAllocationsForHeap(const Heap& heap) {
     Offset base = heap._address;
     Offset size = heap._size;
@@ -1742,21 +1840,29 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Reader reader(_addressMap);
     Offset sizeAndFlags = reader.ReadOffset(base + OFFSET_SIZE);
     Offset chunkSize = 0;
-    for (Offset check = base; check != limit; check += chunkSize) {
+    Offset prevCheck = base;
+    Offset checkLimit = limit - 4 * OFFSET_SIZE;
+    for (Offset check = base; check < checkLimit;
+         prevCheck = check, check += chunkSize) {
       if (((sizeAndFlags & 2) != 0) ||
           ((OFFSET_SIZE == 8) && ((sizeAndFlags & OFFSET_SIZE) != 0))) {
-        /*
-         * TODO: Allow partial repair for corruption here.
-         * Free lists would be of use.
-         */
+        check = HandleNonMainArenaCorruption(heap, prevCheck);
+        if (check != 0) {
+          chunkSize = 0;
+          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
+          continue;
+        }
         return;
       }
       chunkSize = sizeAndFlags & ~7;
       if ((chunkSize == 0) || (chunkSize >= 0x10000000) ||
           (chunkSize > (limit - check))) {
-        /*
-         * TODO: Allow partial repair for corruption here.
-         */
+        check = HandleNonMainArenaCorruption(heap, prevCheck);
+        if (check != 0) {
+          chunkSize = 0;
+          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
+          continue;
+        }
         return;
       }
       Offset allocationSize = chunkSize - OFFSET_SIZE;
@@ -1767,6 +1873,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE + chunkSize);
         isFree =
             ((sizeAndFlags & 1) == 0) || (allocationSize < 3 * OFFSET_SIZE);
+      }
+      if ((check + allocationSize + 3 * OFFSET_SIZE == limit) &&
+          ((sizeAndFlags & ~7) == 0)) {
+        break;
       }
       if (isFree) {
         RecordFree(check + 2 * OFFSET_SIZE, allocationSize);
