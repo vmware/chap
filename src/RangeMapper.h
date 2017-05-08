@@ -211,8 +211,6 @@ class RangeMapper {
   const_iterator find(Offset member) const {
     MapConstIterator it = _map.upper_bound(member);
     if (it != _map.end()) {
-      Offset foundRangeSize = it->second.first;
-      Offset foundRangeBase = it->first - foundRangeSize;
       if (member < it->first - it->second.first) {
         // member is less than base (limit - size)
         it = _map.end();

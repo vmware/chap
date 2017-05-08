@@ -140,7 +140,7 @@ class VirtualAddressMapCommandHandler {
       } else {
         typename AddressMap::const_iterator itEnd = _addressMap.end();
         for (typename AddressMap::const_iterator it = _addressMap.begin();
-             it != _addressMap.end(); ++it) {
+             it != itEnd; ++it) {
           Offset numCandidates = it.Size() / sizeof(Offset);
           const char* rangeImage = it.GetImage();
           if (rangeImage != (const char*)0) {
@@ -181,7 +181,7 @@ class VirtualAddressMapCommandHandler {
       } else {
         typename AddressMap::const_iterator itEnd = _addressMap.end();
         for (typename AddressMap::const_iterator it = _addressMap.begin();
-             it != _addressMap.end(); ++it) {
+             it != itEnd; ++it) {
           const char* rangeImage = it.GetImage();
           if (rangeImage != (const char*)0) {
             const unsigned char* nextCandidate =
@@ -224,7 +224,7 @@ class VirtualAddressMapCommandHandler {
         uint32_t value = (uint32_t)valueToMatch;
         typename AddressMap::const_iterator itEnd = _addressMap.end();
         for (typename AddressMap::const_iterator it = _addressMap.begin();
-             it != _addressMap.end(); ++it) {
+             it != itEnd; ++it) {
           Offset numCandidates = it.Size() / sizeof(uint32_t);
           const char* rangeImage = it.GetImage();
           if (rangeImage != (const char*)0) {
@@ -271,7 +271,7 @@ class VirtualAddressMapCommandHandler {
         size_t numBytes = bytes.size();
         typename AddressMap::const_iterator itEnd = _addressMap.end();
         for (typename AddressMap::const_iterator it = _addressMap.begin();
-             it != _addressMap.end(); ++it) {
+             it != itEnd; ++it) {
           const unsigned char* rangeImage = (unsigned char*)it.GetImage();
           if (rangeImage != (const unsigned char*)0) {
             const unsigned char* rangeLimit = rangeImage + it.Size();

@@ -194,7 +194,6 @@ class VirtualAddressMap {
     }
     template <typename T>
     void Read(Offset address, T *valueRead) {
-      bool success = true;
       if (_base > address || _limit < address + sizeof(T)) {
         _image = (char *)0;
         _base = 0;

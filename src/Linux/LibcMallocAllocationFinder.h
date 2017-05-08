@@ -367,10 +367,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
             ((headers[0] & ~(_maxHeapSize - 1)) == heapStart) ==
                 (headers[1] == 0)) {
           if (arenaAddress == heapStart + (OFFSET_SIZE * 4)) {
-            ArenaMapIterator itArena =
-                _arenas
-                    .insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
-                    .first;
+            (void)_arenas
+                .insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
+                .first;
           }
           _heaps.insert(std::make_pair(
               heapStart,
@@ -765,9 +764,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       return false;
     }
     _mainArenaAddress = bestMainArenaCandidate;
-    ArenaMapIterator it =
-        _arenas
-            .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
+    (void) _arenas.insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
             .first;
 
     Offset arenaAddress = _mainArenaAddress;

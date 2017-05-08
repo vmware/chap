@@ -69,14 +69,17 @@ class Input {
         }
         std::string::size_type pos = cmdLine.find_first_not_of(" \t", 0);
         if (pos == std::string::npos) {
-          // TODO: This looks wrong.  Comment it if it is correct.
+          // There is no non-white space on the current line.
           if (tokens.empty()) {
+            // There are no tokens yet.  Find a non-empty line.
             continue;
           } else {
+            // Tokens were found there must have been a trailing
+            // '\' before a blank line.  Treat this as ending
+            // the statement.
             return;
           }
         }
-        std::string::size_type lastPos = cmdLine.find_last_not_of(" \t", pos);
 
         // ??? TODO: support piping with |
         do {
