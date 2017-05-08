@@ -1,3 +1,4 @@
+
 // Copyright (c) 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
@@ -19,8 +20,7 @@ class Lister {
    public:
     Factory() : _commandName("list") {}
     Lister* MakeVisitor(Commands::Context& context,
-                        const ProcessImage<Offset>& processImage,
-                        const Finder<Offset>& allocationFinder) {
+                        const ProcessImage<Offset>& processImage) {
       return new Lister(context, processImage.GetSignatureDirectory(),
                         processImage.GetVirtualAddressMap());
     }
@@ -45,7 +45,7 @@ class Lister {
         _signatureDirectory(signatureDirectory),
         _addressMap(addressMap),
         _sizedTally(context, "allocations") {}
-  void Visit(AllocationIndex index, const Allocation& allocation) {
+  void Visit(AllocationIndex /* index */, const Allocation& allocation) {
     size_t size = allocation.Size();
     _sizedTally.AdjustTally(size);
     Commands::Output& output = _context.GetOutput();
@@ -57,7 +57,7 @@ class Lister {
     Offset address = allocation.Address();
     output << std::hex << address << " of size " << size << "\n";
     const char* image;
-    Offset numBytesFound = _addressMap.FindMappedMemoryImage(address, &image);
+    (void) _addressMap.FindMappedMemoryImage(address, &image);
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
       if (_signatureDirectory.IsMapped(signature)) {

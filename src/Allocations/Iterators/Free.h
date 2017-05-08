@@ -14,8 +14,8 @@ class Free {
   class Factory {
    public:
     Factory() : _setName("free") {}
-    Free* MakeIterator(Commands::Context& context,
-                       const ProcessImage<Offset>& processImage,
+    Free* MakeIterator(Commands::Context& /* context */,
+                       const ProcessImage<Offset>& /* processImage */,
                        const Finder<Offset>& allocationFinder) {
       return new Free(allocationFinder, allocationFinder.NumAllocations());
     }

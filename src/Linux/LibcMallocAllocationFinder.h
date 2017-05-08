@@ -353,7 +353,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         continue;
       }
       Offset base = it.Base();
-      Offset size = it.Size();
       Offset limit = it.Limit();
 
       for (Offset heapStart = (base + (_maxHeapSize - 1)) & ~(_maxHeapSize - 1);
@@ -503,7 +502,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         continue;
       }
       Offset base = it.Base();
-      Offset size = it.Size();
       Offset limit = it.Limit();
 
       for (Offset heapStart = (base + (_maxHeapSize - 1)) & ~(_maxHeapSize - 1);
@@ -742,7 +740,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   bool FindArenasByRingFromNonMainArenas() {
     OffsetSet notInCompletedRing;
-    Offset nextArenaOffset = 0;
     Offset bestMainArenaCandidate = 0;
     size_t bestNumVotes = 0;
     Offset bestNextOffset = 0;
@@ -1072,7 +1069,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Offset mainArenaCandidate = 0;
     Offset minListAddr = base + 13 * OFFSET_SIZE;
     Offset maxListAddr = limit - 4 * OFFSET_SIZE;
-    Offset listAddr = minListAddr;
     Reader reader(_addressMap);
     for (Offset listAddr = minListAddr; listAddr < maxListAddr;) {
       if (!IsEmptyDoubleFreeList(reader, listAddr)) {
@@ -1205,7 +1201,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   bool ScanForMainArena(Offset base, Offset limit, OffsetSet& topCandidates) {
     size_t scanWindow = 0;
-    bool foundEmptyBinCandidate = false;
     Offset lastArenaCandidate = 0;
     Offset lastArenaNextCandidate = 0;
     Offset lastTopCandidate = 0;
@@ -1233,9 +1228,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
             lastArenaNextCandidate = check;
             lastTopCandidate = it->second;
           }
-        }
-        if (atCheck == check - 2 * OFFSET_SIZE) {
-          foundEmptyBinCandidate = true;
         }
 
         if (atCheck >= 0x4000 && (atCheck & 0xFFF) == 0 &&
@@ -1677,7 +1669,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     for (LargeAllocationsConstIterator itLarge = _largeAllocations.begin();
          itLarge != _largeAllocations.end(); ++itLarge) {
-      Offset base = itLarge->first;
       _virtualMemoryPartition.ClaimRange(itLarge->first, itLarge->second,
                                          LIBC_MALLOC_LARGE_ALLOCATIONS);
     }
@@ -1971,7 +1962,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     AllocationIndex noAllocation = _allocations.size();
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Offset arenaAddress = it->first;
-      Arena& arena = it->second;
       Offset fastBinLimit = arenaAddress + _arenaTopOffset;
       Reader reader(_addressMap);
       for (Offset fastBinCheck = arenaAddress + 2 * sizeof(int);

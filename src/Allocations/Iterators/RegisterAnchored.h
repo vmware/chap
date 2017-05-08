@@ -15,7 +15,7 @@ class RegisterAnchored {
   class Factory {
    public:
     Factory() : _setName("registeranchored") {}
-    RegisterAnchored* MakeIterator(Commands::Context& context,
+    RegisterAnchored* MakeIterator(Commands::Context& /* context */,
                                    const ProcessImage<Offset>& processImage,
                                    const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

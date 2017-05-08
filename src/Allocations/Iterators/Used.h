@@ -14,8 +14,8 @@ class Used {
   class Factory {
    public:
     Factory() : _setName("used") {}
-    Used* MakeIterator(Commands::Context& context,
-                       const ProcessImage<Offset>& processImage,
+    Used* MakeIterator(Commands::Context& /* context */,
+                       const ProcessImage<Offset>& /* processImage */,
                        const Finder<Offset>& allocationFinder) {
       return new Used(allocationFinder, allocationFinder.NumAllocations());
     }

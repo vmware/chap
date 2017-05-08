@@ -19,7 +19,7 @@ namespace chap {
 using namespace std;
 
 FileAnalyzer::FileAnalyzer() {}
-void FileAnalyzer::AddCommandCallbacks(Commands::Runner &r) {}
+void FileAnalyzer::AddCommandCallbacks(Commands::Runner & /* r */) {}
 
 void PrintUsageAndExit(int exitCode,
                        const vector<string> supportedFileFormats) {
@@ -36,7 +36,7 @@ void PrintUsageAndExit(int exitCode,
 }  // namespace chap
 
 using namespace chap;
-int main(int argc, char **argv, char **envp) {
+int main(int argc, char **argv, char ** /* envp */) {
   vector<FileAnalyzerFactory *> factories;
 
   Linux::ELFCore64FileAnalyzerFactory elf64CoreAnalyzerFactory;
@@ -83,7 +83,7 @@ int main(int argc, char **argv, char **envp) {
         }
       }
       if (!truncationCheckOnly) {
-        Commands::Runner commandsRunner(path, "<file>");
+        Commands::Runner commandsRunner(path);
 
         analyzer->AddCommands(commandsRunner);
         // TODO - the call to AddCommandCallbacks will become obsolete

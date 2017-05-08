@@ -20,8 +20,7 @@ class Summarizer {
    public:
     Factory() : _commandName("summarize") {}
     Summarizer* MakeVisitor(Commands::Context& context,
-                            const ProcessImage<Offset>& processImage,
-                            const Finder<Offset>& allocationFinder) {
+                            const ProcessImage<Offset>& processImage) {
       return new Summarizer(context, processImage.GetSignatureDirectory(),
                             processImage.GetVirtualAddressMap());
     }
@@ -53,7 +52,7 @@ class Summarizer {
     _signatureSummary.SummarizeByCount(items);
     DumpSummaryItems(items);
   }
-  void Visit(AllocationIndex index, const Allocation& allocation) {
+  void Visit(AllocationIndex /* index */, const Allocation& allocation) {
     size_t size = allocation.Size();
     const char* image;
     Offset numBytesFound =

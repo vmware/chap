@@ -15,7 +15,7 @@ class StaticAnchorPoints {
   class Factory {
    public:
     Factory() : _setName("staticanchorpoints") {}
-    StaticAnchorPoints* MakeIterator(Commands::Context& context,
+    StaticAnchorPoints* MakeIterator(Commands::Context& /* context */,
                                      const ProcessImage<Offset>& processImage,
                                      const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

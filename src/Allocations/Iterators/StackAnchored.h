@@ -15,7 +15,7 @@ class StackAnchored {
   class Factory {
    public:
     Factory() : _setName("stackanchored") {}
-    StackAnchored* MakeIterator(Commands::Context& context,
+    StackAnchored* MakeIterator(Commands::Context& /* context */,
                                 const ProcessImage<Offset>& processImage,
                                 const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

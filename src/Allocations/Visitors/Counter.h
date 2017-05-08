@@ -18,8 +18,7 @@ class Counter {
    public:
     Factory() : _commandName("count") {}
     Counter* MakeVisitor(Commands::Context& context,
-                         const ProcessImage<Offset>& processImage,
-                         const Finder<Offset>& allocationFinder) {
+                         const ProcessImage<Offset>& /* processImage */) {
       return new Counter(context);
     }
     const std::string& GetCommandName() const { return _commandName; }
@@ -39,7 +38,7 @@ class Counter {
 
   Counter(Commands::Context& context)
       : _context(context), _sizedTally(context, "allocations") {}
-  void Visit(AllocationIndex index, const Allocation& allocation) {
+  void Visit(AllocationIndex /* index */, const Allocation& allocation) {
     _sizedTally.AdjustTally(allocation.Size());
   }
 

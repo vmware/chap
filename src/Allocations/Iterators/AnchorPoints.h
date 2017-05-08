@@ -15,7 +15,7 @@ class AnchorPoints {
   class Factory {
    public:
     Factory() : _setName("anchorpoints") {}
-    AnchorPoints* MakeIterator(Commands::Context& context,
+    AnchorPoints* MakeIterator(Commands::Context& /* context */,
                                const ProcessImage<Offset>& processImage,
                                const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

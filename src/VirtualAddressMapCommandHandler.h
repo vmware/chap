@@ -66,9 +66,16 @@ class VirtualAddressMapCommandHandler {
         const char* image;
         Offset numBytesFound =
             _addressMap.FindMappedMemoryImage(startAddr, &image);
+        size_t length = 0;
+        for ( ; length < numBytesFound; ++length) {
+          char c = image[length];
+          if (c < ' ' || c > 0x7e) {
+            break;
+          }
+        }
         // TODO - make more robust (for other characters ...)
         // TODO - consider making part of Commands::output
-        output << "\"" << image << "\"\n";
+        output << "\"" << std::string(image, length)  << "\"\n";
       }
     }
     return numTokensAccepted;
@@ -225,7 +232,7 @@ class VirtualAddressMapCommandHandler {
 
             for (const uint32_t* limit = nextCandidate + numCandidates;
                  nextCandidate < limit; nextCandidate++) {
-              if (*nextCandidate == valueToMatch) {
+              if (*nextCandidate == value) {
                 output << ((it.Base()) +
                            ((const char*)nextCandidate - rangeImage))
                        << "\n";

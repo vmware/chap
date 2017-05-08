@@ -49,7 +49,6 @@ class ProcessImageCommandHandler {
   size_t Explain(Commands::Context &context, bool checkOnly) {
     Commands::Output &output = context.GetOutput();
     Offset addrToExplain;
-    Offset numBytes;
     size_t numTokensAccepted = 0;
     if (context.TokenAt(0) == "explain") {
       numTokensAccepted++;

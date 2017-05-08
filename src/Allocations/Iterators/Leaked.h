@@ -15,7 +15,7 @@ class Leaked {
   class Factory {
    public:
     Factory() : _setName("leaked") {}
-    Leaked* MakeIterator(Commands::Context& context,
+    Leaked* MakeIterator(Commands::Context& /* context */,
                          const ProcessImage<Offset>& processImage,
                          const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

@@ -15,7 +15,7 @@ class Anchored {
   class Factory {
    public:
     Factory() : _setName("anchored") {}
-    Anchored* MakeIterator(Commands::Context& context,
+    Anchored* MakeIterator(Commands::Context& /* context */,
                            const ProcessImage<Offset>& processImage,
                            const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

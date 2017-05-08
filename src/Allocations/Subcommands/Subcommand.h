@@ -101,8 +101,7 @@ class Subcommand : public Commands::Subcommand {
       }
     }
     std::unique_ptr<Visitor> visitor;
-    visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage,
-                                              *allocationFinder));
+    visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage));
     if (visitor.get() == 0) {
       return;
     }
@@ -160,6 +159,9 @@ class Subcommand : public Commands::Subcommand {
       }
     }
 
+    if (switchError) {
+      return;
+    }
     const std::vector<std::string>& taints = _iteratorFactory.GetTaints();
     if (!taints.empty()) {
       error << "The output of this command cannot be trusted:\n";

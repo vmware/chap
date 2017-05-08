@@ -19,8 +19,7 @@ class Shower {
    public:
     Factory() : _commandName("show") {}
     Shower* MakeVisitor(Commands::Context& context,
-                        const ProcessImage<Offset>& processImage,
-                        const Finder<Offset>& allocationFinder) {
+                        const ProcessImage<Offset>& processImage) {
       return new Shower(context, processImage.GetSignatureDirectory(),
                         processImage.GetVirtualAddressMap());
     }
@@ -48,7 +47,7 @@ class Shower {
         _signatureDirectory(signatureDirectory),
         _addressMap(addressMap),
         _sizedTally(context, "allocations") {}
-  void Visit(AllocationIndex index, const Allocation& allocation) {
+  void Visit(AllocationIndex /* index */, const Allocation& allocation) {
     size_t size = allocation.Size();
     _sizedTally.AdjustTally(size);
     Commands::Output& output = _context.GetOutput();

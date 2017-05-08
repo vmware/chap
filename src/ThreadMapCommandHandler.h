@@ -17,9 +17,6 @@ class ThreadMapCommandHandler {
   }
 
   size_t ListStacks(Commands::Context& context, bool checkOnly) {
-    Commands::Output& output = context.GetOutput();
-    Offset startAddr;
-    Offset numBytes;
     size_t numTokensAccepted = 0;
     if (context.TokenAt(0) == "list") {
       numTokensAccepted++;
@@ -53,9 +50,6 @@ class ThreadMapCommandHandler {
   }
 
   size_t CountStacks(Commands::Context& context, bool checkOnly) {
-    Commands::Output& output = context.GetOutput();
-    Offset startAddr;
-    Offset numBytes;
     size_t numTokensAccepted = 0;
     if (context.TokenAt(0) == "count") {
       numTokensAccepted++;
@@ -65,12 +59,10 @@ class ThreadMapCommandHandler {
     }
     if (!checkOnly) {
       Commands::Error& error = context.GetError();
-      Commands::Output& output = context.GetOutput();
       if (context.GetNumTokens() != numTokensAccepted ||
           numTokensAccepted != 2) {
         error << "Usage: list entries\n";
       } else if (CheckThreadMap(context)) {
-        Offset totalBytes = 0;
         SizedTally<Offset> tally(context, "stacks");
         typename ThreadMap<Offset>::const_iterator itEnd = _threadMap->end();
         for (typename ThreadMap<Offset>::const_iterator it =

@@ -15,7 +15,7 @@ class ExternalAnchored {
   class Factory {
    public:
     Factory() : _setName("externalanchored") {}
-    ExternalAnchored* MakeIterator(Commands::Context& context,
+    ExternalAnchored* MakeIterator(Commands::Context& /* context */,
                                    const ProcessImage<Offset>& processImage,
                                    const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

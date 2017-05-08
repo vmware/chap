@@ -16,7 +16,8 @@ class ThreadOnlyAnchorPoints {
    public:
     Factory() : _setName("threadonlyanchorpoints") {}
     ThreadOnlyAnchorPoints* MakeIterator(
-        Commands::Context& context, const ProcessImage<Offset>& processImage,
+        Commands::Context& /* context */,
+        const ProcessImage<Offset>& processImage,
         const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();
       if (allocationGraph == 0) {

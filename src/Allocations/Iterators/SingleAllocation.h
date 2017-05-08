@@ -15,7 +15,7 @@ class SingleAllocation {
    public:
     Factory() : _setName("allocation") {}
     SingleAllocation* MakeIterator(Commands::Context& context,
-                                   const ProcessImage<Offset>& processImage,
+                                   const ProcessImage<Offset>&,
                                    const Finder<Offset>& allocationFinder) {
       SingleAllocation* iterator = 0;
       AllocationIndex numAllocations = allocationFinder.NumAllocations();

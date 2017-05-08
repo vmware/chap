@@ -143,7 +143,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
       }
 
       if (c == 'E' || c == 'K' || c == 'R' || c == 'P') {
-        bool contextFound = true;
         while (!operationStack.empty()) {
           char op = operationStack.top();
           if (op == 'I' || op == 'N') {
@@ -238,8 +237,9 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
           break;
         case 'L':
           // TODO: support constant literals other than just booleans
-          if ((pC[1] != 'b') || (pC[2] != '0') && (pC[2] != '1') ||
-              pC[3] != 'E') {
+          if ((pC[1] != 'b') ||
+              ((pC[2] != '0') && (pC[2] != '1')) ||
+              (pC[3] != 'E')) {
             return emptySignatureName;
           }
           pC += 3;
@@ -333,7 +333,7 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
           reader.ReadOffset(typeInfoAddress + sizeof(Offset));
       char buffer[1000];
       buffer[sizeof(buffer) - 1] = '\000';
-      int numToCopy = sizeof(buffer) - 1;
+      size_t numToCopy = sizeof(buffer) - 1;
       typename VirtualAddressMap<Offset>::const_iterator it =
           Base::_virtualAddressMap.find(typeInfoNameAddress);
       if (it != Base::_virtualAddressMap.end()) {
@@ -366,7 +366,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
     std::string line;
     Offset signature = 0;
     Offset anchor = 0;
-    bool expectStackPointer = false;
 
     while (getline(symDefs, line, '\n')) {
       size_t lastNonBlank = line.find_last_not_of(' ');
@@ -387,7 +386,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
         continue;
       }
       if (line.find("ANCHOR ") == 0) {
-        expectStackPointer = false;
         std::string anchorString(line, 7);
         if (!ParseOffset(anchorString, anchor)) {
           std::cerr << "\"" << anchorString
@@ -414,7 +412,7 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
         Base::_signatureDirectory.MapSignatureToName(signature, name);
         signature = 0;
       } else if (anchor != 0) {
-        size_t defEnd = line.find(" in section");
+        // size_t defEnd = line.find(" in section");
         //??? _anchorToName[anchor] = line.substr(0, defEnd);
         anchor = 0;
       }

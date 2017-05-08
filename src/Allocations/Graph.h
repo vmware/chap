@@ -305,8 +305,6 @@ class Graph {
       return true;
     }
     // rest of chain algorithm, listed from ExplainAnchored
-    size_t numAnchorPaths = 0;
-    bool indirectPathFound = false;
     Index edgeIndex = _firstIncoming[index];
     if (edgeIndex != _firstIncoming[index + 1]) {
       std::vector<bool> visited;
@@ -430,7 +428,6 @@ class Graph {
       if (!allocation->IsUsed()) {
         continue;
       }
-      Offset address = allocation->Address();
       Offset size = allocation->Size();
       Offset numCandidates = size / sizeof(Offset);
       std::set<Index> targets;
@@ -480,7 +477,6 @@ class Graph {
       if (!allocation->IsUsed()) {
         continue;
       }
-      Offset address = allocation->Address();
       Offset size = allocation->Size();
       Offset numCandidates = size / sizeof(Offset);
       std::set<Index> targets;

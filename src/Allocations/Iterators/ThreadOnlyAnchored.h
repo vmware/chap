@@ -15,7 +15,7 @@ class ThreadOnlyAnchored {
   class Factory {
    public:
     Factory() : _setName("threadonlyanchored") {}
-    ThreadOnlyAnchored* MakeIterator(Commands::Context& context,
+    ThreadOnlyAnchored* MakeIterator(Commands::Context& /* context */,
                                      const ProcessImage<Offset>& processImage,
                                      const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

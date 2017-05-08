@@ -17,8 +17,7 @@ class Enumerator {
    public:
     Factory() : _commandName("enumerate") {}
     Enumerator* MakeVisitor(Commands::Context& context,
-                            const ProcessImage<Offset>& processImage,
-                            const Finder<Offset>& allocationFinder) {
+                            const ProcessImage<Offset>& /* processImage */) {
       return new Enumerator(context);
     }
     const std::string& GetCommandName() const { return _commandName; }
@@ -36,7 +35,7 @@ class Enumerator {
   };
 
   Enumerator(Commands::Context& context) : _context(context) {}
-  void Visit(AllocationIndex index, const Allocation& allocation) {
+  void Visit(AllocationIndex /* index */, const Allocation& allocation) {
     _context.GetOutput() << std::hex << allocation.Address() << "\n";
   }
 

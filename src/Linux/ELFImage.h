@@ -185,7 +185,7 @@ class ELFImage {
           std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
                               PRStatusRegInfo>::FindThreadsFromPRStatus,
                     this, std::placeholders::_1, std::placeholders::_2,
-                    std::placeholders::_3, std::placeholders::_4));
+                    std::placeholders::_3));
     } catch (...) {
       if (!_isTruncated) {
         std::cerr << "An error was found processing the PT_NOTE section.\n";
@@ -218,7 +218,6 @@ class ELFImage {
 
   typedef std::function<bool(std::string &,  // Normalized note name
                              const char *,   // Description
-                             ElfWord,        // Description length
                              ElfWord)        // Note type
                         >
       NoteVisitor;
@@ -289,7 +288,7 @@ class ELFImage {
           return false;
         }
 
-        if (visitor(name, pDescription, descLen, noteHeader->n_type)) {
+        if (visitor(name, pDescription, noteHeader->n_type)) {
           return true;
         }
         noteImage = pDescription +
@@ -340,7 +339,7 @@ class ELFImage {
   }
 
   bool FindThreadsFromPRStatus(std::string &noteName, const char *description,
-                               ElfWord descLen, ElfWord noteType) {
+                               ElfWord noteType) {
     if (noteName == "CORE" && noteType == NT_PRSTATUS) {
       size_t threadNum = ++_numThreadsFound;
       Offset *registers =

@@ -14,8 +14,8 @@ class Allocations {
   class Factory {
    public:
     Factory() : _setName("allocations") {}
-    Allocations* MakeIterator(Commands::Context& context,
-                              const ProcessImage<Offset>& processImage,
+    Allocations* MakeIterator(Commands::Context& /* context */,
+                              const ProcessImage<Offset>& /* processImage */,
                               const Finder<Offset>& allocationFinder) {
       return new Allocations(allocationFinder.NumAllocations());
     }

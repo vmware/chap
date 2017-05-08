@@ -135,7 +135,7 @@ class Output {
     int headerWidth = 0;
     if (numBytes > 0x20) {
       headerWidth = 1;
-      for (int widthLimit = 0x10; numBytes > widthLimit; widthLimit <<= 4) {
+      for (size_t widthLimit = 0x10; numBytes > widthLimit; widthLimit <<= 4) {
         headerWidth++;
       }
     }
@@ -167,7 +167,7 @@ class Output {
     int headerWidth = 0;
     if (numBytes > 0x20) {
       headerWidth = 1;
-      for (int widthLimit = 0x10; numBytes > widthLimit; widthLimit <<= 4) {
+      for (size_t widthLimit = 0x10; numBytes > widthLimit; widthLimit <<= 4) {
         headerWidth++;
       }
     }
@@ -414,7 +414,6 @@ class Context {
 
   const std::string& Argument(const std::string& switchName,
                               size_t index) const {
-    const std::string& returnValue = emptyToken;
     std::map<std::string, std::vector<std::string> >::const_iterator it =
         _switchedArguments.find(switchName);
     return (it != _switchedArguments.end() && index < it->second.size())
@@ -491,8 +490,7 @@ typedef std::function<size_t(Context&,  // command context
 
 class Runner {
  public:
-  Runner(const std::string& redirectPrefix,
-         const std::string& prefixDescription)
+  Runner(const std::string& redirectPrefix)
       : _redirectPrefix(redirectPrefix),
         _redirect(false),
         _input(_scriptContext),

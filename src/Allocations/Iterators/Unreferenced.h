@@ -15,7 +15,7 @@ class Unreferenced {
   class Factory {
    public:
     Factory() : _setName("unreferenced") {}
-    Unreferenced* MakeIterator(Commands::Context& context,
+    Unreferenced* MakeIterator(Commands::Context& /* context */,
                                const ProcessImage<Offset>& processImage,
                                const Finder<Offset>& allocationFinder) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();

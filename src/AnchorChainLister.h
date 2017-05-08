@@ -49,7 +49,7 @@ class AnchorChainLister
     } else {
       output << "indirectly statically anchored\n... via anchor point "
              << address;
-      ShowSignatureIfPresent(output, address, size, image);
+      ShowSignatureIfPresent(output, size, image);
       output << "\n";
     }
     for (typename std::vector<Offset>::const_iterator it = staticAddrs.begin();
@@ -83,7 +83,7 @@ class AnchorChainLister
       output << "indirectly anchored from at least one stack\n"
                 "via anchor point "
              << address;
-      ShowSignatureIfPresent(output, address, size, image);
+      ShowSignatureIfPresent(output, size, image);
       output << "\n";
     }
     for (typename std::vector<Offset>::const_iterator it = stackAddrs.begin();
@@ -117,7 +117,7 @@ class AnchorChainLister
       output << "indirectly anchored from at least one register\n"
                 "via anchor point "
              << address;
-      ShowSignatureIfPresent(output, address, size, image);
+      ShowSignatureIfPresent(output, size, image);
       output << "\n";
     }
     for (typename std::vector<std::pair<size_t, const char*> >::const_iterator
@@ -139,7 +139,7 @@ class AnchorChainLister
     Commands::Output& output = _context.GetOutput();
     output << "... which references " << std::hex << address;
     if (address != _anchoree) {
-      ShowSignatureIfPresent(output, address, size, image);
+      ShowSignatureIfPresent(output, size, image);
     }
     output << "\n";
     return false;
@@ -159,7 +159,7 @@ class AnchorChainLister
   size_t _numDirectStackAnchorChainsShown;
   size_t _numDirectRegisterAnchorChainsShown;
 
-  void ShowSignatureIfPresent(Commands::Output& output, Offset address,
+  void ShowSignatureIfPresent(Commands::Output& output,
                               Offset size, const char* image) {
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
