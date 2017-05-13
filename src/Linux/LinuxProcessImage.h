@@ -20,7 +20,12 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   LinuxProcessImage(const AddressMap& virtualAddressMap,
                     const ThreadMap<Offset>& threadMap)
       : ProcessImage<OffsetType>(virtualAddressMap, threadMap),
-        _symdefsRead(false) {}
+        _symdefsRead(false) {
+    // Make the allocation finder eagerly because it is
+    // disconcerting to see errors about corruption in the middle
+    // of some arbitrary command.
+    MakeAllocationFinder();
+  }
 
   template <typename T>
   struct CompareByAddressField {
@@ -42,11 +47,14 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
      * different one is used this is done by using LD_PRELOAD to override
      * the libc malloc code.
      */
+    if (Base::_allocationFinder != 0) {
+      return;
+    }
     Base::_allocationFinder =
         new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition);
 
     /*
-     * At present this can only be done here because we find the allocations
+     * At present this can only be done here because we may find the allocations
      * lazily and the current algorithm for static anchor ranges is to
      * assume that all imaged writeable memory that is not otherwise claimed
      * (for example by stack or memory allocators) is OK for anchors.

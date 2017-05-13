@@ -62,7 +62,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           DeriveArenaOffsets();
         }
       } else {
-        std::cerr << "Failed find any arenas, main or not." << std::endl;
+        std::cerr << "Failed to find any arenas, main or not."
+                  << std::endl;
       }
 
     } else {
@@ -260,11 +261,18 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       (OFFSET_SIZE == 4) ? 0x100000 : 0x4000000;
   struct Arena {
     Arena(Offset address)
-        : _address(address), _nextArena(0), _top(0), _size(0) {}
+        : _address(address),
+          _nextArena(0),
+          _top(0),
+          _size(0),
+          _hasFastBinCorruption(false),
+          _hasFreeListCorruption(false) {}
     Offset _address;
     Offset _nextArena;
     Offset _top;
     Offset _size;
+    bool _hasFastBinCorruption;
+    bool _hasFreeListCorruption;  // ... in doubly linked list
   };
   typedef std::map<Offset, Arena> ArenaMap;
   typedef typename ArenaMap::iterator ArenaMapIterator;
@@ -312,6 +320,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   Offset _arenaSizeOffset;
   Offset _arenaTopOffset;
   Offset _arenaDoublyLinkedFreeListOffset;
+  Offset _arenaLastDoublyLinkedFreeListOffset;
   Offset _arenaStructSize;
   Offset _maxHeapSize;
 
@@ -824,9 +833,20 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                   << _arenaDoublyLinkedFreeListOffset;
       }
     }
+    for (Offset freeListOffset =
+             _arenaDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE;
+         freeListOffset < 0x130 * OFFSET_SIZE;
+         freeListOffset += 2 * OFFSET_SIZE) {
+      numListOffsetVotes = CheckFreeListOffset(freeListOffset);
+      if (numListOffsetVotes == 0) {
+        break;
+      }
+      _arenaLastDoublyLinkedFreeListOffset = freeListOffset;
+    }
     size_t bestNextOffsetVotes = 0;
 
-    for (Offset nextOffset = 0x108 * OFFSET_SIZE;
+    for (Offset nextOffset = _arenaLastDoublyLinkedFreeListOffset +
+            2 * OFFSET_SIZE;
          nextOffset < 0x130 * OFFSET_SIZE; nextOffset += OFFSET_SIZE) {
       Offset mainArenaCandidate;
       size_t numVotes = CheckNextOffset(nextOffset, mainArenaCandidate);
@@ -1955,10 +1975,32 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return (it != _heaps.end()) ? it->second._arenaAddress : _mainArenaAddress;
   }
 
+   void ReportFastBinCorruption(Arena& arena,
+                                Offset fastBinHeader,
+                                Offset node,
+                                const char *specificError) {
+    if (!arena._hasFastBinCorruption) {
+      arena._hasFastBinCorruption = true;
+      std::cerr << "Fast bin corruption was found for the arena"
+                   " at 0x"
+                << std::hex << arena._address << "\n";
+      std::cerr << "  Leak analysis will not be accurate.\n";
+      std::cerr << "  Used/free analysis will not be accurate "
+                   "for the arena.\n";
+    }
+    std::cerr << "  The fast bin list headed at 0x"
+              << std::hex
+              << fastBinHeader
+              << " has a node\n  0x" << node
+              << " "
+              << specificError << ".\n";
+  }
+
   void CorrectFreeListStatus() {
     AllocationIndex noAllocation = _allocations.size();
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Offset arenaAddress = it->first;
+      Arena& arena = it->second;
       Offset fastBinLimit = arenaAddress + _arenaTopOffset;
       Reader reader(_addressMap);
       for (Offset fastBinCheck = arenaAddress + 2 * sizeof(int);
@@ -1966,40 +2008,148 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         try {
           for (Offset nextNode = reader.ReadOffset(fastBinCheck); nextNode != 0;
                nextNode = reader.ReadOffset(nextNode + OFFSET_SIZE * 2)) {
-            if (ArenaAddressFor(nextNode) != arenaAddress) {
-              std::cerr << "The fast bin list headed at 0x" << std::hex
-                        << fastBinCheck << " has a node 0x" << nextNode
-                        << " in the wrong arena.\n";
-              std::cerr << "Leak analysis will not be accurate.\n";
-              continue;
-            }
             Offset allocation = nextNode + OFFSET_SIZE * 2;
             AllocationIndex index = AllocationIndexOf(allocation);
             if (index == noAllocation ||
                 _allocations[index].Address() != allocation) {
-              std::cerr << "The fast bin list headed at 0x" << std::hex
-                        << fastBinCheck << " has a node 0x" << nextNode
-                        << " not matching an allocation.\n";
-              std::cerr << "Leak analysis will not be accurate.\n";
-              continue;
+              ReportFastBinCorruption(arena,
+                                      fastBinCheck,
+                                      nextNode,
+                                      "not matching an allocation");
+              // It is not possible to process the rest of this
+              // fast bin list because there is a break in the
+              // chain.
+              // TODO: A possible improvement would be to try
+              // to recognize any orphan fast bin lists.  Doing
+              // so here would be the best place because if we
+              // fail to find the rest of the fast bin list, which
+              // in rare cases can be huge, the used/free status
+              // will be wrong for remaining entries on that
+              // particular fast bin list.
+              break;
+            }
+            if (ArenaAddressFor(nextNode) != arenaAddress) {
+              ReportFastBinCorruption(arena,
+                                      fastBinCheck,
+                                      nextNode,
+                                      "in the wrong arena");
+              // It is not possible to process the rest of this
+              // fast bin list because there is a break in the
+              // chain.
+              // TODO: A possible improvement would be to try
+              // to recognize any orphan fast bin lists.  Doing
+              // so here would be the best place because if we
+              // fail to find the rest of the fast bin list, which
+              // in rare cases can be huge, the used/free status
+              // will be wrong for remaining entries on that
+              // particular fast bin list.
+              break;
             }
             _allocations[index].MarkAsFree();
           }
         } catch (NotMapped& e) {
-          std::cerr << "The fast bin list headed at 0x" << std::hex
-                    << fastBinCheck << " has a node 0x" << e._address
-                    << " not in the core.\n";
-          std::cerr << "Leak analysis will not be accurate.\n";
+          // It is not possible to process the rest of this
+          // fast bin list because there is a break in the
+          // chain.
+          // TODO: A possible improvement would be to try
+          // to recognize any orphan fast bin lists.  Doing
+          // so here would be the best place because if we
+          // fail to find the rest of the fast bin list, which
+          // in rare cases can be huge, the used/free status
+          // will be wrong for remaining entries on that
+          // particular fast bin list.
+          ReportFastBinCorruption(arena, fastBinCheck, e._address,
+                                  "not in the core");
         }
       }
     }
   }
   // ??? make sure to include logic related to registers and
   // ??? stacks for arenas in flux
-
-  void CheckForCorruption() {
-    // ??? Adapt any checks of fast bin lists or regular free lists
+  void ReportFreeListCorruption(Arena& arena, Offset freeListHeader,
+                                Offset node, const char* specificError) {
+    if (!arena._hasFreeListCorruption) {
+      arena._hasFastBinCorruption = true;
+      std::cerr << "Doubly linked free list corruption was "
+                   "found for the arena"
+                   " at 0x"
+                << std::hex << arena._address << "\n";
+      std::cerr << "  Leak analysis may not be accurate.\n";
+      std::cerr << "  Used/free analysis may not be accurate "
+                   "for the arena.\n";
+    }
+    std::cerr << "  The free list headed at 0x" << std::hex << freeListHeader
+              << " has a node\n  0x" << node << " " << specificError << ".\n";
   }
+
+  void CheckForDoublyLinkedListCorruption() {
+    AllocationIndex noAllocation = _allocations.size();
+    Reader reader(_addressMap);
+    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
+      Offset arenaAddress = it->first;
+      Offset firstList =
+          arenaAddress + _arenaDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
+      Offset lastList =
+          arenaAddress + _arenaLastDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
+      Arena& arena = it->second;
+      for (Offset list = firstList; list <= lastList; list += 2 * OFFSET_SIZE) {
+        try {
+          Offset firstNode = reader.ReadOffset(list + 2 * OFFSET_SIZE);
+          Offset lastNode = reader.ReadOffset(list + 3 * OFFSET_SIZE);
+          if (firstNode == list) {
+            if (lastNode != list) {
+              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                       lastNode,
+                                       "at end of list with empty start");
+            }
+          } else {
+            if (lastNode == list) {
+              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                       lastNode,
+                                       "at start of list with empty end");
+            } else {
+              Offset prevNode = list;
+              for (Offset node = firstNode; node != list;
+                   node = reader.ReadOffset(node + 2 * OFFSET_SIZE)) {
+                Offset allocation = node + 2 * OFFSET_SIZE;
+                AllocationIndex index = AllocationIndexOf(allocation);
+                if (index == noAllocation) {
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                           node,
+                                           "not matching an allocation");
+                  break;
+                }
+                Offset allocationSize = AllocationAt(index)->Size();
+                if ((reader.ReadOffset(allocation + allocationSize) & 1) != 0) {
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
+                                           "with a wrong used/free status bit");
+                  break;
+                }
+                if (ArenaAddressFor(node) != arenaAddress) {
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                           node,
+                                           "in the wrong arena");
+                  break;
+                }
+                if (reader.ReadOffset(node + 3 * OFFSET_SIZE) != prevNode) {
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                           node,
+                                           "with an unexpected back pointer");
+                  break;
+                }
+                prevNode = node;
+              }
+            }
+          }
+        } catch (NotMapped& e) {
+          ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                   e._address,
+                                   "not in the core");
+        }
+      }
+    }
+  }
+  void CheckForCorruption() { CheckForDoublyLinkedListCorruption(); }
 };
 
 }  // namespace Linux
