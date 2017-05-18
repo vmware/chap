@@ -1,0 +1,7 @@
+Used allocation at 613c20 of size 18
+... with signature 4007e0(B)
+
+Used allocation at 613c40 of size 18
+... with signature 4007c8(D)
+
+2 allocations use 0x30 (48) bytes.

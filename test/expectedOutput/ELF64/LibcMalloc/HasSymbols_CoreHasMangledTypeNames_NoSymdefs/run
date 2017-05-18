@@ -1,0 +1,124 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program.  In
+# this particular core there is a single used allocation at 602010 and it is
+# anchored both by registers and stack for the current thread.
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$1 core.34218 << DONE
+redirect on
+count used
+summarize used
+enumerate used
+list used
+show used
+count free
+summarize free
+enumerate free
+list free
+count leaked
+summarize leaked
+enumerate leaked
+list leaked
+show leaked
+count anchored
+summarize anchored
+enumerate anchored
+list anchored
+show anchored
+count staticanchored
+summarize staticanchored
+enumerate staticanchored
+list staticanchored
+show staticanchored
+count stackanchored
+summarize stackanchored
+enumerate stackanchored
+list stackanchored
+show stackanchored
+count registeranchored
+summarize registeranchored
+enumerate registeranchored
+list registeranchored
+show registeranchored
+count anchorpoints
+summarize anchorpoints
+enumerate anchorpoints
+list anchorpoints
+show anchorpoints
+count staticanchorpoints
+summarize staticanchorpoints
+enumerate staticanchorpoints
+list staticanchorpoints
+show staticanchorpoints
+count stackanchorpoints
+summarize stackanchorpoints
+enumerate stackanchorpoints
+list stackanchorpoints
+show stackanchorpoints
+count registeranchorpoints
+summarize registeranchorpoints
+enumerate registeranchorpoints
+list registeranchorpoints
+show registeranchorpoints
+count incoming 602010
+summarize incoming 602010
+enumerate incoming 602010
+list incoming 602010
+show incoming 602010
+count outgoing 602010
+count exactincoming 602010
+summarize exactincoming 602010
+enumerate exactincoming 602010
+list exactincoming 602010
+show exactincoming 602010
+count outgoing 602010
+summarize outgoing 602010
+enumerate outgoing 602010
+list outgoing 602010
+show outgoing 602010
+findptr 602010
+count incoming 613c20
+summarize incoming 613c20
+enumerate incoming 613c20
+list incoming 613c20
+show incoming 613c20
+count outgoing 613c20
+count exactincoming 613c20
+summarize exactincoming 613c20
+enumerate exactincoming 613c20
+list exactincoming 613c20
+show exactincoming 613c20
+count outgoing 613c20
+summarize outgoing 613c20
+enumerate outgoing 613c20
+list outgoing 613c20
+show outgoing 613c20
+findptr 613c20
+count incoming 613c40
+summarize incoming 613c40
+enumerate incoming 613c40
+list incoming 613c40
+show incoming 613c40
+count outgoing 613c40
+count exactincoming 613c40
+summarize exactincoming 613c40
+enumerate exactincoming 613c40
+list exactincoming 613c40
+show exactincoming 613c40
+count outgoing 613c40
+summarize outgoing 613c40
+enumerate outgoing 613c40
+list outgoing 613c40
+show outgoing 613c40
+findptr 613c40
+count used B
+count used D
+count used b
+count used d
+DONE

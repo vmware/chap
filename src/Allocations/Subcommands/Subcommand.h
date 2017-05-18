@@ -81,11 +81,18 @@ class Subcommand : public Commands::Subcommand {
       if (nameOrSignature == "-") {
         onlyUnsigned = true;
       } else {
+        signatures = signatureDirectory.Signatures(nameOrSignature);
         Offset signature;
-        if (context.ParsePositional(signaturePositional, signature)) {
+	// Note that if a class has some name that happens to look OK
+	// as hexadecimal, such as BEEF, for example, a requested
+	// signature BEEF will be treated as referring to the class
+	// name.  For purposes of pseudo signatures, the number can
+	// be selected as a sudo-signature by prepending 0, or 0x
+	// or anything that chap will parse as hexadecimal but that
+	// will make it not match the symbol.
+        if (signatures.empty() &&
+	    context.ParsePositional(signaturePositional, signature)) {
           signatures.insert(signature);
-        } else {
-          signatures = signatureDirectory.Signatures(nameOrSignature);
         }
         if (signatures.empty()) {
           /*
