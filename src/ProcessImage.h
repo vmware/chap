@@ -64,8 +64,8 @@ class ProcessImage {
     if (_lazyAllocationFinderInitializationPending) {
       _lazyAllocationFinderInitializationPending = false;
       MakeAllocationFinder();
-      RefreshSignatureDirectory();
     }
+    RefreshSignatureDirectory();
     return _allocationFinder;
   }
   const Allocations::Graph<Offset> *GetAllocationGraph() const {
