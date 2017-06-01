@@ -52,9 +52,9 @@ class Outgoing {
     void ShowHelpMessage(Commands::Context& context) {
       Commands::Output& output = context.GetOutput();
       output << "Use \"outgoing <address-in-hex>\""
-                " to specify the set of all allocations that\n"
-                "are referenced by the allocation that contains the specified"
-                " address.\n";
+                " to specify the set of all used allocations\n"
+                "that are referenced by the allocation that contains the"
+                " specified address.\n";
     }
 
    private:
@@ -72,9 +72,19 @@ class Outgoing {
         _numAllocations(numAllocations) {
     _graph.GetOutgoing(index, &_pNextOutgoing, &_pPastOutgoing);
   }
+
   AllocationIndex Next() {
-    return (_pNextOutgoing == _pPastOutgoing) ? _numAllocations
-                                              : *(_pNextOutgoing++);
+    while (_pNextOutgoing != _pPastOutgoing) {
+      AllocationIndex index = *(_pNextOutgoing++);
+      const Allocation* allocation = _finder.AllocationAt(index);
+      if (allocation == ((Allocation*)(0))) {
+        abort();
+      }
+      if (allocation->IsUsed()) {
+        return index;
+      }
+    }
+    return _numAllocations;
   }
 
  private:

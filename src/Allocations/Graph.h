@@ -297,19 +297,33 @@ class Graph {
                          AnchorChainVisitor &visitor,
                          const IndexedDistances<Index> &distances,
                          LocalVisitor anchorPointVisitor) const {
-    if (index >= _finder.NumAllocations()) {
+    if (index >= _finder.NumAllocations() || _leaked[index]) {
       return false;
+    } else {
+      const Allocation *allocation = _finder.AllocationAt(index);
+      if (allocation == 0 || !allocation->IsUsed()) {
+        return false;
+      }
     }
+    
     if (distances.GetDistance(index) == 1 &&
         CallAnchorChainVisitor(index, visitor, anchorPointVisitor)) {
+      // Under the given anchor type imposed by the distances argument, the
+      // allocation to explain was directly anchored, so there is normally no
+      // need to explain any indirect anchoring.
       return true;
     }
-    // rest of chain algorithm, listed from ExplainAnchored
+    // At this point the starting allocation is not directly anchored under
+    // the given anchor type so we are interested in whether there is any
+    // indirect anchoring.
     Index edgeIndex = _firstIncoming[index];
     if (edgeIndex != _firstIncoming[index + 1]) {
+      // There is at least one incoming edge.
       std::vector<bool> visited;
       visited.reserve(_numAllocations);
       visited.resize(_numAllocations, false);
+
+      // The edge target is already considered visited.
       visited[index] = true;
       std::vector<std::pair<Index, Index> > edgesToVisit;
       edgesToVisit.push_back(std::make_pair(index, edgeIndex - 1));
@@ -318,6 +332,9 @@ class Graph {
         Index targetIndex = edgesToVisit.back().first;
 
         if (edgeIndex >= _firstIncoming[targetIndex + 1]) {
+          // We have checked for any anchor paths that involve the
+          // allocation corresponding to the target index as the target
+          // of an edge.
           edgesToVisit.pop_back();
           continue;
         }
@@ -325,8 +342,15 @@ class Graph {
         Index sourceIndex = _incoming[edgeIndex];
         if (visited[sourceIndex]) {
           continue;
+        } else {
+          // The graph has both used and free nodes but here we are only
+          // interested in paths involving used nodes.
+          visited[sourceIndex] = true;
+          const Allocation *allocation = _finder.AllocationAt(sourceIndex);
+          if (allocation == 0 || !allocation->IsUsed()) {
+            continue;
+          }
         }
-        visited[sourceIndex] = true;
 
         unsigned char sourceAnchorDistance = distances.GetDistance(sourceIndex);
         unsigned char targetAnchorDistance = distances.GetDistance(targetIndex);
@@ -337,6 +361,8 @@ class Graph {
           continue;
         }
         if (sourceAnchorDistance == 1) {
+          // The source is an anchor point of the type associated with the
+          // distances argument.
           if (CallAnchorChainVisitor(sourceIndex, visitor,
                                      anchorPointVisitor)) {
             return true;
@@ -350,7 +376,6 @@ class Graph {
             const Allocation *allocation = _finder.AllocationAt(linkIndex);
             if (allocation == 0 || !allocation->IsUsed()) {
               break;
-              ;
             }
             const char *image;
             Offset numBytesFound = _addressMap.FindMappedMemoryImage(
@@ -425,9 +450,13 @@ class Graph {
     for (Index i = 0; i < _numAllocations; i++) {
       _firstOutgoing[i] = _totalEdges;
       const Allocation *allocation = _finder.AllocationAt(i);
-      if (!allocation->IsUsed()) {
-        continue;
-      }
+
+      /*
+       * Note that we find all the edges, regardless of whether the source
+       * or target is used or free.  Code that uses the graph is expected to
+       * check the source and/or the target when one particular usage status
+       * is required.
+       */ 
       Offset size = allocation->Size();
       Offset numCandidates = size / sizeof(Offset);
       std::set<Index> targets;
@@ -474,9 +503,12 @@ class Graph {
 
     for (Index i = _numAllocations; i > 0;) {
       const Allocation *allocation = _finder.AllocationAt(--i);
-      if (!allocation->IsUsed()) {
-        continue;
-      }
+      /*
+       * Note that we find all the edges, regardless of whether the source
+       * or target is used or free.  Code that uses the graph is expected to
+       * check the source and/or the target when one particular usage status
+       * is required.
+       */ 
       Offset size = allocation->Size();
       Offset numCandidates = size / sizeof(Offset);
       std::set<Index> targets;

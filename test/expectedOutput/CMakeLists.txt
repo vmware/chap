@@ -59,3 +59,4 @@ exout_test(PATH ELF32/LibcMalloc/OneLeaked FILES core.51504)
 exout_test(PATH ELF64/LibcMalloc/OneLeaked FILES core.20675)
 exout_test(PATH ELF64/LibcMalloc/HasSymbols_CoreHasMangledTypeNames_NoSymdefs
            FILES core.34218)
+exout_test(PATH ELF64/LibcMalloc/OneHasFreeOutgoing FILES core.5661)

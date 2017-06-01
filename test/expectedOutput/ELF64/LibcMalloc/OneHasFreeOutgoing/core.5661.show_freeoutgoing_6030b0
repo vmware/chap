@@ -1,0 +1,5 @@
+Free allocation at 603070 of size 38
+ 0:                0               16         ffffffff 20726568746f6e61
+20: 207373656c657375     676e69727473                0 
+
+1 allocations use 0x38 (56) bytes.

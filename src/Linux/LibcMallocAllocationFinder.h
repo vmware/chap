@@ -238,7 +238,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     AllocationIndex targetIndex = AllocationIndexOf(targetCandidate);
     if (targetIndex != _allocations.size()) {
       const Allocation* target = AllocationAt(targetIndex);
-      if ((target != 0) && target->IsUsed()) {
+      if (target != 0) {
         return targetIndex;
       }
     }

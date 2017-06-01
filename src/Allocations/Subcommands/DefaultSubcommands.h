@@ -16,6 +16,7 @@
 #include "../Iterators/Incoming.h"
 #include "../Iterators/Leaked.h"
 #include "../Iterators/Outgoing.h"
+#include "../Iterators/FreeOutgoing.h"
 #include "../Iterators/RegisterAnchorPoints.h"
 #include "../Iterators/RegisterAnchored.h"
 #include "../Iterators/ReverseChain.h"
@@ -59,6 +60,7 @@ class DefaultSubcommands {
         _incomingSubcommands(_incomingIteratorFactory),
         _exactIncomingSubcommands(_exactIncomingIteratorFactory),
         _outgoingSubcommands(_outgoingIteratorFactory),
+        _freeOutgoingSubcommands(_freeOutgoingIteratorFactory),
         _chainSubcommands(_chainIteratorFactory),
         _reverseChainSubcommands(_reverseChainIteratorFactory) {}
 
@@ -85,6 +87,7 @@ class DefaultSubcommands {
     _incomingSubcommands.SetProcessImage(processImage);
     _exactIncomingSubcommands.SetProcessImage(processImage);
     _outgoingSubcommands.SetProcessImage(processImage);
+    _freeOutgoingSubcommands.SetProcessImage(processImage);
     _chainSubcommands.SetProcessImage(processImage);
     _reverseChainSubcommands.SetProcessImage(processImage);
   }
@@ -111,6 +114,7 @@ class DefaultSubcommands {
     _incomingSubcommands.RegisterSubcommands(runner);
     _exactIncomingSubcommands.RegisterSubcommands(runner);
     _outgoingSubcommands.RegisterSubcommands(runner);
+    _freeOutgoingSubcommands.RegisterSubcommands(runner);
     _chainSubcommands.RegisterSubcommands(runner);
     _reverseChainSubcommands.RegisterSubcommands(runner);
   }
@@ -227,6 +231,11 @@ class DefaultSubcommands {
   typedef typename Iterators::Outgoing<Offset> OutgoingIterator;
   typename OutgoingIterator::Factory _outgoingIteratorFactory;
   SubcommandsForOneIterator<Offset, OutgoingIterator> _outgoingSubcommands;
+
+  typedef typename Iterators::FreeOutgoing<Offset> FreeOutgoingIterator;
+  typename FreeOutgoingIterator::Factory _freeOutgoingIteratorFactory;
+  SubcommandsForOneIterator<Offset, FreeOutgoingIterator>
+      _freeOutgoingSubcommands;
 
   typedef typename Iterators::Chain<Offset> ChainIterator;
   typename ChainIterator::Factory _chainIteratorFactory;

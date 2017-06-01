@@ -73,8 +73,17 @@ class Incoming {
     _graph.GetIncoming(index, &_pNextIncoming, &_pPastIncoming);
   }
   AllocationIndex Next() {
-    return (_pNextIncoming == _pPastIncoming) ? _numAllocations
-                                              : *(_pNextIncoming++);
+    while (_pNextIncoming != _pPastIncoming) {
+      AllocationIndex index = *(_pNextIncoming++);
+      const Allocation* allocation = _finder.AllocationAt(index);
+      if (allocation == ((Allocation*)(0))) {
+        abort();
+      }
+      if (allocation->IsUsed()) {
+        return index;
+      }
+    }
+    return _numAllocations;
   }
 
  private:
