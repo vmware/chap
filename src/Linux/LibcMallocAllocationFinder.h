@@ -1475,7 +1475,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (typename RunCandidates::iterator it = runCandidates.begin();
          it != runCandidates.end(); ++it) {
       Offset base = it->_start;
-      Offset size = runCandidates[0]._lastPageBoundary - base;
+      Offset size = it->_lastPageBoundary - base;
       if (base < prevLimit) {
         continue;
       }
