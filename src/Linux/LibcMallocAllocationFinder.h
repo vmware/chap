@@ -1205,95 +1205,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return false;
   }
 
-  void ScanForTops(Offset base, Offset limit, OffsetSet& topCandidates) {
-    Reader reader(_addressMap);
-    for (Offset check = base; check < limit; check += (2 * OFFSET_SIZE)) {
-      Offset topSize = reader.ReadOffset(check + OFFSET_SIZE) & ~7;
-      if (topSize >= 2 * OFFSET_SIZE && topSize <= _maxHeapSize &&
-          ((check + topSize) & 0xFFF) == 0) {
-        topCandidates.insert(check);
-      }
-    }
-  }
-
-  bool ScanForMainArena(Offset base, Offset limit, OffsetSet& topCandidates) {
-    size_t scanWindow = 0;
-    Offset lastArenaCandidate = 0;
-    Offset lastArenaNextCandidate = 0;
-    Offset lastTopCandidate = 0;
-    std::map<Offset, Offset> topReferences;
-
-    Reader reader(_addressMap);
-    for (Offset check = base; check < limit; check += (2 * OFFSET_SIZE)) {
-      Offset atCheck = reader.ReadOffset(check);
-
-      if (topCandidates.find(atCheck) != topCandidates.end()) {
-        topReferences.insert(std::make_pair(check, atCheck));
-        scanWindow = 0x120 * OFFSET_SIZE;
-      }
-
-      if (scanWindow > 0) {
-        if (atCheck + 0x100 * OFFSET_SIZE <= check &&
-            atCheck + 0x120 * OFFSET_SIZE >= check) {
-          typename std::map<Offset, Offset>::iterator it =
-              topReferences.find(atCheck + 12 * OFFSET_SIZE);
-          if (it == topReferences.end()) {
-            it = topReferences.find(atCheck + 11 * OFFSET_SIZE);
-          }
-          if (it != topReferences.end()) {
-            lastArenaCandidate = atCheck;
-            lastArenaNextCandidate = check;
-            lastTopCandidate = it->second;
-          }
-        }
-
-        if (atCheck >= 0x4000 && (atCheck & 0xFFF) == 0 &&
-            lastArenaNextCandidate + 2 * OFFSET_SIZE >= check) {
-          _mainArenaAddress = lastArenaCandidate;
-          ArenaMapIterator it =
-              _arenas
-                  .insert(std::make_pair(_mainArenaAddress,
-                                         Arena(_mainArenaAddress)))
-                  .first;
-          Arena& mainArena = it->second;
-          mainArena._nextArena = _mainArenaAddress;
-          mainArena._top = lastTopCandidate;
-          mainArena._size = atCheck;
-
-          _mainArenaIsContiguous =
-              (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
-          return true;
-        }
-        scanWindow -= OFFSET_SIZE;
-      }
-    }
-    return false;
-  }
 
   bool ScanForMainArena() {
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
         itEnd = _virtualMemoryPartition.EndUnclaimedImages();
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
         _virtualMemoryPartition.BeginUnclaimedImages();
-
-    OffsetSet topCandidates;
-    for (; it != itEnd; ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-        ScanForTops(it->_base, it->_limit, topCandidates);
-      }
-    }
-    for (it = _virtualMemoryPartition.BeginUnclaimedImages(); it != itEnd;
-         ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-      }
-      if (ScanForMainArena(it->_base, it->_limit, topCandidates)) {
-        return true;
-      }
-    }
     for (it = _virtualMemoryPartition.BeginUnclaimedImages(); it != itEnd;
          ++it) {
       if ((it->_value &
