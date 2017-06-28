@@ -10,6 +10,8 @@
 #include "../Visitors/Lister.h"
 #include "../Visitors/Shower.h"
 #include "../Visitors/Summarizer.h"
+#include "../Visitors/Describer.h"
+#include "../Visitors/Explainer.h"
 #include "Subcommand.h"
 namespace chap {
 namespace Allocations {
@@ -24,6 +26,8 @@ class SubcommandsForOneIterator {
         _enumerateSubcommand(_enumeratorFactory, iteratorFactory),
         _listSubcommand(_listerFactory, iteratorFactory),
         _showSubcommand(_showerFactory, iteratorFactory),
+        _describeSubcommand(_describerFactory, iteratorFactory),
+        _explainSubcommand(_explainerFactory, iteratorFactory),
         _processImage(0) {}
 
   void SetProcessImage(const ProcessImage<Offset>* processImage) {
@@ -33,6 +37,8 @@ class SubcommandsForOneIterator {
     _enumerateSubcommand.SetProcessImage(processImage);
     _listSubcommand.SetProcessImage(processImage);
     _showSubcommand.SetProcessImage(processImage);
+    _describeSubcommand.SetProcessImage(processImage);
+    _explainSubcommand.SetProcessImage(processImage);
   }
   void RegisterSubcommands(Commands::Runner& runner) {
     RegisterSubcommand(runner, _countSubcommand);
@@ -40,6 +46,8 @@ class SubcommandsForOneIterator {
     RegisterSubcommand(runner, _enumerateSubcommand);
     RegisterSubcommand(runner, _listSubcommand);
     RegisterSubcommand(runner, _showSubcommand);
+    RegisterSubcommand(runner, _describeSubcommand);
+    RegisterSubcommand(runner, _explainSubcommand);
   }
 
  private:
@@ -66,6 +74,16 @@ class SubcommandsForOneIterator {
   typename Visitors::Shower<Offset>::Factory _showerFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Shower<Offset>, Iterator>
       _showSubcommand;
+
+  typename Visitors::Describer<Offset>::Factory _describerFactory;
+  Subcommands::Subcommand<Offset, typename Visitors::Describer<Offset>,
+                          Iterator>
+      _describeSubcommand;
+
+  typename Visitors::Explainer<Offset>::Factory _explainerFactory;
+  Subcommands::Subcommand<Offset, typename Visitors::Explainer<Offset>,
+                          Iterator>
+      _explainSubcommand;
 
   const ProcessImage<Offset>* _processImage;
   void RegisterSubcommand(Commands::Runner& runner,

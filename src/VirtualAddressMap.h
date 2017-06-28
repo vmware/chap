@@ -3,6 +3,7 @@
 
 #pragma once
 #include "FileImage.h"
+#include "RangeMapper.h"
 namespace chap {
 template <typename OffsetType>
 class VirtualAddressMap {

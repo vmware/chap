@@ -1,4 +1,3 @@
-
 // Copyright (c) 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
@@ -30,7 +29,8 @@ class Lister {
     void ShowHelpMessage(Commands::Context& context) {
       Commands::Output& output = context.GetOutput();
       output << "In this case \"list\" means show the address, size,"
-                " and type if known.\n";
+                " used/free status\n"
+                "and type if known.\n";
     }
 
    private:
@@ -57,7 +57,7 @@ class Lister {
     Offset address = allocation.Address();
     output << std::hex << address << " of size " << size << "\n";
     const char* image;
-    (void) _addressMap.FindMappedMemoryImage(address, &image);
+    (void)_addressMap.FindMappedMemoryImage(address, &image);
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
       if (_signatureDirectory.IsMapped(signature)) {

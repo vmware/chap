@@ -28,7 +28,7 @@ class SetBasedCommand : public Command {
   void Run(Context& context) {
     Error& error = context.GetError();
     if (_subcommands.empty()) {
-      error << "There are no sets to " << GetName() << ".\n";
+      error << "There are no defined sets to " << GetName() << ".\n";
       return;
     }
     size_t numPositionals = context.GetNumPositionals();
@@ -41,14 +41,11 @@ class SetBasedCommand : public Command {
     std::map<std::string, Subcommand*>::iterator it =
         _subcommands.find(setName);
     if (it == _subcommands.end()) {
-      const std::string& commandName = context.Positional(0);
-      error << "It is not defined how to " << commandName << " " << setName
-            << ".\n";
-      error << "Use \"help " << commandName << "\" to see what you can "
-            << commandName << ".\n";
-      return;
+      error << "It is currently not defined how to " << GetName() << " "
+            << setName << ".\n";
+    } else {
+      it->second->Run(context);
     }
-    it->second->Run(context);
   }
 
   void ShowAvailableSets(Context& context) {

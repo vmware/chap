@@ -60,6 +60,10 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
     _processImageCommandHandler.AddCommandCallbacks(r);
   }
 
+  virtual void AddCommands(Commands::Runner& r) {
+    _processImageCommandHandler.AddCommands(r);
+  }
+   
  private:
   ElfImage _elfImage;
   const VirtualAddressMap<Offset>& _virtualAddressMap;

@@ -4,23 +4,22 @@
 #pragma once
 #include "Allocations/Graph.h"
 #include "Commands/Runner.h"
-#include "Explainer.h"
-#include "InModuleExplainer.h"
+#include "InModuleDescriber.h"
 #include "SignatureDirectory.h"
-#include "StackExplainer.h"
+#include "StackDescriber.h"
 namespace chap {
 template <typename Offset>
 class AnchorChainLister
     : public Allocations::Graph<Offset>::AnchorChainVisitor {
  public:
-  AnchorChainLister(const InModuleExplainer<Offset>& inModuleExplainer,
-                    const StackExplainer<Offset>& stackExplainer,
+  AnchorChainLister(const InModuleDescriber<Offset>& inModuleDescriber,
+                    const StackDescriber<Offset>& stackDescriber,
                     const Allocations::Graph<Offset>& graph,
                     const SignatureDirectory<Offset>* signatureDirectory,
                     Commands::Context& context, Offset anchoree)
       : _graph(graph),
-        _inModuleExplainer(inModuleExplainer),
-        _stackExplainer(stackExplainer),
+        _inModuleDescriber(inModuleDescriber),
+        _stackDescriber(stackDescriber),
         _signatureDirectory(signatureDirectory),
         _context(context),
         _anchoree(anchoree),
@@ -55,7 +54,7 @@ class AnchorChainLister
     for (typename std::vector<Offset>::const_iterator it = staticAddrs.begin();
          it != staticAddrs.end(); ++it) {
       Offset staticAddr = *it;
-      _inModuleExplainer.Explain(_context, staticAddr);
+      _inModuleDescriber.Describe(_context, staticAddr, false);
       output << "Static address " << staticAddr << " references"
              << (isDirect ? " " : " anchor point ") << address << "\n";
     }
@@ -89,7 +88,7 @@ class AnchorChainLister
     for (typename std::vector<Offset>::const_iterator it = stackAddrs.begin();
          it != stackAddrs.end(); ++it) {
       Offset stackAddr = *it;
-      _stackExplainer.Explain(_context, stackAddr);
+      _stackDescriber.Describe(_context, stackAddr, false);
       output << "Stack address " << std::hex << stackAddr << " references"
              << (isDirect ? " " : " anchor point ") << address << "\n";
     }
@@ -147,8 +146,8 @@ class AnchorChainLister
 
  private:
   const Allocations::Graph<Offset>& _graph;
-  const InModuleExplainer<Offset>& _inModuleExplainer;
-  const StackExplainer<Offset>& _stackExplainer;
+  const InModuleDescriber<Offset>& _inModuleDescriber;
+  const StackDescriber<Offset>& _stackDescriber;
   const SignatureDirectory<Offset>* _signatureDirectory;
   Commands::Context& _context;
   const Offset _anchoree;

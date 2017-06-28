@@ -4,12 +4,6 @@
 #pragma once
 #include <string>
 
-#include "Commands/CountCommand.h"
-#include "Commands/EnumerateCommand.h"
-#include "Commands/ListCommand.h"
-#include "Commands/Runner.h"
-#include "Commands/ShowCommand.h"
-#include "Commands/SummarizeCommand.h"
 namespace chap {
 class FileAnalyzer {
  public:
@@ -50,27 +44,13 @@ class FileAnalyzer {
    * some key piece of information is missing from the file.
    */
 
-  virtual void AddCommandCallbacks(Commands::Runner& r);
+  virtual void AddCommandCallbacks(Commands::Runner& r) = 0;
 
   /*
    * Add commands.  This should include all the ones reasonably supported
    * for this file format.
    */
 
-  virtual void AddCommands(Commands::Runner& r) {
-    r.AddCommand(_countCommand);
-    r.AddCommand(_summarizeCommand);
-    r.AddCommand(_enumerateCommand);
-    r.AddCommand(_listCommand);
-    r.AddCommand(_showCommand);
-  }
-
- protected:
-  Commands::CountCommand _countCommand;
-  Commands::SummarizeCommand _summarizeCommand;
-  Commands::EnumerateCommand _enumerateCommand;
-  Commands::ListCommand _listCommand;
-  // Commands::DescribeCommand _describeCommand;
-  Commands::ShowCommand _showCommand;
+  virtual void AddCommands(Commands::Runner& r) = 0;
 };
 }  // namespace chap

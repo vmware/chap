@@ -2,12 +2,21 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include "AllocationExplainer.h"
 #include "Allocations/Subcommands/DefaultSubcommands.h"
+#include "Commands/CountCommand.h"
+#include "Commands/EnumerateCommand.h"
+#include "Commands/ListCommand.h"
 #include "Commands/Runner.h"
-#include "InModuleExplainer.h"
+#include "Commands/ShowCommand.h"
+#include "Commands/SummarizeCommand.h"
+#include "Commands/DescribeCommand.h"
+#include "Commands/ExplainCommand.h"
+#include "Commands/Runner.h"
+#include "Allocations/Describer.h"
+#include "CompoundDescriber.h"
+#include "InModuleDescriber.h"
+#include "StackDescriber.h"
 #include "ProcessImage.h"
-#include "StackExplainer.h"
 #include "ThreadMapCommandHandler.h"
 
 namespace chap {
@@ -16,85 +25,62 @@ class ProcessImageCommandHandler {
  public:
   typedef ProcessImageCommandHandler<Offset> ThisClass;
   ProcessImageCommandHandler(const ProcessImage<Offset> *processImage)
-      : _processImage(processImage),
-        _threadMapCommandHandler(
-            (processImage != NULL) ? (&processImage->GetThreadMap()) : NULL),
-        _allocationExplainer(_inModuleExplainer, _stackExplainer,
-                             (processImage != NULL)
-                                 ? (&processImage->GetSignatureDirectory())
-                                 : (const SignatureDirectory<Offset> *)(0)) {
-    _defaultAllocationsSubcommands.SetProcessImage(processImage);
+      : _stackDescriber(0),
+        _inModuleDescriber(0),
+        _allocationDescriber(_inModuleDescriber, _stackDescriber, 0),
+        _describeCommand(_compoundDescriber),
+        _explainCommand(_compoundDescriber),
+        _threadMapCommandHandler(0) {
+    SetProcessImage(processImage);
+    _compoundDescriber.AddDescriber(&_allocationDescriber);
+    _compoundDescriber.AddDescriber(&_stackDescriber);
+    _compoundDescriber.AddDescriber(&_inModuleDescriber);
   }
 
   void SetProcessImage(const ProcessImage<Offset> *processImage) {
     _processImage = processImage;
     if (processImage != NULL) {
       _threadMapCommandHandler.SetThreadMap(&processImage->GetThreadMap());
-      _allocationExplainer.SetSignatureDirectory(
-          &(_processImage->GetSignatureDirectory()));
-      _inModuleExplainer.SetModuleDirectory(
-          &(_processImage->GetModuleDirectory()));
-      _stackExplainer.SetThreadMap(&(_processImage->GetThreadMap()));
     } else {
       _threadMapCommandHandler.SetThreadMap((const ThreadMap<Offset> *)(0));
-      _allocationExplainer.SetSignatureDirectory(
-          (const SignatureDirectory<Offset> *)(0));
-      _inModuleExplainer.SetModuleDirectory(
-          (const ModuleDirectory<Offset> *)(0));
-      _stackExplainer.SetThreadMap((const ThreadMap<Offset> *)(0));
     }
     _defaultAllocationsSubcommands.SetProcessImage(processImage);
-  }
-
-  size_t Explain(Commands::Context &context, bool checkOnly) {
-    Commands::Output &output = context.GetOutput();
-    Offset addrToExplain;
-    size_t numTokensAccepted = 0;
-    if (context.TokenAt(0) == "explain") {
-      numTokensAccepted++;
-      if (context.ParseTokenAt(1, addrToExplain)) {
-        numTokensAccepted++;
-      }
-    }
-    if (!checkOnly) {
-      Commands::Error &error = context.GetError();
-      if (context.GetNumTokens() != numTokensAccepted ||
-          numTokensAccepted != 2) {
-        error << "Usage: explain <addr-in-hex>\n";
-      } else {
-        if (_processImage == NULL) {
-          error << "No process image could be obtained from the dump.\n";
-          error << "The \"explain\" command won't work without that.\n";
-        } else {
-          // The allocation graph is allocated lazily, because it is
-          // time consuming to set it up.
-          _allocationExplainer.SetAllocationGraph(
-              _processImage->GetAllocationGraph());
-          if (!_allocationExplainer.Explain(context, addrToExplain) &&
-              !_inModuleExplainer.Explain(context, addrToExplain) &&
-              !_stackExplainer.Explain(context, addrToExplain)) {
-            output << "No explanation is available yet.\n";
-          }
-        }
-      }
-    }
-    return numTokensAccepted;
+    _allocationDescriber.SetProcessImage(processImage);
+    _stackDescriber.SetProcessImage(processImage);
+    _inModuleDescriber.SetProcessImage(processImage);
   }
 
   virtual void AddCommandCallbacks(Commands::Runner &r) {
-    _defaultAllocationsSubcommands.RegisterSubcommands(r);
     _threadMapCommandHandler.AddCommandCallbacks(r);
-    r.AddCommand("explain",
-                 std::bind(&ThisClass::Explain, this, std::placeholders::_1,
-                           std::placeholders::_2));
   }
 
- private:
+  virtual void AddCommands(Commands::Runner &r) {
+    r.AddCommand(_countCommand);
+    r.AddCommand(_summarizeCommand);
+    r.AddCommand(_enumerateCommand);
+    r.AddCommand(_listCommand);
+    r.AddCommand(_showCommand);
+    r.AddCommand(_describeCommand);
+    r.AddCommand(_explainCommand);
+    _defaultAllocationsSubcommands.RegisterSubcommands(r);
+  }
+
+ protected:
   const ProcessImage<Offset> *_processImage;
+  StackDescriber<Offset> _stackDescriber;
+  InModuleDescriber<Offset> _inModuleDescriber;
+  Allocations::Describer<Offset> _allocationDescriber;
+  CompoundDescriber<Offset> _compoundDescriber;
+  Commands::CountCommand _countCommand;
+  Commands::SummarizeCommand _summarizeCommand;
+  Commands::EnumerateCommand _enumerateCommand;
+  Commands::ListCommand _listCommand;
+  Commands::ShowCommand _showCommand;
+  Commands::DescribeCommand<Offset> _describeCommand;
+  Commands::ExplainCommand<Offset> _explainCommand;
+
+ private:
   ThreadMapCommandHandler<Offset> _threadMapCommandHandler;
-  InModuleExplainer<Offset> _inModuleExplainer;
-  StackExplainer<Offset> _stackExplainer;
-  AllocationExplainer<Offset> _allocationExplainer;
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
 };
