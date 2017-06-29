@@ -62,7 +62,12 @@ int main(int argc, char **argv, char ** /* envp */) {
     FileImage fileImage(path.c_str());
     for (vector<FileAnalyzerFactory *>::iterator it = factories.begin();
          it != factories.end(); ++it) {
-      FileAnalyzer *analyzer = (*it)->MakeFileAnalyzer(fileImage);
+      /*
+       * Try to create a file analyzer of the given type, telling it to
+       * find allocations eagerly unless we are only checking for truncation.
+       */
+      FileAnalyzer *analyzer =
+          (*it)->MakeFileAnalyzer(fileImage, truncationCheckOnly);
       if (analyzer == 0) {
         continue;
       }
@@ -74,9 +79,11 @@ int main(int argc, char **argv, char ** /* envp */) {
         if (fileSize > 0 && minimumExpectedFileSize > 0) {
           cerr << "It has size " << dec << fileSize
                << " which is smaller than minimum expected size "
-               << minimumExpectedFileSize << endl;
-          cerr << "Many commands may be disabled or inaccurate as a "
-               << "result." << endl;
+               << minimumExpectedFileSize << "." << endl;
+          if (!truncationCheckOnly) {
+            cerr << "Many commands may be disabled or inaccurate as a "
+                 << "result." << endl;
+          }
         }
         if (truncationCheckOnly) {
           exit(1);

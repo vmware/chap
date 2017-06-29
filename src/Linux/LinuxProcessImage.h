@@ -18,13 +18,14 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   typedef typename AddressMap::NotMapped NotMapped;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
   LinuxProcessImage(const AddressMap& virtualAddressMap,
-                    const ThreadMap<Offset>& threadMap)
+                    const ThreadMap<Offset>& threadMap,
+                    bool truncationCheckOnly)
       : ProcessImage<OffsetType>(virtualAddressMap, threadMap),
         _symdefsRead(false) {
-    // Make the allocation finder eagerly because it is
-    // disconcerting to see errors about corruption in the middle
-    // of some arbitrary command.
-    MakeAllocationFinder();
+    if (!truncationCheckOnly) {
+      // Make the allocation finder eagerly if requested to do so.
+      MakeAllocationFinder();
+    }
   }
 
   template <typename T>
@@ -245,8 +246,7 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
           break;
         case 'L':
           // TODO: support constant literals other than just booleans
-          if ((pC[1] != 'b') ||
-              ((pC[2] != '0') && (pC[2] != '1')) ||
+          if ((pC[1] != 'b') || ((pC[2] != '0') && (pC[2] != '1')) ||
               (pC[3] != 'E')) {
             return emptySignatureName;
           }

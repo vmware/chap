@@ -18,9 +18,10 @@ class ELFCore64FileAnalyzerFactory : public FileAnalyzerFactory {
    * given file, returning 0 if the file is not of the correct type.
    */
 
-  virtual FileAnalyzer* MakeFileAnalyzer(const FileImage& fileImage) {
+  virtual FileAnalyzer* MakeFileAnalyzer(const FileImage& fileImage,
+                                         bool truncationCheckOnly) {
     try {
-      return new ELFCoreFileAnalyzer<Elf64>(fileImage);
+      return new ELFCoreFileAnalyzer<Elf64>(fileImage, truncationCheckOnly);
     } catch (...) {
       return 0;
     }

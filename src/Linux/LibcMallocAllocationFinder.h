@@ -62,8 +62,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           DeriveArenaOffsets();
         }
       } else {
-        std::cerr << "Failed to find any arenas, main or not."
-                  << std::endl;
+        /*
+         * If no arenas were found probably some other allocation finder
+         * is needed.
+         */
+        std::cerr << "Failed to find any arenas, main or not." << std::endl;
+        return;
       }
 
     } else {

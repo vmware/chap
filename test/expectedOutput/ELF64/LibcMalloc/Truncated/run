@@ -1,0 +1,26 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests that truncation checking works properly against either a truncated
+# file or an untruncated file, and that the proper error message is displayed
+# in the case that the file is truncated, even if the run was not limited
+# to truncation checking.
+
+chap=$1
+
+# The first run is in truncation mode on a truncated file.  It should report
+# truncation and exit with a code of 1.
+# It should not attempt to create a .symreqs.
+echo | $1 -t core.48555.1M > expectFail.out 2>expectFail.err
+echo $? >expectFail.exit
+
+# The first run is in truncation mode on a truncated file.  It should not
+# report truncation and should exit with a code of 0.
+# It should not attempt to create a .symreqs.
+echo | $1 -t core.48555 > expectPass.out 2>expectPass.err
+echo $? >expectPass.exit
+
+# The last run is in regular mode on a truncated file.  It should report
+# truncation and also other errors as it attempts to find the allocations.
+# It should create a .symreqs.
+echo | $1 core.48555.512K  > emptyRun.out 2>emptyRun.err

@@ -27,7 +27,8 @@ class FileAnalyzerFactory {
    * given file, returning NULL if  the format is not supported.
    */
 
-  virtual FileAnalyzer* MakeFileAnalyzer(const FileImage& fileImage) = 0;
+  virtual FileAnalyzer* MakeFileAnalyzer(const FileImage& fileImage,
+                                         bool truncationCheckOnly) = 0;
 
  protected:
   const std::string _supportedFileFormat;

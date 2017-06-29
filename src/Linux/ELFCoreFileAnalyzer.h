@@ -14,12 +14,13 @@ template <class ElfImage>
 class ELFCoreFileAnalyzer : public FileAnalyzer {
  public:
   typedef typename ElfImage::Offset Offset;
-  ELFCoreFileAnalyzer(const FileImage& fileImage)
+  ELFCoreFileAnalyzer(const FileImage& fileImage, bool truncationCheckOnly)
       : _elfImage(fileImage),
         _virtualAddressMap(_elfImage.GetVirtualAddressMap()),
-        _processImage(_virtualAddressMap, _elfImage.GetThreadMap()),
+        _processImage(_virtualAddressMap, _elfImage.GetThreadMap(),
+                      truncationCheckOnly),
         _virtualAddressMapCommandHandler(_virtualAddressMap),
-        _processImageCommandHandler(&_processImage) {}
+        _processImageCommandHandler(truncationCheckOnly ? 0 : &_processImage) {}
 
   /*
    * Return true if the file is known to be truncated.
@@ -63,7 +64,7 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
   virtual void AddCommands(Commands::Runner& r) {
     _processImageCommandHandler.AddCommands(r);
   }
-   
+
  private:
   ElfImage _elfImage;
   const VirtualAddressMap<Offset>& _virtualAddressMap;

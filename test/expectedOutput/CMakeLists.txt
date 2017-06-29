@@ -60,3 +60,5 @@ exout_test(PATH ELF64/LibcMalloc/OneLeaked FILES core.20675)
 exout_test(PATH ELF64/LibcMalloc/HasSymbols_CoreHasMangledTypeNames_NoSymdefs
            FILES core.34218)
 exout_test(PATH ELF64/LibcMalloc/OneHasFreeOutgoing FILES core.5661)
+exout_test(PATH ELF64/LibcMalloc/Truncated
+           FILES core.48555 core.48555.1M core.48555.512K)
