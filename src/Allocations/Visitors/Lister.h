@@ -4,7 +4,7 @@
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../../SignatureDirectory.h"
+#include "../SignatureDirectory.h"
 #include "../../SizedTally.h"
 #include "../Finder.h"
 namespace chap {

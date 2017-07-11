@@ -2,10 +2,14 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <iostream>
 #include <memory>
+#include <sstream>
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Finder.h"
+#include "../ReferenceConstraint.h"
+#include "../SignatureChecker.h"
 namespace chap {
 namespace Allocations {
 namespace Subcommands {
@@ -61,13 +65,14 @@ class Subcommand : public Commands::Subcommand {
 
     size_t numPositionals = context.GetNumPositionals();
     size_t nextPositional = 2 + _iteratorFactory.GetNumArguments();
-    bool checkSignature = nextPositional < numPositionals;
-    bool onlyUnsigned = false;
-    std::set<Offset> signatures;
+
     const SignatureDirectory<Offset>& signatureDirectory =
         _processImage->GetSignatureDirectory();
+    const VirtualAddressMap<Offset>& addressMap =
+        _processImage->GetVirtualAddressMap();
 
-    if (checkSignature) {
+    std::string signatureString;
+    if (nextPositional < numPositionals) {
       size_t signaturePositional = nextPositional++;
       if (nextPositional < numPositionals) {
         error << "Unexpected positional arguments found:\n";
@@ -76,40 +81,13 @@ class Subcommand : public Commands::Subcommand {
         } while (nextPositional < numPositionals);
         return;
       }
-      const std::string& nameOrSignature =
-          context.Positional(signaturePositional);
-      if (nameOrSignature == "-") {
-        onlyUnsigned = true;
-      } else {
-        signatures = signatureDirectory.Signatures(nameOrSignature);
-        Offset signature;
-	// Note that if a class has some name that happens to look OK
-	// as hexadecimal, such as BEEF, for example, a requested
-	// signature BEEF will be treated as referring to the class
-	// name.  For purposes of pseudo signatures, the number can
-	// be selected as a sudo-signature by prepending 0, or 0x
-	// or anything that chap will parse as hexadecimal but that
-	// will make it not match the symbol.
-        if (signatures.empty() &&
-	    context.ParsePositional(signaturePositional, signature)) {
-          signatures.insert(signature);
-        }
-        if (signatures.empty()) {
-          /*
-           * A signature may not be recognized simply because there
-           * were not any objects of the given time at the type the
-           * process image was taken.  For now, even though it is
-           * valid, we stop the command because nothing will be found.
-           */
-          error << "Signature \"" << nameOrSignature
-                << "\" is not recognized.\n";
-          return;
-        }
-      }
+      signatureString = context.Positional(signaturePositional);
     }
-    std::unique_ptr<Visitor> visitor;
-    visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage));
-    if (visitor.get() == 0) {
+
+    SignatureChecker<Offset> signatureChecker(signatureDirectory, addressMap,
+                                              signatureString);
+    if (signatureChecker.UnrecognizedSignature()) {
+      error << "Signature \"" << signatureString << "\" is not recognized.\n";
       return;
     }
 
@@ -166,9 +144,58 @@ class Subcommand : public Commands::Subcommand {
       }
     }
 
+    std::vector<ReferenceConstraint<Offset> > referenceConstraints;
+    const Graph<Offset>* graph = 0;
+    size_t numMinIncoming = context.GetNumArguments("minincoming");
+    size_t numMaxIncoming = context.GetNumArguments("maxincoming");
+    size_t numMinOutgoing = context.GetNumArguments("minoutgoing");
+    size_t numMaxOutgoing = context.GetNumArguments("maxoutgoing");
+    if (numMinIncoming + numMaxIncoming + numMinOutgoing + numMaxOutgoing > 0) {
+      // This is done lazily because it is an expensive calculation.
+      graph = _processImage->GetAllocationGraph();
+      if (graph == 0) {
+        std::cerr
+            << "Constraints were placed on incoming or outgoing references\n"
+               "but it was not possible to calculate the graph.";
+        return;
+      }
+
+      switchError =
+          switchError ||
+          AddReferenceConstraints(
+              context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
+              ReferenceConstraint<Offset>::INCOMING, *allocationFinder, *graph,
+              signatureDirectory, addressMap, referenceConstraints);
+      switchError =
+          switchError ||
+          AddReferenceConstraints(
+              context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
+              ReferenceConstraint<Offset>::INCOMING, *allocationFinder, *graph,
+              signatureDirectory, addressMap, referenceConstraints);
+      switchError =
+          switchError ||
+          AddReferenceConstraints(
+              context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
+              ReferenceConstraint<Offset>::OUTGOING, *allocationFinder, *graph,
+              signatureDirectory, addressMap, referenceConstraints);
+      switchError =
+          switchError ||
+          AddReferenceConstraints(
+              context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
+              ReferenceConstraint<Offset>::OUTGOING, *allocationFinder, *graph,
+              signatureDirectory, addressMap, referenceConstraints);
+    }
+
     if (switchError) {
       return;
     }
+
+    std::unique_ptr<Visitor> visitor;
+    visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage));
+    if (visitor.get() == 0) {
+      return;
+    }
+
     const std::vector<std::string>& taints = _iteratorFactory.GetTaints();
     if (!taints.empty()) {
       error << "The output of this command cannot be trusted:\n";
@@ -183,9 +210,6 @@ class Subcommand : public Commands::Subcommand {
         }
       }
     }
-
-    const VirtualAddressMap<Offset>& addressMap =
-        _processImage->GetVirtualAddressMap();
     for (AllocationIndex index = iterator->Next(); index != numAllocations;
          index = iterator->Next()) {
       const Allocation* allocation = allocationFinder->AllocationAt(index);
@@ -198,38 +222,20 @@ class Subcommand : public Commands::Subcommand {
         continue;
       }
 
-      if (checkSignature) {
-        const char* image;
-        Offset numBytesFound =
-            addressMap.FindMappedMemoryImage(allocation->Address(), &image);
-        if (numBytesFound < size) {
-          /*
-           * This is not expected to happen on Linux but could, for
-           * example, given null pages in the core.
-           */
-          output << "Note that allocation is not contiguously mapped.\n";
-          size = numBytesFound;
-        }
+      if (!signatureChecker.Check(*allocation)) {
+        continue;
+      }
 
-        if (onlyUnsigned) {
-          if ((size >= sizeof(Offset)) &&
-              signatureDirectory.IsMapped(*((Offset*)image))) {
-            /*
-             * The allocation was signed and only unsigned allocations
-             * are wanted.
-             */
-            continue;
-          }
-        } else {
-          if ((size < sizeof(Offset)) ||
-              signatures.find(*((Offset*)image)) == signatures.end()) {
-            /*
-             * The signature was not matched.
-             */
-            continue;
-          }
+      bool unsatisfiedReferenceConstraint = false;
+      for (auto constraint : referenceConstraints) {
+        if (!constraint.Check(index)) {
+          unsatisfiedReferenceConstraint = true;
         }
       }
+      if (unsatisfiedReferenceConstraint) {
+        continue;
+      }
+
       visitor->Visit(index, *allocation);
     }
   }
@@ -255,6 +261,48 @@ class Subcommand : public Commands::Subcommand {
   typename Visitor::Factory& _visitorFactory;
   typename Iterator::Factory& _iteratorFactory;
   const ProcessImage<Offset>* _processImage;
+
+  bool AddReferenceConstraints(
+      Commands::Context& context, const std::string& switchName,
+      typename ReferenceConstraint<Offset>::BoundaryType boundaryType,
+      typename ReferenceConstraint<Offset>::ReferenceType referenceType,
+      const Finder<Offset>& finder, const Graph<Offset>& graph,
+      const SignatureDirectory<Offset>& signatureDirectory,
+      const VirtualAddressMap<Offset>& addressMap,
+      std::vector<ReferenceConstraint<Offset> >& constraints) {
+    bool switchError = false;
+    size_t numSwitches = context.GetNumArguments(switchName);
+    Commands::Error& error = context.GetError();
+    for (size_t i = 0; i < numSwitches; ++i) {
+      const std::string& signatureAndCount = context.Argument(switchName, i);
+      const char* countString = signatureAndCount.c_str();
+      // If there is no embedded "=", no signature is wanted and only a count
+      // is specified.
+      std::string signature;
+
+      size_t equalPos = signatureAndCount.find("=");
+      if (equalPos != signatureAndCount.npos) {
+        countString += (equalPos + 1);
+        signature = signatureAndCount.substr(0, equalPos);
+      }
+      size_t count = atoi(countString);
+      if (count == 0) {
+        if (countString[0] != '0' || countString[1] != '\000') {
+          error << "Invalid count " << std::dec << "\"" << countString
+                << "\".\n";
+          switchError = true;
+        }
+      }
+      constraints.emplace_back(signatureDirectory, addressMap,
+                                        signature, count, boundaryType,
+                                        referenceType, finder, graph);
+      if (constraints.back().UnrecognizedSignature()) {
+        error << "Signature \"" << signature << "\" is not recognized.\n";
+        switchError = true;
+      }
+    }
+    return switchError;
+  }
 };
 }  // namespace Subcommands
 }  // namespace Allocations

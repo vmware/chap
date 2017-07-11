@@ -2,19 +2,20 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include "Allocations/Graph.h"
-#include "Commands/Runner.h"
-#include "InModuleDescriber.h"
+#include "Graph.h"
 #include "SignatureDirectory.h"
-#include "StackDescriber.h"
+#include "../Commands/Runner.h"
+#include "../InModuleDescriber.h"
+#include "../StackDescriber.h"
 namespace chap {
+namespace Allocations {
 template <typename Offset>
 class AnchorChainLister
-    : public Allocations::Graph<Offset>::AnchorChainVisitor {
+    : public Graph<Offset>::AnchorChainVisitor {
  public:
   AnchorChainLister(const InModuleDescriber<Offset>& inModuleDescriber,
                     const StackDescriber<Offset>& stackDescriber,
-                    const Allocations::Graph<Offset>& graph,
+                    const Graph<Offset>& graph,
                     const SignatureDirectory<Offset>* signatureDirectory,
                     Commands::Context& context, Offset anchoree)
       : _graph(graph),
@@ -145,7 +146,7 @@ class AnchorChainLister
   }
 
  private:
-  const Allocations::Graph<Offset>& _graph;
+  const Graph<Offset>& _graph;
   const InModuleDescriber<Offset>& _inModuleDescriber;
   const StackDescriber<Offset>& _stackDescriber;
   const SignatureDirectory<Offset>* _signatureDirectory;
@@ -173,4 +174,5 @@ class AnchorChainLister
     }
   }
 };
+}  // namespace Allocations
 }  // namespace chap

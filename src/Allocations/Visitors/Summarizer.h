@@ -4,8 +4,8 @@
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../../SignatureSummary.h"
 #include "../../SizedTally.h"
+#include "../SignatureSummary.h"
 #include "../Finder.h"
 namespace chap {
 namespace Allocations {

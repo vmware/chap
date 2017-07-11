@@ -4,8 +4,8 @@
 #pragma once
 #include "Allocations/Finder.h"
 #include "Allocations/Graph.h"
+#include "Allocations/SignatureDirectory.h"
 #include "ModuleDirectory.h"
-#include "SignatureDirectory.h"
 #include "ThreadMap.h"
 #include "VirtualAddressMap.h"
 #include "VirtualMemoryPartition.h"
@@ -52,11 +52,11 @@ class ProcessImage {
     return _moduleDirectory;
   }
 
-  const SignatureDirectory<Offset> &GetSignatureDirectory() const {
+  const Allocations::SignatureDirectory<Offset> &GetSignatureDirectory() const {
     return _signatureDirectory;
   }
 
-  SignatureDirectory<Offset> &GetSignatureDirectory() {
+  Allocations::SignatureDirectory<Offset> &GetSignatureDirectory() {
     return _signatureDirectory;
   }
 
@@ -100,6 +100,6 @@ class ProcessImage {
   mutable bool _unrecognizedMemoryAllocator;
   mutable Allocations::Finder<Offset> *_allocationFinder;
   mutable Allocations::Graph<Offset> *_allocationGraph;
-  mutable SignatureDirectory<Offset> _signatureDirectory;
+  mutable Allocations::SignatureDirectory<Offset> _signatureDirectory;
 };
 }  // namespace chap

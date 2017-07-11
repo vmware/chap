@@ -12,6 +12,7 @@
  */
 
 namespace chap {
+namespace Allocations {
 template <class Offset>
 class SignatureDirectory {
  public:
@@ -91,4 +92,5 @@ class SignatureDirectory {
   std::string NO_NAME;
   std::set<Offset> NO_SIGNATURES;
 };
+}  // namespace Allocations
 }  // namespace chap

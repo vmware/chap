@@ -7,6 +7,7 @@
 #include <set>
 #include "SignatureDirectory.h"
 namespace chap {
+namespace Allocations {
 template <class Offset>
 class SignatureSummary {
  public:
@@ -199,4 +200,5 @@ class SignatureSummary {
     }
   };
 };
+}  // namespace Allocations
 }  // namespace chap

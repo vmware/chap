@@ -5,9 +5,9 @@
 #include "../Describer.h"
 #include "../InModuleDescriber.h"
 #include "../ProcessImage.h"
-#include "../SignatureDirectory.h"
 #include "../StackDescriber.h"
-#include "../AnchorChainLister.h"
+#include "SignatureDirectory.h"
+#include "AnchorChainLister.h"
 #include "Finder.h"
 
 namespace chap {
