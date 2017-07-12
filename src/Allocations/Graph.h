@@ -136,20 +136,18 @@ class Graph {
     return result;
   }
 
-  bool IsRegisterAnchored(
-      typename Finder<Offset>::AllocationIndex index) const {
+  bool IsRegisterAnchored(Index index) const {
     return index < _finder.NumAllocations() &&
            _registerAnchorDistances.GetDistance(index) > 0;
   }
 
-  bool IsRegisterAnchorPoint(
-      typename Finder<Offset>::AllocationIndex index) const {
+  bool IsRegisterAnchorPoint(Index index) const {
     return index < _finder.NumAllocations() &&
            _registerAnchorDistances.GetDistance(index) == 1;
   }
 
   void GetRegisterAnchors(
-      typename Finder<Offset>::AllocationIndex index,
+      Index index,
       std::vector<std::pair<size_t, const char *> > anchors) const {
     anchors.clear();
     AnchorPointMapConstIterator it = _registerAnchorPoints.find(index);
@@ -167,20 +165,17 @@ class Graph {
     }
   }
 
-  bool IsExternalAnchored(
-      typename Finder<Offset>::AllocationIndex index) const {
+  bool IsExternalAnchored(Index index) const {
     return index < _finder.NumAllocations() &&
            _externalAnchorDistances.GetDistance(index) > 0;
   }
 
-  bool IsExternalAnchorPoint(
-      typename Finder<Offset>::AllocationIndex index) const {
+  bool IsExternalAnchorPoint(Index index) const {
     return index < _finder.NumAllocations() &&
            _externalAnchorDistances.GetDistance(index) == 1;
   }
 
-  bool IsThreadOnlyAnchored(
-      typename Finder<Offset>::AllocationIndex index) const {
+  bool IsThreadOnlyAnchored(Index index) const {
     return (index < _finder.NumAllocations()) &&
            ((_registerAnchorDistances.GetDistance(index) > 0) ||
             (_stackAnchorDistances.GetDistance(index) > 0)) &&
@@ -188,8 +183,7 @@ class Graph {
            (_externalAnchorDistances.GetDistance(index) == 0);
   }
 
-  bool IsThreadOnlyAnchorPoint(
-      typename Finder<Offset>::AllocationIndex index) const {
+  bool IsThreadOnlyAnchorPoint(Index index) const {
     return (index < _finder.NumAllocations()) &&
            ((_registerAnchorDistances.GetDistance(index) == 1) ||
             (_stackAnchorDistances.GetDistance(index) == 1)) &&
@@ -293,8 +287,7 @@ class Graph {
                                        allocation->Size(), image);
   }
 
-  bool VisitAnchorChains(typename Finder<Offset>::AllocationIndex index,
-                         AnchorChainVisitor &visitor,
+  bool VisitAnchorChains(Index index, AnchorChainVisitor &visitor,
                          const IndexedDistances<Index> &distances,
                          LocalVisitor anchorPointVisitor) const {
     if (index >= _finder.NumAllocations() || _leaked[index]) {
@@ -305,7 +298,7 @@ class Graph {
         return false;
       }
     }
-    
+
     if (distances.GetDistance(index) == 1 &&
         CallAnchorChainVisitor(index, visitor, anchorPointVisitor)) {
       // Under the given anchor type imposed by the distances argument, the
@@ -397,9 +390,21 @@ class Graph {
     return false;
   }
 
-  bool IsUnreferenced(typename Finder<Offset>::AllocationIndex index) const {
-    return index < _finder.NumAllocations() && _leaked[index] &&
-           _firstIncoming[index] == _firstIncoming[index + 1];
+  bool IsUnreferenced(Index index) const {
+    bool isUnreferenced = false;
+    if (index < _finder.NumAllocations() && _leaked[index]) {
+      const Index *pFirstIncomingIndex = &(_incoming[_firstIncoming[index]]);
+      const Index *pPastIncomingIndex = &(_incoming[_firstIncoming[index + 1]]);
+      isUnreferenced = true;
+      for (const Index *pIncomingIndex = pFirstIncomingIndex;
+           pIncomingIndex != pPastIncomingIndex; pIncomingIndex++) {
+        if (_finder.AllocationAt((*pIncomingIndex))->IsUsed()) {
+          isUnreferenced = false;
+          break;
+        }
+      }
+    }
+    return isUnreferenced;
   }
 
  private:
@@ -456,7 +461,7 @@ class Graph {
        * or target is used or free.  Code that uses the graph is expected to
        * check the source and/or the target when one particular usage status
        * is required.
-       */ 
+       */
       Offset size = allocation->Size();
       Offset numCandidates = size / sizeof(Offset);
       std::set<Index> targets;
@@ -508,7 +513,7 @@ class Graph {
        * or target is used or free.  Code that uses the graph is expected to
        * check the source and/or the target when one particular usage status
        * is required.
-       */ 
+       */
       Offset size = allocation->Size();
       Offset numCandidates = size / sizeof(Offset);
       std::set<Index> targets;

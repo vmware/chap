@@ -22,11 +22,13 @@ class ReferenceConstraint {
   ReferenceConstraint(const SignatureDirectory<Offset>& directory,
                       const VirtualAddressMap<Offset>& addressMap,
                       const std::string& signature, size_t count,
+                      bool wantUsed,
                       BoundaryType boundaryType, ReferenceType referenceType,
                       const Finder<Offset>& finder, const Graph<Offset>& graph)
 
       : _signatureChecker(directory, addressMap, signature),
         _count(count),
+        _wantUsed(wantUsed),
         _boundaryType(boundaryType),
         _referenceType(referenceType),
         _finder(finder),
@@ -45,7 +47,9 @@ class ReferenceConstraint {
     }
     for (const AllocationIndex* pEdge = pFirstEdge; pEdge != pPastEdge;
          pEdge++) {
-      if (_signatureChecker.Check(*(_finder.AllocationAt(*pEdge)))) {
+      const Allocation& allocation = *(_finder.AllocationAt(*pEdge));
+      if ((allocation.IsUsed() == _wantUsed) &&
+          (_signatureChecker.Check(allocation))) {
         numMatchingEdges++;
       }
     }
@@ -56,6 +60,7 @@ class ReferenceConstraint {
  private:
   SignatureChecker<Offset> _signatureChecker;
   size_t _count;
+  bool _wantUsed;
   BoundaryType _boundaryType;
   ReferenceType _referenceType;
   const Finder<Offset>& _finder;

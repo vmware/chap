@@ -150,7 +150,12 @@ class Subcommand : public Commands::Subcommand {
     size_t numMaxIncoming = context.GetNumArguments("maxincoming");
     size_t numMinOutgoing = context.GetNumArguments("minoutgoing");
     size_t numMaxOutgoing = context.GetNumArguments("maxoutgoing");
-    if (numMinIncoming + numMaxIncoming + numMinOutgoing + numMaxOutgoing > 0) {
+    size_t numMinFreeOutgoing = context.GetNumArguments("minfreeoutgoing");
+    size_t numReferenceConstraints = numMinIncoming + numMaxIncoming +
+                                     numMinOutgoing + numMaxOutgoing +
+                                     numMinFreeOutgoing;
+    if (numReferenceConstraints > 0) {
+      referenceConstraints.reserve(numReferenceConstraints);
       // This is done lazily because it is an expensive calculation.
       graph = _processImage->GetAllocationGraph();
       if (graph == 0) {
@@ -164,26 +169,32 @@ class Subcommand : public Commands::Subcommand {
           switchError ||
           AddReferenceConstraints(
               context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
-              ReferenceConstraint<Offset>::INCOMING, *allocationFinder, *graph,
-              signatureDirectory, addressMap, referenceConstraints);
+              ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
+              *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
           switchError ||
           AddReferenceConstraints(
               context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
-              ReferenceConstraint<Offset>::INCOMING, *allocationFinder, *graph,
-              signatureDirectory, addressMap, referenceConstraints);
+              ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
+              *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
           switchError ||
           AddReferenceConstraints(
               context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
-              ReferenceConstraint<Offset>::OUTGOING, *allocationFinder, *graph,
-              signatureDirectory, addressMap, referenceConstraints);
+              ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
+              *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
           switchError ||
           AddReferenceConstraints(
               context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
-              ReferenceConstraint<Offset>::OUTGOING, *allocationFinder, *graph,
-              signatureDirectory, addressMap, referenceConstraints);
+              ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
+              *graph, signatureDirectory, addressMap, referenceConstraints);
+      switchError =
+          switchError ||
+          AddReferenceConstraints(
+              context, "minfreeoutgoing", ReferenceConstraint<Offset>::MINIMUM,
+              ReferenceConstraint<Offset>::OUTGOING, false, *allocationFinder,
+              *graph, signatureDirectory, addressMap, referenceConstraints);
     }
 
     if (switchError) {
@@ -245,16 +256,33 @@ class Subcommand : public Commands::Subcommand {
     _visitorFactory.ShowHelpMessage(context);
     output << "\n";
     _iteratorFactory.ShowHelpMessage(context);
-    output << "\nThe set can be further restricted by appending a class"
-              " name or any value\n"
-              "in hexadecimal to match against the first "
-           << std::dec << ((sizeof(Offset) * 8))
-           << "-bit unsigned word, or by specifying\n\"-\" to accept"
-              " only unsigned allocations.\n\n"
-              "It can also be further restricted by any of the following:\n\n"
-              "/minsize <size-in-hex> imposes a minimum size.\n"
-              "/maxsize <size-in-hex> imposes a maximum size.\n"
-              "/size <size-in-hex> imposes an exact size requirement.\n";
+    output
+        << "\nThe set can be further restricted by appending a class"
+           " name or any value\n"
+           "in hexadecimal to match against the first "
+        << std::dec << ((sizeof(Offset) * 8))
+        << "-bit unsigned word, or by specifying\n\"-\" to accept"
+           " only unsigned allocations.\n\n"
+           "It can also be further restricted by any of the following"
+           " switches:\n\n"
+           "/minsize <size-in-hex> imposes a minimum size.\n"
+           "/maxsize <size-in-hex> imposes a maximum size.\n"
+           "/size <size-in-hex> imposes an exact size requirement.\n"
+           "/minincoming [<signature>=]<count> restricts that each member"
+           " must have at least\n"
+           " the specified number of incoming references, if"
+           " no signature is specified, or\n"
+           " at least the specified number"
+           " of incoming references from allocations with the\n"
+           " specified signature.\n"
+           "/maxincoming is like /minincoming, but imposes a maximum.\n"
+           "/minoutgoing is like /minincoming, but for outgoing references.\n"
+           "/maxoutgoing is like /maxincoming, but for outgoing references.\n"
+           "/minfreeoutgoing is like /minoutgoing, but for references to"
+           " free allocations,\n"
+           " with the caveat that normally such references are false, so this"
+           " switch cannot\n"
+           " be used for automated bug detection.\n";
   }
 
  private:
@@ -266,7 +294,7 @@ class Subcommand : public Commands::Subcommand {
       Commands::Context& context, const std::string& switchName,
       typename ReferenceConstraint<Offset>::BoundaryType boundaryType,
       typename ReferenceConstraint<Offset>::ReferenceType referenceType,
-      const Finder<Offset>& finder, const Graph<Offset>& graph,
+      bool wantUsed, const Finder<Offset>& finder, const Graph<Offset>& graph,
       const SignatureDirectory<Offset>& signatureDirectory,
       const VirtualAddressMap<Offset>& addressMap,
       std::vector<ReferenceConstraint<Offset> >& constraints) {
@@ -293,9 +321,9 @@ class Subcommand : public Commands::Subcommand {
           switchError = true;
         }
       }
-      constraints.emplace_back(signatureDirectory, addressMap,
-                                        signature, count, boundaryType,
-                                        referenceType, finder, graph);
+      constraints.emplace_back(signatureDirectory, addressMap, signature, count,
+                               wantUsed, boundaryType, referenceType, finder,
+                               graph);
       if (constraints.back().UnrecognizedSignature()) {
         error << "Signature \"" << signature << "\" is not recognized.\n";
         switchError = true;
