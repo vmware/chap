@@ -1996,8 +1996,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                    " at 0x"
                 << std::hex << arena._address << "\n";
       std::cerr << "  Leak analysis may not be accurate.\n";
-      std::cerr << "  Used/free analysis may not be accurate "
-                   "for the arena.\n";
+      /*
+       * Unlike the fast bin case, the chunks on the doubly linked free
+       * lists are actually marked as free, so a cut in a doubly linked
+       * list will not compromise the understanding of whether the remaining
+       * nodes on the list are free or not.
+       */
     }
     std::cerr << "  The free list headed at 0x" << std::hex << freeListHeader
               << " has a node\n  0x" << node << " " << specificError << ".\n";
