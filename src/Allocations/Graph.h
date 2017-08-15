@@ -17,6 +17,7 @@ class Graph {
   typedef VirtualAddressMap<Offset> AddressMap;
   typedef typename Finder<Offset>::Allocation Allocation;
   typedef typename Finder<Offset>::AllocationIndex Index;
+  typedef Offset EdgeIndex;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::NotMapped NotMapped;
 
@@ -309,7 +310,7 @@ class Graph {
     // At this point the starting allocation is not directly anchored under
     // the given anchor type so we are interested in whether there is any
     // indirect anchoring.
-    Index edgeIndex = _firstIncoming[index];
+    EdgeIndex edgeIndex = _firstIncoming[index];
     if (edgeIndex != _firstIncoming[index + 1]) {
       // There is at least one incoming edge.
       std::vector<bool> visited;
@@ -318,7 +319,7 @@ class Graph {
 
       // The edge target is already considered visited.
       visited[index] = true;
-      std::vector<std::pair<Index, Index> > edgesToVisit;
+      std::vector<std::pair<Index, EdgeIndex> > edgesToVisit;
       edgesToVisit.push_back(std::make_pair(index, edgeIndex - 1));
       while (!edgesToVisit.empty()) {
         edgeIndex = ++(edgesToVisit.back().second);
@@ -362,7 +363,7 @@ class Graph {
           }
 
           for (typename std::vector<
-                   std::pair<Index, Index> >::const_reverse_iterator it =
+                   std::pair<Index, EdgeIndex> >::const_reverse_iterator it =
                    edgesToVisit.rbegin();
                it != edgesToVisit.rend(); ++it) {
             Offset linkIndex = it->first;
@@ -419,11 +420,11 @@ class Graph {
   const ThreadMap<Offset> &_threadMap;
   const ExternalAnchorPointChecker<Offset> *_externalAnchorPointChecker;
   Index _numAllocations;
-  Index _totalEdges;
+  EdgeIndex _totalEdges;
   std::vector<Index> _outgoing;
   std::vector<Index> _incoming;
-  std::vector<Index> _firstOutgoing;
-  std::vector<Index> _firstIncoming;
+  std::vector<EdgeIndex> _firstOutgoing;
+  std::vector<EdgeIndex> _firstIncoming;
   IndexedDistances<Index> _staticAnchorDistances;
   IndexedDistances<Index> _stackAnchorDistances;
   IndexedDistances<Index> _registerAnchorDistances;
@@ -528,7 +529,7 @@ class Graph {
           _incoming[--_firstIncoming[targetIndex]] = i;
         }
       }
-      Index nextOutgoing = _firstOutgoing[i];
+      EdgeIndex nextOutgoing = _firstOutgoing[i];
       for (typename std::set<Index>::const_iterator it = targets.begin();
            it != targets.end(); ++it) {
         _outgoing[nextOutgoing++] = *it;
@@ -555,9 +556,9 @@ class Graph {
       Index sourceIndex = toVisit.front();
       Index newDistance = anchorDistance.GetDistance(sourceIndex) + 1;
       toVisit.pop_front();
-      Index edgeLimit = _firstOutgoing[sourceIndex + 1];
-      for (Index edgeIndex = _firstOutgoing[sourceIndex]; edgeIndex < edgeLimit;
-           edgeIndex++) {
+      EdgeIndex edgeLimit = _firstOutgoing[sourceIndex + 1];
+      for (EdgeIndex edgeIndex = _firstOutgoing[sourceIndex];
+           edgeIndex < edgeLimit; edgeIndex++) {
         Index targetIndex = _outgoing[edgeIndex];
         if (!visited[targetIndex]) {
           visited[targetIndex] = true;
@@ -590,8 +591,9 @@ class Graph {
       Index sourceIndex = toVisit.front();
       Index newDistance = anchorDistance.GetDistance(sourceIndex) + 1;
       toVisit.pop_front();
-      Index edgeLimit = _firstOutgoing[sourceIndex + 1];
-      for (Index edgeIndex = _firstOutgoing[sourceIndex]; edgeIndex < edgeLimit;
+      EdgeIndex edgeLimit = _firstOutgoing[sourceIndex + 1];
+      for (EdgeIndex edgeIndex = _firstOutgoing[sourceIndex];
+           edgeIndex < edgeLimit;
            edgeIndex++) {
         Index targetIndex = _outgoing[edgeIndex];
         if (!visited[targetIndex]) {
