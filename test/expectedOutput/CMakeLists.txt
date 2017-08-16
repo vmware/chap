@@ -62,3 +62,4 @@ exout_test(PATH ELF64/LibcMalloc/HasSymbols_CoreHasMangledTypeNames_NoSymdefs
 exout_test(PATH ELF64/LibcMalloc/OneHasFreeOutgoing FILES core.5661)
 exout_test(PATH ELF64/LibcMalloc/Truncated
            FILES core.48555 core.48555.1M core.48555.512K)
+exout_test(PATH ELF64/LibcMalloc/HasContainersAndSymbols FILES core.38066)

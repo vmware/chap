@@ -1,0 +1,10 @@
+Unsigned allocations have 5 instances taking 0x2c8(712) bytes.
+   Unsigned allocations of size 0x28 have 3 instances taking 0x78(120) bytes.
+   Unsigned allocations of size 0x48 have 1 instances taking 0x48(72) bytes.
+   Unsigned allocations of size 0x208 have 1 instances taking 0x208(520) bytes.
+Signature 402050 (HasList) has 3 instances taking 0x48(72) bytes.
+Signature 401fb0 (HasDeque) has 1 instances taking 0x58(88) bytes.
+Signature 4020a0 (HasPair) has 1 instances taking 0x18(24) bytes.
+Signature 401f30 (HasSet) has 1 instances taking 0x38(56) bytes.
+Signature 402000 (HasVector) has 1 instances taking 0x28(40) bytes.
+12 allocations use 0x3e0 (992) bytes.

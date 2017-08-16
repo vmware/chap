@@ -1,0 +1,32 @@
+Used allocation at 603010 of size 38
+... with signature 401f30(HasSet)
+
+Used allocation at 603050 of size 18
+... with signature 402050(HasList)
+
+Used allocation at 603070 of size 58
+... with signature 401fb0(HasDeque)
+
+Used allocation at 6030d0 of size 48
+
+Used allocation at 603120 of size 208
+
+Used allocation at 603330 of size 28
+... with signature 402000(HasVector)
+
+Used allocation at 603360 of size 18
+... with signature 402050(HasList)
+
+Used allocation at 603380 of size 28
+
+Used allocation at 6033b0 of size 28
+
+Used allocation at 6033e0 of size 28
+
+Used allocation at 603410 of size 18
+... with signature 402050(HasList)
+
+Used allocation at 603430 of size 18
+... with signature 4020a0(HasPair)
+
+12 allocations use 0x3e0 (992) bytes.

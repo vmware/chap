@@ -1,0 +1,79 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program.  In
+# this particular core there is a single used allocation at 601010 and it is
+# anchored both by registers and stack for the current thread.
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$1 core.38066 << DONE
+redirect on
+count used
+summarize used
+enumerate used
+list used
+show used
+# Count the set of all used allocations plus any allocations reachable by a
+# chain of one or more outgoing references starting from members of the
+# set.  This should yield the same size as the original set because that one
+# contains all the used allocations.
+count used /extend ->
+# We can do the same with incoming edges.  Again the count should match the
+# original count of used allocations.
+count used /extend <-
+# However the order of visiting is different because as each member of the
+# set is visited in turn, any extensions added to the set (because an extension
+# rule places it there and it has not already been visited) will have any
+# extensions applied to it.  By the time we get to a member of the set via the
+# normal traversal it may already have been visited.
+show used /extend ->
+show used /extend <-
+# The normal case is to visit starting with some set other than "used".  In the # following, all the used objects are anchored, directly or indirectly, by
+# a single object of type HasPair.
+list used HasPair /extend ->
+# If instead we follow incoming edges we reach fewer allocations.
+list used HasPair /extend <-
+# If we start from an instance of HasVector, one thing it does is allows
+# reaching all anchor points that would anchor that HasVector.
+show used HasVector /extend <-
+# Any extension can be qualified by the type of object already in the set.  So
+# in this case we should see just any instances of HasPair plus any allocations
+# directly referenced by that instance.
+enumerate used HasPair /extend HasPair->
+# We can do the same with incoming edges, so the following will include any 
+# instances of HasSet plus any allocations that reference at least one of those
+# instances.
+enumerate used HasPair /extend HasPair<-
+# An extension can be qualified by the type of the extension object to add.
+show used HasPair /extend ->HasSet
+show used HasPair /extend ->HasList
+# An extension can be qualified by the offset at which the pointer appears in
+# the object already in the set, specified in hexadecimal.
+show used HasPair /extend @8->
+show used HasPair /extend @10->
+# An extension can be qualified by the offset at which the pointer appears in
+# the candidate to add to the set.
+show used HasPair /extend ->@0
+# This one wouldn't find anything because there are no pointers to offset 100
+# in any of the allocations in the core.
+show used HasPair /extend ->@100
+# Any of those qualifications can be used together.
+show used HasPair /extend HasPair@8->HasSet@0
+show used HasPair /extend HasPair@10->HasSet@0
+show used HasPair /extend HasPair@8->HasList@0
+show used HasPair /extend HasPair@10->HasList@0
+# Multiple extensions may be specified.  As each member of the set is visited
+# for the first time (including members added as extended) each applicable
+# rule, in the order specified, is checked.
+show used HasPair /extend HasPair->HasSet /extend HasSet->-
+# As a sort of "types lite", there is a notion of extension state.  Initially,
+# the default extension state applies but the state can be different as 
+# specified by =><statelabel> at the end.  A state label can be used in place of# a member signature.
+show used HasSet /extend HasSet@18->@0=>mapNode \
+ /extend mapNode@10->@0=>mapNode \
+ /extend mapNode@18->@0=>mapNode /extend mapNode@20->=>StopHere
+DONE

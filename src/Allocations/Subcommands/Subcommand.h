@@ -10,6 +10,7 @@
 #include "../Finder.h"
 #include "../ReferenceConstraint.h"
 #include "../SignatureChecker.h"
+#include "../ExtendedVisitor.h"
 namespace chap {
 namespace Allocations {
 namespace Subcommands {
@@ -200,13 +201,20 @@ class Subcommand : public Commands::Subcommand {
     if (switchError) {
       return;
     }
-
+    
+    ExtendedVisitor<Offset, Visitor> extendedVisitor(context, *_processImage);
+    if (extendedVisitor.HasErrors() || switchError) {
+      return;
+    }
     std::unique_ptr<Visitor> visitor;
     visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage));
     if (visitor.get() == 0) {
       return;
     }
+    Visitor& visitorRef = *(visitor.get());
 
+    bool extendedVisitorIsEnabled = extendedVisitor.IsEnabled();
+    
     const std::vector<std::string>& taints = _iteratorFactory.GetTaints();
     if (!taints.empty()) {
       error << "The output of this command cannot be trusted:\n";
@@ -247,7 +255,11 @@ class Subcommand : public Commands::Subcommand {
         continue;
       }
 
-      visitor->Visit(index, *allocation);
+      if (extendedVisitorIsEnabled) {
+        extendedVisitor.Visit(index, *allocation, visitorRef);
+      } else {
+        visitorRef.Visit(index, *allocation);
+      }
     }
   }
 

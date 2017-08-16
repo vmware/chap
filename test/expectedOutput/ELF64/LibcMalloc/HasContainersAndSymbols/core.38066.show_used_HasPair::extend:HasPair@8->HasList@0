@@ -1,0 +1,5 @@
+Used allocation at 603430 of size 18
+... with signature 4020a0(HasPair)
+          4020a0           603010           603410 
+
+1 allocations use 0x18 (24) bytes.
