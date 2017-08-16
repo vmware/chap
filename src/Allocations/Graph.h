@@ -316,6 +316,11 @@ class Graph {
       std::vector<bool> visited;
       visited.reserve(_numAllocations);
       visited.resize(_numAllocations, false);
+      for (Index freeIndex = 0; freeIndex < _numAllocations; freeIndex++) {
+        if (!_finder.AllocationAt(freeIndex)->IsUsed()) {
+          visited[freeIndex] = true;
+        }
+      }
 
       // The edge target is already considered visited.
       visited[index] = true;
@@ -542,6 +547,11 @@ class Graph {
     std::vector<bool> visited;
     visited.reserve(_numAllocations);
     visited.resize(_numAllocations, false);
+    for (Index index = 0; index < _numAllocations; index++) {
+      if (!_finder.AllocationAt(index)->IsUsed()) {
+        visited[index] = true;
+      }
+    }
     std::deque<Index> toVisit;
     AnchorPointMapConstIterator itEnd = anchorPoints.end();
     for (AnchorPointMapConstIterator it = anchorPoints.begin(); it != itEnd;
@@ -575,6 +585,11 @@ class Graph {
     std::vector<bool> visited;
     visited.reserve(_numAllocations);
     visited.resize(_numAllocations, false);
+    for (Index index = 0; index < _numAllocations; index++) {
+      if (!_finder.AllocationAt(index)->IsUsed()) {
+        visited[index] = true;
+      }
+    }
     std::deque<Index> toVisit;
     typename std::map<Index, const char *>::const_iterator itEnd =
         anchorPoints.end();
