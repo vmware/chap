@@ -332,6 +332,16 @@ class Context {
         }
       }
 
+      if (_redirectPath.size() > 255) {
+        /*
+         * Paths that are too long cause an error in the attempt to open them.
+         * This is typically exposed using large numbers of switches, as might
+         * happen with use of the /extend switch.  For now, just handle this
+         * by truncation.
+         */
+        _redirectPath.resize(255);
+      }
+
       if (!_output.PushTarget(_redirectPath)) {
         _error << "Failed to open " << _redirectPath << " for writing.\n";
         _redirectPath.clear();
