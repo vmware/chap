@@ -32,8 +32,13 @@ class DescribeCommand : public SetBasedCommand {
           return;
         }
         if (!_describer.Describe(context, address, false)) {
-          error << "Currently no description is available for address 0x"
-                << std::hex << address << "\n";
+          /*
+           * Generally the describer will provide at least a minimal
+           * description if the address is at all known in the process
+           * image.
+           */
+          error << "0x" << std::hex << address
+                << " is probably not a valid address.\n";
         }
         return;
       }

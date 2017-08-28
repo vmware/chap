@@ -15,6 +15,7 @@
 #include "Allocations/Describer.h"
 #include "CompoundDescriber.h"
 #include "InModuleDescriber.h"
+#include "KnownAddressDescriber.h"
 #include "StackDescriber.h"
 #include "ProcessImage.h"
 #include "ThreadMapCommandHandler.h"
@@ -28,6 +29,7 @@ class ProcessImageCommandHandler {
       : _stackDescriber(0),
         _inModuleDescriber(0),
         _allocationDescriber(_inModuleDescriber, _stackDescriber, 0),
+        _knownAddressDescriber(0),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
         _threadMapCommandHandler(0) {
@@ -35,6 +37,7 @@ class ProcessImageCommandHandler {
     _compoundDescriber.AddDescriber(&_allocationDescriber);
     _compoundDescriber.AddDescriber(&_stackDescriber);
     _compoundDescriber.AddDescriber(&_inModuleDescriber);
+    _compoundDescriber.AddDescriber(&_knownAddressDescriber);
   }
 
   void SetProcessImage(const ProcessImage<Offset> *processImage) {
@@ -48,6 +51,7 @@ class ProcessImageCommandHandler {
     _allocationDescriber.SetProcessImage(processImage);
     _stackDescriber.SetProcessImage(processImage);
     _inModuleDescriber.SetProcessImage(processImage);
+    _knownAddressDescriber.SetProcessImage(processImage);
   }
 
   virtual void AddCommandCallbacks(Commands::Runner &r) {
@@ -70,6 +74,7 @@ class ProcessImageCommandHandler {
   StackDescriber<Offset> _stackDescriber;
   InModuleDescriber<Offset> _inModuleDescriber;
   Allocations::Describer<Offset> _allocationDescriber;
+  KnownAddressDescriber<Offset> _knownAddressDescriber;
   CompoundDescriber<Offset> _compoundDescriber;
   Commands::CountCommand _countCommand;
   Commands::SummarizeCommand _summarizeCommand;
