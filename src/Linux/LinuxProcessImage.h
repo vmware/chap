@@ -23,8 +23,15 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
       : ProcessImage<OffsetType>(virtualAddressMap, threadMap),
         _symdefsRead(false) {
     if (!truncationCheckOnly) {
-      // Make the allocation finder eagerly if requested to do so.
+      FindModules();
+
+      /*
+       * Make the allocation finder eagerly unless chap is being used only
+       * to determine whether the core is truncated, in which case there
+       * won't be any need to find the allocations.
+       */
       MakeAllocationFinder();
+
     }
   }
 
@@ -73,6 +80,274 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
     FindSignatures();
   }
 
+  void FindModules() {
+    Offset executableAddress = 0;
+    typename AddressMap::const_iterator itEnd = Base::_virtualAddressMap.end();
+
+    for (typename AddressMap::const_iterator it =
+             Base::_virtualAddressMap.begin();
+         it != itEnd; ++it) {
+      int flags = it.Flags();
+      const char* image = it.GetImage();
+      Offset base = it.Base();
+      Offset limit = it.Limit();
+      if ((flags & RangeAttributes::PERMISSIONS_MASK) !=
+          (RangeAttributes::IS_READABLE | RangeAttributes::IS_EXECUTABLE |
+           RangeAttributes::HAS_KNOWN_PERMISSIONS)) {
+        continue;
+      }
+      if (image == 0) {
+        continue;
+      }
+      if (strncmp((const char*)image, ELFMAG, SELFMAG)) {
+        continue;
+      }
+
+      const unsigned char elfClass = ((const unsigned char*)image)[EI_CLASS];
+      bool acceptElfClass = true;
+      if (elfClass == ELFCLASS64) {
+        const Elf64_Ehdr* elfHeader = (const Elf64_Ehdr*)(image);
+        if (elfHeader->e_type == ET_EXEC) {
+          if (executableAddress == 0) {
+            executableAddress = base;
+          } else {
+            std::cerr << "An image of an ELF executable was found at both 0x"
+                      << std::hex << executableAddress << " and 0x" << base
+                      << ".\n";
+            std::cerr
+                << "This is unexpected but probably won't break anything.\n";
+          }
+        } else if (elfHeader->e_type != ET_DYN) {
+          continue;
+        }
+        if (sizeof(Offset) != 8) {
+          std::cerr << "Image of 64 bit library or executable currently not "
+                       "supported with 32 bit core.\n";
+          acceptElfClass = false;
+        }
+      } else if (elfClass == ELFCLASS32) {
+        const Elf32_Ehdr* elfHeader = (const Elf32_Ehdr*)(image);
+        if (elfHeader->e_type == ET_EXEC) {
+          if (executableAddress == 0) {
+            executableAddress = base;
+          } else {
+            std::cerr << "An image of an ELF executable was found at both 0x"
+                      << std::hex << executableAddress << " and 0x" << base
+                      << ".\n";
+            std::cerr
+                << "This is unexpected but probably won't break anything.\n";
+          }
+        } else if (elfHeader->e_type != ET_DYN) {
+          continue;
+        }
+        if (sizeof(Offset) != 4) {
+          std::cerr << "Image of 32 bit library or executable currently not "
+                       "supported with 64 bit core.\n";
+          acceptElfClass = false;
+        }
+      } else {
+        std::cerr << "Elf class " << std::dec << elfClass
+                  << " will not be included in module directory.\n";
+        acceptElfClass = false;
+      }
+      if (!acceptElfClass) {
+        std::cerr << "Image at 0x" << std::hex << base
+                  << " will be excluded from module directory.\n";
+        continue;
+      }
+
+      const char* name = (char*)(0);
+      if (executableAddress == base) {
+        name = "main executable";
+      }
+      Offset dynStrAddr = 0;
+      Offset nameInDynStr = 0;
+      if (elfClass == ELFCLASS64) {
+        const Elf64_Ehdr* elfHeader = (const Elf64_Ehdr*)(image);
+        int entrySize = elfHeader->e_phentsize;
+        Offset minimumExpectedRegionSize =
+            elfHeader->e_phoff + (elfHeader->e_phnum * entrySize);
+        const char* headerImage = image + elfHeader->e_phoff;
+        const char* headerLimit = image + minimumExpectedRegionSize;
+        if (it.Size() < minimumExpectedRegionSize) {
+          std::cerr << "Contiguous image of module at 0x" << std::hex << base
+                    << " is only " << it.Size() << " bytes.\n";
+          continue;
+        }
+
+        bool firstPTLoadFound = false;
+        bool adjustByBase = false;
+        Offset dynBase = 0;
+        Offset dynSize = 0;
+        for (; headerImage < headerLimit; headerImage += entrySize) {
+          Elf64_Phdr* programHeader = (Elf64_Phdr*)(headerImage);
+          Offset vAddr = programHeader->p_vaddr;
+          if (programHeader->p_type == PT_LOAD) {
+            if (!firstPTLoadFound) {
+              firstPTLoadFound = true;
+              adjustByBase = (vAddr == 0);
+            }
+            if (adjustByBase) {
+              vAddr += base;
+            }
+            Offset loadLimit =
+                ((vAddr + programHeader->p_memsz) + 0xfff) & ~0xfff;
+            if (limit < loadLimit) {
+              limit = loadLimit;
+            }
+          } else if (programHeader->p_type == PT_DYNAMIC &&
+                     base != executableAddress) {
+            /*
+             * Defer the rest of the processing, based on the notion that
+             * we may not have seen the first PT_LOAD yet and don't know
+             * whether to adjust the base.
+             */
+            dynBase = vAddr;
+            dynSize = programHeader->p_memsz;
+          }
+        }
+        if (dynBase != 0) {
+          if (adjustByBase) {
+            dynBase += base;
+          }
+          const char* dynImage = 0;
+          Offset numBytesFound = Base::_virtualAddressMap.FindMappedMemoryImage(
+              dynBase, &dynImage);
+          if (numBytesFound < dynSize) {
+#if 0
+            // It is a regrettably common case that the last thing that
+            // looks like the image of a shared library refers to a
+            // PT_DYNAMIC section that is not actually in the core.
+            // For now, don't complain because it happens pretty much
+            // for every core.
+            std::cerr << "Only 0x" << std::hex << numBytesFound
+                      << " bytes found for PT_DYNAMIC section at 0x"
+                      << dynBase << "\n... for image at 0x" << base << "\n";
+#endif
+            continue;
+          }
+          int numDyn = dynSize / sizeof(Elf64_Dyn);
+          const Elf64_Dyn* dyn = (Elf64_Dyn*)(dynImage);
+          const Elf64_Dyn* dynLimit = dyn + numDyn;
+          for (; dyn < dynLimit; dyn++) {
+            if (dyn->d_tag == DT_STRTAB) {
+              dynStrAddr = (Offset)dyn->d_un.d_ptr;
+            } else if (dyn->d_tag == DT_SONAME) {
+              nameInDynStr = (Offset)dyn->d_un.d_ptr;
+            }
+          }
+        } else {
+          if (base != executableAddress) {
+            std::cerr << "Library image at 0x" << std::hex << base
+                      << " has no PT_DYNAMIC section.\n";
+          }
+        }
+      } else {
+        const Elf32_Ehdr* elfHeader = (const Elf32_Ehdr*)(image);
+        int entrySize = elfHeader->e_phentsize;
+        Offset minimumExpectedRegionSize =
+            elfHeader->e_phoff + (elfHeader->e_phnum * entrySize);
+        const char* headerImage = image + elfHeader->e_phoff;
+        const char* headerLimit = image + minimumExpectedRegionSize;
+        if (it.Size() < minimumExpectedRegionSize) {
+          std::cerr << "Contiguous image of module at 0x" << std::hex << base
+                    << " is only " << it.Size() << " bytes.\n";
+          continue;
+        }
+
+        bool firstPTLoadFound = false;
+        bool adjustByBase = false;
+        Offset dynBase = 0;
+        Offset dynSize = 0;
+        for (; headerImage < headerLimit; headerImage += entrySize) {
+          Elf32_Phdr* programHeader = (Elf32_Phdr*)(headerImage);
+          Offset vAddr = programHeader->p_vaddr;
+          if (programHeader->p_type == PT_LOAD) {
+            if (!firstPTLoadFound) {
+              firstPTLoadFound = true;
+              adjustByBase = (vAddr == 0);
+            }
+            if (adjustByBase) {
+              vAddr += base;
+            }
+            Offset loadLimit =
+                ((vAddr + programHeader->p_memsz) + 0xfff) & ~0xfff;
+            if (limit < loadLimit) {
+              limit = loadLimit;
+            }
+          } else if (programHeader->p_type == PT_DYNAMIC &&
+                     base != executableAddress) {
+            /*
+             * Defer the rest of the processing, based on the notion that
+             * we may not have seen the first PT_LOAD yet and don't know
+             * whether to adjust the base.
+             */
+            dynBase = vAddr;
+            dynSize = programHeader->p_memsz;
+          }
+        }
+        if (dynBase != 0) {
+          if (adjustByBase) {
+            dynBase += base;
+          }
+          const char* dynImage = 0;
+          Offset numBytesFound = Base::_virtualAddressMap.FindMappedMemoryImage(
+              dynBase, &dynImage);
+          if (numBytesFound < dynSize) {
+#if 0
+            // It is a regrettably common case that the last thing that
+            // looks like the image of a shared library refers to a
+            // PT_DYNAMIC section that is not actually in the core.
+            // For now, don't complain because it happens pretty much
+            // for every core.
+            std::cerr << "Only 0x" << std::hex << numBytesFound
+                      << " bytes found for PT_DYNAMIC section at 0x"
+                      << dynBase << "\n... for image at 0x" << base << "\n";
+#endif
+            continue;
+          }
+          int numDyn = dynSize / sizeof(Elf32_Dyn);
+          const Elf32_Dyn* dyn = (Elf32_Dyn*)(dynImage);
+          const Elf32_Dyn* dynLimit = dyn + numDyn;
+          for (; dyn < dynLimit; dyn++) {
+            if (dyn->d_tag == DT_STRTAB) {
+              dynStrAddr = (Offset)dyn->d_un.d_ptr;
+            } else if (dyn->d_tag == DT_SONAME) {
+              nameInDynStr = (Offset)dyn->d_un.d_ptr;
+            }
+          }
+        } else {
+          if (base != executableAddress) {
+            std::cerr << "Library image at 0x" << std::hex << base
+                      << " has no PT_DYNAMIC section.\n";
+          }
+        }
+      }
+      if (name == (char*)(0)) {
+        if (dynStrAddr != 0 && nameInDynStr != 0) {
+          Offset numBytesFound = Base::_virtualAddressMap.FindMappedMemoryImage(
+              dynStrAddr + nameInDynStr, &name);
+          if (numBytesFound < 2) {
+            name = (char*)(0);
+          }
+        }
+      }
+      if (name == (char*)(0)) {
+#if 0
+      // This happens for the last image seen in pretty much every core.
+      // It also happens for libraries for which the PT_DYNAMIC section
+      // does not contain a DT_SONAME image.  This should be fixed at some
+      // point but for now it is not a big deal if we can't identify some
+      // of the modules.
+      std::cerr << "Unable to find name of module at 0x" << std::hex << base
+                << "\n";
+#endif
+      } else {
+        Base::_moduleDirectory.AddModule(base, limit - base, name);
+      }
+    }
+  }
+
   void RefreshSignatureDirectory() const {
     if (Base::_allocationFinder == 0) {
       return;
@@ -118,8 +393,8 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
 
   std::string UnmangledTypeinfoName(char* buffer) const {
     /*
-     * Lots of mangled names could start with something else, but typeinfo names
-     * are a bit more constrained.
+     * Lots of mangled names could start with something else, but typeinfo
+     * names are a bit more constrained.
      */
     std::string emptySignatureName;
     char c = buffer[0];
