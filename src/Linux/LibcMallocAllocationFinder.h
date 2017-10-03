@@ -59,7 +59,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
          * to fail if one of the headers from the ring were not present).
          */
         if (!FindNonMainArenasByRingFromMainArena()) {
-          DeriveArenaOffsets();
+          if (!DeriveArenaOffsets(true)) {
+            abort();
+          }
         }
       } else {
         /*
@@ -106,7 +108,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
         bool hadMainArenaBeforeDerivation = (_mainArenaAddress != 0);
 
-        DeriveArenaOffsets();
+        if (!DeriveArenaOffsets(true)) {
+          abort();
+        }
 
         if (_mainArenaAddress != 0 && !hadMainArenaBeforeDerivation) {
           Reader reader(_addressMap);
@@ -543,7 +547,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return addedHeapSizes;
   }
 
-  void SetArenasBasedOnRing(const std::vector<Offset> arenaAddresses) {
+  bool SetArenasBasedOnRing(const std::vector<Offset> arenaAddresses) {
     _arenas.clear();
     size_t numArenas = arenaAddresses.size();
     for (size_t i = 0; i < numArenas; i++) {
@@ -557,13 +561,17 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
 
     /*
-     * Given that all the arenas have been found it should be safe to
+     * If all the arenas have been found it should be safe to
      * derive the offsets of various fields.  This also fills in various
      * fields of the Arena objects, such as the _size field, based on the
      * derived offsets.
+     * If the derivation of the arena offsets fails it is assumed that the
+     * arena ring was guessed incorrectly.
      */
 
-    DeriveArenaOffsets();
+    if (!DeriveArenaOffsets(false)) {
+      return false;
+    }
 
     /*
      * Calculate the sum of the non-main arena sizes, as for use below in
@@ -627,7 +635,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         std::cerr << "Some heaps are probably missing." << std::endl;
         std::cerr << "Leak analysis will be inaccurate." << std::endl;
       }
-      return;
+      return true;
     }
 
     Offset minMaxHeapSize = 0x10000;
@@ -640,7 +648,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                   << "but not be valid.\n";
         std::cerr << "Using default.\n";
         _maxHeapSize = DEFAULT_MAX_HEAP_SIZE;
-        return;
+        return true;
       }
       _maxHeapSize = _maxHeapSize >> 1;
     }
@@ -686,7 +694,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           lastMaxHeapSizeWithHeap = _maxHeapSize;
           totalHeapSizes += numHeapBytesFound;
           if (totalHeapSizes >= sumOfNonMainArenaSizes) {
-            return;
+            return true;
           }
         }
       }
@@ -698,6 +706,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       std::cerr << "Some heaps may be missing." << std::endl
                 << "Leak analysis will be inaccurate." << std::endl;
     }
+    return true;
   }
 
   /*
@@ -741,8 +750,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
            * not to be _mainArenaAddress.
            */
           candidates.push_back(_mainArenaAddress);
-          SetArenasBasedOnRing(candidates);
-          return true;
+          if (SetArenasBasedOnRing(candidates)) {
+            return true;
+          }
+          /*
+           * Reaching this point means that the ring found was a false ring.
+           */
         }
       }
     } catch (NotMapped&) {
@@ -789,16 +802,19 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         inRing.push_back(arenaAddress);
         arenaAddress = nextArena;
         if (arenaAddress == _mainArenaAddress) {
-          SetArenasBasedOnRing(inRing);
-          return true;  // The ring was found.
+          if (SetArenasBasedOnRing(inRing)) {
+            return true;  // The ring was found and verified.
+          }
+          _mainArenaAddress = 0;
+          break;
         }
       } while ((arenaAddress & 0xffff) == (4 * OFFSET_SIZE));
     } catch (NotMapped&) {
     }
-    return false;  // The ring was never found.
+    return false;  // The ring was never found or failed verfication.
   }
 
-  void DeriveArenaOffsets() {
+  bool DeriveArenaOffsets(bool showErrors) {
     size_t numArenas = _arenas.size();
     _arenaTopOffset = 0xb * OFFSET_SIZE;
     size_t newTopVotes = CheckAsTopOffset(_arenaTopOffset);
@@ -809,7 +825,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         _arenaTopOffset = 0xc * OFFSET_SIZE;
         numBadTops = numArenas - oldTopVotes;
       }
-      if (numBadTops > 0) {
+      if (numBadTops > 0 && showErrors) {
         std::cerr << std::dec << numBadTops
                   << " arenas have unexpected top values." << std::endl;
         if (numBadTops == numArenas) {
@@ -829,12 +845,16 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     if (numListOffsetVotes < numArenas) {
       if (numListOffsetVotes == 0) {
-        std::cerr << "The arena format is totally unrecognized.\n";
-        abort();
+        if (showErrors) {
+          std::cerr << "The arena format is totally unrecognized.\n";
+        }
+        return false;
       } else {
-        std::cerr << "At least one arena has an invalid doubly linked list"
-                  << " at offset 0x" << std::hex
-                  << _arenaDoublyLinkedFreeListOffset;
+        if (showErrors) {
+          std::cerr << "At least one arena has an invalid doubly linked list"
+                    << " at offset 0x" << std::hex
+                    << _arenaDoublyLinkedFreeListOffset;
+        }
       }
     }
     for (Offset freeListOffset =
@@ -867,12 +887,16 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     if (bestNextOffsetVotes < numArenas) {
       if (bestNextOffsetVotes == 0) {
-        std::cerr << "The arena next pointer was not found.\n";
-        abort();
+        if (showErrors) {
+          std::cerr << "The arena next pointer was not found.\n";
+        }
+        return false;
       } else {
-        std::cerr << "At least one arena has an invalid next pointer"
-                  << " at offset 0x" << std::hex << _arenaNextOffset
-                  << std::endl;
+        if (showErrors) {
+          std::cerr << "At least one arena has an invalid next pointer"
+                    << " at offset 0x" << std::hex << _arenaNextOffset
+                    << std::endl;
+        }
       }
     }
 
@@ -891,12 +915,16 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     if (bestSizeOffsetVotes < numArenas) {
       if (bestSizeOffsetVotes == 0) {
-        std::cerr << "The arena size field was not found.\n";
-        abort();
+        if (showErrors) {
+          std::cerr << "The arena size field was not found.\n";
+        }
+        return false;
       } else {
-        std::cerr << "At least one arena has an invalid arena size field"
-                  << " at offset 0x" << std::hex << _arenaSizeOffset
-                  << std::endl;
+        if (showErrors) {
+          std::cerr << "At least one arena has an invalid arena size field"
+                    << " at offset 0x" << std::hex << _arenaSizeOffset
+                    << std::endl;
+        }
       }
     }
 
@@ -922,10 +950,14 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
       if (bestArenaStructSizeVotes < numNonMainArenas) {
         if (bestArenaStructSizeVotes == 0) {
-          std::cerr << "The arena structure size was not derived.\n";
-          abort();
+          if (showErrors) {
+            std::cerr << "The arena structure size was not derived.\n";
+          }
+          return false;
         } else {
-          std::cerr << "At least one arena has an invalid heap start.\n";
+          if (showErrors) {
+            std::cerr << "At least one arena has an invalid heap start.\n";
+          }
         }
       }
     }
@@ -939,10 +971,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         arena._nextArena = reader.ReadOffset(arenaAddress + _arenaNextOffset);
         arena._size = reader.ReadOffset(arenaAddress + _arenaSizeOffset);
       } catch (NotMapped&) {
-        std::cerr << "Arena at " << std::hex << arenaAddress
-                  << " is not fully mapped.\n";
+        if (showErrors) {
+          std::cerr << "Arena at " << std::hex << arenaAddress
+                    << " is not fully mapped.\n";
+        }
       }
     }
+    return true;
   }
 
   void CheckHeapArenaReferences() {
