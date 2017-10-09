@@ -23,6 +23,10 @@ class FileImage {
     _fd = open(filePath, O_RDONLY);
     if (_fd < 0) {
       std::cerr << "Cannot open file \"" << filePath << "\" for reading.\n";
+      char *openFailCause = strerror(errno);
+      if (openFailCause) {
+        std::cerr << openFailCause << "\n";
+      }
       throw "cannot open file";
     }
 
