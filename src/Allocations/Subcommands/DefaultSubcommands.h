@@ -13,10 +13,10 @@
 #include "../Iterators/ExternalAnchorPoints.h"
 #include "../Iterators/ExternalAnchored.h"
 #include "../Iterators/Free.h"
+#include "../Iterators/FreeOutgoing.h"
 #include "../Iterators/Incoming.h"
 #include "../Iterators/Leaked.h"
 #include "../Iterators/Outgoing.h"
-#include "../Iterators/FreeOutgoing.h"
 #include "../Iterators/RegisterAnchorPoints.h"
 #include "../Iterators/RegisterAnchored.h"
 #include "../Iterators/ReverseChain.h"
@@ -25,6 +25,7 @@
 #include "../Iterators/StackAnchored.h"
 #include "../Iterators/StaticAnchorPoints.h"
 #include "../Iterators/StaticAnchored.h"
+#include "../Iterators/ThreadCached.h"
 #include "../Iterators/ThreadOnlyAnchorPoints.h"
 #include "../Iterators/ThreadOnlyAnchored.h"
 #include "../Iterators/Unreferenced.h"
@@ -42,6 +43,7 @@ class DefaultSubcommands {
         _allocationsSubcommands(_allocationsIteratorFactory),
         _usedSubcommands(_usedIteratorFactory),
         _freeSubcommands(_freeIteratorFactory),
+        _threadCachedSubcommands(_threadCachedIteratorFactory),
         _leakedSubcommands(_leakedIteratorFactory),
         _unreferencedSubcommands(_unreferencedIteratorFactory),
         _anchoredSubcommands(_anchoredIteratorFactory),
@@ -70,6 +72,7 @@ class DefaultSubcommands {
     _allocationsSubcommands.SetProcessImage(processImage);
     _usedSubcommands.SetProcessImage(processImage);
     _freeSubcommands.SetProcessImage(processImage);
+    _threadCachedSubcommands.SetProcessImage(processImage);
     _leakedSubcommands.SetProcessImage(processImage);
     _unreferencedSubcommands.SetProcessImage(processImage);
     _anchoredSubcommands.SetProcessImage(processImage);
@@ -97,6 +100,7 @@ class DefaultSubcommands {
     _allocationsSubcommands.RegisterSubcommands(runner);
     _usedSubcommands.RegisterSubcommands(runner);
     _freeSubcommands.RegisterSubcommands(runner);
+    _threadCachedSubcommands.RegisterSubcommands(runner);
     _leakedSubcommands.RegisterSubcommands(runner);
     _unreferencedSubcommands.RegisterSubcommands(runner);
     _anchoredSubcommands.RegisterSubcommands(runner);
@@ -139,6 +143,11 @@ class DefaultSubcommands {
   typedef typename Iterators::Free<Offset> FreeIterator;
   typename FreeIterator::Factory _freeIteratorFactory;
   SubcommandsForOneIterator<Offset, FreeIterator> _freeSubcommands;
+
+  typedef typename Iterators::ThreadCached<Offset> ThreadCachedIterator;
+  typename ThreadCachedIterator::Factory _threadCachedIteratorFactory;
+  SubcommandsForOneIterator<Offset, ThreadCachedIterator>
+      _threadCachedSubcommands;
 
   typedef typename Iterators::Leaked<Offset> LeakedIterator;
   typename LeakedIterator::Factory _leakedIteratorFactory;

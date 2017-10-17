@@ -69,6 +69,7 @@ class Describer : public chap::Describer<Offset> {
     bool isUsed = false;
     bool isLeaked = false;
     bool isUnreferenced = false;
+    bool isThreadCached = false;
     if (allocation.IsUsed()) {
       isUsed = true;
       if (_graph->IsLeaked(index)) {
@@ -77,8 +78,10 @@ class Describer : public chap::Describer<Offset> {
           isUnreferenced = true;
         }
       }
+    } else {
+      isThreadCached = _finder->IsThreadCached(index);
     }
-    output << (!isUsed ? "Free"
+    output << (!isUsed ? (isThreadCached ? "Thread cached free" : "Free")
                        : !isLeaked ? "Anchored"
                                    : isUnreferenced ? "Unreferenced" : "Leaked")
            << " allocation at ";
@@ -100,7 +103,10 @@ class Describer : public chap::Describer<Offset> {
     if (explain) {
       /*
        * We might at some point want to explain free allocations.  That
-       * is very allocator specific.
+       * is very allocator specific.  In particular for free allocations
+       * they might be thread cached (reserved for allocation by some
+       * particular thread) or for libc malloc they might be on a fast
+       * bin list or not.
        */
       if (isUsed) {
         if (!isLeaked) {

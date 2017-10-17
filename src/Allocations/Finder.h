@@ -104,6 +104,8 @@ class Finder {
   // not suitable as an anchor.
   virtual AllocationIndex EdgeTargetIndex(Offset targetCandidate) const = 0;
   const VirtualAddressMap<Offset>& GetAddressMap() const { return _addressMap; }
+  virtual bool HasThreadCached() const { return false; }
+  virtual bool IsThreadCached(AllocationIndex) const { return false; }
 
  protected:
   const VirtualAddressMap<Offset>& _addressMap;

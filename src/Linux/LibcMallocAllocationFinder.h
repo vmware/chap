@@ -204,12 +204,15 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
     FindAllAllocations();
 
-    CorrectFreeListStatus();
+    MarkFastBinAllocationsAsFree();
+
+    MarkThreadCachedAllocationsAsFree();
 
     CheckForCorruption();
   }
 
   virtual ~LibcMallocAllocationFinder() {}
+
   // returns NumAllocations() if offset is not in any range.
 
   virtual AllocationIndex AllocationIndexOf(Offset addr) const {
@@ -253,6 +256,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return _allocations.size();
   }
 
+  virtual bool HasThreadCached() const { return !_isThreadCached.empty(); }
+  virtual bool IsThreadCached(AllocationIndex index) const {
+    return _isThreadCached[index];
+  }
+
   const char* LIBC_MALLOC_HEAP;
   const char* LIBC_MALLOC_MAIN_ARENA;
   const char* LIBC_MALLOC_MAIN_ARENA_PAGES;
@@ -263,6 +271,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   const VirtualAddressMap<Offset>& _addressMap;
 
   std::vector<Allocation> _allocations;
+  std::vector<bool> _isThreadCached;
 
   static const Offset OFFSET_SIZE = sizeof(Offset);
   static const Offset DEFAULT_MAX_HEAP_SIZE =
@@ -790,8 +799,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       return false;
     }
     _mainArenaAddress = bestMainArenaCandidate;
-    (void) _arenas.insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
-            .first;
+    (void)_arenas
+        .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
+        .first;
 
     Offset arenaAddress = _mainArenaAddress;
     std::vector<Offset> inRing;
@@ -869,8 +879,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     size_t bestNextOffsetVotes = 0;
 
-    for (Offset nextOffset = _arenaLastDoublyLinkedFreeListOffset +
-            2 * OFFSET_SIZE;
+    for (Offset nextOffset =
+             _arenaLastDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE;
          nextOffset < 0x130 * OFFSET_SIZE; nextOffset += OFFSET_SIZE) {
       Offset mainArenaCandidate;
       size_t numVotes = CheckNextOffset(nextOffset, mainArenaCandidate);
@@ -1243,7 +1253,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     return false;
   }
-
 
   bool ScanForMainArena() {
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
@@ -1931,10 +1940,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return (it != _heaps.end()) ? it->second._arenaAddress : _mainArenaAddress;
   }
 
-   void ReportFastBinCorruption(Arena& arena,
-                                Offset fastBinHeader,
-                                Offset node,
-                                const char *specificError) {
+  void ReportFastBinCorruption(Arena& arena, Offset fastBinHeader, Offset node,
+                               const char* specificError) {
     if (!arena._hasFastBinCorruption) {
       arena._hasFastBinCorruption = true;
       std::cerr << "Fast bin corruption was found for the arena"
@@ -1944,15 +1951,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       std::cerr << "  Used/free analysis will not be accurate "
                    "for the arena.\n";
     }
-    std::cerr << "  The fast bin list headed at 0x"
-              << std::hex
-              << fastBinHeader
-              << " has a node\n  0x" << node
-              << " "
-              << specificError << ".\n";
+    std::cerr << "  The fast bin list headed at 0x" << std::hex << fastBinHeader
+              << " has a node\n  0x" << node << " " << specificError << ".\n";
   }
 
-  void CorrectFreeListStatus() {
+  void MarkFastBinAllocationsAsFree() {
     AllocationIndex noAllocation = _allocations.size();
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Offset arenaAddress = it->first;
@@ -1968,9 +1971,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
             AllocationIndex index = AllocationIndexOf(allocation);
             if (index == noAllocation ||
                 _allocations[index].Address() != allocation) {
-              ReportFastBinCorruption(arena,
-                                      fastBinCheck,
-                                      nextNode,
+              ReportFastBinCorruption(arena, fastBinCheck, nextNode,
                                       "not matching an allocation");
               // It is not possible to process the rest of this
               // fast bin list because there is a break in the
@@ -1985,9 +1986,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
               break;
             }
             if (ArenaAddressFor(nextNode) != arenaAddress) {
-              ReportFastBinCorruption(arena,
-                                      fastBinCheck,
-                                      nextNode,
+              ReportFastBinCorruption(arena, fastBinCheck, nextNode,
                                       "in the wrong arena");
               // It is not possible to process the rest of this
               // fast bin list because there is a break in the
@@ -2020,6 +2019,117 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
     }
   }
+
+  void MarkThreadCachedAllocationsAsFree() {
+    Offset minSize = 0x40 * (1 + OFFSET_SIZE);
+    Offset maxSize = minSize + 0x40;
+    AllocationIndex numAllocations = NumAllocations();
+    Reader reader(_addressMap);
+    for (auto allocation : _allocations) {
+      if (!allocation.IsUsed()) {
+        continue;
+      }
+      Offset size = allocation.Size();
+      if (size < minSize || size > maxSize) {
+        continue;
+      }
+      int numMismatched = 0;
+      Offset cacheHeaderAddress = allocation.Address();
+      const char* allocationImage = 0;
+      Offset numBytesFound = _addressMap.FindMappedMemoryImage(
+          cacheHeaderAddress, &allocationImage);
+      if (numBytesFound < size) {
+        abort();
+      }
+
+      const uint8_t* listSizes = (const uint8_t*)allocationImage;
+      const Offset* listHeaders = (const Offset*)(allocationImage + 0x40);
+      int numMatchingCounts = 0;
+      for (size_t i = 0; i < 0x40; i++) {
+        size_t expectEntries = listSizes[i];
+        Offset listHeader = listHeaders[i];
+        Offset listEntry = listHeader;
+        while (expectEntries != 0) {
+          if (listEntry == 0) {
+            break;
+          }
+          AllocationIndex listEntryIndex = AllocationIndexOf(listEntry);
+          if (listEntryIndex == numAllocations) {
+            break;
+          }
+          Allocation& listEntryAllocation = _allocations[listEntryIndex];
+          if (!listEntryAllocation.IsUsed()) {
+            break;
+          }
+          if (listEntryAllocation.Size() != (((2 * i) + 3) * sizeof(Offset))) {
+            break;
+          }
+          if (listEntryAllocation.Address() != listEntry) {
+            break;
+          }
+          listEntry = reader.ReadOffset(listEntry);
+          expectEntries--;
+        }
+        if (expectEntries != 0 || listEntry != 0) {
+          if (++numMismatched > 2) {
+            /*
+             * We need to allow at least one mismatch here because at present
+             * there is no logic to deal with a thread cache in flux.
+             * Given that the cache head is local to one thread one would
+             * expect at most one of the chains to be in flux and so at most
+             * one mismatch.
+             */
+            break;
+          }
+        } else {
+          if (listHeader != 0) {
+            numMatchingCounts++;
+          }
+        }
+      }
+      if ((numMatchingCounts == 0) || (numMismatched > 1)) {
+        /*
+         * Don't bother with empty caches.  Allow at most one list/size pair
+         * to be inconsistent, as described in an earlier comment, unless
+         * we have seen enough well formed lists to be reasonably comfortable
+         * that one other inconsistency could be caused by corruption.
+         */
+        continue;
+      }
+
+      for (size_t i = 0; i < 0x40; i++) {
+        size_t expectEntries = listSizes[i];
+        Offset listEntry = listHeaders[i];
+        while (expectEntries != 0) {
+          if (listEntry == 0) {
+            break;
+          }
+          AllocationIndex listEntryIndex = AllocationIndexOf(listEntry);
+          if (listEntryIndex == numAllocations) {
+            break;
+          }
+          Allocation& listEntryAllocation = _allocations[listEntryIndex];
+          if (!listEntryAllocation.IsUsed()) {
+            break;
+          }
+          if (listEntryAllocation.Size() != (((2 * i) + 3) * sizeof(Offset))) {
+            break;
+          }
+          if (listEntryAllocation.Address() != listEntry) {
+            break;
+          }
+          listEntryAllocation.MarkAsFree();
+          if (_isThreadCached.empty()) {
+            _isThreadCached.resize(numAllocations, false);
+          }
+          _isThreadCached[listEntryIndex] = true;
+          listEntry = reader.ReadOffset(listEntry);
+          expectEntries--;
+        }
+      }
+    }
+  }
+
   // ??? make sure to include logic related to registers and
   // ??? stacks for arenas in flux
   void ReportFreeListCorruption(Arena& arena, Offset freeListHeader,
@@ -2058,14 +2168,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           Offset lastNode = reader.ReadOffset(list + 3 * OFFSET_SIZE);
           if (firstNode == list) {
             if (lastNode != list) {
-              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                       lastNode,
+              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, lastNode,
                                        "at end of list with empty start");
             }
           } else {
             if (lastNode == list) {
-              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                       lastNode,
+              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, lastNode,
                                        "at start of list with empty end");
             } else {
               Offset prevNode = list;
@@ -2074,8 +2182,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                 Offset allocation = node + 2 * OFFSET_SIZE;
                 AllocationIndex index = AllocationIndexOf(allocation);
                 if (index == noAllocation) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                           node,
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
                                            "not matching an allocation");
                   break;
                 }
@@ -2086,14 +2193,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                   break;
                 }
                 if (ArenaAddressFor(node) != arenaAddress) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                           node,
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
                                            "in the wrong arena");
                   break;
                 }
                 if (reader.ReadOffset(node + 3 * OFFSET_SIZE) != prevNode) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                           node,
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
                                            "with an unexpected back pointer");
                   break;
                 }
@@ -2102,8 +2207,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
             }
           }
         } catch (NotMapped& e) {
-          ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                   e._address,
+          ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, e._address,
                                    "not in the core");
         }
       }
