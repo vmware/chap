@@ -821,6 +821,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       } while ((arenaAddress & 0xffff) == (4 * OFFSET_SIZE));
     } catch (NotMapped&) {
     }
+    _mainArenaAddress = 0;
     return false;  // The ring was never found or failed verfication.
   }
 
