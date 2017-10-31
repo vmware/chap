@@ -33,6 +33,13 @@ class Input {
     input->open(inputPath.c_str());
     if (input->fail()) {
       delete input;
+      std::cerr << "Failed to open script \""
+                << inputPath
+                << "\".\n";
+      char *openFailCause = strerror(errno);
+      if (openFailCause) {
+        std::cerr << openFailCause << "\n";
+      }
       return false;
     }
     _inputStack.push(input);
@@ -97,6 +104,16 @@ class Input {
       }
       _inputStack.pop();
       if (!_scriptContext.empty()) {
+        if (!input.eof()) {
+          LineInfo& lineInfo = _scriptContext.back();
+          size_t line = lineInfo._line;
+          std::string& path = lineInfo._path;
+          std::cerr << "Error at line " << std::dec << line
+                    << " of script \""  << path << "\"\n";
+          if (input.fail()) {
+            std::cerr << "Failed to read a command line.\n";
+          }
+        }
         _scriptContext.pop_back();
       }
       return;  // There is no more input, at least in the current script.
@@ -344,6 +361,10 @@ class Context {
 
       if (!_output.PushTarget(_redirectPath)) {
         _error << "Failed to open " << _redirectPath << " for writing.\n";
+        char *openFailCause = strerror(errno);
+        if (openFailCause) {
+          std::cerr << openFailCause << "\n";
+        }
         _redirectPath.clear();
       }
     }
