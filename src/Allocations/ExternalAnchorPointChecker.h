@@ -16,6 +16,7 @@ class ExternalAnchorPointChecker {
       : _allocationFinder(allocationFinder),
         _addressMap(allocationFinder.GetAddressMap()) {}
 
+  virtual ~ExternalAnchorPointChecker() {}
   const char* GetExternalAnchorReason(AllocationIndex index) const {
     const Allocation* allocation = _allocationFinder.AllocationAt(index);
     if (allocation != (const Allocation*)0 && allocation->IsUsed()) {
