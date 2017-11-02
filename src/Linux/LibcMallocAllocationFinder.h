@@ -69,7 +69,16 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
          * is needed.
          */
         std::cerr << "Failed to find any arenas, main or not." << std::endl;
-        return;
+        if (_heaps.size() > 0) {
+          std::cerr << "However, " << std::dec << _heaps.size()
+                    << " heaps were found.\n";
+          std::cerr << "An attempt will be made to used this partial "
+                       " information.\n";
+          std::cerr
+              << "Leaked status and used/free status cannot be trusted.\n";
+        } else {
+          return;
+        }
       }
 
     } else {
@@ -1402,7 +1411,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     size_t numRunCandidates = runCandidates.size();
     if (numRunCandidates == 0) {
       std::cerr << "No main arena runs were found.\n";
-      std::cerr << "Perhaps libc malloc was not used.\n";
+      if (_heaps.size() == 0) {
+        std::cerr << "Perhaps libc malloc was not used.\n";
+      }
       return;
     }
 
@@ -1411,7 +1422,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                 << "Leak analysis probably will not be correct.\n";
       Offset base = runCandidates[0]._start;
       Offset size = runCandidates[0]._lastPageBoundary - base;
-      if (size > mainArenaSize) {
+      if ((_mainArenaAddress != 0) && (size > mainArenaSize)) {
         size = mainArenaSize;
         // TODO, do this more precisely, taking into account the top
         // value.
@@ -1804,7 +1815,15 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   void AddAllocationsForHeap(const Heap& heap) {
     Offset base = heap._address;
     Offset size = heap._size;
+    const char* heapImage;
+    Offset numBytesFound = _addressMap.FindMappedMemoryImage(base, &heapImage);
+    if (numBytesFound < size) {
+      std::cerr << "Heap at 0x" << std::hex << base
+                << " is not fully mapped in the core.\n";
+      size = numBytesFound;
+    }
     Offset limit = base + size;
+
     if ((heap._arenaAddress & ~(_maxHeapSize - 1)) == base) {
       base += 4 * OFFSET_SIZE + _arenaStructSize;
     } else {
