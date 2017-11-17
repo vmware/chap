@@ -30,6 +30,8 @@
 #include "../Iterators/ThreadOnlyAnchored.h"
 #include "../Iterators/Unreferenced.h"
 #include "../Iterators/Used.h"
+#include "../Visitors/DefaultVisitorFactories.h"
+#include "../Describer.h"
 #include "SubcommandsForOneIterator.h"
 namespace chap {
 namespace Allocations {
@@ -37,34 +39,55 @@ namespace Subcommands {
 template <class Offset>
 class DefaultSubcommands {
  public:
-  DefaultSubcommands()
+  DefaultSubcommands(const Describer<Offset> &describer)
       : _processImage(0),
-        _singleAllocationSubcommands(_singleAllocationIteratorFactory),
-        _allocationsSubcommands(_allocationsIteratorFactory),
-        _usedSubcommands(_usedIteratorFactory),
-        _freeSubcommands(_freeIteratorFactory),
-        _threadCachedSubcommands(_threadCachedIteratorFactory),
-        _leakedSubcommands(_leakedIteratorFactory),
-        _unreferencedSubcommands(_unreferencedIteratorFactory),
-        _anchoredSubcommands(_anchoredIteratorFactory),
-        _anchorPointsSubcommands(_anchorPointsIteratorFactory),
-        _staticAnchoredSubcommands(_staticAnchoredIteratorFactory),
-        _staticAnchorPointsSubcommands(_staticAnchorPointsIteratorFactory),
-        _stackAnchoredSubcommands(_stackAnchoredIteratorFactory),
-        _stackAnchorPointsSubcommands(_stackAnchorPointsIteratorFactory),
-        _registerAnchoredSubcommands(_registerAnchoredIteratorFactory),
-        _registerAnchorPointsSubcommands(_registerAnchorPointsIteratorFactory),
-        _externalAnchoredSubcommands(_externalAnchoredIteratorFactory),
-        _externalAnchorPointsSubcommands(_externalAnchorPointsIteratorFactory),
-        _threadOnlyAnchoredSubcommands(_threadOnlyAnchoredIteratorFactory),
+        _defaultVisitorFactories(describer),
+        _singleAllocationSubcommands(_singleAllocationIteratorFactory,
+                                     _defaultVisitorFactories),
+        _allocationsSubcommands(_allocationsIteratorFactory,
+                                _defaultVisitorFactories),
+        _usedSubcommands(_usedIteratorFactory, _defaultVisitorFactories),
+        _freeSubcommands(_freeIteratorFactory, _defaultVisitorFactories),
+        _threadCachedSubcommands(_threadCachedIteratorFactory,
+                                 _defaultVisitorFactories),
+        _leakedSubcommands(_leakedIteratorFactory, _defaultVisitorFactories),
+        _unreferencedSubcommands(_unreferencedIteratorFactory,
+                                 _defaultVisitorFactories),
+        _anchoredSubcommands(_anchoredIteratorFactory,
+                             _defaultVisitorFactories),
+        _anchorPointsSubcommands(_anchorPointsIteratorFactory,
+                                 _defaultVisitorFactories),
+        _staticAnchoredSubcommands(_staticAnchoredIteratorFactory,
+                                   _defaultVisitorFactories),
+        _staticAnchorPointsSubcommands(_staticAnchorPointsIteratorFactory,
+                                       _defaultVisitorFactories),
+        _stackAnchoredSubcommands(_stackAnchoredIteratorFactory,
+                                  _defaultVisitorFactories),
+        _stackAnchorPointsSubcommands(_stackAnchorPointsIteratorFactory,
+                                      _defaultVisitorFactories),
+        _registerAnchoredSubcommands(_registerAnchoredIteratorFactory,
+                                     _defaultVisitorFactories),
+        _registerAnchorPointsSubcommands(_registerAnchorPointsIteratorFactory,
+                                         _defaultVisitorFactories),
+        _externalAnchoredSubcommands(_externalAnchoredIteratorFactory,
+                                     _defaultVisitorFactories),
+        _externalAnchorPointsSubcommands(_externalAnchorPointsIteratorFactory,
+                                         _defaultVisitorFactories),
+        _threadOnlyAnchoredSubcommands(_threadOnlyAnchoredIteratorFactory,
+                                       _defaultVisitorFactories),
         _threadOnlyAnchorPointsSubcommands(
-            _threadOnlyAnchorPointsIteratorFactory),
-        _incomingSubcommands(_incomingIteratorFactory),
-        _exactIncomingSubcommands(_exactIncomingIteratorFactory),
-        _outgoingSubcommands(_outgoingIteratorFactory),
-        _freeOutgoingSubcommands(_freeOutgoingIteratorFactory),
-        _chainSubcommands(_chainIteratorFactory),
-        _reverseChainSubcommands(_reverseChainIteratorFactory) {}
+            _threadOnlyAnchorPointsIteratorFactory, _defaultVisitorFactories),
+        _incomingSubcommands(_incomingIteratorFactory,
+                             _defaultVisitorFactories),
+        _exactIncomingSubcommands(_exactIncomingIteratorFactory,
+                                  _defaultVisitorFactories),
+        _outgoingSubcommands(_outgoingIteratorFactory,
+                             _defaultVisitorFactories),
+        _freeOutgoingSubcommands(_freeOutgoingIteratorFactory,
+                                 _defaultVisitorFactories),
+        _chainSubcommands(_chainIteratorFactory, _defaultVisitorFactories),
+        _reverseChainSubcommands(_reverseChainIteratorFactory,
+                                 _defaultVisitorFactories) {}
 
   void SetProcessImage(const ProcessImage<Offset> *processImage) {
     _processImage = processImage;
@@ -125,6 +148,7 @@ class DefaultSubcommands {
 
  private:
   const ProcessImage<Offset> *_processImage;
+  typename Visitors::DefaultVisitorFactories<Offset> _defaultVisitorFactories;
 
   typedef typename Iterators::SingleAllocation<Offset> SingleAllocationIterator;
   typename SingleAllocationIterator::Factory _singleAllocationIteratorFactory;

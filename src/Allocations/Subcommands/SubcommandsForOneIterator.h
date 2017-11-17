@@ -5,13 +5,7 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/SetBasedCommand.h"
 #include "../../ProcessImage.h"
-#include "../Visitors/Counter.h"
-#include "../Visitors/Enumerator.h"
-#include "../Visitors/Lister.h"
-#include "../Visitors/Shower.h"
-#include "../Visitors/Summarizer.h"
-#include "../Visitors/Describer.h"
-#include "../Visitors/Explainer.h"
+#include "../Visitors/DefaultVisitorFactories.h"
 #include "Subcommand.h"
 namespace chap {
 namespace Allocations {
@@ -19,15 +13,20 @@ namespace Subcommands {
 template <class Offset, class Iterator>
 class SubcommandsForOneIterator {
  public:
-  SubcommandsForOneIterator(typename Iterator::Factory& iteratorFactory)
+  SubcommandsForOneIterator(
+      typename Iterator::Factory& iteratorFactory,
+      typename Visitors::DefaultVisitorFactories<Offset>& visitorFactories)
       : _iteratorFactory(iteratorFactory),
-        _countSubcommand(_counterFactory, iteratorFactory),
-        _summarizeSubcommand(_summarizerFactory, iteratorFactory),
-        _enumerateSubcommand(_enumeratorFactory, iteratorFactory),
-        _listSubcommand(_listerFactory, iteratorFactory),
-        _showSubcommand(_showerFactory, iteratorFactory),
-        _describeSubcommand(_describerFactory, iteratorFactory),
-        _explainSubcommand(_explainerFactory, iteratorFactory),
+        _countSubcommand(visitorFactories._counterFactory, iteratorFactory),
+        _summarizeSubcommand(visitorFactories._summarizerFactory,
+                             iteratorFactory),
+        _enumerateSubcommand(visitorFactories._enumeratorFactory,
+                             iteratorFactory),
+        _listSubcommand(visitorFactories._listerFactory, iteratorFactory),
+        _showSubcommand(visitorFactories._showerFactory, iteratorFactory),
+        _describeSubcommand(visitorFactories._describerFactory,
+                            iteratorFactory),
+        _explainSubcommand(visitorFactories._explainerFactory, iteratorFactory),
         _processImage(0) {}
 
   void SetProcessImage(const ProcessImage<Offset>* processImage) {
@@ -53,34 +52,21 @@ class SubcommandsForOneIterator {
  private:
   typename Iterator::Factory _iteratorFactory;
 
-  typename Visitors::Counter<Offset>::Factory _counterFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Counter<Offset>, Iterator>
       _countSubcommand;
-
-  typename Visitors::Summarizer<Offset>::Factory _summarizerFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Summarizer<Offset>,
                           Iterator>
       _summarizeSubcommand;
-
-  typename Visitors::Enumerator<Offset>::Factory _enumeratorFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Enumerator<Offset>,
                           Iterator>
       _enumerateSubcommand;
-
-  typename Visitors::Lister<Offset>::Factory _listerFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Lister<Offset>, Iterator>
       _listSubcommand;
-
-  typename Visitors::Shower<Offset>::Factory _showerFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Shower<Offset>, Iterator>
       _showSubcommand;
-
-  typename Visitors::Describer<Offset>::Factory _describerFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Describer<Offset>,
                           Iterator>
       _describeSubcommand;
-
-  typename Visitors::Explainer<Offset>::Factory _explainerFactory;
   Subcommands::Subcommand<Offset, typename Visitors::Explainer<Offset>,
                           Iterator>
       _explainSubcommand;

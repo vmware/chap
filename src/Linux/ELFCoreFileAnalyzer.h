@@ -3,7 +3,7 @@
 
 #pragma once
 #include "../FileAnalyzer.h"
-#include "../ProcessImageCommandHandler.h"
+#include "ProcessImageCommandHandler.h"
 #include "../VirtualAddressMapCommandHandler.h"
 #include "ELFImage.h"
 #include "LinuxProcessImage.h"

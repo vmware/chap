@@ -3,6 +3,7 @@
 
 #pragma once
 #include "Allocations/Subcommands/DefaultSubcommands.h"
+#include "Allocations/PatternRecognizerRegistry.h"
 #include "Commands/CountCommand.h"
 #include "Commands/EnumerateCommand.h"
 #include "Commands/ListCommand.h"
@@ -28,11 +29,14 @@ class ProcessImageCommandHandler {
   ProcessImageCommandHandler(const ProcessImage<Offset> *processImage)
       : _stackDescriber(0),
         _inModuleDescriber(0),
-        _allocationDescriber(_inModuleDescriber, _stackDescriber, 0),
+        _patternRecognizerRegistry(processImage),
+        _allocationDescriber(_inModuleDescriber, _stackDescriber,
+                             _patternRecognizerRegistry, 0),
         _knownAddressDescriber(0),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
-        _threadMapCommandHandler(0) {
+        _threadMapCommandHandler(0),
+        _defaultAllocationsSubcommands(_allocationDescriber) {
     SetProcessImage(processImage);
     _compoundDescriber.AddDescriber(&_allocationDescriber);
     _compoundDescriber.AddDescriber(&_stackDescriber);
@@ -48,6 +52,7 @@ class ProcessImageCommandHandler {
       _threadMapCommandHandler.SetThreadMap((const ThreadMap<Offset> *)(0));
     }
     _defaultAllocationsSubcommands.SetProcessImage(processImage);
+    _patternRecognizerRegistry.SetProcessImage(processImage);
     _allocationDescriber.SetProcessImage(processImage);
     _stackDescriber.SetProcessImage(processImage);
     _inModuleDescriber.SetProcessImage(processImage);
@@ -73,6 +78,7 @@ class ProcessImageCommandHandler {
   const ProcessImage<Offset> *_processImage;
   StackDescriber<Offset> _stackDescriber;
   InModuleDescriber<Offset> _inModuleDescriber;
+  Allocations::PatternRecognizerRegistry<Offset> _patternRecognizerRegistry;
   Allocations::Describer<Offset> _allocationDescriber;
   KnownAddressDescriber<Offset> _knownAddressDescriber;
   CompoundDescriber<Offset> _compoundDescriber;

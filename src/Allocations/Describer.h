@@ -9,6 +9,7 @@
 #include "SignatureDirectory.h"
 #include "AnchorChainLister.h"
 #include "Finder.h"
+#include "PatternRecognizerRegistry.h"
 
 namespace chap {
 namespace Allocations {
@@ -19,8 +20,11 @@ class Describer : public chap::Describer<Offset> {
   typedef typename Finder<Offset>::Allocation Allocation;
   Describer(const InModuleDescriber<Offset>& inModuleDescriber,
             const StackDescriber<Offset>& stackDescriber,
+            const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
             const ProcessImage<Offset>* processImage)
-      : _inModuleDescriber(inModuleDescriber), _stackDescriber(stackDescriber) {
+      : _inModuleDescriber(inModuleDescriber),
+        _stackDescriber(stackDescriber),
+        _patternRecognizerRegistry(patternRecognizerRegistry) {
     SetProcessImage(processImage);
   }
 
@@ -89,9 +93,11 @@ class Describer : public chap::Describer<Offset> {
     output << std::hex << address << " of size " << size << "\n";
     const char* image;
     (void)_addressMap->FindMappedMemoryImage(address, &image);
+    bool isUnsigned = true;
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
       if (_signatureDirectory->IsMapped(signature)) {
+        isUnsigned = false;
         output << "... with signature " << signature;
         std::string name = _signatureDirectory->Name(signature);
         if (!name.empty()) {
@@ -100,6 +106,8 @@ class Describer : public chap::Describer<Offset> {
         output << "\n";
       }
     }
+    _patternRecognizerRegistry.Describe(context, index, allocation, isUnsigned,
+                                        explain);
     if (explain) {
       /*
        * We might at some point want to explain free allocations.  That
@@ -126,6 +134,7 @@ class Describer : public chap::Describer<Offset> {
  private:
   const InModuleDescriber<Offset>& _inModuleDescriber;
   const StackDescriber<Offset>& _stackDescriber;
+  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
   const ProcessImage<Offset>* _processImage;
   const SignatureDirectory<Offset>* _signatureDirectory;
   const VirtualAddressMap<Offset>* _addressMap;

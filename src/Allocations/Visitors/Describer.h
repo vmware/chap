@@ -17,14 +17,10 @@ class Describer {
   typedef typename Finder<Offset>::Allocation Allocation;
   class Factory {
    public:
-    Factory()
-        : _inModuleDescriber(0),
-          _stackDescriber(0),
-          _describer(_inModuleDescriber, _stackDescriber, 0),
-          _commandName("describe") {}
+    Factory(const chap::Allocations::Describer<Offset>& describer)
+        : _describer(describer), _commandName("describe") {}
     Describer* MakeVisitor(Commands::Context& context,
-                           const ProcessImage<Offset>& processImage) {
-      _describer.SetProcessImage(&processImage);
+                           const ProcessImage<Offset>& /* processImage */ ) {
       return new Describer(context, _describer);
     }
     const std::string& GetCommandName() const { return _commandName; }
@@ -38,9 +34,7 @@ class Describer {
     }
 
    private:
-    InModuleDescriber<Offset> _inModuleDescriber;
-    StackDescriber<Offset> _stackDescriber;
-    Allocations::Describer<Offset> _describer;
+    const Allocations::Describer<Offset>& _describer;
     const std::string _commandName;
     const std::vector<std::string> _taints;
   };
