@@ -78,7 +78,7 @@ class Subcommand : public Commands::Subcommand {
       if (nextPositional < numPositionals) {
         error << "Unexpected positional arguments found:\n";
         do {
-          error << context.Positional(nextPositional++);
+          error << "\"" << context.Positional(nextPositional++) << "\"\n";
         } while (nextPositional < numPositionals);
         return;
       }
