@@ -351,11 +351,17 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   Offset _maxHeapSize;
 
   void RecordAllocated(Offset address, Offset size) {
-    _allocations.push_back(Allocation(address, size, true));
+    if (size >= 3 * sizeof(Offset)) {
+      // Avoid small false allocations at the end of an allocation run.
+      _allocations.push_back(Allocation(address, size, true));
+    }
   }
 
   void RecordFree(Offset address, Offset size) {
-    _allocations.push_back(Allocation(address, size, false));
+    if (size >= 3 * sizeof(Offset)) {
+      // Avoid small false allocations at the end of an allocation run.
+      _allocations.push_back(Allocation(address, size, false));
+    }
   }
 
   bool IsTextAddress(Offset address) {
