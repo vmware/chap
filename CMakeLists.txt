@@ -12,7 +12,12 @@ include(CTest)
 
 # chap
 
+add_subdirectory(thirdparty)
+
 add_executable(chap src/FileAnalyzer.cpp)
+
+# Replxx is  linked as a static library
+target_link_libraries(chap PRIVATE Replxx::Replxx)
 install(TARGETS chap DESTINATION bin)
 
 # Tests

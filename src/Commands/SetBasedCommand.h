@@ -60,8 +60,9 @@ class SetBasedCommand : public Command {
            it != _subcommands.end(); ++it) {
         output << it->first << "\n";
       }
-      output << "Try \"help " << GetName() << " <setname>\" for more"
-                                              " information.\n";
+      output << "Try \"help " << GetName()
+             << " <setname>\" for more"
+                " information.\n";
     }
   }
 
@@ -80,6 +81,17 @@ class SetBasedCommand : public Command {
       }
     }
     ShowAvailableSets(context);
+  }
+
+  virtual void GetSecondTokenCompletions(
+      const std::string& prefix,
+      std::function<void(const std::string&)> cb) const override {
+    for (const auto& sc : _subcommands) {
+      const std::string& scname = sc.first;
+      if (!scname.compare(0, prefix.size(), prefix)) {
+        cb(scname.c_str());
+      }
+    }
   }
 
  private:

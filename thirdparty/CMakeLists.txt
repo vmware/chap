@@ -1,0 +1,1 @@
+add_subdirectory(replxx EXCLUDE_FROM_ALL)
