@@ -32,13 +32,18 @@ any questions about the CLA process, please refer to our
 
 * __clang-format__ - We use clang-format's 'Google' style to format code.
 
+* __replxx__ - We use [replxx](https://github.com/AmokHuginnsson/replxx) from
+    source as a git submodule for command history and tab completion.
+
 ### Building
 
 ```bash
 git clone https://github.com/vmware/chap.git
+cd chap
+git submodule update --init --recursive
 mkdir build-chap
 cd build-chap
-cmake ../chap
+cmake ../
 make
 ./chap
 Usage: chap [-t] <file>

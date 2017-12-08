@@ -26,9 +26,11 @@ leaks.
 
 ```
 $ git clone https://github.com/vmware/chap.git
+$ cd chap
+$ git submodule update --init --recursive
 $ mkdir build-chap
 $ cd build-chap
-$ cmake ../chap
+$ cmake ../
 $ make
 $ ./chap
 Usage: chap [-t] <file>
@@ -44,6 +46,9 @@ Supported file types include the following:
 
 If that doesn't work out of the box, see [CONTRIBUTING.md](CONTRIBUTING.md) for
 pre-requisites and other details.
+
+`chap` has REPL support for command history and tab completion using
+the [replxx](https://github.com/AmokHuginnsson/replxx)  library.
 
 Once built, here's a trivial example of an interactive session:
 
