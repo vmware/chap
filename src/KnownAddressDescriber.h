@@ -85,6 +85,16 @@ class KnownAddressDescriber : public Describer<Offset> {
     } else {
       output << " has unknown permissions.";
     }
+    if ((flags & Attributes::IS_MAPPED) != 0) {
+      if ((flags & Attributes::IS_TRUNCATED) != 0) {
+        output << "This address is mapped into a truncated section of "
+                  "the process image.\n";
+      } else {
+        output << "This address is mapped into the process image.\n";
+      }
+    } else {
+      output << "This address is not mapped into the process image.\n";
+    }
     if (explain) {
       Offset base = it.Base();
       Offset limit = it.Limit();
