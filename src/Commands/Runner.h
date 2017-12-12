@@ -77,11 +77,13 @@ class Input {
         std::string::size_type pos = cmdLine.find_first_not_of(" \t", 0);
         if (pos == std::string::npos) {
           // There is no non-white space on the current line.
-          if (tokens.empty()) {
-            // There are no tokens yet.  Find a non-empty line.
+          if (tokens.empty() || checkNextLine) {
+            // No tokens were found on a previous line or the current line
+            // had a trailing '\'.  The statement may not have ended yet.
             continue;
           } else {
-            // Tokens were found there must have been a trailing
+            // Tokens were found on some earlier line.
+            // There must have been a trailing
             // '\' before a blank line.  Treat this as ending
             // the statement.
             return;
