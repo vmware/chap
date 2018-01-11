@@ -55,7 +55,7 @@ class Input {
   }
   bool ReadLine(std::istream& is, std::string& out) {
     if (IsInScript()) {
-      return getline(is, out, '\n');
+      return !std::getline(is, out, '\n').fail();
     }
 
     // ANSI_COLOR_GREEN
@@ -537,8 +537,12 @@ class Command {
   virtual void ShowHelpMessage(Context& context) = 0;
   const virtual std::string& GetName() const = 0;
   virtual void GetSecondTokenCompletions(
-      const std::string& prefix,
-      std::function<void(const std::string&)> cb) const {}
+      const std::
+          string& /* prefix - commented out to avoid compiler warnings */,
+      std::function<void(
+          const std::
+              string&)> /* cb - commented out to avoid compiler warnings */)
+      const {}
 
  protected:
   const std::string _name;
@@ -558,7 +562,9 @@ class Runner {
 
   {}
 
-  void CompletionHook(char const* pref, int ctx, replxx_completions* lc) {
+  void CompletionHook(char const* pref,
+                      int /* ctx - commented out to avoid compiler warnings */,
+                      replxx_completions* lc) {
     std::string prefix(pref);
     const auto startPos = prefix.find_first_not_of(" \t");
     prefix =

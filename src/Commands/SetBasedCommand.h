@@ -25,7 +25,7 @@ class SetBasedCommand : public Command {
     }
   }
 
-  void Run(Context& context) {
+  void Run(Context& context) override {
     Error& error = context.GetError();
     if (_subcommands.empty()) {
       error << "There are no defined sets to " << GetName() << ".\n";
@@ -66,7 +66,7 @@ class SetBasedCommand : public Command {
     }
   }
 
-  void ShowHelpMessage(Context& context) {
+  void ShowHelpMessage(Context& context) override {
     size_t numPositionals = context.GetNumPositionals();
     if (numPositionals >= 3) {
       const std::string& setName = context.Positional(2);
