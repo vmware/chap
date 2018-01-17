@@ -2,31 +2,31 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include "Allocations/Subcommands/DefaultSubcommands.h"
+#include "Allocations/Describer.h"
 #include "Allocations/PatternRecognizerRegistry.h"
+#include "Allocations/Subcommands/DefaultSubcommands.h"
 #include "Commands/CountCommand.h"
+#include "Commands/DescribeCommand.h"
 #include "Commands/EnumerateCommand.h"
+#include "Commands/ExplainCommand.h"
 #include "Commands/ListCommand.h"
 #include "Commands/Runner.h"
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
-#include "Commands/DescribeCommand.h"
-#include "Commands/ExplainCommand.h"
-#include "Commands/Runner.h"
-#include "Allocations/Describer.h"
 #include "CompoundDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
-#include "StackDescriber.h"
 #include "ProcessImage.h"
-#include "ThreadMapCommandHandler.h"
+#include "StackDescriber.h"
+#include "ThreadMapCommands/CountStacks.h"
+#include "ThreadMapCommands/ListStacks.h"
 
 namespace chap {
 template <typename Offset>
 class ProcessImageCommandHandler {
  public:
   typedef ProcessImageCommandHandler<Offset> ThisClass;
-  ProcessImageCommandHandler(const ProcessImage<Offset> *processImage)
+  ProcessImageCommandHandler(const ProcessImage<Offset>* processImage)
       : _stackDescriber(0),
         _inModuleDescriber(0),
         _patternRecognizerRegistry(processImage),
@@ -35,7 +35,6 @@ class ProcessImageCommandHandler {
         _knownAddressDescriber(0),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
-        _threadMapCommandHandler(0),
         _defaultAllocationsSubcommands(_allocationDescriber) {
     SetProcessImage(processImage);
     _compoundDescriber.AddDescriber(&_allocationDescriber);
@@ -44,26 +43,21 @@ class ProcessImageCommandHandler {
     _compoundDescriber.AddDescriber(&_knownAddressDescriber);
   }
 
-  void SetProcessImage(const ProcessImage<Offset> *processImage) {
+  void SetProcessImage(const ProcessImage<Offset>* processImage) {
     _processImage = processImage;
-    if (processImage != NULL) {
-      _threadMapCommandHandler.SetThreadMap(&processImage->GetThreadMap());
-    } else {
-      _threadMapCommandHandler.SetThreadMap((const ThreadMap<Offset> *)(0));
-    }
     _defaultAllocationsSubcommands.SetProcessImage(processImage);
     _patternRecognizerRegistry.SetProcessImage(processImage);
     _allocationDescriber.SetProcessImage(processImage);
     _stackDescriber.SetProcessImage(processImage);
     _inModuleDescriber.SetProcessImage(processImage);
     _knownAddressDescriber.SetProcessImage(processImage);
+    _countStacksSubcommand.SetProcessImage(processImage);
+    _listStacksSubcommand.SetProcessImage(processImage);
   }
 
-  virtual void AddCommandCallbacks(Commands::Runner &r) {
-    _threadMapCommandHandler.AddCommandCallbacks(r);
-  }
+  virtual void AddCommandCallbacks(Commands::Runner& /* r */) {}
 
-  virtual void AddCommands(Commands::Runner &r) {
+  virtual void AddCommands(Commands::Runner& r) {
     r.AddCommand(_countCommand);
     r.AddCommand(_summarizeCommand);
     r.AddCommand(_enumerateCommand);
@@ -71,11 +65,13 @@ class ProcessImageCommandHandler {
     r.AddCommand(_showCommand);
     r.AddCommand(_describeCommand);
     r.AddCommand(_explainCommand);
+    RegisterSubcommand(r, _countStacksSubcommand);
+    RegisterSubcommand(r, _listStacksSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
   }
 
  protected:
-  const ProcessImage<Offset> *_processImage;
+  const ProcessImage<Offset>* _processImage;
   StackDescriber<Offset> _stackDescriber;
   InModuleDescriber<Offset> _inModuleDescriber;
   Allocations::PatternRecognizerRegistry<Offset> _patternRecognizerRegistry;
@@ -89,9 +85,30 @@ class ProcessImageCommandHandler {
   Commands::ShowCommand _showCommand;
   Commands::DescribeCommand<Offset> _describeCommand;
   Commands::ExplainCommand<Offset> _explainCommand;
+  ThreadMapCommands::CountStacks<Offset> _countStacksSubcommand;
+  ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
+
+  void RegisterSubcommand(Commands::Runner& runner,
+                          Commands::Subcommand& subcommand) {
+    const std::string& commandName = subcommand.GetCommandName();
+    const std::string& setName = subcommand.GetSetName();
+    Commands::Command* command = runner.FindCommand(commandName);
+    if (command == 0) {
+      std::cerr << "Attempted to register subcommand \"" << commandName << " "
+                << setName << "\" for command that does\nnot exist.\n";
+      return;
+    }
+    Commands::SetBasedCommand* setBasedCommand =
+        dynamic_cast<typename Commands::SetBasedCommand*>(command);
+    if (setBasedCommand == 0) {
+      std::cerr << "Attempted to register subcommand \"" << commandName << " "
+                << setName << " for command that is\nnot set based.\n";
+      return;
+    }
+    setBasedCommand->AddSubcommand(subcommand);
+  }
 
  private:
-  ThreadMapCommandHandler<Offset> _threadMapCommandHandler;
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
 };
