@@ -267,7 +267,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   virtual bool HasThreadCached() const { return !_isThreadCached.empty(); }
   virtual bool IsThreadCached(AllocationIndex index) const {
-    return _isThreadCached[index];
+    return !_isThreadCached.empty() && _isThreadCached[index];
   }
 
   const char* LIBC_MALLOC_HEAP;
