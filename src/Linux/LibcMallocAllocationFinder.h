@@ -494,8 +494,15 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       Arena& arena = it->second;
       try {
         Offset size = reader.ReadOffset(arena._address + candidate);
+        Offset maxSize =
+            reader.ReadOffset(arena._address + candidate + OFFSET_SIZE);
         if (_arenas.find(size) == _arenas.end() && size != 0 &&
-            (size & 0xFFF) == 0) {
+            (size & 0xFFF) == (maxSize & 0xFFF)) {
+          /*
+           * Note that for recent libc builds, allocation runs no longer
+           * need to start on page boundaries but they still need to end
+           * on them.
+           */
           numVotes++;
         }
       } catch (NotMapped&) {
@@ -1620,14 +1627,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         abort();
       }
       Arena& mainArena = itArena->second;
-      if ((mainArena._size & 0xFFF) == 0) {
-        mainArenaSize = mainArena._size;
-        if (FindSingleContiguousMainArenaRun(mainArena)) {
-          return;
-        }
-      } else {
-        std::cerr << "The arena size value, 0x" << std::hex << mainArena._size
-                  << " appears to be corrupt.\n";
+      mainArenaSize = mainArena._size;
+      if (FindSingleContiguousMainArenaRun(mainArena)) {
+        return;
       }
     }
     ScanForMainArenaPageRuns(mainArenaSize);
