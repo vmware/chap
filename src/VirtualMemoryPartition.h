@@ -36,19 +36,19 @@ class VirtualMemoryPartition {
     return true;
   }
 
-  UnclaimedImagesConstIterator BeginUnclaimedImages() {
+  UnclaimedImagesConstIterator BeginUnclaimedImages() const {
     return _unclaimedImages.begin();
   }
 
-  UnclaimedImagesConstIterator EndUnclaimedImages() {
+  UnclaimedImagesConstIterator EndUnclaimedImages() const {
     return _unclaimedImages.end();
   }
 
-  ClaimedRangesConstIterator find(Offset member) {
+  ClaimedRangesConstIterator find(Offset member) const {
     return _claimedRanges.find(member);
   }
 
-  ClaimedRangesConstIterator end() { return _claimedRanges.end(); }
+  ClaimedRangesConstIterator end() const { return _claimedRanges.end(); }
 
   const AddressMap &GetAddressMap() { return _addressMap; }
 

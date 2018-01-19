@@ -30,8 +30,32 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
        * to determine whether the core is truncated, in which case there
        * won't be any need to find the allocations.
        */
-      MakeAllocationFinder();
 
+      Base::_allocationFinder =
+          new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition);
+
+      /*
+       * At present this can only be done here because we may find the
+       * allocations
+       * lazily and the current algorithm for static anchor ranges is to
+       * assume that all imaged writeable memory that is not otherwise claimed
+       * (for example by stack or memory allocators) is OK for anchors.
+       */
+      FindStaticAnchorRanges();
+
+      /*
+       * In Linux processes the current approach is to wait until the
+       * allocations have been found, then treat pointers at the start of
+       * the allocations to read only memory as signatures.  This means
+       * that the signatures can't be identified until the allocations have
+       * been found.
+       */
+
+      FindSignatures();
+
+      Base::_allocationGraph = new Allocations::Graph<Offset>(
+        *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
+        (Allocations::ExternalAnchorPointChecker<Offset>*)(0));
     }
   }
 
@@ -47,38 +71,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   }
 
  protected:
-  void MakeAllocationFinder() const {
-    /*
-     * This will have to be fixed when we support multiple kinds of
-     * allocation finders on Linux.  At present it is assumed that just
-     * one memory allocator applies to a given process and that if a
-     * different one is used this is done by using LD_PRELOAD to override
-     * the libc malloc code.
-     */
-    if (Base::_allocationFinder != 0) {
-      return;
-    }
-    Base::_allocationFinder =
-        new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition);
-
-    /*
-     * At present this can only be done here because we may find the allocations
-     * lazily and the current algorithm for static anchor ranges is to
-     * assume that all imaged writeable memory that is not otherwise claimed
-     * (for example by stack or memory allocators) is OK for anchors.
-     */
-    FindStaticAnchorRanges();
-
-    /*
-     * In Linux processes the current approach is to wait until the
-     * allocations have been found, then treat pointers at the start of
-     * the allocations to read only memory as signatures.  This means
-     * that the signatures can't be identified until the allocations have
-     * been found.
-     */
-
-    FindSignatures();
-  }
 
   void FindModules() {
     Offset executableAddress = 0;
@@ -355,12 +347,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
     if (!_symdefsRead) {
       ReadSymdefsFile();
     }
-  }
-
-  void MakeAllocationGraph() const {
-    Base::_allocationGraph = new Allocations::Graph<Offset>(
-        *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
-        (Allocations::ExternalAnchorPointChecker<Offset>*)(0));
   }
 
  private:

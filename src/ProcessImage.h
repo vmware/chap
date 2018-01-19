@@ -24,9 +24,6 @@ class ProcessImage {
         _virtualAddressMap(virtualAddressMap),
         _threadMap(threadMap),
         _virtualMemoryPartition(virtualAddressMap),
-        _lazyAllocationFinderInitializationPending(true),
-        _lazyAllocationGraphInitializationPending(true),
-        _unrecognizedMemoryAllocator(false),
         _allocationFinder((Allocations::Finder<Offset> *)(0)),
         _allocationGraph((Allocations::Graph<Offset> *)(0)) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
@@ -61,45 +58,29 @@ class ProcessImage {
   }
 
   const Allocations::Finder<Offset> *GetAllocationFinder() const {
-    if (_lazyAllocationFinderInitializationPending) {
-      _lazyAllocationFinderInitializationPending = false;
-      MakeAllocationFinder();
-    }
     RefreshSignatureDirectory();
     return _allocationFinder;
   }
   const Allocations::Graph<Offset> *GetAllocationGraph() const {
-    if (_lazyAllocationFinderInitializationPending) {
-      _lazyAllocationFinderInitializationPending = false;
-      MakeAllocationFinder();
-    }
-    if ((_allocationFinder != (Allocations::Finder<Offset> *)(0)) &&
-        _lazyAllocationGraphInitializationPending) {
-      _lazyAllocationGraphInitializationPending = false;
-      MakeAllocationGraph();
-    }
     return _allocationGraph;
   }
   const char *STACK_AREA;
 
  protected:
-  virtual void MakeAllocationFinder() const = 0;
-  virtual void MakeAllocationGraph() const = 0;
   virtual void RefreshSignatureDirectory() const {}
 
   const AddressMap &_virtualAddressMap;
   const ThreadMap<OffsetType> &_threadMap;
   ModuleDirectory<Offset> _moduleDirectory;
-  /*
-   * The following are mutable because they are modified when the allocation
-   * finder is made lazily.
-   */
-  mutable VirtualMemoryPartition<Offset> _virtualMemoryPartition;
-  mutable bool _lazyAllocationFinderInitializationPending;
-  mutable bool _lazyAllocationGraphInitializationPending;
-  mutable bool _unrecognizedMemoryAllocator;
-  mutable Allocations::Finder<Offset> *_allocationFinder;
-  mutable Allocations::Graph<Offset> *_allocationGraph;
+  VirtualMemoryPartition<Offset> _virtualMemoryPartition;
+  Allocations::Finder<Offset> *_allocationFinder;
+  Allocations::Graph<Offset> *_allocationGraph;
+
+   /*
+    * At present this is mutable because some const functions cause the
+    * signature directory to be refreshed (because we are allowing the
+    * user to make a symdefs file between commands).
+    */
   mutable Allocations::SignatureDirectory<Offset> _signatureDirectory;
 };
 }  // namespace chap
