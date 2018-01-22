@@ -1,0 +1,6 @@
+ANCHOR 6032f0
+SomeBogusMap + 16 in section .bss of /dbc/pa-dbc1129/tim/git/cayman_chap/chap/src/HasStatic
+ANCHOR 603300
+SomeBogusMap + 32 in section .bss of /dbc/pa-dbc1129/tim/git/cayman_chap/chap/src/HasStatic
+ANCHOR 6032f8
+SomeBogusMap + 24 in section .bss of /dbc/pa-dbc1129/tim/git/cayman_chap/chap/src/HasStatic

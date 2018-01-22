@@ -6,10 +6,11 @@
 #include "../InModuleDescriber.h"
 #include "../ProcessImage.h"
 #include "../StackDescriber.h"
-#include "SignatureDirectory.h"
 #include "AnchorChainLister.h"
+#include "AnchorDirectory.h"
 #include "Finder.h"
 #include "PatternRecognizerRegistry.h"
+#include "SignatureDirectory.h"
 
 namespace chap {
 namespace Allocations {
@@ -32,11 +33,13 @@ class Describer : public chap::Describer<Offset> {
     _processImage = processImage;
     if (processImage == 0) {
       _signatureDirectory = 0;
+      _anchorDirectory = 0;
       _addressMap = 0;
       _finder = 0;
       _graph = 0;
     } else {
       _signatureDirectory = &(processImage->GetSignatureDirectory());
+      _anchorDirectory = &(processImage->GetAnchorDirectory());
       _addressMap = &(processImage->GetVirtualAddressMap());
       _finder = processImage->GetAllocationFinder();
       _graph = processImage->GetAllocationGraph();
@@ -119,9 +122,8 @@ class Describer : public chap::Describer<Offset> {
       if (isUsed) {
         if (!isLeaked) {
           AnchorChainLister<Offset> anchorChainLister(
-              _inModuleDescriber, _stackDescriber,
-              *_graph, _signatureDirectory,
-              context, address);
+              _inModuleDescriber, _stackDescriber, *_graph, _signatureDirectory,
+              _anchorDirectory, context, address);
           _graph->VisitStaticAnchorChains(index, anchorChainLister);
           _graph->VisitRegisterAnchorChains(index, anchorChainLister);
           _graph->VisitStackAnchorChains(index, anchorChainLister);
@@ -137,6 +139,7 @@ class Describer : public chap::Describer<Offset> {
   const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
   const ProcessImage<Offset>* _processImage;
   const SignatureDirectory<Offset>* _signatureDirectory;
+  const AnchorDirectory<Offset>* _anchorDirectory;
   const VirtualAddressMap<Offset>* _addressMap;
   const Finder<Offset>* _finder;
   const Graph<Offset>* _graph;

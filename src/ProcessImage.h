@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include "Allocations/AnchorDirectory.h"
 #include "Allocations/Finder.h"
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
@@ -57,6 +58,14 @@ class ProcessImage {
     return _signatureDirectory;
   }
 
+  const Allocations::AnchorDirectory<Offset> &GetAnchorDirectory() const {
+    return _anchorDirectory;
+  }
+
+  Allocations::AnchorDirectory<Offset> &GetAnchorDirectory() {
+    return _anchorDirectory;
+  }
+
   const Allocations::Finder<Offset> *GetAllocationFinder() const {
     RefreshSignatureDirectory();
     return _allocationFinder;
@@ -76,11 +85,12 @@ class ProcessImage {
   Allocations::Finder<Offset> *_allocationFinder;
   Allocations::Graph<Offset> *_allocationGraph;
 
-   /*
-    * At present this is mutable because some const functions cause the
-    * signature directory to be refreshed (because we are allowing the
-    * user to make a symdefs file between commands).
-    */
+  /*
+   * At present this is mutable because some const functions cause these
+   * directories to be refreshed (because we are allowing the
+   * user to make a symdefs file between commands).
+   */
   mutable Allocations::SignatureDirectory<Offset> _signatureDirectory;
+  mutable Allocations::AnchorDirectory<Offset> _anchorDirectory;
 };
 }  // namespace chap

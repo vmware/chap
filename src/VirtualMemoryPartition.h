@@ -50,7 +50,7 @@ class VirtualMemoryPartition {
 
   ClaimedRangesConstIterator end() const { return _claimedRanges.end(); }
 
-  const AddressMap &GetAddressMap() { return _addressMap; }
+  const AddressMap &GetAddressMap() const { return _addressMap; }
 
  private:
   const AddressMap _addressMap;

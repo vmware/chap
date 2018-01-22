@@ -43,6 +43,10 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
        */
       FindStaticAnchorRanges();
 
+      Base::_allocationGraph = new Allocations::Graph<Offset>(
+          *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
+          (Allocations::ExternalAnchorPointChecker<Offset>*)(0));
+
       /*
        * In Linux processes the current approach is to wait until the
        * allocations have been found, then treat pointers at the start of
@@ -52,10 +56,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
        */
 
       FindSignatures();
-
-      Base::_allocationGraph = new Allocations::Graph<Offset>(
-        *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
-        (Allocations::ExternalAnchorPointChecker<Offset>*)(0));
     }
   }
 
@@ -71,7 +71,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   }
 
  protected:
-
   void FindModules() {
     Offset executableAddress = 0;
     typename AddressMap::const_iterator itEnd = Base::_virtualAddressMap.end();
@@ -351,18 +350,12 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
 
  private:
   /*
-   * The following is mutable because the symdefs file is read lazily the
-   * first tyime it is present and needed.
+   * _symdefsRead is mutable because the symdefs file is read lazily the
+   * first time it is present and needed.
    */
 
   mutable bool _symdefsRead;
-  /*
-   * TODO: This really should not be mutable but it is because static
-   * anchor limits are calculated lazily because they are calculated
-   * after the allocations are found and the allocations are found
-   * lazily.
-   */
-  mutable std::map<Offset, Offset> _staticAnchorLimits;
+  std::map<Offset, Offset> _staticAnchorLimits;
 
   bool ParseOffset(const std::string& s, Offset& value) const {
     if (!s.empty()) {
@@ -681,8 +674,9 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
         Base::_signatureDirectory.MapSignatureToName(signature, name);
         signature = 0;
       } else if (anchor != 0) {
-        // size_t defEnd = line.find(" in section");
-        //??? _anchorToName[anchor] = line.substr(0, defEnd);
+        size_t defEnd = line.find(" in section");
+        std::string name(line.substr(0, defEnd));
+        Base::_anchorDirectory.MapAnchorToName(anchor, name);
         anchor = 0;
       }
     }
@@ -691,13 +685,7 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
     return true;
   }
 
-  /*
-   * TODO: This is declared as const only because it is done lazily.
-   * It is done lazily because finding allocations is done lazily.  Fix
-   * this.
-   */
-
-  void FindSignatures() const {
+  void FindSignatures() {
     std::string emptyName;
     bool writeSymreqs = true;
     std::string symReqsPath(
@@ -764,29 +752,26 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
                       << "info symbol 0x" << signature << '\n';
       }
     }
-#if 0
-      // ??? In old approach we need anchor requests in .symreqs
-      // ??? as well.
-      // ??? In the new approach this is awkward because the static
-      // ??? anchor points are now calculated by the graph, which is
-      // ??? in turn calculated lazily.  We want the anchor points
-      // ??? somewhat earlier.
-      if (_staticAnchorPoints.size() > 1000000) {
-         gdbScriptFile << "# Too many anchors were found ("
-                       << dec << _staticAnchorPoints.size()
-                       << ") ... omitting anchor points\n";
+    const Allocations::Graph<Offset>& graph = *(Base::_allocationGraph);
+    for (typename Allocations::Finder<Offset>::AllocationIndex i = 0;
+         i < numAllocations; ++i) {
+      const typename Allocations::Finder<Offset>::Allocation* allocation =
+          finder.AllocationAt(i);
+      if (!allocation->IsUsed() || !graph.IsStaticAnchorPoint(i)) {
+        continue;
       }
-      for (AnchorPointMapConstIterator it = _staticAnchorPoints.begin();
-           it!= _staticAnchorPoints.end(); ++it) {
-         for (OffsetVectorConstIterator itVec = it->second.begin();
-              itVec != it->second.end(); ++itVec) {
-            gdbScriptFile << "printf \"ANCHOR " << hex << *itVec << "\\n\""
-                          << '\n'
-                          << "info symbol 0x" << hex << *itVec << '\n';
-         }
+      const std::vector<Offset>* anchors = graph.GetStaticAnchors(i);
+      typename std::vector<Offset>::const_iterator itAnchorsEnd =
+          anchors->end();
+      for (typename std::vector<Offset>::const_iterator itAnchors =
+               anchors->begin();
+           itAnchors != itAnchorsEnd; ++itAnchors) {
+        gdbScriptFile << "printf \"ANCHOR " << std::hex << *itAnchors << "\\n\""
+                      << '\n'
+                      << "info symbol 0x" << std::hex << *itAnchors << '\n';
       }
-      // TODO - possibly handle failed I/O in some way.
-#endif
+    }
+    // TODO - possibly handle failed I/O in some way.
     if (writeSymreqs) {
       gdbScriptFile << "set logging off\n";
       gdbScriptFile << "set logging overwrite 0\n";
@@ -796,7 +781,7 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
       gdbScriptFile.close();
     }
   }
-  void FindStaticAnchorRanges() const {
+  void FindStaticAnchorRanges() {
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
         itEnd = Base::_virtualMemoryPartition.EndUnclaimedImages();
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =

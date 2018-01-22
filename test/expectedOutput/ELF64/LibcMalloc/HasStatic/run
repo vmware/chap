@@ -1,0 +1,18 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program.  In
+# this particular core there is a single used allocation at 601010 and it is
+# anchored both by registers and stack for the current thread.
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$1 core.26574 << DONE
+redirect on
+show used
+list staticanchorpoints
+explain used
+DONE

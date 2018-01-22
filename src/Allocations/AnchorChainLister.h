@@ -2,26 +2,27 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include "Graph.h"
-#include "SignatureDirectory.h"
 #include "../Commands/Runner.h"
 #include "../InModuleDescriber.h"
 #include "../StackDescriber.h"
+#include "Graph.h"
+#include "SignatureDirectory.h"
 namespace chap {
 namespace Allocations {
 template <typename Offset>
-class AnchorChainLister
-    : public Graph<Offset>::AnchorChainVisitor {
+class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
  public:
   AnchorChainLister(const InModuleDescriber<Offset>& inModuleDescriber,
                     const StackDescriber<Offset>& stackDescriber,
                     const Graph<Offset>& graph,
                     const SignatureDirectory<Offset>* signatureDirectory,
+                    const AnchorDirectory<Offset>* anchorDirectory,
                     Commands::Context& context, Offset anchoree)
       : _graph(graph),
         _inModuleDescriber(inModuleDescriber),
         _stackDescriber(stackDescriber),
         _signatureDirectory(signatureDirectory),
+        _anchorDirectory(anchorDirectory),
         _context(context),
         _anchoree(anchoree),
         _numStaticAnchorChainsShown(0),
@@ -56,8 +57,15 @@ class AnchorChainLister
          it != staticAddrs.end(); ++it) {
       Offset staticAddr = *it;
       _inModuleDescriber.Describe(_context, staticAddr, false);
-      output << "Static address " << staticAddr << " references"
-             << (isDirect ? " " : " anchor point ") << address << "\n";
+      output << "Static address " << staticAddr;
+      if (_anchorDirectory != 0) {
+        const std::string& name = _anchorDirectory->Name(staticAddr);
+        if (!name.empty()) {
+          output << " (" << name << ")";
+        }
+      }
+      output << " references" << (isDirect ? " " : " anchor point ") << address
+             << "\n";
     }
     _numStaticAnchorChainsShown++;
     if (isDirect) {
@@ -150,6 +158,7 @@ class AnchorChainLister
   const InModuleDescriber<Offset>& _inModuleDescriber;
   const StackDescriber<Offset>& _stackDescriber;
   const SignatureDirectory<Offset>* _signatureDirectory;
+  const AnchorDirectory<Offset>* _anchorDirectory;
   Commands::Context& _context;
   const Offset _anchoree;
   size_t _numStaticAnchorChainsShown;
@@ -159,8 +168,8 @@ class AnchorChainLister
   size_t _numDirectStackAnchorChainsShown;
   size_t _numDirectRegisterAnchorChainsShown;
 
-  void ShowSignatureIfPresent(Commands::Output& output,
-                              Offset size, const char* image) {
+  void ShowSignatureIfPresent(Commands::Output& output, Offset size,
+                              const char* image) {
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
       if ((_signatureDirectory != ((SignatureDirectory<Offset>*)(0))) &&
