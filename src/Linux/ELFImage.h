@@ -209,7 +209,20 @@ class ELFImage {
                     ((_fileSize - _elfHeader->e_phoff) / entrySize) * entrySize;
     }
     for (; headerImage < headerLimit; headerImage += entrySize) {
-      if (visitor((ProgramHeader *)headerImage)) {
+      ProgramHeader *programHeader;
+      Offset align = programHeader->p_align;
+      if ((align ^ (align - 1)) != ((align << 1) - 1)) {
+        /*
+         * So far this has only been seen in a fuzzed core, where e_phnum
+         * in the ELF header was clobbered, but it is pretty simple to
+         * handle it.  There is an annoying tradeoff here in that if the
+         * p_align field of a program header gets clobbered, that will cause
+         * the remaining program headers to be ignored, but we really don't
+         * expect that to happen either.
+         */
+        break;
+      }
+      if (visitor(programHeader)) {
         return true;
       }
     }
@@ -233,10 +246,34 @@ class ELFImage {
       headerLimit = headerImage +
                     ((_fileSize - _elfHeader->e_phoff) / entrySize) * entrySize;
     }
+    
     for (; headerImage < headerLimit; headerImage += entrySize) {
       ProgramHeader *programHeader = (ProgramHeader *)headerImage;
+      Offset align = programHeader->p_align;
+      if ((align ^ (align - 1)) != ((align << 1) - 1)) {
+        /*
+         * So far this has only been seen in a fuzzed core, where e_phnum
+         * in the ELF header was clobbered, but it is pretty simple to
+         * handle it.  There is an annoying tradeoff here in that if the
+         * p_align field of a program header gets clobbered, that will cause
+         * the remaining program headers to be ignored, but we really don't
+         * expect that to happen either.
+         */
+        std::cerr << "Program header at offset 0x" << std::hex
+                  << ((char *)programHeader - _image)
+                  << " has unexpected alignment 0x" << align
+                  << ".\nPerhaps the e_phnum value in the ELF header"
+                     " is invalid.\n";
+        break;
+      }
       if (programHeader->p_type != PT_NOTE) {
         continue;
+      }
+      if (programHeader->p_offset == 0) {
+        std::cerr << "Program header at offset 0x" << std::hex
+                  << ((char *)programHeader - _image)
+                  << " in process image has invalid p_offset 0.\n";
+        break;
       }
       if (_fileSize < (programHeader->p_offset + programHeader->p_filesz)) {
         /*
@@ -253,6 +290,12 @@ class ELFImage {
         const char *pName = (const char *)(noteHeader + 1);
 
         int nameSize = noteHeader->n_namesz;
+        if (nameSize > (limit - pName)) {
+          std::cerr << "A PT_NOTE section at offset 0x"
+                    << programHeader->p_offset
+                    << " in the core is not currently parseable.\n";
+          break;
+        }
         std::string name;
         if (nameSize > 0) {
           /*
