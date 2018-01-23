@@ -1,0 +1,17 @@
+Used allocation at 604010 of size 28
+ 0:                e                e                0 676f6220656d6f73
+20:     79656b207375 
+
+Used allocation at 604040 of size 38
+ 0:                1           6032e8           6040c0                0
+20:           604028               5c                0 
+
+Used allocation at 604080 of size 38
+ 0:               11               11                0 20726568746f6e61
+20: 656b207375676f62               79                0 
+
+Used allocation at 6040c0 of size 38
+ 0:                0           604040                0                0
+20:           604098               5d                0 
+
+4 allocations use 0xd0 (208) bytes.
