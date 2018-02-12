@@ -15,7 +15,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   typedef ProcessImage<Offset> Base;
   typedef VirtualAddressMap<Offset> AddressMap;
   typedef typename AddressMap::Reader Reader;
-  typedef typename AddressMap::NotMapped NotMapped;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
   LinuxProcessImage(const AddressMap& virtualAddressMap,
                     const ThreadMap<Offset>& threadMap,
@@ -71,10 +70,231 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   }
 
  protected:
-  void FindModules() {
-    Offset executableAddress = 0;
+  bool CheckChainMember(Offset* image, Offset candidate,
+                        typename VirtualAddressMap<Offset>::Reader& reader) {
+    Offset BAD = 0xbadbad;
+    if (((((Offset*)(image))[0] & 0xfff) != 0) ||
+        (((Offset*)(image))[5] != candidate)) {
+      return false;
+    }
+    Offset current = candidate;
+    size_t numChecked = 0;
+    for (; numChecked < 1000; ++numChecked) {
+      Offset next = reader.ReadOffset(current + 3 * sizeof(Offset), BAD);
+      if (next == 0) {
+        break;
+      }
+      if (next == BAD) {
+        return false;
+      }
+      Offset nameStart = reader.ReadOffset(next + sizeof(Offset), BAD);
+      if ((nameStart == BAD) || ((reader.ReadOffset(next, BAD) & 0xfff) != 0) ||
+          (reader.ReadOffset(next + 5 * sizeof(Offset), BAD) != next) ||
+          (reader.ReadOffset(next + 4 * sizeof(Offset), BAD) != current)) {
+        return false;
+      }
+      current = next;
+    }
+    if (numChecked == 1000) {
+      return false;
+    }
+    current = candidate;
+    Offset chainHead = 0;
+    for (numChecked = 0; numChecked < 1000; ++numChecked) {
+      Offset prev = reader.ReadOffset(current + 4 * sizeof(Offset), BAD);
+      if (prev == 0) {
+        chainHead = current;
+        break;
+      }
+      if (prev == BAD) {
+        return false;
+      }
+      Offset nameStart = reader.ReadOffset(prev + sizeof(Offset), BAD);
+      if ((nameStart == BAD) || ((reader.ReadOffset(prev, BAD) & 0xfff) != 0) ||
+          (reader.ReadOffset(prev + 5 * sizeof(Offset), BAD) != prev) ||
+          (reader.ReadOffset(prev + 3 * sizeof(Offset), BAD) != current)) {
+        return false;
+      }
+      current = prev;
+    }
+    if (chainHead == 0) {
+      return false;
+    }
+
+    size_t chainLength = 0;
+    size_t expectedNumVotes = 0;
+    Offset maxStructSize = (Offset)(0x1000);
+    for (Offset link = chainHead; link != 0;) {
+      chainLength++;
+      if (reader.ReadOffset(link, 0) != 0) {
+        expectedNumVotes++;
+      }
+      Offset next = reader.ReadOffset(link + 3 * sizeof(Offset), BAD);
+      if (link < next) {
+        Offset maxSize = (next - link);
+        if (maxSize < maxStructSize) {
+          maxStructSize = maxSize;
+        }
+      }
+      link = next;
+    }
+
+    Offset bestNumVotes = 0;
+    Offset bestOffsetOfPair = 0;
+    for (Offset offsetOfPair = 64 * sizeof(Offset);
+         offsetOfPair < maxStructSize; offsetOfPair += sizeof(Offset)) {
+      Offset numVotes = 0;
+      for (Offset link = chainHead; link != 0;
+           link = reader.ReadOffset(link + 3 * sizeof(Offset), BAD)) {
+        Offset firstOffset = reader.ReadOffset(link, 0);
+        if ((firstOffset != 0) &&
+            (reader.ReadOffset(link + offsetOfPair, 0) == firstOffset)) {
+          numVotes++;
+        }
+      }
+      if (numVotes > bestNumVotes) {
+        bestNumVotes = numVotes;
+        bestOffsetOfPair = offsetOfPair;
+        if (bestNumVotes == expectedNumVotes) {
+          break;
+        }
+      }
+    }
+    if (bestNumVotes == 0) {
+      expectedNumVotes = chainLength;
+      for (Offset offsetOfPair = 64 * sizeof(Offset);
+           offsetOfPair < maxStructSize; offsetOfPair += sizeof(Offset)) {
+        Offset numVotes = 0;
+        for (Offset link = chainHead; link != 0;
+             link = reader.ReadOffset(link + 3 * sizeof(Offset), BAD)) {
+          Offset base = reader.ReadOffset(link + offsetOfPair, BAD);
+          if ((base & 0xfff) != 0) {
+            continue;
+          }
+          Offset limit =
+              reader.ReadOffset(link + offsetOfPair + sizeof(Offset), BAD);
+          if (base >= limit) {
+            continue;
+          }
+          typename VirtualAddressMap<Offset>::const_iterator it =
+              Base::_virtualAddressMap.find(base);
+          if ((it != Base::_virtualAddressMap.end()) &&
+              ((it.Flags() & RangeAttributes::IS_WRITABLE) == 0) &&
+              (it.Base() == base)) {
+            numVotes++;
+          }
+        }
+        if (numVotes > bestNumVotes) {
+          bestNumVotes = numVotes;
+          bestOffsetOfPair = offsetOfPair;
+          if (bestNumVotes == expectedNumVotes) {
+            break;
+          }
+        }
+      }
+    }
+    if (bestNumVotes == 0) {
+      std::cerr << "Cannot figure out how to identify module ends.\n";
+      return false;
+    }
+    for (Offset link = chainHead; link != 0;
+         link = reader.ReadOffset(link + 3 * sizeof(Offset), BAD)) {
+      const char* name = (char*)(0);
+      if (link == chainHead) {
+        name = "main executable";
+      } else {
+        Offset nameStart = reader.ReadOffset(link + sizeof(Offset), BAD);
+        if (nameStart == BAD) {
+          std::cerr << "Module chain entry at 0x" << std::hex << link
+                    << " is not fully mapped.\n";
+          continue;
+        }
+        if (nameStart == 0) {
+          std::cerr << "Module chain entry at 0x" << std::hex << link
+                    << " has no name pointer.\n";
+          continue;
+        }
+        typename VirtualAddressMap<Offset>::const_iterator it =
+            Base::_virtualAddressMap.find(nameStart);
+        if (it == Base::_virtualAddressMap.end()) {
+          std::cerr << "Module chain entry at 0x" << std::hex << link
+                    << " has an invalid name pointer.\n";
+          continue;
+        }
+        if ((it.Flags() & RangeAttributes::IS_MAPPED) == 0) {
+          std::cerr << "Module chain entry at 0x" << std::hex << link
+                    << " has an unmapped name.\n";
+          continue;
+        }
+        Offset numBytesFound =
+            Base::_virtualAddressMap.FindMappedMemoryImage(nameStart, &name);
+        if (numBytesFound < 2 || name[0] == 0) {
+          std::cerr << "Module chain entry at 0x" << std::hex << link
+                    << " has an empty or invalid name.\n";
+          continue;
+        }
+      }
+      Offset base = reader.ReadOffset(link + bestOffsetOfPair, BAD);
+      Offset limit =
+          reader.ReadOffset(link + bestOffsetOfPair + sizeof(Offset), BAD);
+      if (base == BAD || limit == BAD) {
+        std::cerr << "Module chain entry at 0x" << std::hex << link
+                  << " is not fully mapped.\n";
+        continue;
+      }
+      if (base == 0 || (base & 0xfff) != 0) {
+        std::cerr << "Module chain entry at 0x" << std::hex << link
+                  << " has unexpected module base 0x" << base << ".\n";
+        continue;
+      }
+      if (limit < base) {
+        std::cerr << "Module chain entry at 0x" << std::hex << link
+                  << " has unexpected module limit 0x" << limit << ".\n";
+        continue;
+      }
+      limit = (limit + 0xfff) & ~0xfff;
+      Base::_moduleDirectory.AddModule(base, limit - base, name);
+    }
+    return true;
+  }
+
+  /*
+   * Try to find a loader chain with the guess that at least on member has
+   * the expected alignment, which is assumed but not checked to be a power
+   * of 2.
+   */
+  bool FindModulesByAlignedLink(Offset expectedAlignment) {
     typename AddressMap::const_iterator itEnd = Base::_virtualAddressMap.end();
 
+    typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
+    for (typename AddressMap::const_iterator it =
+             Base::_virtualAddressMap.begin();
+         it != itEnd; ++it) {
+      const char* imageBase = it.GetImage();
+      if (imageBase == 0) {
+        continue;
+      }
+      Offset base = it.Base();
+      Offset align = base & (expectedAlignment - 1);
+      if ((align) != 0) {
+        base += (expectedAlignment - align);
+        imageBase += (expectedAlignment - align);
+      }
+      Offset limit = it.Limit() - 0x2f;
+      const char* image = imageBase;
+      for (Offset candidate = base; candidate <= limit;
+           candidate += expectedAlignment) {
+        if (CheckChainMember((Offset*)(image), candidate, reader)) {
+          return true;
+        }
+        image += expectedAlignment;
+      }
+    }
+    return false;
+  }
+  void FindModulesByMappedImages() {
+    Offset executableAddress = 0;
+    typename AddressMap::const_iterator itEnd = Base::_virtualAddressMap.end();
     for (typename AddressMap::const_iterator it =
              Base::_virtualAddressMap.begin();
          it != itEnd; ++it) {
@@ -338,6 +558,12 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
       }
     }
   }
+  void FindModules() {
+    if (!FindModulesByAlignedLink(0x1000) &&
+        !FindModulesByAlignedLink(sizeof(Offset))) {
+      FindModulesByMappedImages();
+    }
+  }
 
   void RefreshSignatureDirectory() const {
     if (Base::_allocationFinder == 0) {
@@ -589,10 +815,13 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
     Offset typeInfoPointerAddress = signature - sizeof(Offset);
 
     typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
-    try {
-      Offset typeInfoAddress = reader.ReadOffset(typeInfoPointerAddress);
-      Offset typeInfoNameAddress =
-          reader.ReadOffset(typeInfoAddress + sizeof(Offset));
+    Offset typeInfoAddress = reader.ReadOffset(typeInfoPointerAddress, 0);
+    if (typeInfoAddress == 0) {
+      return emptySignatureName;
+    }
+    Offset typeInfoNameAddress =
+        reader.ReadOffset(typeInfoAddress + sizeof(Offset), 0);
+    if (typeInfoNameAddress != 0) {
       char buffer[1000];
       buffer[sizeof(buffer) - 1] = '\000';
       size_t numToCopy = sizeof(buffer) - 1;
@@ -610,9 +839,8 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
           return UnmangledTypeinfoName(buffer);
         }
       }
-    } catch (typename VirtualAddressMap<Offset>::NotMapped&) {
     }
-    return "";
+    return emptySignatureName;
   }
 
   bool ReadSymdefsFile() const {

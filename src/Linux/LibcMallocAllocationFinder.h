@@ -425,13 +425,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Reader reader(_addressMap);
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
-      try {
-        Offset top = reader.ReadOffset(arena._address + candidate);
-        Offset topSizeAndFlags = reader.ReadOffset(top + OFFSET_SIZE);
-        if (((top + (topSizeAndFlags & ~7)) & 0xFFF) == 0) {
+      Offset top = reader.ReadOffset(arena._address + candidate, 0);
+      if (top != 0) {
+        Offset topSizeAndFlags = reader.ReadOffset(top + OFFSET_SIZE, 0);
+        if ((topSizeAndFlags != 0) &&
+            (((top + (topSizeAndFlags & ~7)) & 0xFFF) == 0)) {
           numVotes++;
         }
-      } catch (NotMapped&) {
       }
     }
     return numVotes;
@@ -443,15 +443,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
       Offset adjustedHeader = arena._address + candidate - OFFSET_SIZE * 2;
-      try {
-        Offset first = reader.ReadOffset(adjustedHeader + OFFSET_SIZE * 2);
-        Offset last = reader.ReadOffset(adjustedHeader + OFFSET_SIZE * 3);
-        if ((first == adjustedHeader && last == adjustedHeader) ||
-            (reader.ReadOffset(first + OFFSET_SIZE * 3) == adjustedHeader &&
-             reader.ReadOffset(last + OFFSET_SIZE * 2) == adjustedHeader)) {
-          numVotes++;
-        }
-      } catch (NotMapped&) {
+      Offset first = reader.ReadOffset(adjustedHeader + OFFSET_SIZE * 2, 0);
+      Offset last = reader.ReadOffset(adjustedHeader + OFFSET_SIZE * 3, 0);
+      if ((first == adjustedHeader && last == adjustedHeader) ||
+          (reader.ReadOffset(first + OFFSET_SIZE * 3, 0) == adjustedHeader &&
+           reader.ReadOffset(last + OFFSET_SIZE * 2, 0) == adjustedHeader)) {
+        numVotes++;
       }
     }
     return numVotes;
@@ -463,25 +460,22 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Reader reader(_addressMap);
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
-      try {
-        Offset next = reader.ReadOffset(arena._address + candidate);
-        if ((next & (OFFSET_SIZE - 1)) == 0 && next != 0) {
-          if (_arenas.find(next) != _arenas.end()) {
+      Offset next = reader.ReadOffset(arena._address + candidate, 0);
+      if ((next != 0) && ((next & (OFFSET_SIZE - 1)) == 0)) {
+        if (_arenas.find(next) != _arenas.end()) {
+          numVotes++;
+        } else {
+          Offset nextNext = reader.ReadOffset(next + candidate, 0);
+          if ((nextNext != 0) && (_arenas.find(nextNext) != _arenas.end())) {
             numVotes++;
-          } else {
-            Offset nextNext = reader.ReadOffset(next + candidate);
-            if (_arenas.find(nextNext) != _arenas.end()) {
-              numVotes++;
-              if ((next & 0xFFFFF) != (OFFSET_SIZE * 4)) {
-                mainArenaCandidate = next;
-              } else {
-                std::cerr << "Arena at " << std::hex << arena._address
-                          << " has unexpected next: " << next << std::endl;
-              }
+            if ((next & 0xFFFFF) != (OFFSET_SIZE * 4)) {
+              mainArenaCandidate = next;
+            } else {
+              std::cerr << "Arena at " << std::hex << arena._address
+                        << " has unexpected next: " << next << std::endl;
             }
           }
         }
-      } catch (NotMapped&) {
       }
     }
     return numVotes;
@@ -492,12 +486,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Reader reader(_addressMap);
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
-      try {
-        Offset size = reader.ReadOffset(arena._address + candidate);
+      Offset size = reader.ReadOffset(arena._address + candidate, 0);
+      if (size != 0) {
         Offset maxSize =
-            reader.ReadOffset(arena._address + candidate + OFFSET_SIZE);
-        if (_arenas.find(size) == _arenas.end() && size != 0 &&
-            (size & 0xFFF) == (maxSize & 0xFFF)) {
+            reader.ReadOffset(arena._address + candidate + OFFSET_SIZE, 0);
+        if ((maxSize != 0) && (_arenas.find(size) == _arenas.end()) &&
+            ((size & 0xFFF) == (maxSize & 0xFFF))) {
           /*
            * Note that for recent libc builds, allocation runs no longer
            * need to start on page boundaries but they still need to end
@@ -505,7 +499,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
            */
           numVotes++;
         }
-      } catch (NotMapped&) {
       }
     }
     return numVotes;
@@ -517,15 +510,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
       Offset possibleAllocationStart = arena._address + candidate;
-      try {
-        if ((reader.ReadOffset(possibleAllocationStart) == 0)) {
-          Offset sizeAndFlags =
-              reader.ReadOffset(possibleAllocationStart + OFFSET_SIZE);
-          if ((sizeAndFlags & ~(_maxHeapSize - 4)) == 1) {
-            numVotes++;
-          }
+      if ((reader.ReadOffset(possibleAllocationStart, ~0) == 0)) {
+        Offset sizeAndFlags =
+            reader.ReadOffset(possibleAllocationStart + OFFSET_SIZE, 0);
+        if ((sizeAndFlags & ~(_maxHeapSize - 4)) == 1) {
+          numVotes++;
         }
-      } catch (NotMapped&) {
       }
     }
     return numVotes;

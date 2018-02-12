@@ -11,10 +11,20 @@ class ModuleDirectory {
  public:
   void AddModule(Offset baseAddress, Offset imageSize, std::string name) {
     _rangeMapper.MapRange(baseAddress, imageSize, name);
-    _rangesByName.insert(
-        std::make_pair(name, std::make_pair(baseAddress, imageSize)));
+    if (!_rangesByName
+             .insert(
+                 std::make_pair(name, std::make_pair(baseAddress, imageSize)))
+             .second) {
+      if (name.empty()) {
+        std::cerr << "Warning, there are at least two modules for which "
+                     "the name is not known.\n";
+      } else {
+        std::cerr << "Warning, there are at least two modules for which "
+                     "the name is \""
+                  << name << "\".\n";
+      }
+    }
   }
-
   bool Find(const std::string& name, Offset& base, Offset& size) const {
     typename std::map<std::string, std::pair<Offset, Offset> >::const_iterator
         it = _rangesByName.find(name);

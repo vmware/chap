@@ -93,6 +93,11 @@ class VirtualAddressMap {
           _image((const char *)0),
           _base(0),
           _limit(0) {}
+    /*
+     * This form, which throws an exception if the address is not mapped,
+     * should be used only if the address is actually expected to be mapped,
+     * so as to avoid rather expensive control flow by exception.
+     */
     Offset ReadOffset(Offset address) {
       Offset readLimit = address + sizeof(Offset);
       if (readLimit < address) {  // wrap
@@ -118,6 +123,41 @@ class VirtualAddressMap {
       }
       return *((Offset *)(_image + (address - _base)));
     }
+
+    /*
+     * This form should be used whenever there is a significant chance that
+     * the specified address will not be mapped.
+     */
+    Offset ReadOffset(Offset address, Offset defaultValue) {
+      Offset readLimit = address + sizeof(Offset);
+      if (readLimit < address) {  // wrap
+        return defaultValue;
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            return defaultValue;
+          }
+        }
+        if (readLimit > _limit) {
+          return defaultValue;
+        }
+      }
+      return *((Offset *)(_image + (address - _base)));
+    }
+    /*
+     * This form, which throws an exception if the address is not mapped,
+     * should be used only if the address is actually expected to be mapped,
+     * so as to avoid rather expensive control flow by exception.
+     */
     uint16_t ReadU16(Offset address) {
       Offset readLimit = address + sizeof(uint16_t);
       if (readLimit < address) {  // wrap
@@ -143,6 +183,40 @@ class VirtualAddressMap {
       }
       return *((uint16_t *)(_image + (address - _base)));
     }
+    /*
+     * This form should be used whenever there is a significant chance that
+     * the specified address will not be mapped.
+     */
+    uint16_t ReadU16(Offset address, uint16_t defaultValue) {
+      Offset readLimit = address + sizeof(uint16_t);
+      if (readLimit < address) {  // wrap
+        return defaultValue;
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            return defaultValue;
+          }
+        }
+        if (readLimit > _limit) {
+          return defaultValue;
+        }
+      }
+      return *((uint16_t *)(_image + (address - _base)));
+    }
+    /*
+     * This form, which throws an exception if the address is not mapped,
+     * should be used only if the address is actually expected to be mapped,
+     * so as to avoid rather expensive control flow by exception.
+     */
     uint32_t ReadU32(Offset address) {
       Offset readLimit = address + sizeof(uint32_t);
       if (readLimit < address) {  // wrap
@@ -168,6 +242,40 @@ class VirtualAddressMap {
       }
       return *((uint32_t *)(_image + (address - _base)));
     }
+    /*
+     * This form should be used whenever there is a significant chance that
+     * the specified address will not be mapped.
+     */
+    uint32_t ReadU32(Offset address, uint32_t defaultValue) {
+      Offset readLimit = address + sizeof(uint32_t);
+      if (readLimit < address) {  // wrap
+        return defaultValue;
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            return defaultValue;
+          }
+        }
+        if (readLimit > _limit) {
+          return defaultValue;
+        }
+      }
+      return *((uint32_t *)(_image + (address - _base)));
+    }
+    /*
+     * This form, which throws an exception if the address is not mapped,
+     * should be used only if the address is actually expected to be mapped,
+     * so as to avoid rather expensive control flow by exception.
+     */
     uint64_t ReadU64(Offset address) {
       Offset readLimit = address + sizeof(uint64_t);
       if (readLimit < address) {  // wrap
@@ -192,6 +300,94 @@ class VirtualAddressMap {
         }
       }
       return *((uint64_t *)(_image + (address - _base)));
+    }
+    /*
+     * This form should be used whenever there is a significant chance that
+     * the specified address will not be mapped.
+     */
+    uint64_t ReadU64(Offset address, uint64_t defaultValue) {
+      Offset readLimit = address + sizeof(uint64_t);
+      if (readLimit < address) {  // wrap
+        return defaultValue;
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            return defaultValue;
+          }
+        }
+        if (readLimit > _limit) {
+          return defaultValue;
+        }
+      }
+      return *((uint64_t *)(_image + (address - _base)));
+    }
+    /*
+     * This form, which throws an exception if the address is not mapped,
+     * should be used only if the address is actually expected to be mapped,
+     * so as to avoid rather expensive control flow by exception.
+     */
+    uint8_t ReadU8(Offset address) {
+      Offset readLimit = address + sizeof(uint8_t);
+      if (readLimit < address) {  // wrap
+        throw NotMapped(address);
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            throw NotMapped(address);
+          }
+        }
+        if (readLimit > _limit) {
+          throw NotMapped(address);
+        }
+      }
+      return *((uint8_t *)(_image + (address - _base)));
+    }
+    /*
+     * This form should be used whenever there is a significant chance that
+     * the specified address will not be mapped.
+     */
+    uint8_t ReadU8(Offset address, uint8_t defaultValue) {
+      Offset readLimit = address + sizeof(uint8_t);
+      if (readLimit < address) {  // wrap
+        return defaultValue;
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            return defaultValue;
+          }
+        }
+        if (readLimit > _limit) {
+          return defaultValue;
+        }
+      }
+      return *((uint8_t *)(_image + (address - _base)));
     }
     template <typename T>
     void Read(Offset address, T *valueRead) {
