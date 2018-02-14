@@ -22,8 +22,6 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
       : ProcessImage<OffsetType>(virtualAddressMap, threadMap),
         _symdefsRead(false) {
     if (!truncationCheckOnly) {
-      FindModules();
-
       /*
        * Make the allocation finder eagerly unless chap is being used only
        * to determine whether the core is truncated, in which case there
@@ -34,11 +32,23 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
           new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition);
 
       /*
-       * At present this can only be done here because we may find the
-       * allocations
-       * lazily and the current algorithm for static anchor ranges is to
+       * Find any modules after checking for the libc malloc allocation
+       * finder because the libc malloc allocation finder does not depend
+       * on knowing whether or where any modules are present, and finding
+       * libc allocations first considerably shortens the time to find the
+       * modules because it allows skipping heaps and main arena allocation
+       * runs.
+       */
+      FindModules();
+
+      /*
+       * This has to be done after the allocations are found because the
+       * the current algorithm for static anchor ranges is to
        * assume that all imaged writeable memory that is not otherwise claimed
        * (for example by stack or memory allocators) is OK for anchors.
+       * At some point, we should change the algorithm to use the module
+       * ranges, but at present the module ranges are not found sufficiently
+       * consistently to allow that.
        */
       FindStaticAnchorRanges();
 
@@ -70,11 +80,11 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
   }
 
  protected:
-  bool CheckChainMember(Offset* image, Offset candidate,
+  bool CheckChainMember(Offset candidate,
                         typename VirtualAddressMap<Offset>::Reader& reader) {
     Offset BAD = 0xbadbad;
-    if (((((Offset*)(image))[0] & 0xfff) != 0) ||
-        (((Offset*)(image))[5] != candidate)) {
+    if (((reader.ReadOffset(candidate, BAD) & 0xfff) != 0) ||
+        (reader.ReadOffset(candidate + 5 * sizeof(Offset), BAD) != candidate)) {
       return false;
     }
     Offset current = candidate;
@@ -264,30 +274,28 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
    * of 2.
    */
   bool FindModulesByAlignedLink(Offset expectedAlignment) {
-    typename AddressMap::const_iterator itEnd = Base::_virtualAddressMap.end();
-
     typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
-    for (typename AddressMap::const_iterator it =
-             Base::_virtualAddressMap.begin();
-         it != itEnd; ++it) {
-      const char* imageBase = it.GetImage();
-      if (imageBase == 0) {
+    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
+        itEnd = Base::_virtualMemoryPartition.EndUnclaimedImages();
+    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
+        Base::_virtualMemoryPartition.BeginUnclaimedImages();
+    for (; it != itEnd; ++it) {
+      if ((it->_value &
+           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) !=
+          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
         continue;
       }
-      Offset base = it.Base();
+      Offset base = it->_base;
       Offset align = base & (expectedAlignment - 1);
       if ((align) != 0) {
         base += (expectedAlignment - align);
-        imageBase += (expectedAlignment - align);
       }
-      Offset limit = it.Limit() - 0x2f;
-      const char* image = imageBase;
+      Offset limit = it->_limit - 0x2f;
       for (Offset candidate = base; candidate <= limit;
            candidate += expectedAlignment) {
-        if (CheckChainMember((Offset*)(image), candidate, reader)) {
+        if (CheckChainMember(candidate, reader)) {
           return true;
         }
-        image += expectedAlignment;
       }
     }
     return false;
