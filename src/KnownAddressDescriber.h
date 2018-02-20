@@ -85,21 +85,23 @@ class KnownAddressDescriber : public Describer<Offset> {
     } else {
       output << " has unknown permissions.";
     }
+    output << "Address 0x" << std::hex << address;
     if ((flags & Attributes::IS_MAPPED) != 0) {
       if ((flags & Attributes::IS_TRUNCATED) != 0) {
-        output << "This address is mapped into a truncated section of "
+        output << " is mapped into a truncated section of "
                   "the process image.\n";
       } else {
-        output << "This address is mapped into the process image.\n";
+        output << " is mapped into the process image.\n";
       }
     } else {
-      output << "This address is not mapped into the process image.\n";
+      output << " is not mapped into the process image.\n";
     }
     if (explain) {
       Offset base = it.Base();
       Offset limit = it.Limit();
-      output << "This address is at offset 0x" << std::hex << (address - base)
-             << " in region [0x" << base << ", 0x" << limit << ").\n";
+      output << "Address 0x" << std::hex << address << " is at offset 0x"
+             << std::hex << (address - base) << " in region [0x" << base
+             << ", 0x" << limit << ").\n";
       if (flags & Attributes::IS_MAPPED) {
         if (flags & Attributes::IS_TRUNCATED) {
           output << "The region is truncated in the process image.\n";

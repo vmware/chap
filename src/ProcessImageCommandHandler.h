@@ -28,11 +28,11 @@ class ProcessImageCommandHandler {
   typedef ProcessImageCommandHandler<Offset> ThisClass;
   ProcessImageCommandHandler(const ProcessImage<Offset>* processImage)
       : _stackDescriber(0),
-        _inModuleDescriber(0),
         _patternRecognizerRegistry(processImage),
         _allocationDescriber(_inModuleDescriber, _stackDescriber,
                              _patternRecognizerRegistry, 0),
         _knownAddressDescriber(0),
+        _inModuleDescriber(0, _knownAddressDescriber),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
         _defaultAllocationsSubcommands(_allocationDescriber) {
@@ -40,6 +40,10 @@ class ProcessImageCommandHandler {
     _compoundDescriber.AddDescriber(&_allocationDescriber);
     _compoundDescriber.AddDescriber(&_stackDescriber);
     _compoundDescriber.AddDescriber(&_inModuleDescriber);
+    /*
+     * The following should alway be added last because describers are
+     * checked in the order given and the first applicable describer applies.
+     */
     _compoundDescriber.AddDescriber(&_knownAddressDescriber);
   }
 
@@ -49,8 +53,8 @@ class ProcessImageCommandHandler {
     _patternRecognizerRegistry.SetProcessImage(processImage);
     _allocationDescriber.SetProcessImage(processImage);
     _stackDescriber.SetProcessImage(processImage);
-    _inModuleDescriber.SetProcessImage(processImage);
     _knownAddressDescriber.SetProcessImage(processImage);
+    _inModuleDescriber.SetProcessImage(processImage);
     _countStacksSubcommand.SetProcessImage(processImage);
     _listStacksSubcommand.SetProcessImage(processImage);
   }
@@ -73,10 +77,10 @@ class ProcessImageCommandHandler {
  protected:
   const ProcessImage<Offset>* _processImage;
   StackDescriber<Offset> _stackDescriber;
-  InModuleDescriber<Offset> _inModuleDescriber;
   Allocations::PatternRecognizerRegistry<Offset> _patternRecognizerRegistry;
   Allocations::Describer<Offset> _allocationDescriber;
   KnownAddressDescriber<Offset> _knownAddressDescriber;
+  InModuleDescriber<Offset> _inModuleDescriber;
   CompoundDescriber<Offset> _compoundDescriber;
   Commands::CountCommand _countCommand;
   Commands::SummarizeCommand _summarizeCommand;

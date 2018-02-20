@@ -3,13 +3,16 @@
 
 #pragma once
 #include "Describer.h"
+#include "KnownAddressDescriber.h"
 #include "ProcessImage.h"
 
 namespace chap {
 template <typename Offset>
 class InModuleDescriber : public Describer<Offset> {
  public:
-  InModuleDescriber(const ProcessImage<Offset> *processImage) {
+  InModuleDescriber(const ProcessImage<Offset> *processImage,
+                    const KnownAddressDescriber<Offset> &addressDescriber)
+      : _knownAddressDescriber(addressDescriber) {
     SetProcessImage(processImage);
   }
 
@@ -35,9 +38,11 @@ class InModuleDescriber : public Describer<Offset> {
     if (_moduleDirectory != 0 &&
         _moduleDirectory->Find(address, name, base, size)) {
       Commands::Output &output = context.GetOutput();
-      output << "Address 0x" << std::hex << address
-             << " is at offset 0x" << (address - base) << " in module "
-             << name << " loaded at 0x" << base << ".\n";
+      output << "Address 0x" << std::hex << address << " is at offset 0x"
+             << (address - base) << " in module " << name << " loaded at 0x"
+             << base << ".\n";
+      _knownAddressDescriber.Describe(context, address, explain);
+
       /*
        * This should also give some indication as to whether it is text
        * or data or something else.
@@ -55,5 +60,6 @@ class InModuleDescriber : public Describer<Offset> {
 
  protected:
    const ModuleDirectory<Offset> *_moduleDirectory;
+   const KnownAddressDescriber<Offset>& _knownAddressDescriber;
 };
 }  // namespace chap
