@@ -48,7 +48,7 @@ class Explainer {
   void Visit(AllocationIndex index, const Allocation& allocation) {
     size_t size = allocation.Size();
     _sizedTally.AdjustTally(size);
-    _describer.Describe(_context, index, allocation, true);
+    _describer.Describe(_context, index, allocation, true, 0, false);
   }
 
  private:

@@ -65,12 +65,14 @@ class Describer : public chap::Describer<Offset> {
     if (allocation == 0) {
       abort();
     }
-    Describe(context, index, *allocation, explain);
+    Describe(context, index, *allocation, explain,
+             address - allocation->Address(), true);
     return true;
   }
 
   void Describe(Commands::Context& context, AllocationIndex index,
-                const Allocation& allocation, bool explain) const {
+                const Allocation& allocation, bool explain,
+                Offset offsetInAllocation, bool showOffset) const {
     size_t size = allocation.Size();
     Commands::Output& output = context.GetOutput();
     bool isUsed = false;
@@ -88,12 +90,22 @@ class Describer : public chap::Describer<Offset> {
     } else {
       isThreadCached = _finder->IsThreadCached(index);
     }
-    output << (!isUsed ? (isThreadCached ? "Thread cached free" : "Free")
-                       : !isLeaked ? "Anchored"
-                                   : isUnreferenced ? "Unreferenced" : "Leaked")
-           << " allocation at ";
     Offset address = allocation.Address();
-    output << std::hex << address << " of size " << size << "\n";
+    if (showOffset) {
+      output << "Address " << std::hex << (address + offsetInAllocation)
+             << " is at offset " << offsetInAllocation << " of\n"
+             << (!isUsed ? (isThreadCached ? "a thread-cached free" : "a free")
+                         : !isLeaked ? "an anchored"
+                                     : isUnreferenced ? "an unreferenced"
+                                                      : "a leaked");
+    } else {
+      output << (!isUsed
+                     ? (isThreadCached ? "Thread cached free" : "Free")
+                     : !isLeaked ? "Anchored"
+                                 : isUnreferenced ? "Unreferenced" : "Leaked");
+    }
+    output << " allocation at " << std::hex << address << " of size " << size
+           << "\n";
     const char* image;
     (void)_addressMap->FindMappedMemoryImage(address, &image);
     bool isUnsigned = true;
