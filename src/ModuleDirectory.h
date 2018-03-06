@@ -9,43 +9,67 @@ namespace chap {
 template <typename Offset>
 class ModuleDirectory {
  public:
-  void AddModule(Offset baseAddress, Offset imageSize, std::string name) {
-    _rangeMapper.MapRange(baseAddress, imageSize, name);
-    if (!_rangesByName
-             .insert(
-                 std::make_pair(name, std::make_pair(baseAddress, imageSize)))
-             .second) {
-      if (name.empty()) {
-        std::cerr << "Warning, there are at least two modules for which "
-                     "the name is not known.\n";
-      } else {
-        std::cerr << "Warning, there are at least two modules for which "
-                     "the name is \""
-                  << name << "\".\n";
-      }
+  static const Offset MODULE_OFFSET_UNKNOWN = ~0;
+  typedef typename std::map<std::string, RangeMapper<Offset, Offset> >
+      NameToRanges;
+  typedef typename NameToRanges::iterator iterator;
+  typedef typename NameToRanges::const_iterator const_iterator;
+  void AddRange(Offset baseAddress, Offset imageSize, std::string name,
+                Offset offsetInModule) {
+    if (!_rangeMapper.MapRange(baseAddress, imageSize, name)) {
+      std::cerr << "Warning, range [0x" << std::hex << baseAddress << ", 0x"
+                << (baseAddress + imageSize) << ")\nfor module " << name
+                << "overlaps some other mapped range.\n";
+      return;
     }
-  }
-  bool Find(const std::string& name, Offset& base, Offset& size) const {
-    typename std::map<std::string, std::pair<Offset, Offset> >::const_iterator
-        it = _rangesByName.find(name);
-    if (it != _rangesByName.end()) {
-      base = it->second.first;
-      size = it->second.second;
-      return true;
-    } else {
-      return false;
+    RangeMapper<Offset, Offset>& rangesForModule = _rangesByName[name];
+    if (!rangesForModule.MapRange(baseAddress, imageSize, offsetInModule)) {
+      /*
+       * It should be impossible to reach this, due to the fact that the
+       * given range already was known not to overlap ranges for any module
+       * not just ranges for this one.
+       */
+      abort();
     }
   }
 
-  bool Find(Offset addr, std::string& name, Offset& base, Offset& size) const {
-    return _rangeMapper.FindRange(addr, base, size, name);
+  void AddRange(Offset baseAddress, Offset imageSize, std::string name) {
+    AddRange(baseAddress, imageSize, name, MODULE_OFFSET_UNKNOWN);
   }
+
+  RangeMapper<Offset, Offset>* Find(const std::string& name) const {
+    const_iterator it = _rangesByName.find(name);
+    if (it != _rangesByName.end()) {
+      return it->second;
+    } else {
+      return (RangeMapper<Offset, Offset>*)(0);
+    }
+  }
+
+  bool Find(Offset addr, std::string& name, Offset& base, Offset& size,
+            Offset& offsetInModule) const {
+    if (_rangeMapper.FindRange(addr, base, size, name)) {
+      const_iterator it = _rangesByName.find(name);
+      if (it != _rangesByName.end()) {
+        if (it->second.FindRange(addr, base, size, offsetInModule)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  const_iterator begin() const { return _rangesByName.begin(); }
+  const_iterator end() const { return _rangesByName.end(); }
+  size_t NumModules() const { return _rangesByName.size(); }
 
  private:
   // The following allows determining which module, if any, is associated
   // with a given address.
   RangeMapper<Offset, std::string> _rangeMapper;
   // The following allows looking up memory ranges by short module name.
-  std::map<std::string, std::pair<Offset, Offset> > _rangesByName;
+  // Each entry in the map allows one to determine, for any range associated
+  // with the corresponding module, the limits of that range and possibly,
+  // if it is known, the start address relative to the binary.
+  std::map<std::string, RangeMapper<Offset, Offset> > _rangesByName;
 };
 }  // namespace chap

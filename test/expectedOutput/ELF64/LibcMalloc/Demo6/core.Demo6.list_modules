@@ -1,0 +1,17 @@
+/home/tim/Demo6 uses the following ranges:
+[0x400000, 0x402000)
+[0x601000, 0x603000)
+/lib/x86_64-linux-gnu/ld-2.23.so uses the following ranges:
+[0x7ff37e218000, 0x7ff37e23e000)
+[0x7ff37e43d000, 0x7ff37e43f000)
+/lib/x86_64-linux-gnu/libc-2.23.so uses the following ranges:
+[0x7ff37d69a000, 0x7ff37da5f000)
+/lib/x86_64-linux-gnu/libgcc_s.so.1 uses the following ranges:
+[0x7ff37dc80000, 0x7ff37de96000)
+/lib/x86_64-linux-gnu/libm-2.23.so uses the following ranges:
+[0x7ff37d391000, 0x7ff37d69a000)
+/lib/x86_64-linux-gnu/libpthread-2.23.so uses the following ranges:
+[0x7ff37da63000, 0x7ff37dc7c000)
+/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 uses the following ranges:
+[0x7ff37de96000, 0x7ff37e214000)
+7 modules use 0xea7000 bytes.

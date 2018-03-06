@@ -1,0 +1,56 @@
+Anchored allocation at 134c010 of size 11c08
+Allocation at 134c010 appears to be directly statically anchored.
+Address 0x7ff37e213d28 is at offset 0x37dd28 in range starting at 0x7ff37de96000
+for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.
+Address 0x7ff37e213d28 is readable and writable.
+Address 0x7ff37e213d28 is mapped into the process image.
+Static address 7ff37e213d28 references 134c010
+Address 0x7ff37e213d30 is at offset 0x37dd30 in range starting at 0x7ff37de96000
+for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.
+Address 0x7ff37e213d30 is readable and writable.
+Address 0x7ff37e213d30 is mapped into the process image.
+Static address 7ff37e213d30 references 134c010
+
+Anchored allocation at 135dc40 of size 38
+Allocation at 135dc40 appears to be directly anchored from at least one register.
+Register rbx for thread 1 references 135dc40
+Register rdi for thread 1 references 135dc40
+Allocation at 135dc40 appears to be directly anchored from at least one stack.
+Address 0x7ff37d390d48 is on the live part of the stack for thread 1.
+Stack address 7ff37d390d48 references 135dc40
+
+Anchored allocation at 135dc80 of size 128
+Allocation at 135dc80 appears to be directly anchored from at least one stack.
+Address 0x7ff37d390708 is on the live part of the stack for thread 1.
+Stack address 7ff37d390708 references 135dc80
+
+Anchored allocation at 135e0f0 of size 78
+Allocation at 135e0f0 appears to be directly anchored from at least one stack.
+Address 0x7fffe5518650 is on the live part of the stack for thread 2.
+Stack address 7fffe5518650 references 135e0f0
+Address 0x7fffe5518658 is on the live part of the stack for thread 2.
+Stack address 7fffe5518658 references 135e0f0
+Address 0x7fffe5518660 is on the live part of the stack for thread 2.
+Stack address 7fffe5518660 references 135e0f0
+
+Anchored allocation at 135e170 of size 78
+Allocation at 135e170 appears to be directly statically anchored.
+Address 0x602170 is at offset 0x1170 in range starting at 0x601000
+for module /home/tim/Demo6.
+Address 0x602170 is readable and writable.
+Address 0x602170 is mapped into the process image.
+Static address 602170 references 135e170
+Address 0x602178 is at offset 0x1178 in range starting at 0x601000
+for module /home/tim/Demo6.
+Address 0x602178 is readable and writable.
+Address 0x602178 is mapped into the process image.
+Static address 602178 references 135e170
+Address 0x602180 is at offset 0x1180 in range starting at 0x601000
+for module /home/tim/Demo6.
+Address 0x602180 is readable and writable.
+Address 0x602180 is mapped into the process image.
+Static address 602180 references 135e170
+Allocation at 135e170 appears to be directly anchored from at least one register.
+Register rcx for thread 2 references 135e170
+
+5 allocations use 0x11e58 (73,304) bytes.

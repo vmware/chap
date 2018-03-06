@@ -17,8 +17,7 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
   ELFCoreFileAnalyzer(const FileImage& fileImage, bool truncationCheckOnly)
       : _elfImage(fileImage),
         _virtualAddressMap(_elfImage.GetVirtualAddressMap()),
-        _processImage(_virtualAddressMap, _elfImage.GetThreadMap(),
-                      truncationCheckOnly),
+        _processImage(_elfImage, truncationCheckOnly),
         _virtualAddressMapCommandHandler(_virtualAddressMap),
         _processImageCommandHandler(truncationCheckOnly ? 0 : &_processImage) {}
 
@@ -68,7 +67,7 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
  private:
   ElfImage _elfImage;
   const VirtualAddressMap<Offset>& _virtualAddressMap;
-  const LinuxProcessImage<Offset> _processImage;
+  const LinuxProcessImage<ElfImage> _processImage;
   VirtualAddressMapCommandHandler<Offset> _virtualAddressMapCommandHandler;
   ProcessImageCommandHandler<Offset> _processImageCommandHandler;
 };

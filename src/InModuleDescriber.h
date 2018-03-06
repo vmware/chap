@@ -35,12 +35,17 @@ class InModuleDescriber : public Describer<Offset> {
     std::string name;
     Offset base;
     Offset size;
+    Offset offsetInModule;
     if (_moduleDirectory != 0 &&
-        _moduleDirectory->Find(address, name, base, size)) {
+        _moduleDirectory->Find(address, name, base, size, offsetInModule)) {
       Commands::Output &output = context.GetOutput();
       output << "Address 0x" << std::hex << address << " is at offset 0x"
-             << (address - base) << " in module " << name << " loaded at 0x"
-             << base << ".\n";
+             << (address - base) << " in range starting at 0x"
+             << base << "\nfor module " << name << ".\n";
+      if (offsetInModule != ModuleDirectory<Offset>::MODULE_OFFSET_UNKNOWN) {
+        output << "This corresponds to offset 0x" << std::hex
+               << (offsetInModule + (address - base)) << " in the binary.\n";
+      }
       _knownAddressDescriber.Describe(context, address, explain);
 
       /*

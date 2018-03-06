@@ -4,22 +4,24 @@
 #pragma once
 #include <map>
 #include "../ProcessImage.h"
+#include "ELFImage.h"
 #include "LibcMallocAllocationFinder.h"
+#include <string.h>
 
 namespace chap {
 namespace Linux {
-template <typename OffsetType>
-class LinuxProcessImage : public ProcessImage<OffsetType> {
+template <class ElfImage>
+class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
  public:
-  typedef OffsetType Offset;
+  typedef typename ElfImage::Offset Offset;
   typedef ProcessImage<Offset> Base;
   typedef VirtualAddressMap<Offset> AddressMap;
   typedef typename AddressMap::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
-  LinuxProcessImage(const AddressMap& virtualAddressMap,
-                    const ThreadMap<Offset>& threadMap,
-                    bool truncationCheckOnly)
-      : ProcessImage<OffsetType>(virtualAddressMap, threadMap),
+  LinuxProcessImage(ElfImage& elfImage, bool truncationCheckOnly)
+      : ProcessImage<Offset>(elfImage.GetVirtualAddressMap(),
+                             elfImage.GetThreadMap()),
+        _elfImage(elfImage),
         _symdefsRead(false) {
     if (!truncationCheckOnly) {
       /*
@@ -263,16 +265,51 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
         continue;
       }
       limit = (limit + 0xfff) & ~0xfff;
-      Base::_moduleDirectory.AddModule(base, limit - base, name);
+      Base::_moduleDirectory.AddRange(base, limit - base, name);
     }
     return true;
   }
 
+  bool FindModulesFromELIFNote(std::string& noteName, const char* description,
+                               typename ElfImage::ElfWord noteType) {
+    if (noteName == "CORE" && noteType == 0x46494c45) {
+      Offset numEntries = *((const Offset*)(description));
+      const Offset* arrayStart = ((const Offset*)(description)) + 2;
+      const char* stringStart =
+          description + ((2 + numEntries * 3) * sizeof(Offset));
+      const Offset* arrayLimit = arrayStart + 3 * numEntries;
+      for (const Offset* entry = arrayStart; entry < arrayLimit; entry += 3) {
+        Offset base = entry[0];
+        Offset size = entry[1] - base;
+        Base::_moduleDirectory.AddRange(base, size, std::string(stringStart));
+        stringStart += strlen(stringStart) + 1;
+      }
+      return true;
+    }
+    return false;
+  }
+
   /*
-   * Try to find a loader chain with the guess that at least on member has
-   * the expected alignment, which is assumed but not checked to be a power
-   * of 2.
+   * Try to find modules by finding an entry in the PT_NOTE section that
+   * is of type 0x46494c45 and reading the file paths and range boundaries
+   * from that entry.  This is the favored from when it works, because it
+   * provides resolved paths, whereas other forms often base path names on
+   * a referenced path, which may be a symbolic link on the system where
+   * the core was generated and may not be resolvable if chap is run
+   * elsewhere.
    */
+
+  bool FindModulesByPTNote() {
+    return _elfImage.VisitNotes(std::bind(
+        &LinuxProcessImage<ElfImage>::FindModulesFromELIFNote, this,
+        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+  }
+
+  /*
+  * Try to find a loader chain with the guess that at least one member has
+  * the expected alignment, which is assumed but not checked to be a power
+  * of 2.
+  */
   bool FindModulesByAlignedLink(Offset expectedAlignment) {
     typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
@@ -562,12 +599,12 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
                 << "\n";
 #endif
       } else {
-        Base::_moduleDirectory.AddModule(base, limit - base, name);
+        Base::_moduleDirectory.AddRange(base, limit - base, name);
       }
     }
   }
   void FindModules() {
-    if (!FindModulesByAlignedLink(0x1000) &&
+    if (!FindModulesByPTNote() && !FindModulesByAlignedLink(0x1000) &&
         !FindModulesByAlignedLink(sizeof(Offset))) {
       FindModulesByMappedImages();
     }
@@ -588,6 +625,7 @@ class LinuxProcessImage : public ProcessImage<OffsetType> {
    * first time it is present and needed.
    */
 
+  ElfImage& _elfImage;
   mutable bool _symdefsRead;
   std::map<Offset, Offset> _staticAnchorLimits;
 

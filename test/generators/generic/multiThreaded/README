@@ -1,0 +1,5 @@
+This is for generic tests that run on a multiple thread.  These are separated
+out because they are messier than the single-threaded ones.  As generic tests
+the source should not make any assumptions that are specific to a particular
+platform about what threading models available, except that to assume a 
+certain minimal C++ standard is OK.

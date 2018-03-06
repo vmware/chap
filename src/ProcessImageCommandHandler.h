@@ -20,6 +20,7 @@
 #include "StackDescriber.h"
 #include "ThreadMapCommands/CountStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
+#include "ModuleCommands/ListModules.h"
 
 namespace chap {
 template <typename Offset>
@@ -57,6 +58,7 @@ class ProcessImageCommandHandler {
     _inModuleDescriber.SetProcessImage(processImage);
     _countStacksSubcommand.SetProcessImage(processImage);
     _listStacksSubcommand.SetProcessImage(processImage);
+    _listModulesSubcommand.SetProcessImage(processImage);
   }
 
   virtual void AddCommandCallbacks(Commands::Runner& /* r */) {}
@@ -71,6 +73,7 @@ class ProcessImageCommandHandler {
     r.AddCommand(_explainCommand);
     RegisterSubcommand(r, _countStacksSubcommand);
     RegisterSubcommand(r, _listStacksSubcommand);
+    RegisterSubcommand(r, _listModulesSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
   }
 
@@ -91,6 +94,7 @@ class ProcessImageCommandHandler {
   Commands::ExplainCommand<Offset> _explainCommand;
   ThreadMapCommands::CountStacks<Offset> _countStacksSubcommand;
   ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
+  ModuleCommands::ListModules<Offset> _listModulesSubcommand;
 
   void RegisterSubcommand(Commands::Runner& runner,
                           Commands::Subcommand& subcommand) {

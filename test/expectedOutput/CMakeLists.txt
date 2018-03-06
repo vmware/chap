@@ -65,3 +65,5 @@ exout_test(PATH ELF64/LibcMalloc/Truncated
 exout_test(PATH ELF64/LibcMalloc/HasContainersAndSymbols FILES core.38066)
 exout_test(PATH ELF64/LibcMalloc/HasStatic
            FILES core.26574 core.26574.symreqs core.26574.symdefs)
+exout_test(PATH ELF64/LibcMalloc/Demo6
+           FILES core.Demo6)
