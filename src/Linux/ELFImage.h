@@ -134,23 +134,28 @@ class ELFImage {
       Offset flags = programHeader->p_flags;
       if (sizeInFile > 0) {
         Offset limit = programHeader->p_offset + sizeInFile;
-        if (size == sizeInFile) {
+        if (size >= sizeInFile) {
           /*
-           * The size of the image in the process matches the amount
-           * that the program header says was stored in the file.
+           * The size of the image in the process is at least as large
+           * the amount that the program header says was stored in the file.
+           * There have been recent cores where just the first page or so
+           * of a given virtual address region get mapped and this is
+           * reflected in a program header that supplies both the start of
+           * the region in the file and the region in the address space but
+           * gives a smaller size for the file image.
            */
           if (_fileSize >= limit) {
             /*
              * The entire range that is supposed to be present in
              * the file is there.
              */
-            AddRangeToVirtualAddressMap(base, size, adjust, true, flags);
+            AddRangeToVirtualAddressMap(base, sizeInFile, adjust, true, flags);
           } else if (_fileSize <= programHeader->p_offset) {
             /*
              * None of the range that is supposed to be present actually
              * is present, presumably due to truncation.
              */
-            AddRangeToVirtualAddressMap(base, size, adjust, false, flags);
+            AddRangeToVirtualAddressMap(base, sizeInFile, adjust, false, flags);
           } else {
             /*
              * Only part of the range that is supposed to be present
@@ -164,6 +169,13 @@ class ELFImage {
             AddRangeToVirtualAddressMap(base + present, missing, adjust, false,
                                         flags);
           }
+          if (size > sizeInFile) {
+            AddRangeToVirtualAddressMap(base + sizeInFile, size - sizeInFile,
+                                        adjust, false, flags);
+          }
+        } else {
+          std::cerr << "Warning: a region in the core is larger than the "
+             " mapped range.\n";
         }
         if (_minimumExpectedFileSize < limit) {
           _minimumExpectedFileSize = limit;

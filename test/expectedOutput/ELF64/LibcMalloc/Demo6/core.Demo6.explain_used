@@ -12,6 +12,7 @@ Address 0x7ff37e213d30 is mapped into the process image.
 Static address 7ff37e213d30 references 134c010
 
 Anchored allocation at 135dc40 of size 38
+... with signature 401888
 Allocation at 135dc40 appears to be directly anchored from at least one register.
 Register rbx for thread 1 references 135dc40
 Register rdi for thread 1 references 135dc40

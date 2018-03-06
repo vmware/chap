@@ -2274,6 +2274,7 @@ Used allocation at 134c010 of size 11c08
 11c00:                0 
 
 Used allocation at 135dc40 of size 38
+... with signature 401888
  0:           401888        100000001           401860                0
 20:                0           400e60                0 
 
