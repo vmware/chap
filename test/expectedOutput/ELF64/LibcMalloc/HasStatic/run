@@ -15,4 +15,7 @@ redirect on
 show used
 list staticanchorpoints
 explain used
+describe used %COWStringBody
+describe used %COWStringBody /extend %COWStringBody<-
+list used /minoutgoing %COWStringBody=1
 DONE

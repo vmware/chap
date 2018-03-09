@@ -1,0 +1,11 @@
+Anchored allocation at 604010 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 14, reference count 1 and a string of size 14 containing
+"some bogus key".
+
+Anchored allocation at 604080 of size 38
+This allocation matches pattern COWStringBody.
+This has capacity 17, reference count 1 and a string of size 17 containing
+"another bogus key".
+
+2 allocations use 0x60 (96) bytes.

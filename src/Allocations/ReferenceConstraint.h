@@ -8,6 +8,7 @@
 #include "../VirtualAddressMap.h"
 #include "Finder.h"
 #include "Graph.h"
+#include "PatternRecognizerRegistry.h"
 #include "SignatureChecker.h"
 
 namespace chap {
@@ -19,14 +20,16 @@ class ReferenceConstraint {
   typedef typename Finder<Offset>::Allocation Allocation;
   enum BoundaryType { MINIMUM, MAXIMUM };
   enum ReferenceType { INCOMING, OUTGOING };
-  ReferenceConstraint(const SignatureDirectory<Offset>& directory,
-                      const VirtualAddressMap<Offset>& addressMap,
-                      const std::string& signature, size_t count,
-                      bool wantUsed,
-                      BoundaryType boundaryType, ReferenceType referenceType,
-                      const Finder<Offset>& finder, const Graph<Offset>& graph)
+  ReferenceConstraint(
+      const SignatureDirectory<Offset>& directory,
+      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
+      const VirtualAddressMap<Offset>& addressMap, const std::string& signature,
+      size_t count, bool wantUsed, BoundaryType boundaryType,
+      ReferenceType referenceType, const Finder<Offset>& finder,
+      const Graph<Offset>& graph)
 
-      : _signatureChecker(directory, addressMap, signature),
+      : _signatureChecker(directory, patternRecognizerRegistry, addressMap,
+                          signature),
         _count(count),
         _wantUsed(wantUsed),
         _boundaryType(boundaryType),
@@ -35,6 +38,9 @@ class ReferenceConstraint {
         _graph(graph) {}
   bool UnrecognizedSignature() const {
     return _signatureChecker.UnrecognizedSignature();
+  }
+  bool UnrecognizedPattern() const {
+    return _signatureChecker.UnrecognizedPattern();
   }
   bool Check(AllocationIndex index) const {
     size_t numMatchingEdges = 0;
@@ -49,7 +55,7 @@ class ReferenceConstraint {
          pEdge++) {
       const Allocation& allocation = *(_finder.AllocationAt(*pEdge));
       if ((allocation.IsUsed() == _wantUsed) &&
-          (_signatureChecker.Check(allocation))) {
+          (_signatureChecker.Check(*pEdge, allocation))) {
         numMatchingEdges++;
       }
     }

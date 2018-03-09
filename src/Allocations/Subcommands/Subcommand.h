@@ -7,10 +7,11 @@
 #include <sstream>
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
+#include "../ExtendedVisitor.h"
 #include "../Finder.h"
+#include "../PatternRecognizerRegistry.h"
 #include "../ReferenceConstraint.h"
 #include "../SignatureChecker.h"
-#include "../ExtendedVisitor.h"
 namespace chap {
 namespace Allocations {
 namespace Subcommands {
@@ -20,11 +21,13 @@ class Subcommand : public Commands::Subcommand {
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
   Subcommand(typename Visitor::Factory& visitorFactory,
-             typename Iterator::Factory& iteratorFactory)
+             typename Iterator::Factory& iteratorFactory,
+             const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
       : Commands::Subcommand(visitorFactory.GetCommandName(),
                              iteratorFactory.GetSetName()),
         _visitorFactory(visitorFactory),
         _iteratorFactory(iteratorFactory),
+        _patternRecognizerRegistry(patternRecognizerRegistry),
         _processImage(0) {}
 
   void SetProcessImage(const ProcessImage<Offset>* processImage) {
@@ -85,11 +88,18 @@ class Subcommand : public Commands::Subcommand {
       signatureString = context.Positional(signaturePositional);
     }
 
-    SignatureChecker<Offset> signatureChecker(signatureDirectory, addressMap,
-                                              signatureString);
+    bool signatureOrPatternError = false;
+    SignatureChecker<Offset> signatureChecker(signatureDirectory,
+                                              _patternRecognizerRegistry,
+                                              addressMap, signatureString);
     if (signatureChecker.UnrecognizedSignature()) {
       error << "Signature \"" << signatureString << "\" is not recognized.\n";
-      return;
+      signatureOrPatternError = true;
+    }
+    if (signatureChecker.UnrecognizedPattern()) {
+      error << "Pattern \"" << signatureChecker.GetPatternName()
+            << "\" is not recognized.\n";
+      signatureOrPatternError = true;
     }
 
     Offset minSize = 0;
@@ -167,43 +177,40 @@ class Subcommand : public Commands::Subcommand {
       }
 
       switchError =
-          switchError ||
+          switchError |
           AddReferenceConstraints(
               context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
               *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
-          switchError ||
+          switchError |
           AddReferenceConstraints(
               context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
               *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
-          switchError ||
+          switchError |
           AddReferenceConstraints(
               context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
               *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
-          switchError ||
+          switchError |
           AddReferenceConstraints(
               context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
               *graph, signatureDirectory, addressMap, referenceConstraints);
       switchError =
-          switchError ||
+          switchError |
           AddReferenceConstraints(
               context, "minfreeoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, false, *allocationFinder,
               *graph, signatureDirectory, addressMap, referenceConstraints);
     }
 
-    if (switchError) {
-      return;
-    }
-    
-    ExtendedVisitor<Offset, Visitor> extendedVisitor(context, *_processImage);
-    if (extendedVisitor.HasErrors() || switchError) {
+    ExtendedVisitor<Offset, Visitor> extendedVisitor(
+        context, *_processImage, _patternRecognizerRegistry);
+    if (extendedVisitor.HasErrors() || switchError || signatureOrPatternError) {
       return;
     }
     std::unique_ptr<Visitor> visitor;
@@ -214,7 +221,7 @@ class Subcommand : public Commands::Subcommand {
     Visitor& visitorRef = *(visitor.get());
 
     bool extendedVisitorIsEnabled = extendedVisitor.IsEnabled();
-    
+
     const std::vector<std::string>& taints = _iteratorFactory.GetTaints();
     if (!taints.empty()) {
       error << "The output of this command cannot be trusted:\n";
@@ -241,7 +248,7 @@ class Subcommand : public Commands::Subcommand {
         continue;
       }
 
-      if (!signatureChecker.Check(*allocation)) {
+      if (!signatureChecker.Check(index, *allocation)) {
         continue;
       }
 
@@ -300,6 +307,7 @@ class Subcommand : public Commands::Subcommand {
  private:
   typename Visitor::Factory& _visitorFactory;
   typename Iterator::Factory& _iteratorFactory;
+  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
   const ProcessImage<Offset>* _processImage;
 
   bool AddReferenceConstraints(
@@ -333,11 +341,16 @@ class Subcommand : public Commands::Subcommand {
           switchError = true;
         }
       }
-      constraints.emplace_back(signatureDirectory, addressMap, signature, count,
-                               wantUsed, boundaryType, referenceType, finder,
-                               graph);
+      constraints.emplace_back(signatureDirectory, _patternRecognizerRegistry,
+                               addressMap, signature, count, wantUsed,
+                               boundaryType, referenceType, finder, graph);
       if (constraints.back().UnrecognizedSignature()) {
         error << "Signature \"" << signature << "\" is not recognized.\n";
+        switchError = true;
+      }
+      if (constraints.back().UnrecognizedPattern()) {
+        error << "Pattern \"" << signature.substr(1)
+              << "\" is not recognized.\n";
         switchError = true;
       }
     }

@@ -5,6 +5,7 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/SetBasedCommand.h"
 #include "../../ProcessImage.h"
+#include "../PatternRecognizerRegistry.h"
 #include "../Visitors/DefaultVisitorFactories.h"
 #include "Subcommand.h"
 namespace chap {
@@ -15,18 +16,23 @@ class SubcommandsForOneIterator {
  public:
   SubcommandsForOneIterator(
       typename Iterator::Factory& iteratorFactory,
-      typename Visitors::DefaultVisitorFactories<Offset>& visitorFactories)
+      typename Visitors::DefaultVisitorFactories<Offset>& visitorFactories,
+      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
       : _iteratorFactory(iteratorFactory),
-        _countSubcommand(visitorFactories._counterFactory, iteratorFactory),
+        _countSubcommand(visitorFactories._counterFactory, iteratorFactory,
+                         patternRecognizerRegistry),
         _summarizeSubcommand(visitorFactories._summarizerFactory,
-                             iteratorFactory),
+                             iteratorFactory, patternRecognizerRegistry),
         _enumerateSubcommand(visitorFactories._enumeratorFactory,
-                             iteratorFactory),
-        _listSubcommand(visitorFactories._listerFactory, iteratorFactory),
-        _showSubcommand(visitorFactories._showerFactory, iteratorFactory),
-        _describeSubcommand(visitorFactories._describerFactory,
-                            iteratorFactory),
-        _explainSubcommand(visitorFactories._explainerFactory, iteratorFactory),
+                             iteratorFactory, patternRecognizerRegistry),
+        _listSubcommand(visitorFactories._listerFactory, iteratorFactory,
+                        patternRecognizerRegistry),
+        _showSubcommand(visitorFactories._showerFactory, iteratorFactory,
+                        patternRecognizerRegistry),
+        _describeSubcommand(visitorFactories._describerFactory, iteratorFactory,
+                            patternRecognizerRegistry),
+        _explainSubcommand(visitorFactories._explainerFactory, iteratorFactory,
+                           patternRecognizerRegistry),
         _processImage(0) {}
 
   void SetProcessImage(const ProcessImage<Offset>* processImage) {

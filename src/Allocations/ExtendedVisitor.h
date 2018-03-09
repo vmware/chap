@@ -9,6 +9,7 @@
 #include "../ProcessImage.h"
 #include "Finder.h"
 #include "Graph.h"
+#include "PatternRecognizerRegistry.h"
 #include "SignatureChecker.h"
 #include "SignatureDirectory.h"
 
@@ -25,10 +26,12 @@ class ExtendedVisitor {
  public:
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
-  ExtendedVisitor(Commands::Context& context,
-                  const ProcessImage<Offset>& processImage)
+  ExtendedVisitor(
+      Commands::Context& context, const ProcessImage<Offset>& processImage,
+      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
       : _isEnabled(false),
         _hasErrors(false),
+        _patternRecognizerRegistry(patternRecognizerRegistry),
         _graph(0),
         _finder(processImage.GetAllocationFinder()),
         _addressMap(processImage.GetVirtualAddressMap()),
@@ -156,7 +159,8 @@ class ExtendedVisitor {
 
     _rules.reserve(numSpecs);
     for (size_t i = 0; i < numSpecs; i++) {
-      _rules.emplace_back(signatureDirectory, _addressMap,
+      _rules.emplace_back(signatureDirectory, _patternRecognizerRegistry,
+                          _addressMap,
                           specifications[ruleIndexToArgumentIndex[i]]);
       Rule& rule = _rules.back();
       if (rule._memberSignatureChecker.UnrecognizedSignature()) {
@@ -165,9 +169,21 @@ class ExtendedVisitor {
               << "\" is not recognized.\n";
         _hasErrors = true;
       }
+      if (rule._memberSignatureChecker.UnrecognizedPattern()) {
+        error << "Member pattern \""
+              << rule._memberSignatureChecker.GetPatternName()
+              << "\" is not recognized.\n";
+        _hasErrors = true;
+      }
       if (rule._extensionSignatureChecker.UnrecognizedSignature()) {
         error << "Extension signature \""
               << rule._extensionSignatureChecker.GetSignature()
+              << "\" is not recognized.\n";
+        _hasErrors = true;
+      }
+      if (rule._extensionSignatureChecker.UnrecognizedPattern()) {
+        error << "Extension pattern \""
+              << rule._extensionSignatureChecker.GetPatternName()
               << "\" is not recognized.\n";
         _hasErrors = true;
       }
@@ -282,7 +298,8 @@ class ExtendedVisitor {
       AllocationIndex candidateIndex = _numAllocations;
       const Allocation* candidateAllocation = 0;
       if (ruleCheckProgress == RuleCheckProgress::NEW_RULE) {
-        if (!rule._memberSignatureChecker.Check(*memberAllocation) ||
+        if (!rule._memberSignatureChecker.Check(memberIndex,
+                                                *memberAllocation) ||
             (rule._useOffsetInMember &&
              (rule._offsetInMember +
                   (rule._referenceIsOutgoing ? sizeof(Offset) : 1) >
@@ -342,7 +359,8 @@ class ExtendedVisitor {
       }
 
       if (!candidateAllocation->IsUsed() ||
-          !rule._extensionSignatureChecker.Check(*candidateAllocation)) {
+          !rule._extensionSignatureChecker.Check(candidateIndex,
+                                                 *candidateAllocation)) {
         continue;
       }
       if (rule._useOffsetInExtension) {
@@ -444,15 +462,17 @@ class ExtendedVisitor {
   };
   struct Rule {
     Rule(const SignatureDirectory<Offset>& directory,
+         const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
          const VirtualAddressMap<Offset>& addressMap, const Specification& spec)
         : _offsetInMember(spec._offsetInMember),
           _offsetInExtension(spec._offsetInExtension),
           _useOffsetInMember(spec._useOffsetInMember),
           _useOffsetInExtension(spec._useOffsetInExtension),
           _referenceIsOutgoing(spec._referenceIsOutgoing),
-          _memberSignatureChecker(directory, addressMap, spec._memberSignature),
-          _extensionSignatureChecker(directory, addressMap,
-                                     spec._extensionSignature),
+          _memberSignatureChecker(directory, patternRecognizerRegistry,
+                                  addressMap, spec._memberSignature),
+          _extensionSignatureChecker(directory, patternRecognizerRegistry,
+                                     addressMap, spec._extensionSignature),
           _baseState(spec._baseState),
           _newState(spec._newState) {}
 
@@ -489,6 +509,7 @@ class ExtendedVisitor {
   bool _isEnabled;
   bool _hasErrors;
   bool _canRun;
+  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
   const Graph<Offset>* _graph;
   const Finder<Offset>* _finder;
   const VirtualAddressMap<Offset>& _addressMap;

@@ -7,6 +7,7 @@
 #include <sstream>
 #include "../VirtualAddressMap.h"
 #include "Finder.h"
+#include "PatternRecognizerRegistry.h"
 #include "SignatureDirectory.h"
 
 namespace chap {
@@ -18,21 +19,37 @@ class SignatureChecker {
   enum CheckType {
     NO_CHECK_NEEDED,
     UNRECOGNIZED_SIGNATURE,
+    UNRECOGNIZED_PATTERN,
     UNSIGNED_ONLY,
-    SIGNATURE_CHECK
+    SIGNATURE_CHECK,
+    PATTERN_CHECK
   };
-  SignatureChecker(const SignatureDirectory<Offset>& directory,
-                   const VirtualAddressMap<Offset>& addressMap,
-                   const std::string& signature)
+  SignatureChecker(
+      const SignatureDirectory<Offset>& directory,
+      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
+      const VirtualAddressMap<Offset>& addressMap, const std::string& signature)
       : _checkType(NO_CHECK_NEEDED),
         _directory(directory),
+        _patternRecognizerRegistry(patternRecognizerRegistry),
         _addressMap(addressMap),
-        _signature(signature) {
+        _signature((signature[0] != '%') ? signature : ""),
+        _patternName((signature[0] == '%') ? signature.substr(1) : ""),
+        _patternRecognizer(0) {
     if (signature.empty()) {
       return;
     }
     if (signature == "-") {
       _checkType = UNSIGNED_ONLY;
+      return;
+    }
+
+    if (signature[0] == '%') {
+      _patternRecognizer = _patternRecognizerRegistry.Find(_patternName);
+      if (_patternRecognizer == 0) {
+        _checkType = UNRECOGNIZED_PATTERN;
+      } else {
+        _checkType = PATTERN_CHECK;
+      }
       return;
     }
 
@@ -59,13 +76,21 @@ class SignatureChecker {
   bool UnrecognizedSignature() const {
     return _checkType == UNRECOGNIZED_SIGNATURE;
   }
+  bool UnrecognizedPattern() const {
+    return _checkType == UNRECOGNIZED_PATTERN;
+  }
   const std::string& GetSignature() { return _signature; }
-  bool Check(const Allocation& allocation) const {
+  const std::string& GetPatternName() { return _patternName; }
+  bool Check(typename Finder<Offset>::AllocationIndex index,
+             const Allocation& allocation) const {
     switch (_checkType) {
       case NO_CHECK_NEEDED:
         return true;
       case UNRECOGNIZED_SIGNATURE:
         return false;
+      case UNRECOGNIZED_PATTERN:
+        return false;
+      case PATTERN_CHECK:
       case UNSIGNED_ONLY:
       case SIGNATURE_CHECK:
         const char* image;
@@ -80,21 +105,29 @@ class SignatureChecker {
           size = numBytesFound;
         }
 
-        return (_checkType == UNSIGNED_ONLY)
-                   ? ((size < sizeof(Offset)) ||
-                      !_directory.IsMapped(*((Offset*)image)))
-                   : ((size >= sizeof(Offset)) &&
-                      !(_signatures.find(*((Offset*)image)) ==
-                        _signatures.end()));
+        if (_checkType == PATTERN_CHECK) {
+          return _patternRecognizer->Matches(
+              index, allocation, ((size < sizeof(Offset)) ||
+                                  !_directory.IsMapped(*((Offset*)image))));
+        } else if (_checkType == UNSIGNED_ONLY) {
+          return ((size < sizeof(Offset)) ||
+                  !_directory.IsMapped(*((Offset*)image)));
+        } else {
+          return ((size >= sizeof(Offset)) &&
+                  !(_signatures.find(*((Offset*)image)) == _signatures.end()));
+        }
     }
   }
 
  private:
   enum CheckType _checkType;
   const SignatureDirectory<Offset>& _directory;
+  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
   const VirtualAddressMap<Offset>& _addressMap;
   const std::string _signature;
+  const std::string _patternName;
   std::set<Offset> _signatures;
+  const PatternRecognizer<Offset>* _patternRecognizer;
 };
 }  // namespace Allocations
 }  // namespace chap

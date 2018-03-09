@@ -16,11 +16,11 @@
 #include "CompoundDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
+#include "ModuleCommands/ListModules.h"
 #include "ProcessImage.h"
 #include "StackDescriber.h"
 #include "ThreadMapCommands/CountStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
-#include "ModuleCommands/ListModules.h"
 
 namespace chap {
 template <typename Offset>
@@ -36,7 +36,8 @@ class ProcessImageCommandHandler {
         _inModuleDescriber(0, _knownAddressDescriber),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
-        _defaultAllocationsSubcommands(_allocationDescriber) {
+        _defaultAllocationsSubcommands(_allocationDescriber,
+                                       _patternRecognizerRegistry) {
     SetProcessImage(processImage);
     _compoundDescriber.AddDescriber(&_allocationDescriber);
     _compoundDescriber.AddDescriber(&_stackDescriber);

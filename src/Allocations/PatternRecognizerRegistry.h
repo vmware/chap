@@ -64,6 +64,15 @@ class PatternRecognizerRegistry {
     }
   }
 
+  const PatternRecognizer<Offset>* Find(const std::string& name) const {
+    typename RecognizerMap::const_iterator it = _recognizers.find(name);
+    if (it != _recognizers.end()) {
+      return it->second;
+    } else {
+      return (PatternRecognizer<Offset>*)(0);
+    }
+  }
+
  private:
   const ProcessImage<Offset>* _processImage;
   const VirtualAddressMap<Offset>* _addressMap;
