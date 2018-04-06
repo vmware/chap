@@ -795,9 +795,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
          candidateOffset += OFFSET_SIZE) {
       Offset mainArenaCandidate = 0;
       size_t numVotes = CheckNextOffset(candidateOffset, mainArenaCandidate);
-      if (mainArenaCandidate == 0) {
-        continue;
-      }
       if (bestNumVotes < numVotes) {
         bestNumVotes = numVotes;
         bestMainArenaCandidate = mainArenaCandidate;
@@ -1111,37 +1108,31 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   bool IsEmptyDoubleFreeList(Reader& reader, Offset listAddr) {
-    try {
-      return reader.ReadOffset(listAddr + 2 * OFFSET_SIZE) == listAddr &&
-             reader.ReadOffset(listAddr + 3 * OFFSET_SIZE) == listAddr;
-    } catch (NotMapped&) {
-      return false;
-    }
+    return reader.ReadOffset(listAddr + 2 * OFFSET_SIZE, 0xbadbad) ==
+               listAddr &&
+           reader.ReadOffset(listAddr + 3 * OFFSET_SIZE, 0xbadbad) == listAddr;
   }
 
   bool IsNonEmptyDoubleFreeList(Reader& reader, Offset listAddr) {
     Reader freeReader(_addressMap);
-    try {
-      Offset firstFree = reader.ReadOffset(listAddr + 2 * OFFSET_SIZE);
-      Offset lastFree = reader.ReadOffset(listAddr + 3 * OFFSET_SIZE);
-      if (firstFree != listAddr && lastFree != listAddr &&
-          freeReader.ReadOffset(firstFree + 3 * OFFSET_SIZE) == listAddr &&
-          freeReader.ReadOffset(lastFree + 2 * OFFSET_SIZE) == listAddr) {
+    Offset firstFree = reader.ReadOffset(listAddr + 2 * OFFSET_SIZE, listAddr);
+    if (firstFree != listAddr) {
+      Offset lastFree = reader.ReadOffset(listAddr + 3 * OFFSET_SIZE, listAddr);
+      if (lastFree != listAddr &&
+          freeReader.ReadOffset(firstFree + 3 * OFFSET_SIZE, 0xbadbad) ==
+              listAddr &&
+          freeReader.ReadOffset(lastFree + 2 * OFFSET_SIZE, 0xbadbad) ==
+              listAddr) {
         return true;
       }
-    } catch (NotMapped&) {
     }
     return false;
   }
   bool HasPlausibleTop(Reader& reader, Offset candidateTopField) {
-    try {
-      Offset top = reader.ReadOffset(candidateTopField);
-      Offset topSizeAndFlags = reader.ReadOffset(top + OFFSET_SIZE);
-      Offset topSize = topSizeAndFlags & ~7;
-      return ((top + topSize) & 0xfff) == 0;
-    } catch (NotMapped&) {
-    }
-    return false;
+    Offset top = reader.ReadOffset(candidateTopField);
+    Offset topSizeAndFlags = reader.ReadOffset(top + OFFSET_SIZE, 0xbadbad);
+    Offset topSize = topSizeAndFlags & ~7;
+    return ((top + topSize) & 0xfff) == 0;
   }
 
   bool ScanForMainArenaByEmptyFreeLists(Offset base, Offset limit) {
@@ -1245,13 +1236,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
        */
       bool isNonMainArena = false;
       Offset heapCandidate = mainArenaCandidate - 4 * OFFSET_SIZE;
-      if ((heapCandidate & 0xffff) == 0) {
-        try {
-          if (mainArenaCandidate == reader.ReadOffset(heapCandidate)) {
-            isNonMainArena = true;
-          }
-        } catch (NotMapped&) {
-        }
+      if ((heapCandidate & 0xffff) == 0 &&
+          mainArenaCandidate == reader.ReadOffset(heapCandidate, 0xbadbad)) {
+        isNonMainArena = true;
       }
       if (!isNonMainArena) {
         _mainArenaAddress = mainArenaCandidate;
@@ -1639,12 +1626,14 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Reader reader(_addressMap);
     Offset candidate = (base + 0xFFF) & ~0xFFF;
     while (candidate <= limit - 0x1000) {
-      Offset expect0 = reader.ReadOffset(candidate);
-      Offset chunkSizeAndFlags = reader.ReadOffset(candidate + OFFSET_SIZE);
+      Offset expect0 = reader.ReadOffset(candidate, 0xbadbad);
+      Offset chunkSizeAndFlags = reader.ReadOffset(candidate + OFFSET_SIZE,
+                                                   0xbadbad);
       bool foundLargeAlloc =
           (expect0 == 0) &&
           ((chunkSizeAndFlags & ((Offset)0xFFF)) == ((Offset)2)) &&
           (chunkSizeAndFlags >= ((Offset)0x1000)) &&
+          (candidate + chunkSizeAndFlags - 2) > candidate &&
           (candidate + chunkSizeAndFlags - 2) <= limit;
       if (!foundLargeAlloc) {
         candidate += 0x1000;
