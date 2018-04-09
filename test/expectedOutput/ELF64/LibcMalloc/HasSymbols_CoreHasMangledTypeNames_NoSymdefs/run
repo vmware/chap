@@ -1,9 +1,10 @@
 # Copyright (c) 2017 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
-# This tests various commands against a core from the OneAllocated program.  In
-# this particular core there is a single used allocation at 602010 and it is
-# anchored both by registers and stack for the current thread.
+# This tests various commands against a core from the HasSymbols program. 
+# The focus here is that in the case that there is no symdefs file but
+# that the core has mangled type names, the type names are found.  There
+# is a more involved test, UnmanglingTest, that stresses unmangling more.
 
 # Note that in general we don't do show free because the output may be
 # quite large.

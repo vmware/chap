@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <string.h>
 #include <map>
+#include "../Allocations/SignatureDirectory.h"
 #include "../ProcessImage.h"
+#include "../Unmangler.h"
 #include "ELFImage.h"
 #include "LibcMallocAllocationFinder.h"
-#include <string.h>
 
 namespace chap {
 namespace Linux {
@@ -18,6 +20,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   typedef VirtualAddressMap<Offset> AddressMap;
   typedef typename AddressMap::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
+  typedef typename Allocations::SignatureDirectory<Offset> SignatureDirectory;
   LinuxProcessImage(ElfImage& elfImage, bool truncationCheckOnly)
       : ProcessImage<Offset>(elfImage.GetVirtualAddressMap(),
                              elfImage.GetThreadMap()),
@@ -642,220 +645,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     return false;
   }
 
-  std::string UnmangledTypeinfoName(char* buffer) const {
-    /*
-     * Lots of mangled names could start with something else, but typeinfo
-     * names are a bit more constrained.
-     */
-    std::string emptySignatureName;
-    char c = buffer[0];
-    if (c != 'N' && !((c >= '0') && (c <= '9')) && c != 'S') {
-      return emptySignatureName;
-    }
-
-    std::stack<char> operationStack;
-    std::stack<int> listLengthStack;
-    std::stack<std::string> separatorStack;
-    std::string unmangledName;
-    listLengthStack.push(0);
-    separatorStack.push("::");
-    std::string lastNamespace;
-    for (char* pC = buffer; *pC != '\000'; pC++) {
-      char c = *pC;
-      if (c == 'I') {  // This starts a list of template arguments;
-        unmangledName.append("<");
-        operationStack.push(c);
-        listLengthStack.push(0);
-        separatorStack.push(",");
-        continue;
-      }
-
-      if (c == 'N') {  // This starts a new namespace-qualified name
-        operationStack.push(c);
-        listLengthStack.push(0);
-        separatorStack.push("::");
-        continue;
-      }
-
-      if (c == 'E' || c == 'K' || c == 'R' || c == 'P') {
-        while (!operationStack.empty()) {
-          char op = operationStack.top();
-          if (op == 'I' || op == 'N') {
-            break;
-          }
-          if (op == 'K') {
-            unmangledName.append(" const");
-          } else if (op == 'P') {
-            unmangledName.append("*");
-          } else if (op == 'R') {
-            unmangledName.append("&");
-          }
-          operationStack.pop();
-        }
-
-        if (operationStack.empty()) {
-          return emptySignatureName;
-        }
-
-        if (c == 'E') {
-          char op = operationStack.top();
-          if (op == 'I') {
-            /*
-             * Intentionally do not worry about putting ">>" if multiple
-             * template
-             * argument lists end together because we are not going to compile
-             * this stuff and blanks are annoying for parsing the class name
-             * as command line input.
-             */
-            unmangledName.append(">");
-          } else {
-          }
-          operationStack.pop();
-          separatorStack.pop();
-          listLengthStack.pop();
-          if (!listLengthStack.empty()) {
-            listLengthStack.top()++;
-          }
-        } else {
-          operationStack.push(c);
-          char next = pC[1];
-          while (next == 'K' || next == 'R' || next == 'P') {
-            operationStack.push(next);
-            pC++;
-            next = pC[1];
-          }
-        }
-        continue;
-      }
-
-      if (listLengthStack.top() > 0) {
-        unmangledName.append(separatorStack.top());
-      }
-      listLengthStack.top()++;
-
-      if ((c >= '1') && (c <= '9')) {
-        int length = c - '0';
-        for (c = *(++pC); (c >= '0') && (c <= '9'); c = *(++pC)) {
-          length = (length * 10) + (c - '0');
-        }
-        for (int numSeen = 0; numSeen < length; numSeen++) {
-          if (pC[numSeen] == 0) {
-            return emptySignatureName;
-          }
-        }
-        unmangledName.append(pC, length);
-        if (!operationStack.empty() && listLengthStack.top() == 1) {
-          lastNamespace.assign(pC, length);
-        }
-        pC = pC + length - 1;
-        continue;
-      }
-
-      switch (c) {
-        case 'S':
-          switch (*(++pC)) {
-            case 't':
-              unmangledName.append("std");
-              break;
-            case 's':
-              unmangledName.append("std::string");
-              break;
-            case 'a':
-              unmangledName.append("std::allocator");
-              break;
-            case '_':
-              unmangledName.append(lastNamespace);
-              break;
-            default:
-              return emptySignatureName;
-          }
-          break;
-        case 'L':
-          // TODO: support constant literals other than just booleans
-          if ((pC[1] != 'b') || ((pC[2] != '0') && (pC[2] != '1')) ||
-              (pC[3] != 'E')) {
-            return emptySignatureName;
-          }
-          pC += 3;
-          unmangledName.append((*pC == '1') ? "true" : "false");
-          break;
-        case 'a':
-          unmangledName.append("signed char");
-          break;
-        case 'b':
-          unmangledName.append("bool");
-          break;
-        case 'c':
-          unmangledName.append("char");
-          break;
-        case 'd':
-          unmangledName.append("double");
-          break;
-        case 'e':
-          unmangledName.append("long double");
-          break;
-        case 'f':
-          unmangledName.append("float");
-          break;
-        case 'g':
-          unmangledName.append("__float128");
-          break;
-        case 'h':
-          unmangledName.append("unsigned char");
-          break;
-        case 'i':
-          unmangledName.append("int");
-          break;
-        case 'j':
-          unmangledName.append("unsigned int");
-          break;
-        case 'l':
-          unmangledName.append("long");
-          break;
-        case 'm':
-          unmangledName.append("unsigned long");
-          break;
-        case 'n':
-          unmangledName.append("__int128");
-          break;
-        case 'o':
-          unmangledName.append("unsigned __int128");
-          break;
-        case 's':
-          unmangledName.append("short");
-          break;
-        case 't':
-          unmangledName.append("unsigned short");
-          break;
-        case 'u':
-          unmangledName.append("unsigned long long");
-          break;
-        case 'v':
-          unmangledName.append("void");
-          break;
-        case 'w':
-          unmangledName.append("wchar_t");
-          break;
-        case 'x':
-          unmangledName.append("long long");
-          break;
-        case 'y':
-          unmangledName.append("unsigned long long");
-          break;
-        case 'z':
-          unmangledName.append("...");
-          break;
-        default:
-          return emptySignatureName;
-      }
-    }
-    if (operationStack.empty()) {
-      return unmangledName;
-    }
-
-    return emptySignatureName;
-  }
-
   std::string GetUnmangledTypeinfoName(Offset signature) const {
     std::string emptySignatureName;
     Offset typeInfoPointerAddress = signature - sizeof(Offset);
@@ -882,7 +671,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
           }
           memcpy(buffer, image + (typeInfoNameAddress - it.Base()), numToCopy);
 
-          return UnmangledTypeinfoName(buffer);
+          Unmangler<Offset> unmangler(buffer, true);
+          if (unmangler.Unmangled().empty() && buffer[0] != '\000') {
+            std::cerr << "Failed to unmangle signature 0x" << std::hex
+                      << signature << "\n";
+          }
+          return unmangler.Unmangled();
         }
       }
     }
@@ -931,21 +725,30 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         continue;
       }
       if (line.find("No symbol matches") != std::string::npos || line.empty()) {
-        signature = 0;
+        if (signature != 0) {
+          Base::_signatureDirectory.MapSignatureToName(
+              signature, "",
+              SignatureDirectory::UNWRITABLE_MISSING_FROM_SYMDEFS);
+          signature = 0;
+        }
         anchor = 0;
       }
 
       if (signature != 0) {
         size_t defStart = 0;
         size_t forPos = line.find(" for ");
-        if (forPos != std::string::npos) {
+        bool isVTable = (forPos != std::string::npos);
+        if (isVTable) {
           defStart = forPos + 5;
         }
         size_t defEnd = line.find(" in section");
         size_t plusPos = line.find(" + ");
         defEnd = plusPos;
         std::string name(line.substr(defStart, defEnd - defStart));
-        Base::_signatureDirectory.MapSignatureToName(signature, name);
+        Base::_signatureDirectory.MapSignatureToName(
+            signature, name,
+            isVTable ? SignatureDirectory::VTABLE_WITH_NAME_FROM_SYMDEFS
+                     : SignatureDirectory::UNWRITABLE_WITH_NAME_FROM_SYMDEFS);
         signature = 0;
       } else if (anchor != 0) {
         size_t defEnd = line.find(" in section");
@@ -1019,7 +822,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
       std::string typeinfoName = GetUnmangledTypeinfoName(signature);
 
-      Base::_signatureDirectory.MapSignatureToName(signature, typeinfoName);
+      Base::_signatureDirectory.MapSignatureToName(
+          signature, typeinfoName,
+          typeinfoName.empty()
+              ? SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS
+              : SignatureDirectory::VTABLE_WITH_NAME_FROM_PROCESS_IMAGE);
       if (writeSymreqs && typeinfoName.empty()) {
         gdbScriptFile << "printf \"SIGNATURE " << std::hex << signature
                       << "\\n\"" << '\n'

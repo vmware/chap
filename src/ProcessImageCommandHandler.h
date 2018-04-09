@@ -5,6 +5,7 @@
 #include "Allocations/Describer.h"
 #include "Allocations/PatternRecognizerRegistry.h"
 #include "Allocations/Subcommands/DefaultSubcommands.h"
+#include "Allocations/Subcommands/SummarizeSignatures.h"
 #include "Commands/CountCommand.h"
 #include "Commands/DescribeCommand.h"
 #include "Commands/EnumerateCommand.h"
@@ -60,6 +61,7 @@ class ProcessImageCommandHandler {
     _countStacksSubcommand.SetProcessImage(processImage);
     _listStacksSubcommand.SetProcessImage(processImage);
     _listModulesSubcommand.SetProcessImage(processImage);
+    _summarizeSignaturesSubcommand.SetProcessImage(processImage);
   }
 
   virtual void AddCommandCallbacks(Commands::Runner& /* r */) {}
@@ -75,6 +77,7 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _countStacksSubcommand);
     RegisterSubcommand(r, _listStacksSubcommand);
     RegisterSubcommand(r, _listModulesSubcommand);
+    RegisterSubcommand(r, _summarizeSignaturesSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
   }
 
@@ -96,6 +99,8 @@ class ProcessImageCommandHandler {
   ThreadMapCommands::CountStacks<Offset> _countStacksSubcommand;
   ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
   ModuleCommands::ListModules<Offset> _listModulesSubcommand;
+  Allocations::Subcommands::SummarizeSignatures<Offset>
+      _summarizeSignaturesSubcommand;
 
   void RegisterSubcommand(Commands::Runner& runner,
                           Commands::Subcommand& subcommand) {

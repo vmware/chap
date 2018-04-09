@@ -1,0 +1,8 @@
+Unsigned allocations have 1 instances taking 0x24(36) bytes.
+   Unsigned allocations of size 0x24 have 1 instances taking 0x24(36) bytes.
+Signature 8049050 (NSA::NSC::Dozen<bool,long long,unsigned long long,long double,__float128,void***,void**,void*,wchar_t,std::map<int,long,std::less<int>,std::allocator<std::pair<int const,long>>>,std::set<int,std::less<int>,std::allocator<int>>,std::string>) has 1 instances taking 0x94(148) bytes.
+Signature 8048f90 (NSA::NSC::Dozen<signed char,char,unsigned char,int,unsigned int,short,unsigned short,long,unsigned long,double,long double,float>) has 1 instances taking 0x34(52) bytes.
+Signature 8049008 (NSA::NSC::Dozen<signed char,char,unsigned char,int,unsigned int,short,unsigned short,long,unsigned long,double,long double,float>::FirstTwo) has 1 instances taking 0xc(12) bytes.
+Signature 80490e8 (NSA::NSC::Dozen<void(*)(void),bool(*)(char),char(*)(short,long),void(*)(int,...),std::string const&(*)(int,short),int(**)(void),char(**)(short,long),NSA::SB*,NSA::NSB::SA,NSA::NSB::SA&(*)(void),NSA::SB const&(*)(void),char(***)(short,long)>) has 1 instances taking 0x3c(60) bytes.
+Signature 80491a0 (NSA::NSC::Dozen<void(*)(void),void(*)(int),void(*)(int,short),int(*)(void),int(*)(int),int(*)(int,short),short(**)(int,short,long),int,int,int,int,int>) has 1 instances taking 0x34(52) bytes.
+6 allocations use 0x168 (360) bytes.

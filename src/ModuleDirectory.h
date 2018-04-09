@@ -19,7 +19,7 @@ class ModuleDirectory {
     if (!_rangeMapper.MapRange(baseAddress, imageSize, name)) {
       std::cerr << "Warning, range [0x" << std::hex << baseAddress << ", 0x"
                 << (baseAddress + imageSize) << ")\nfor module " << name
-                << "overlaps some other mapped range.\n";
+                << "\noverlaps some other mapped range.\n";
       return;
     }
     RangeMapper<Offset, Offset>& rangesForModule = _rangesByName[name];

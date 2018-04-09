@@ -16,7 +16,17 @@ namespace Allocations {
 template <class Offset>
 class SignatureDirectory {
  public:
-  typedef std::map<Offset, std::string> SignatureToNameMap;
+  enum Status {
+    UNWRITABLE_PENDING_SYMDEFS,
+    UNWRITABLE_MISSING_FROM_SYMDEFS,
+    VTABLE_WITH_NAME_FROM_SYMDEFS,
+    UNWRITABLE_WITH_NAME_FROM_SYMDEFS,
+    VTABLE_WITH_NAME_FROM_PROCESS_IMAGE,
+    VTABLE_WITH_NAME_FROM_BINARY,
+    VTABLE_WITH_NAME_FROM_BINDEFS
+  };
+
+  typedef std::map<Offset, std::pair<std::string, Status> > SignatureToNameMap;
   typedef typename SignatureToNameMap::iterator SignatureToNameIterator;
   typedef
       typename SignatureToNameMap::const_iterator SignatureToNameConstIterator;
@@ -26,28 +36,32 @@ class SignatureDirectory {
 
   SignatureDirectory() : _multipleSignaturesPerName(false) {}
 
-  void MapSignatureToName(Offset signature, std::string name) {
+  void MapSignatureToName(Offset signature, std::string name, Status status) {
     SignatureToNameIterator it = _signatureToName.find(signature);
     if (it != _signatureToName.end()) {
+      std::string& knownName = it->second.first;
+      Status& knownStatus = it->second.second;
+
       /*
        * This signature is already known to be a signature.
        */
-      if (it->second == name || name.empty()) {
+      if (name.empty() ? (knownStatus == status) : (name == knownName)) {
         /*
          * There is no new information about the name.
          */
         return;
       }
-      if (!(it->second).empty()) {
+      if (!knownName.empty()) {
         /*
          * There was a previously known name, which is now no longer
          * associated with the signature.
          */
-        _nameToSignatures[it->second].erase(signature);
+        _nameToSignatures[knownName].erase(signature);
       }
-      it->second = name;
+      knownName = name;
+      knownStatus = status;
     } else {
-      _signatureToName[signature] = name;
+      _signatureToName[signature] = std::make_pair(name, status);
     }
     if (!name.empty()) {
       std::set<Offset>& signatures = _nameToSignatures[name];
@@ -69,7 +83,7 @@ class SignatureDirectory {
   const std::string& Name(Offset signature) const {
     SignatureToNameConstIterator it = _signatureToName.find(signature);
     if (it != _signatureToName.end()) {
-      return it->second;
+      return it->second.first;
     } else {
       return NO_NAME;
     }
@@ -83,6 +97,14 @@ class SignatureDirectory {
     } else {
       return NO_SIGNATURES;
     }
+  }
+
+  SignatureToNameConstIterator BeginSignatures() const {
+    return _signatureToName.begin();
+  }
+
+  SignatureToNameConstIterator EndSignatures() const {
+    return _signatureToName.end();
   }
 
  private:

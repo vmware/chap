@@ -67,3 +67,7 @@ exout_test(PATH ELF64/LibcMalloc/HasStatic
            FILES core.26574 core.26574.symreqs core.26574.symdefs)
 exout_test(PATH ELF64/LibcMalloc/Demo6
            FILES core.Demo6)
+exout_test(PATH ELF64/LibcMalloc/UnmanglingTest
+           FILES core.26735)
+exout_test(PATH ELF32/LibcMalloc/UnmanglingTest
+           FILES core.27709)
