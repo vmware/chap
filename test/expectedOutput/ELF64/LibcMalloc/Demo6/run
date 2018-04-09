@@ -15,4 +15,5 @@ list staticanchorpoints
 explain used
 list modules
 find32 464c457f
+summarize signatures
 DONE

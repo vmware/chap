@@ -2,12 +2,14 @@
 # SPDX-License-Identifier: GPL-2.0
 
 # This tests various commands against a core from the UnmanglingTest program.
-# In this case we are basically interested just in "summarize used" because
-# we want to be sure that unmangling works cleanly.
+# In this case we are basically interested in "summarize used" because
+# we want to be sure that unmangling works cleanly and "summarize signatures"
+# should show that all the signature names came from the core.
 
 chap=$1
 
 $1 core.27709 << DONE
 redirect on
 summarize used
+summarize signatures
 DONE
