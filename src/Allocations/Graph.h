@@ -351,8 +351,8 @@ class Graph {
           }
         }
 
-        unsigned char sourceAnchorDistance = distances.GetDistance(sourceIndex);
-        unsigned char targetAnchorDistance = distances.GetDistance(targetIndex);
+        Index  sourceAnchorDistance = distances.GetDistance(sourceIndex);
+        Index targetAnchorDistance = distances.GetDistance(targetIndex);
         if ((sourceAnchorDistance == 0) ||                    // leaked
             (sourceAnchorDistance > targetAnchorDistance) ||  // wrong way
             ((sourceAnchorDistance == targetAnchorDistance) &&

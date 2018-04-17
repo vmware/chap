@@ -23,6 +23,7 @@ class IndexedDistances {
       }
       if (_distanceBits == 8) {
         _distances16.reserve(_numIndices);
+        _distances16.resize(_numIndices, 0);
         for (size_t i = 0; i < _numIndices; ++i) {
           _distances16[i] = _distances8[i];
         }
@@ -32,6 +33,7 @@ class IndexedDistances {
         distances8.swap(_distances8);
       } else if (_distanceBits == 16) {
         _distances32.reserve(_numIndices);
+        _distances32.resize(_numIndices, 0);
         for (size_t i = 0; i < _numIndices; ++i) {
           _distances32[i] = _distances16[i];
         }
