@@ -6,11 +6,13 @@ Allocation at 604010 appears to be indirectly statically anchored
 ... via anchor point 604040
 Address 0x6032f0 is at offset 0x2032f0 in range starting at 0x400000
 for module main executable.
+The relative virtual address in the module is 0x2032f0
 Address 0x6032f0 is readable and writable.
 Address 0x6032f0 is mapped into the process image.
 Static address 6032f0 (SomeBogusMap + 16) references anchor point 604040
 Address 0x603300 is at offset 0x203300 in range starting at 0x400000
 for module main executable.
+The relative virtual address in the module is 0x203300
 Address 0x603300 is readable and writable.
 Address 0x603300 is mapped into the process image.
 Static address 603300 (SomeBogusMap + 32) references anchor point 604040
@@ -28,11 +30,13 @@ Anchored allocation at 604040 of size 38
 Allocation at 604040 appears to be directly statically anchored.
 Address 0x6032f0 is at offset 0x2032f0 in range starting at 0x400000
 for module main executable.
+The relative virtual address in the module is 0x2032f0
 Address 0x6032f0 is readable and writable.
 Address 0x6032f0 is mapped into the process image.
 Static address 6032f0 (SomeBogusMap + 16) references 604040
 Address 0x603300 is at offset 0x203300 in range starting at 0x400000
 for module main executable.
+The relative virtual address in the module is 0x203300
 Address 0x603300 is readable and writable.
 Address 0x603300 is mapped into the process image.
 Static address 603300 (SomeBogusMap + 32) references 604040
@@ -49,6 +53,7 @@ Allocation at 604080 appears to be indirectly statically anchored
 ... via anchor point 6040c0
 Address 0x6032f8 is at offset 0x2032f8 in range starting at 0x400000
 for module main executable.
+The relative virtual address in the module is 0x2032f8
 Address 0x6032f8 is readable and writable.
 Address 0x6032f8 is mapped into the process image.
 Static address 6032f8 (SomeBogusMap + 24) references anchor point 6040c0
@@ -65,6 +70,7 @@ Anchored allocation at 6040c0 of size 38
 Allocation at 6040c0 appears to be directly statically anchored.
 Address 0x6032f8 is at offset 0x2032f8 in range starting at 0x400000
 for module main executable.
+The relative virtual address in the module is 0x2032f8
 Address 0x6032f8 is readable and writable.
 Address 0x6032f8 is mapped into the process image.
 Static address 6032f8 (SomeBogusMap + 24) references 6040c0

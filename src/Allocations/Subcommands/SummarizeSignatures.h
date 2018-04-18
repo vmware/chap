@@ -46,9 +46,10 @@ class SummarizeSignatures : public Commands::Subcommand {
     std::vector<size_t> counts;
     counts.resize(SignatureDirectory<Offset>::VTABLE_WITH_NAME_FROM_BINDEFS + 1,
                   0);
-    typename SignatureDirectory<Offset>::SignatureToNameConstIterator itEnd =
-        _signatureDirectory->EndSignatures();
-    for (typename SignatureDirectory<Offset>::SignatureToNameConstIterator it =
+    typename SignatureDirectory<Offset>::SignatureNameAndStatusConstIterator
+        itEnd = _signatureDirectory->EndSignatures();
+    for (typename SignatureDirectory<
+             Offset>::SignatureNameAndStatusConstIterator it =
              _signatureDirectory->BeginSignatures();
          it != itEnd; ++it) {
       typename SignatureDirectory<Offset>::Status status = it->second.second;

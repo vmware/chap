@@ -35,16 +35,20 @@ class InModuleDescriber : public Describer<Offset> {
     std::string name;
     Offset base;
     Offset size;
-    Offset offsetInModule;
+    Offset fileOffset;
+    Offset relativeVirtualAddress;
     if (_moduleDirectory != 0 &&
-        _moduleDirectory->Find(address, name, base, size, offsetInModule)) {
+        _moduleDirectory->Find(address, name, base, size, fileOffset,
+                               relativeVirtualAddress)) {
       Commands::Output &output = context.GetOutput();
       output << "Address 0x" << std::hex << address << " is at offset 0x"
-             << (address - base) << " in range starting at 0x"
-             << base << "\nfor module " << name << ".\n";
-      if (offsetInModule != ModuleDirectory<Offset>::MODULE_OFFSET_UNKNOWN) {
-        output << "This corresponds to offset 0x" << std::hex
-               << (offsetInModule + (address - base)) << " in the binary.\n";
+             << (address - base) << " in range starting at 0x" << base
+             << "\nfor module " << name << ".\n";
+      output << "The relative virtual address in the module is 0x"
+             << relativeVirtualAddress << "\n";
+      if (fileOffset != ModuleDirectory<Offset>::MODULE_OFFSET_UNKNOWN) {
+        output << "This corresponds to offset 0x" << std::hex << fileOffset
+               << " in the binary.\n";
       }
       _knownAddressDescriber.Describe(context, address, explain);
 
@@ -64,7 +68,7 @@ class InModuleDescriber : public Describer<Offset> {
   }
 
  protected:
-   const ModuleDirectory<Offset> *_moduleDirectory;
-   const KnownAddressDescriber<Offset>& _knownAddressDescriber;
+  const ModuleDirectory<Offset> *_moduleDirectory;
+  const KnownAddressDescriber<Offset> &_knownAddressDescriber;
 };
 }  // namespace chap

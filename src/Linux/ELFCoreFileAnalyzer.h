@@ -3,10 +3,10 @@
 
 #pragma once
 #include "../FileAnalyzer.h"
-#include "ProcessImageCommandHandler.h"
 #include "../VirtualAddressMapCommandHandler.h"
 #include "ELFImage.h"
 #include "LinuxProcessImage.h"
+#include "ProcessImageCommandHandler.h"
 
 namespace chap {
 namespace Linux {
@@ -17,9 +17,20 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
   ELFCoreFileAnalyzer(const FileImage& fileImage, bool truncationCheckOnly)
       : _elfImage(fileImage),
         _virtualAddressMap(_elfImage.GetVirtualAddressMap()),
-        _processImage(_elfImage, truncationCheckOnly),
-        _virtualAddressMapCommandHandler(_virtualAddressMap),
-        _processImageCommandHandler(truncationCheckOnly ? 0 : &_processImage) {}
+        _virtualAddressMapCommandHandler(_virtualAddressMap) {
+    if (_elfImage.GetELFType() == ET_CORE) {
+      _processImage.reset(
+          new LinuxProcessImage<ElfImage>(_elfImage, truncationCheckOnly));
+      if (!truncationCheckOnly) {
+        _processImageCommandHandler.reset(
+            new ProcessImageCommandHandler<Offset>(_processImage.get()));
+      }
+    } else {
+      std::cerr << "This image is an ELF file but not an ELF core.\n";
+      std::cerr
+          << "Commands related to process images will not be available.\n";
+    }
+  }
 
   /*
    * Return true if the file is known to be truncated.
@@ -57,19 +68,24 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
     // TODO: support raw operations on the file by offset
     // FileAnalyzer::AddCommandCallbacks(r);
     _virtualAddressMapCommandHandler.AddCommandCallbacks(r);
-    _processImageCommandHandler.AddCommandCallbacks(r);
+    if (_processImageCommandHandler.get() != 0) {
+      _processImageCommandHandler->AddCommandCallbacks(r);
+    }
   }
 
   virtual void AddCommands(Commands::Runner& r) {
-    _processImageCommandHandler.AddCommands(r);
+    if (_processImageCommandHandler.get() != 0) {
+      _processImageCommandHandler->AddCommands(r);
+    }
   }
 
  private:
   ElfImage _elfImage;
   const VirtualAddressMap<Offset>& _virtualAddressMap;
-  const LinuxProcessImage<ElfImage> _processImage;
   VirtualAddressMapCommandHandler<Offset> _virtualAddressMapCommandHandler;
-  ProcessImageCommandHandler<Offset> _processImageCommandHandler;
+  std::unique_ptr<LinuxProcessImage<ElfImage> > _processImage;
+  std::unique_ptr<ProcessImageCommandHandler<Offset> >
+      _processImageCommandHandler;
 };
 }  // namespace Linux
 }  // namespace chap

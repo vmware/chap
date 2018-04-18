@@ -47,11 +47,18 @@ class ModuleDirectory {
   }
 
   bool Find(Offset addr, std::string& name, Offset& base, Offset& size,
-            Offset& offsetInModule) const {
+            Offset& fileOffset, Offset& relativeVirtualAddress) const {
     if (_rangeMapper.FindRange(addr, base, size, name)) {
       const_iterator it = _rangesByName.find(name);
       if (it != _rangesByName.end()) {
-        if (it->second.FindRange(addr, base, size, offsetInModule)) {
+        relativeVirtualAddress = addr - (it->second.begin()->_base);
+        Offset regionOffsetInModule;
+        if (it->second.FindRange(addr, base, size, regionOffsetInModule)) {
+          if (regionOffsetInModule == MODULE_OFFSET_UNKNOWN) {
+            fileOffset = MODULE_OFFSET_UNKNOWN;
+          } else {
+            fileOffset = (addr - base) + regionOffsetInModule;
+          }
           return true;
         }
       }

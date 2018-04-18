@@ -96,10 +96,6 @@ class ELFImage {
       throw WrongElfClassException();
     }
 
-    if (_elfHeader->e_type != ET_CORE) {
-      throw NotElfCoreException();
-    }
-
     int entrySize = _elfHeader->e_phentsize;
     _minimumExpectedFileSize =
         _elfHeader->e_phoff + (_elfHeader->e_phnum * entrySize);
@@ -175,7 +171,7 @@ class ELFImage {
           }
         } else {
           std::cerr << "Warning: a region in the core is larger than the "
-             " mapped range.\n";
+                       " mapped range.\n";
         }
         if (_minimumExpectedFileSize < limit) {
           _minimumExpectedFileSize = limit;
@@ -193,11 +189,13 @@ class ELFImage {
     _isTruncated = (_fileSize < _minimumExpectedFileSize);
 
     try {
-      VisitNotes(
-          std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
-                              PRStatusRegInfo>::FindThreadsFromPRStatus,
-                    this, std::placeholders::_1, std::placeholders::_2,
-                    std::placeholders::_3));
+      if (_elfHeader->e_type == ET_CORE) {
+        VisitNotes(
+            std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
+                                PRStatusRegInfo>::FindThreadsFromPRStatus,
+                      this, std::placeholders::_1, std::placeholders::_2,
+                      std::placeholders::_3));
+      }
     } catch (...) {
       if (!_isTruncated) {
         std::cerr << "An error was found processing the PT_NOTE section.\n";
@@ -206,6 +204,8 @@ class ELFImage {
   }
 
   ~ELFImage() {}
+
+  uint16_t GetELFType() { return _elfHeader->e_type; }
 
   typedef std::function<bool(ProgramHeader &)> ProgramHeaderVisitor;
 
@@ -258,7 +258,7 @@ class ELFImage {
       headerLimit = headerImage +
                     ((_fileSize - _elfHeader->e_phoff) / entrySize) * entrySize;
     }
-    
+
     for (; headerImage < headerLimit; headerImage += entrySize) {
       ProgramHeader *programHeader = (ProgramHeader *)headerImage;
       Offset align = programHeader->p_align;

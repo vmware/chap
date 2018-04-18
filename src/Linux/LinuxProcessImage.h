@@ -26,6 +26,14 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
                              elfImage.GetThreadMap()),
         _elfImage(elfImage),
         _symdefsRead(false) {
+    if (_elfImage.GetELFType() != ET_CORE) {
+      /*
+       * It is the responsibilty of the caller to avoid passing in an ELFImage
+       * that corresponds to something other than a core.
+       */
+
+      abort();
+    }
     if (!truncationCheckOnly) {
       /*
        * Make the allocation finder eagerly unless chap is being used only
@@ -69,7 +77,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        * been found.
        */
 
-      FindSignatures();
+      FindSignaturesInAllocations();
+
+      FindSignatureNamesFromBinaries();
+
+      WriteSymreqsFileIfNeeded();
     }
   }
 
@@ -644,12 +656,38 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
     return false;
   }
+  std::string CopyAndUnmangle(
+      const VirtualAddressMap<Offset>& virtualAddressMap,
+      Offset mangledNameAddr) const {
+    std::string unmangledName;
+    typename VirtualAddressMap<Offset>::const_iterator it =
+        virtualAddressMap.find(mangledNameAddr);
+    if (it != virtualAddressMap.end()) {
+      char buffer[1000];
+      buffer[sizeof(buffer) - 1] = '\000';
+      size_t numToCopy = sizeof(buffer) - 1;
+      const char* image = it.GetImage();
+      if (image != (const char*)(0)) {
+        Offset maxToCopy = it.Limit() - mangledNameAddr - 1;
+        if (numToCopy > maxToCopy) {
+          numToCopy = maxToCopy;
+        }
+        memcpy(buffer, image + (mangledNameAddr - it.Base()), numToCopy);
 
-  std::string GetUnmangledTypeinfoName(Offset signature) const {
+        Unmangler<Offset> unmangler(buffer, false);
+        unmangledName = unmangler.Unmangled();
+      }
+    }
+    return unmangledName;
+  }
+
+  std::string GetUnmangledTypeinfoName(
+      const VirtualAddressMap<Offset>& virtualAddressMap,
+      Offset signature) const {
     std::string emptySignatureName;
     Offset typeInfoPointerAddress = signature - sizeof(Offset);
 
-    typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
+    typename VirtualAddressMap<Offset>::Reader reader(virtualAddressMap);
     Offset typeInfoAddress = reader.ReadOffset(typeInfoPointerAddress, 0);
     if (typeInfoAddress == 0) {
       return emptySignatureName;
@@ -657,28 +695,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     Offset typeInfoNameAddress =
         reader.ReadOffset(typeInfoAddress + sizeof(Offset), 0);
     if (typeInfoNameAddress != 0) {
-      char buffer[1000];
-      buffer[sizeof(buffer) - 1] = '\000';
-      size_t numToCopy = sizeof(buffer) - 1;
-      typename VirtualAddressMap<Offset>::const_iterator it =
-          Base::_virtualAddressMap.find(typeInfoNameAddress);
-      if (it != Base::_virtualAddressMap.end()) {
-        const char* image = it.GetImage();
-        if (image != (const char*)(0)) {
-          Offset maxToCopy = it.Limit() - typeInfoNameAddress - 1;
-          if (numToCopy > maxToCopy) {
-            numToCopy = maxToCopy;
-          }
-          memcpy(buffer, image + (typeInfoNameAddress - it.Base()), numToCopy);
-
-          Unmangler<Offset> unmangler(buffer, true);
-          if (unmangler.Unmangled().empty() && buffer[0] != '\000') {
-            std::cerr << "Failed to unmangle signature 0x" << std::hex
-                      << signature << "\n";
-          }
-          return unmangler.Unmangled();
-        }
-      }
+      return CopyAndUnmangle(virtualAddressMap, typeInfoNameAddress);
     }
     return emptySignatureName;
   }
@@ -726,7 +743,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       }
       if (line.find("No symbol matches") != std::string::npos || line.empty()) {
         if (signature != 0) {
-          Base::_signatureDirectory.MapSignatureToName(
+          Base::_signatureDirectory.MapSignatureNameAndStatus(
               signature, "",
               SignatureDirectory::UNWRITABLE_MISSING_FROM_SYMDEFS);
           signature = 0;
@@ -745,7 +762,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         size_t plusPos = line.find(" + ");
         defEnd = plusPos;
         std::string name(line.substr(defStart, defEnd - defStart));
-        Base::_signatureDirectory.MapSignatureToName(
+        Base::_signatureDirectory.MapSignatureNameAndStatus(
             signature, name,
             isVTable ? SignatureDirectory::VTABLE_WITH_NAME_FROM_SYMDEFS
                      : SignatureDirectory::UNWRITABLE_WITH_NAME_FROM_SYMDEFS);
@@ -762,33 +779,13 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     return true;
   }
 
-  void FindSignatures() {
-    std::string emptyName;
-    bool writeSymreqs = true;
-    std::string symReqsPath(
-        Base::_virtualAddressMap.GetFileImage().GetFileName());
-    symReqsPath.append(".symreqs");
-    std::string symDefsPath(
-        Base::_virtualAddressMap.GetFileImage().GetFileName());
-    symDefsPath.append(".symdefs");
-    std::ifstream symReqs;
-    symReqs.open(symReqsPath.c_str());
-    std::ofstream gdbScriptFile;
-    if (!symReqs.fail()) {
-      writeSymreqs = false;
-    } else {
-      gdbScriptFile.open(symReqsPath.c_str());
-      if (gdbScriptFile.fail()) {
-        writeSymreqs = false;
-        std::cerr << "Unable to open " << symReqsPath << " for writing.\n";
-      } else {
-        gdbScriptFile << "set logging file " << symDefsPath << '\n';
-        gdbScriptFile << "set logging overwrite 1\n";
-        gdbScriptFile << "set logging redirect 1\n";
-        gdbScriptFile << "set logging on\n";
-        gdbScriptFile << "set height 0\n";
-      }
-    }
+  /*
+   * Initialize the signature directory to contain an entry for each
+   * read-only address seen in the pointer at the start of each allocation
+   * that is aligned on a pointer-sized boundary.
+   */
+
+  void FindSignaturesInAllocations() {
     const Allocations::Finder<Offset>& finder = *(Base::_allocationFinder);
     typename Allocations::Finder<Offset>::AllocationIndex numAllocations =
         finder.NumAllocations();
@@ -820,20 +817,119 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         continue;
       }
 
-      std::string typeinfoName = GetUnmangledTypeinfoName(signature);
+      std::string typeinfoName =
+          GetUnmangledTypeinfoName(Base::_virtualAddressMap, signature);
 
-      Base::_signatureDirectory.MapSignatureToName(
+      Base::_signatureDirectory.MapSignatureNameAndStatus(
           signature, typeinfoName,
           typeinfoName.empty()
               ? SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS
               : SignatureDirectory::VTABLE_WITH_NAME_FROM_PROCESS_IMAGE);
-      if (writeSymreqs && typeinfoName.empty()) {
+    }
+  }
+
+  void FindSignatureNamesFromBinaries() {
+    std::string modulePath;
+    std::unique_ptr<FileImage> fileImage;
+    std::unique_ptr<ElfImage> elfImage;
+    typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
+    typename SignatureDirectory::SignatureNameAndStatusConstIterator itEnd =
+        Base::_signatureDirectory.EndSignatures();
+    for (typename SignatureDirectory::SignatureNameAndStatusConstIterator it =
+             Base::_signatureDirectory.BeginSignatures();
+         it != itEnd; ++it) {
+      typename SignatureDirectory::Status status = it->second.second;
+      if (status != SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS) {
+        continue;
+      }
+      Offset signature = it->first;
+      Offset fileOffset;
+      Offset relativeSignature;
+      Offset rangeBase = 0;
+      Offset rangeSize = 0;
+      std::string newModulePath;
+      if (!Base::_moduleDirectory.Find(signature, newModulePath, rangeBase,
+                                       rangeSize, fileOffset,
+                                       relativeSignature)) {
+        continue;
+      }
+      if (newModulePath != modulePath) {
+        modulePath = newModulePath;
+        try {
+          fileImage.reset(new FileImage(modulePath.c_str(), false));
+          elfImage.reset(new ElfImage(*fileImage));
+        } catch (...) {
+          elfImage.reset(0);
+          continue;
+        }
+      }
+      if (elfImage == 0) {
+        continue;
+      }
+      const VirtualAddressMap<Offset>& virtualAddressMap =
+          elfImage->GetVirtualAddressMap();
+      std::string typeinfoName;
+      typeinfoName =
+          GetUnmangledTypeinfoName(virtualAddressMap, relativeSignature);
+      if (typeinfoName.empty()) {
+        Offset typeinfoAddr = reader.ReadOffset(signature - sizeof(Offset), 0);
+        if (typeinfoAddr == 0) {
+          continue;
+        }
+        Offset mangledNameAddr =
+            reader.ReadOffset(typeinfoAddr + sizeof(Offset), 0);
+        if (mangledNameAddr == 0) {
+          continue;
+        }
+        Offset relativeNameAddr;
+        if (!Base::_moduleDirectory.Find(mangledNameAddr, newModulePath,
+                                         rangeBase, rangeSize, fileOffset,
+                                         relativeNameAddr)) {
+          continue;
+        }
+        if (newModulePath == modulePath) {
+          typeinfoName = CopyAndUnmangle(virtualAddressMap, relativeNameAddr);
+        } else {
+          try {
+            std::unique_ptr<FileImage> fileImageForName(
+                new FileImage(newModulePath.c_str(), false));
+            std::unique_ptr<ElfImage> elfImageForName(
+                new ElfImage(*fileImageForName));
+            typeinfoName = CopyAndUnmangle(
+                elfImageForName->GetVirtualAddressMap(), relativeNameAddr);
+          } catch (...) {
+          }
+        }
+      }
+      if (!typeinfoName.empty()) {
+        Base::_signatureDirectory.MapSignatureNameAndStatus(
+            signature, typeinfoName,
+            SignatureDirectory::VTABLE_WITH_NAME_FROM_BINARY);
+      }
+    }
+  }
+
+  void AddSignatureRequestsToSymReqs(std::ofstream& gdbScriptFile) {
+    typename SignatureDirectory::SignatureNameAndStatusConstIterator itEnd =
+        Base::_signatureDirectory.EndSignatures();
+    for (typename SignatureDirectory::SignatureNameAndStatusConstIterator it =
+             Base::_signatureDirectory.BeginSignatures();
+         it != itEnd; ++it) {
+      Offset signature = it->first;
+      typename SignatureDirectory::Status status = it->second.second;
+      if (status == SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS) {
         gdbScriptFile << "printf \"SIGNATURE " << std::hex << signature
                       << "\\n\"" << '\n'
                       << "info symbol 0x" << signature << '\n';
       }
     }
+  }
+
+  void AddAnchorRequestsToSymReqs(std::ofstream& gdbScriptFile) {
     const Allocations::Graph<Offset>& graph = *(Base::_allocationGraph);
+    const Allocations::Finder<Offset>& finder = *(Base::_allocationFinder);
+    typename Allocations::Finder<Offset>::AllocationIndex numAllocations =
+        finder.NumAllocations();
     for (typename Allocations::Finder<Offset>::AllocationIndex i = 0;
          i < numAllocations; ++i) {
       const typename Allocations::Finder<Offset>::Allocation* allocation =
@@ -852,16 +948,43 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
                       << "info symbol 0x" << std::hex << *itAnchors << '\n';
       }
     }
-    // TODO - possibly handle failed I/O in some way.
-    if (writeSymreqs) {
-      gdbScriptFile << "set logging off\n";
-      gdbScriptFile << "set logging overwrite 0\n";
-      gdbScriptFile << "set logging redirect 0\n";
-      gdbScriptFile << "printf \"output written to " << symDefsPath << "\\n\""
-                    << '\n';
-      gdbScriptFile.close();
-    }
   }
+  void WriteSymreqsFileIfNeeded() {
+    std::string symReqsPath(
+        Base::_virtualAddressMap.GetFileImage().GetFileName());
+    symReqsPath.append(".symreqs");
+    std::ifstream symReqs;
+    symReqs.open(symReqsPath.c_str());
+    if (!symReqs.fail()) {
+      return;
+    }
+
+    std::ofstream gdbScriptFile;
+    gdbScriptFile.open(symReqsPath.c_str());
+    if (gdbScriptFile.fail()) {
+      std::cerr << "Unable to open " << symReqsPath << " for writing.\n";
+      return;
+    }
+
+    std::string symDefsPath(
+        Base::_virtualAddressMap.GetFileImage().GetFileName());
+    symDefsPath.append(".symdefs");
+
+    gdbScriptFile << "set logging file " << symDefsPath << '\n';
+    gdbScriptFile << "set logging overwrite 1\n";
+    gdbScriptFile << "set logging redirect 1\n";
+    gdbScriptFile << "set logging on\n";
+    gdbScriptFile << "set height 0\n";
+    AddSignatureRequestsToSymReqs(gdbScriptFile);
+    AddAnchorRequestsToSymReqs(gdbScriptFile);
+    gdbScriptFile << "set logging off\n";
+    gdbScriptFile << "set logging overwrite 0\n";
+    gdbScriptFile << "set logging redirect 0\n";
+    gdbScriptFile << "printf \"output written to " << symDefsPath << "\\n\""
+                  << '\n';
+    gdbScriptFile.close();
+  }
+
   void FindStaticAnchorRanges() {
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
         itEnd = Base::_virtualMemoryPartition.EndUnclaimedImages();

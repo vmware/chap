@@ -26,18 +26,21 @@ class SignatureDirectory {
     VTABLE_WITH_NAME_FROM_BINDEFS
   };
 
-  typedef std::map<Offset, std::pair<std::string, Status> > SignatureToNameMap;
-  typedef typename SignatureToNameMap::iterator SignatureToNameIterator;
-  typedef
-      typename SignatureToNameMap::const_iterator SignatureToNameConstIterator;
+  typedef std::map<Offset, std::pair<std::string, Status> >
+      SignatureNameAndStatusMap;
+  typedef typename SignatureNameAndStatusMap::iterator
+      SignatureNameAndStatusIterator;
+  typedef typename SignatureNameAndStatusMap::const_iterator
+      SignatureNameAndStatusConstIterator;
   typedef std::map<std::string, std::set<Offset> > NameToSignaturesMap;
   typedef typename NameToSignaturesMap::const_iterator
       NameToSignaturesConstIterator;
 
   SignatureDirectory() : _multipleSignaturesPerName(false) {}
 
-  void MapSignatureToName(Offset signature, std::string name, Status status) {
-    SignatureToNameIterator it = _signatureToName.find(signature);
+  void MapSignatureNameAndStatus(Offset signature, std::string name,
+                                 Status status) {
+    SignatureNameAndStatusIterator it = _signatureToName.find(signature);
     if (it != _signatureToName.end()) {
       std::string& knownName = it->second.first;
       Status& knownStatus = it->second.second;
@@ -81,7 +84,7 @@ class SignatureDirectory {
   }
 
   const std::string& Name(Offset signature) const {
-    SignatureToNameConstIterator it = _signatureToName.find(signature);
+    SignatureNameAndStatusConstIterator it = _signatureToName.find(signature);
     if (it != _signatureToName.end()) {
       return it->second.first;
     } else {
@@ -99,17 +102,17 @@ class SignatureDirectory {
     }
   }
 
-  SignatureToNameConstIterator BeginSignatures() const {
+  SignatureNameAndStatusConstIterator BeginSignatures() const {
     return _signatureToName.begin();
   }
 
-  SignatureToNameConstIterator EndSignatures() const {
+  SignatureNameAndStatusConstIterator EndSignatures() const {
     return _signatureToName.end();
   }
 
  private:
   bool _multipleSignaturesPerName;
-  SignatureToNameMap _signatureToName;
+  SignatureNameAndStatusMap _signatureToName;
   NameToSignaturesMap _nameToSignatures;
   std::string NO_NAME;
   std::set<Offset> NO_SIGNATURES;

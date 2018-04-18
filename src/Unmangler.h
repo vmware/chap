@@ -12,6 +12,12 @@ class Unmangler {
       : _mangled(mangled),
         _warnOnFailure(warnOnFailure),
         _checkAnonymousNamespace(false) {
+    for (const char* pC = mangled; *pC != '\000'; ++pC) {
+      if (*pC < '\041' || *pC > '\176') {
+        _warnOnFailure = false;
+        return;
+      }
+    }
     Unmangle();
   }
   const std::string& Unmangled() const { return _unmangledName; }
