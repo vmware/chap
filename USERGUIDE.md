@@ -56,7 +56,8 @@ If you simply want to know whether the class names and struct names have general
 chap> summarize signatures
 167 signatures are unwritable addresses pending .symdefs file creation.
 2086 signatures are vtable pointers with names from the process image.
-2253 signatures in total were found. ```   
+2253 signatures in total were found.
+```   
 
 Note that there were still 167 signatures not found.  Those are signatures that fail one of the requirements.
 
