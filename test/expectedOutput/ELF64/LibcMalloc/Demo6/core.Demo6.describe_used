@@ -1,0 +1,16 @@
+Anchored allocation at 134c010 of size 11c08
+
+Anchored allocation at 135dc40 of size 38
+... with signature 401888
+
+Anchored allocation at 135dc80 of size 128
+
+Anchored allocation at 135e0f0 of size 78
+This allocation matches pattern VectorBody.
+Only the first 0x6c bytes are considered live.
+
+Anchored allocation at 135e170 of size 78
+This allocation matches pattern VectorBody.
+Only the first 0x70 bytes are considered live.
+
+5 allocations use 0x11e58 (73,304) bytes.

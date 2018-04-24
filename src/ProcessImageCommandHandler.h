@@ -22,6 +22,7 @@
 #include "StackDescriber.h"
 #include "ThreadMapCommands/CountStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
+#include "VectorBodyRecognizer.h"
 
 namespace chap {
 template <typename Offset>
@@ -48,6 +49,8 @@ class ProcessImageCommandHandler {
      * checked in the order given and the first applicable describer applies.
      */
     _compoundDescriber.AddDescriber(&_knownAddressDescriber);
+    _patternRecognizerRegistry.Register(
+        new VectorBodyRecognizer<Offset>(processImage));
   }
 
   void SetProcessImage(const ProcessImage<Offset>* processImage) {

@@ -22,9 +22,13 @@ class ELFCore32FileAnalyzerFactory : public FileAnalyzerFactory {
                                          bool truncationCheckOnly) {
     try {
       return new ELFCoreFileAnalyzer<Elf32>(fileImage, truncationCheckOnly);
+    } catch (std::bad_alloc&) {
+      std::cerr << "There is not enough memory on this server to process"
+                   " this ELF file.\n";
+      exit(1);
     } catch (...) {
-      return 0;
     }
+    return 0;
   }
 };
 }  // namespace Linux

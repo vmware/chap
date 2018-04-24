@@ -137,5 +137,5 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
     return true;
   }
 };
-}  // namespace Allocations
+}  // namespace Linux
 }  // namespace chap

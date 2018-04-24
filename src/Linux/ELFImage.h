@@ -188,18 +188,12 @@ class ELFImage {
     // _expectedMinimumFileSize.
     _isTruncated = (_fileSize < _minimumExpectedFileSize);
 
-    try {
-      if (_elfHeader->e_type == ET_CORE) {
-        VisitNotes(
-            std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
-                                PRStatusRegInfo>::FindThreadsFromPRStatus,
-                      this, std::placeholders::_1, std::placeholders::_2,
-                      std::placeholders::_3));
-      }
-    } catch (...) {
-      if (!_isTruncated) {
-        std::cerr << "An error was found processing the PT_NOTE section.\n";
-      }
+    if (_elfHeader->e_type == ET_CORE) {
+      VisitNotes(
+          std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
+                              PRStatusRegInfo>::FindThreadsFromPRStatus,
+                    this, std::placeholders::_1, std::placeholders::_2,
+                    std::placeholders::_3));
     }
   }
 
@@ -406,6 +400,22 @@ class ELFImage {
         std::cerr << "Thread " << std::dec << threadNum
                   << " has unmapped stack top " << std::hex << "0x"
                   << stackPointer << "\n";
+      } else if (it.GetImage() == (const char *)(0)) {
+        /*
+         * The most likely situation is that the core is truncated.  We cannot
+         * figure out the stack range for this thread (at least not by the
+         * current algorithm) but it is still possible that some of the
+         * stacks are present in the core.
+         */
+        if (!_isTruncated) {
+          /*
+           * If the core is truncated, the warning about truncation should
+           * suffice.  We don't expect the stack image to be missing otherwise
+           * but might as well try to handle it.
+           */
+          std::cerr << "Thread " << std::dec << threadNum
+                    << " has no stack image in the core.\n";
+        }
       } else {
         /*
          * The base of the range (which limits the growth

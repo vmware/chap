@@ -16,6 +16,7 @@ summarize used
 enumerate used
 list used
 show used
+describe used
 # Count the set of all used allocations plus any allocations reachable by a
 # chain of one or more outgoing references starting from members of the
 # set.  This should yield the same size as the original set because that one

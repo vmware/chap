@@ -1,0 +1,34 @@
+Anchored allocation at 603010 of size 38
+... with signature 401f30(HasSet)
+
+Anchored allocation at 603050 of size 18
+... with signature 402050(HasList)
+
+Anchored allocation at 603070 of size 58
+... with signature 401fb0(HasDeque)
+
+Anchored allocation at 6030d0 of size 48
+
+Anchored allocation at 603120 of size 208
+This allocation matches pattern VectorBody.
+Only the first 0x0 bytes are considered live.
+
+Anchored allocation at 603330 of size 28
+... with signature 402000(HasVector)
+
+Anchored allocation at 603360 of size 18
+... with signature 402050(HasList)
+
+Anchored allocation at 603380 of size 28
+
+Anchored allocation at 6033b0 of size 28
+
+Anchored allocation at 6033e0 of size 28
+
+Leaked allocation at 603410 of size 18
+... with signature 402050(HasList)
+
+Unreferenced allocation at 603430 of size 18
+... with signature 4020a0(HasPair)
+
+12 allocations use 0x3e0 (992) bytes.
