@@ -207,7 +207,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
      * allocations associated with the main arena.
      */
 
-    FindMainArenaPageRuns();
+    FindMainArenaRuns();
 
     ScanForLargeChunks();
 
@@ -324,9 +324,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   // Keep the start and size for every run of arena pages, in order
   // of start address.
-  typedef std::vector<std::pair<Offset, Offset> > MainArenaPages;
-  typedef typename MainArenaPages::iterator MainArenaPagesIterator;
-  typedef typename MainArenaPages::const_iterator MainArenaPagesConstIterator;
+  typedef std::vector<std::pair<Offset, Offset> > MainArenaRuns;
+  typedef typename MainArenaRuns::iterator MainArenaRunsIterator;
+  typedef typename MainArenaRuns::const_iterator MainArenaRunsConstIterator;
 
   // Keep the start and size for every memory range containing a large
   // allocation, in order of start address, and including any overhead
@@ -338,7 +338,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   HeapMap _heaps;
   ArenaMap _arenas;
-  MainArenaPages _mainArenaPages;
+  MainArenaRuns _mainArenaRuns;
   LargeAllocations _largeAllocations;
   Offset _mainArenaAddress;
   bool _mainArenaIsContiguous;
@@ -353,14 +353,14 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   void RecordAllocated(Offset address, Offset size) {
     if (size >= 3 * sizeof(Offset)) {
       // Avoid small false allocations at the end of an allocation run.
-      _allocations.push_back(Allocation(address, size, true));
+      _allocations.emplace_back(address, size, true);
     }
   }
 
   void RecordFree(Offset address, Offset size) {
     if (size >= 3 * sizeof(Offset)) {
       // Avoid small false allocations at the end of an allocation run.
-      _allocations.push_back(Allocation(address, size, false));
+      _allocations.emplace_back(address, size, false);
     }
   }
 
@@ -1283,17 +1283,16 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   struct RunCandidate {
-    RunCandidate()
-        : _start(0), _lastCheck(0), _numAllocations(0), _lastPageBoundary(0) {}
+    RunCandidate(Offset start, Offset size, Offset numAllocations)
+        : _start(start), _size(size), _numAllocations(numAllocations) {}
     Offset _start;
-    Offset _lastCheck;
+    Offset _size;
     Offset _numAllocations;
-    Offset _lastPageBoundary;
   };
   typedef std::vector<RunCandidate> RunCandidates;
 
-  void EvaluatePageRunCandidate(Offset base, Offset limit,
-                                RunCandidates& candidates) {
+  void EvaluateRunCandidate(Offset base, Offset limit,
+                            RunCandidates& candidates) {
     Reader reader(_addressMap);
     if (reader.ReadOffset(base) != 0) {
       return;
@@ -1325,62 +1324,65 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     size_t numAllocations = 1;
     Offset lastPageBoundary = base;
     Offset check = base + chunkSize;
+    size_t secondLastCheck = 0;
+    size_t thirdLastCheck = 0;
     while (1) {
       if ((check & 0xfff) == 0) {
-        for (typename RunCandidates::const_reverse_iterator it =
-                 candidates.rbegin();
+        lastPageBoundary = check;
+        for (typename RunCandidates::reverse_iterator it = candidates.rbegin();
              it != candidates.rend(); ++it) {
-          /*
-           * Note that the size of candidates tends to be really tiny
-           * (normally single digits).
-           */
-          RunCandidate& candidate = candidates.back();
+          RunCandidate& candidate = *it;
           if (candidate._start == lastPageBoundary) {
+            candidate._size += (candidate._start - base);
+            candidate._numAllocations += numAllocations;
             candidate._start = base;
             return;
           }
         }
-        lastPageBoundary = check;
       }
       if (check == limit) {
         // We don't need to add OFFSET_SIZE to check because an invariant
         // here is that both are divisible by 2 * OFFSET_SIZE.
         break;
       }
-      Offset sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
+      Offset sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE, 0xff);
       if ((sizeAndFlags & (OFFSET_SIZE | 6)) != 0) {
         break;
       }
 
       Offset chunkSize = sizeAndFlags & ~7;
 
-      if ((chunkSize == 0) || (chunkSize >= 0x10000000) ||
-          (chunkSize > (limit - check))) {
+      Offset nextCheck = check + chunkSize;
+      if ((nextCheck <= check) || (nextCheck > limit)) {
         break;
       }
 
       numAllocations++;
-      check += chunkSize;
+      thirdLastCheck = secondLastCheck;
+      secondLastCheck = check;
+      check = nextCheck;
     }
 
     if (numAllocations >= 20 || lastPageBoundary > base) {
-      candidates.push_back(RunCandidate());
-      RunCandidate& candidate = candidates.back();
-      candidate._start = base;
-      candidate._lastCheck = check;
-      candidate._numAllocations = numAllocations;
-      candidate._lastPageBoundary = lastPageBoundary;
+      Offset runSize = lastPageBoundary - base;
+      if (check != lastPageBoundary && thirdLastCheck > lastPageBoundary) {
+        numAllocations -= 2;
+        runSize = ((thirdLastCheck + 0xfff) & ~0xfff) - base;
+      }
+      if (runSize > 0) {
+        candidates.emplace_back(base, runSize, numAllocations);
+      }
     }
   }
 
-  void ScanForMainArenaPageRunsInRange(Offset base, Offset limit,
-                                       RunCandidates& candidates) {
+  void ScanForMainArenaRunsInRange(Offset base, Offset limit,
+                                   RunCandidates& candidates) {
     limit = limit & ~0xfff;
     base = (base + 0xfff) & ~0xfff;
     RunCandidates candidatesInRange;
     Reader reader(_addressMap);
     for (Offset check = limit - 0x1000; check >= base; check -= 0x1000) {
-      EvaluatePageRunCandidate(check, limit, candidatesInRange);
+      EvaluateRunCandidate(check, limit, candidatesInRange);
     }
     for (typename RunCandidates::const_reverse_iterator it =
              candidatesInRange.rbegin();
@@ -1389,7 +1391,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
   }
 
-  void ScanForMainArenaPageRuns(Offset mainArenaSize) {
+  void ScanForMainArenaRuns(Offset mainArenaSize) {
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
         itEnd = _virtualMemoryPartition.EndUnclaimedImages();
     typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
@@ -1400,12 +1402,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if ((it->_value &
            (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-        ScanForMainArenaPageRunsInRange(it->_base, it->_limit, runCandidates);
+        ScanForMainArenaRunsInRange(it->_base, it->_limit, runCandidates);
       }
     }
 
     /*
-     * Select the _mainArenaPages from the run candidates.
+     * Select the _mainArenaRuns from the run candidates.
      */
 
     size_t numRunCandidates = runCandidates.size();
@@ -1421,13 +1423,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       std::cerr << "Probably there was a corrupt single main arena run.\n"
                 << "Leak analysis probably will not be correct.\n";
       Offset base = runCandidates[0]._start;
-      Offset size = runCandidates[0]._lastPageBoundary - base;
+      Offset size = runCandidates[0]._size;
       if ((_mainArenaAddress != 0) && (size > mainArenaSize)) {
         size = mainArenaSize;
         // TODO, do this more precisely, taking into account the top
         // value.
       }
-      _mainArenaPages.push_back(std::make_pair(base, size));
+      _mainArenaRuns.emplace_back(base, size);
 
       if (!_virtualMemoryPartition.ClaimRange(base, size,
                                               LIBC_MALLOC_MAIN_ARENA_PAGES)) {
@@ -1449,10 +1451,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
     Offset prevLimit = 0;
     Offset totalMainArenaRunSizes = 0;
-    for (typename RunCandidates::iterator it = runCandidates.begin();
-         it != runCandidates.end(); ++it) {
-      Offset base = it->_start;
-      Offset size = it->_lastPageBoundary - base;
+    for (auto candidate : runCandidates) {
+      Offset base = candidate._start;
+      Offset size = candidate._size;
       if (base < prevLimit) {
         continue;
       }
@@ -1460,7 +1461,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                                               LIBC_MALLOC_MAIN_ARENA_PAGES)) {
         abort();
       }
-      _mainArenaPages.push_back(std::make_pair(base, size));
+      _mainArenaRuns.emplace_back(base, size);
       totalMainArenaRunSizes += size;
       prevLimit = base + size;
     }
@@ -1546,10 +1547,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                                     "Only ["
                   << base << ", " << topLimit << ") was available.\n";
       }
-
+      _mainArenaIsContiguous = false;
+      return false;
     } else {
       RunCandidates runCandidates;
-      EvaluatePageRunCandidate(base, topLimit, runCandidates);
+      EvaluateRunCandidate(base, topLimit, runCandidates);
       if (runCandidates.empty()) {
         if (!_mainArenaIsContiguous) {
           /*
@@ -1571,8 +1573,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                   << "was expected at 0x" << std::hex << base << "\n"
                   << "The start of that range may be corrupted.\n";
 
-      } else if ((runCandidates[0]._lastPageBoundary -
-                  runCandidates[0]._start) != mainArena._size) {
+      } else if (runCandidates[0]._size != mainArena._size) {
         if (!_mainArenaIsContiguous) {
           /*
            * Given that part of the range that one would expect
@@ -1594,11 +1595,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                 << topLimit << "] may be inaccurate for main arena pages.\n";
       return false;
     }
-    _mainArenaPages.push_back(std::make_pair(base, topLimit - base));
+    _mainArenaRuns.emplace_back(base, topLimit - base);
     return true;
   }
 
-  void FindMainArenaPageRuns() {
+  void FindMainArenaRuns() {
     Offset mainArenaSize = 0;
     if (_mainArenaAddress != 0) {
       /*
@@ -1619,7 +1620,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         return;
       }
     }
-    ScanForMainArenaPageRuns(mainArenaSize);
+    ScanForMainArenaRuns(mainArenaSize);
   }
 
   void ScanForLargeChunksInRange(Offset base, Offset limit) {
@@ -1627,8 +1628,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Offset candidate = (base + 0xFFF) & ~0xFFF;
     while (candidate <= limit - 0x1000) {
       Offset expect0 = reader.ReadOffset(candidate, 0xbadbad);
-      Offset chunkSizeAndFlags = reader.ReadOffset(candidate + OFFSET_SIZE,
-                                                   0xbadbad);
+      Offset chunkSizeAndFlags =
+          reader.ReadOffset(candidate + OFFSET_SIZE, 0xbadbad);
       bool foundLargeAlloc =
           (expect0 == 0) &&
           ((chunkSizeAndFlags & ((Offset)0xFFF)) == ((Offset)2)) &&
@@ -1639,7 +1640,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         candidate += 0x1000;
       } else {
         Offset chunkSize = chunkSizeAndFlags - 2;
-        _largeAllocations.push_back(std::make_pair(candidate, chunkSize));
+        _largeAllocations.emplace_back(candidate, chunkSize);
         candidate += chunkSize;
       }
     }
@@ -1741,7 +1742,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   Offset HandleMainArenaCorruption(Offset corruptionPoint) {
     std::cerr << "Corruption was found in main arena run near 0x" << std::hex
               << corruptionPoint << "\n";
-    std::cerr << "Corrupt arena is at 0x" << std::hex << _mainArenaAddress
+    std::cerr << "The main arena is at 0x" << std::hex << _mainArenaAddress
               << "\n";
     // TODO: This repairLimit is probably too cautious.
     Offset repairLimit = (corruptionPoint & ~0xfff) + 0x2000;
@@ -1752,7 +1753,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
    * are known to be in the main arena.
    */
 
-  void AddAllocationsForMainArenaPageRun(Offset base, Offset size) {
+  void AddAllocationsForMainArenaRun(Offset base, Offset size) {
     Offset limit = base + size;
     Reader reader(_addressMap);
     Offset sizeAndFlags = reader.ReadOffset(base + OFFSET_SIZE);
@@ -1881,8 +1882,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     LargeAllocationsConstIterator itLargeEnd = _largeAllocations.end();
     HeapMapConstIterator itHeaps = _heaps.begin();
     HeapMapConstIterator itHeapsEnd = _heaps.end();
-    MainArenaPagesConstIterator itPages = _mainArenaPages.begin();
-    MainArenaPagesConstIterator itPagesEnd = _mainArenaPages.end();
+    MainArenaRunsConstIterator itPages = _mainArenaRuns.begin();
+    MainArenaRunsConstIterator itPagesEnd = _mainArenaRuns.end();
     while (itLarge != itLargeEnd) {
       if (itHeaps != itHeapsEnd) {
         if (itPages != itPagesEnd) {
@@ -1891,8 +1892,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
               AddLargeAllocation(itLarge->first, itLarge->second);
               ++itLarge;
             } else {
-              AddAllocationsForMainArenaPageRun(itPages->first,
-                                                itPages->second);
+              AddAllocationsForMainArenaRun(itPages->first, itPages->second);
               ++itPages;
             }
           } else {
@@ -1900,8 +1900,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
               AddAllocationsForHeap(itHeaps->second);
               ++itHeaps;
             } else {
-              AddAllocationsForMainArenaPageRun(itPages->first,
-                                                itPages->second);
+              AddAllocationsForMainArenaRun(itPages->first, itPages->second);
               ++itPages;
             }
           }
@@ -1921,7 +1920,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
             AddLargeAllocation(itLarge->first, itLarge->second);
             ++itLarge;
           } else {
-            AddAllocationsForMainArenaPageRun(itPages->first, itPages->second);
+            AddAllocationsForMainArenaRun(itPages->first, itPages->second);
             ++itPages;
           }
         } else {
@@ -1938,7 +1937,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           AddAllocationsForHeap(itHeaps->second);
           ++itHeaps;
         } else {
-          AddAllocationsForMainArenaPageRun(itPages->first, itPages->second);
+          AddAllocationsForMainArenaRun(itPages->first, itPages->second);
           ++itPages;
         }
       } else {
@@ -1948,7 +1947,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
     }
     for (; itPages != itPagesEnd; ++itPages) {
-      AddAllocationsForMainArenaPageRun(itPages->first, itPages->second);
+      AddAllocationsForMainArenaRun(itPages->first, itPages->second);
     }
   }
 
