@@ -35,6 +35,7 @@ In general, `chap` currently has very limited capabilities, for any given alloca
 A **signature** is a pointer to memory that is not writable.   In the case of 'C++' a **signature** might point to a vtable, which can be used to identify the name of a class or struct associated with the given allocation.  A **signature** might also point to a function or a constant string literal.
 
 A **pattern** is a way of narrowing the type of an allocation based on the contents of that allocation or based on incoming or outgoing edges from that allocation.  A pattern can be used anywhere a signature can be used, but with a "%" preceding the pattern.  At present the following patterns are supported:
+* LongString - dynamically allocated memory for std::string with >= 16 characters
 * COWStringBody - old style copy-on-write std::string bodies
 * VectorBody - dynamically allocated memory for std::vector
 

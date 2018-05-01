@@ -1,0 +1,87 @@
+Anchored allocation at 604010 of size 11c08
+Allocation at 604010 appears to be directly statically anchored.
+Address 0x7ffff7dd2d28 is at offset 0xbd28 in range starting at 0x7ffff7dc7000
+for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.
+The relative virtual address in the module is 0xbd28
+Address 0x7ffff7dd2d28 is readable and writable.
+Address 0x7ffff7dd2d28 is mapped into the process image.
+Static address 7ffff7dd2d28 references 604010
+Address 0x7ffff7dd2d30 is at offset 0xbd30 in range starting at 0x7ffff7dc7000
+for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.
+The relative virtual address in the module is 0xbd30
+Address 0x7ffff7dd2d30 is readable and writable.
+Address 0x7ffff7dd2d30 is mapped into the process image.
+Static address 7ffff7dd2d30 references 604010
+
+Anchored allocation at 615c20 of size 48
+Allocation at 615c20 appears to be directly statically anchored.
+Address 0x603130 is at offset 0x1130 in range starting at 0x602000
+for module /home/tim/LongStringTest.
+The relative virtual address in the module is 0x203130
+Address 0x603130 is readable and writable.
+Address 0x603130 is mapped into the process image.
+Static address 603130 references 615c20
+Address 0x603140 is at offset 0x1140 in range starting at 0x602000
+for module /home/tim/LongStringTest.
+The relative virtual address in the module is 0x203140
+Address 0x603140 is readable and writable.
+Address 0x603140 is mapped into the process image.
+Static address 603140 references 615c20
+
+Anchored allocation at 615c70 of size 18
+This allocation matches pattern LongString.
+The string has 0x10 bytes, containing
+"0123456789abcdef".
+The capacity is considered to be 0x10.
+The string is at address 0x7fffffffde20 on the stack.
+Allocation at 615c70 appears to be directly anchored from at least one stack.
+Address 0x7fffffffde20 is on the live part of the stack for thread 1.
+Stack address 7fffffffde20 references 615c70
+
+Anchored allocation at 615c90 of size 18
+Allocation at 615c90 appears to be directly anchored from at least one register.
+Register rdx for thread 1 references 615c90
+Allocation at 615c90 appears to be directly anchored from at least one stack.
+Address 0x7fffffffde40 is on the live part of the stack for thread 1.
+Stack address 7fffffffde40 references 615c90
+
+Anchored allocation at 615cb0 of size 48
+Allocation at 615cb0 appears to be directly statically anchored.
+Address 0x603138 is at offset 0x1138 in range starting at 0x602000
+for module /home/tim/LongStringTest.
+The relative virtual address in the module is 0x203138
+Address 0x603138 is readable and writable.
+Address 0x603138 is mapped into the process image.
+Static address 603138 references 615cb0
+
+Anchored allocation at 615d00 of size 18
+This allocation matches pattern LongString.
+The string has 0x11 bytes, containing
+"another bogus key".
+The capacity is considered to be 0x11.
+The string is at offset 0x20 in the allocation at 0x615cb0.
+Allocation at 615d00 appears to be indirectly statically anchored
+... via anchor point 615cb0
+Address 0x603138 is at offset 0x1138 in range starting at 0x602000
+for module /home/tim/LongStringTest.
+The relative virtual address in the module is 0x203138
+Address 0x603138 is readable and writable.
+Address 0x603138 is mapped into the process image.
+Static address 603138 references anchor point 615cb0
+... which references 615d00
+
+Anchored allocation at 615d20 of size 28
+This allocation matches pattern LongString.
+The string has 0x26 bytes, containing
+"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
+The capacity is considered to be 0x26.
+The string is at address 0x603100 in statically allocated memory.
+Allocation at 615d20 appears to be directly statically anchored.
+Address 0x603100 is at offset 0x1100 in range starting at 0x602000
+for module /home/tim/LongStringTest.
+The relative virtual address in the module is 0x203100
+Address 0x603100 is readable and writable.
+Address 0x603100 is mapped into the process image.
+Static address 603100 references 615d20
+
+7 allocations use 0x11d08 (72,968) bytes.

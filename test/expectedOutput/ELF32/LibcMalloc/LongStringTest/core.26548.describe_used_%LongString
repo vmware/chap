@@ -1,0 +1,19 @@
+Anchored allocation at 8050a40 of size 14
+This allocation matches pattern LongString.
+The string has 0x10 bytes, containing
+"0123456789abcdef".
+The capacity is considered to be 0x10.
+
+Anchored allocation at 8050aa0 of size 14
+This allocation matches pattern LongString.
+The string has 0x11 bytes, containing
+"another bogus key".
+The capacity is considered to be 0x11.
+
+Anchored allocation at 8050ab8 of size 2c
+This allocation matches pattern LongString.
+The string has 0x26 bytes, containing
+"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
+The capacity is considered to be 0x26.
+
+3 allocations use 0x54 (84) bytes.

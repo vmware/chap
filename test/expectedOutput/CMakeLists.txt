@@ -71,3 +71,7 @@ exout_test(PATH ELF64/LibcMalloc/UnmanglingTest
            FILES core.26735)
 exout_test(PATH ELF32/LibcMalloc/UnmanglingTest
            FILES core.27709)
+exout_test(PATH ELF64/LibcMalloc/LongStringTest
+           FILES core.26368)
+exout_test(PATH ELF32/LibcMalloc/LongStringTest
+           FILES core.26548)

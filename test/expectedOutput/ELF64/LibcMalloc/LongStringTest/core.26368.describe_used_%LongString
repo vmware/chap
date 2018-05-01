@@ -1,0 +1,19 @@
+Anchored allocation at 615c70 of size 18
+This allocation matches pattern LongString.
+The string has 0x10 bytes, containing
+"0123456789abcdef".
+The capacity is considered to be 0x10.
+
+Anchored allocation at 615d00 of size 18
+This allocation matches pattern LongString.
+The string has 0x11 bytes, containing
+"another bogus key".
+The capacity is considered to be 0x11.
+
+Anchored allocation at 615d20 of size 28
+This allocation matches pattern LongString.
+The string has 0x26 bytes, containing
+"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
+The capacity is considered to be 0x26.
+
+3 allocations use 0x58 (88) bytes.

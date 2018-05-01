@@ -4,6 +4,7 @@
 #pragma once
 #include "../ProcessImageCommandHandler.h"
 #include "COWStringBodyRecognizer.h"
+#include "LongStringRecognizer.h"
 
 namespace chap {
 namespace Linux {
@@ -15,12 +16,13 @@ class ProcessImageCommandHandler
       : chap::ProcessImageCommandHandler<Offset>(processImage) {
     chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
         .Register(new COWStringBodyRecognizer<Offset>(processImage));
+    chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
+        .Register(new LongStringRecognizer<Offset>(processImage));
   }
 
   virtual void AddCommands(Commands::Runner &r) {
     chap::ProcessImageCommandHandler<Offset>::AddCommands(r);
   }
-
 };
 
 }  // namespace Linux
