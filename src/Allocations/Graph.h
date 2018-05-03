@@ -293,14 +293,17 @@ class Graph {
                          LocalVisitor anchorPointVisitor) const {
     if (index >= _finder.NumAllocations() || _leaked[index]) {
       return false;
-    } else {
-      const Allocation *allocation = _finder.AllocationAt(index);
-      if (allocation == 0 || !allocation->IsUsed()) {
-        return false;
-      }
     }
-
-    if (distances.GetDistance(index) == 1 &&
+    Index distance = distances.GetDistance(index);
+    if (distance == 0) {
+      // It is not anchored in this way.
+      return false;
+    }
+    const Allocation *allocation = _finder.AllocationAt(index);
+    if (allocation == 0 || !allocation->IsUsed()) {
+      return false;
+    }
+    if (distance == 1 &&
         CallAnchorChainVisitor(index, visitor, anchorPointVisitor)) {
       // Under the given anchor type imposed by the distances argument, the
       // allocation to explain was directly anchored, so there is normally no
@@ -351,7 +354,7 @@ class Graph {
           }
         }
 
-        Index  sourceAnchorDistance = distances.GetDistance(sourceIndex);
+        Index sourceAnchorDistance = distances.GetDistance(sourceIndex);
         Index targetAnchorDistance = distances.GetDistance(targetIndex);
         if ((sourceAnchorDistance == 0) ||                    // leaked
             (sourceAnchorDistance > targetAnchorDistance) ||  // wrong way
@@ -608,8 +611,7 @@ class Graph {
       toVisit.pop_front();
       EdgeIndex edgeLimit = _firstOutgoing[sourceIndex + 1];
       for (EdgeIndex edgeIndex = _firstOutgoing[sourceIndex];
-           edgeIndex < edgeLimit;
-           edgeIndex++) {
+           edgeIndex < edgeLimit; edgeIndex++) {
         Index targetIndex = _outgoing[edgeIndex];
         if (!visited[targetIndex]) {
           visited[targetIndex] = true;
@@ -629,7 +631,8 @@ class Graph {
       try {
         Offset candidateTarget = reader.ReadOffset(anchor);
         Index targetIndex = _finder.EdgeTargetIndex(candidateTarget);
-        if (targetIndex != _numAllocations) {
+        const Allocation *target = _finder.AllocationAt(targetIndex);
+        if ((target != 0) && target->IsUsed()) {
           AnchorPointMapIterator it = anchorPoints.find(targetIndex);
           if (it == anchorPoints.end()) {
             it = anchorPoints
