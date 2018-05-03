@@ -5,6 +5,8 @@
 #include "../ProcessImageCommandHandler.h"
 #include "COWStringBodyRecognizer.h"
 #include "LongStringRecognizer.h"
+#include "SSLRecognizer.h"
+#include "SSL_CTXRecognizer.h"
 
 namespace chap {
 namespace Linux {
@@ -18,6 +20,10 @@ class ProcessImageCommandHandler
         .Register(new COWStringBodyRecognizer<Offset>(processImage));
     chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
         .Register(new LongStringRecognizer<Offset>(processImage));
+    chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
+        .Register(new SSL_CTXRecognizer<Offset>(processImage));
+    chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
+        .Register(new SSLRecognizer<Offset>(processImage));
   }
 
   virtual void AddCommands(Commands::Runner &r) {

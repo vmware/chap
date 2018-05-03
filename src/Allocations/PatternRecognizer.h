@@ -20,22 +20,23 @@ class PatternRecognizer {
   }
 
   const std::string& GetName() const { return _name; }
-   
+
   void SetProcessImage(const ProcessImage<Offset>* processImage) {
     _processImage = processImage;
     if (processImage == 0) {
       _addressMap = 0;
       _finder = 0;
       _graph = 0;
+      _moduleDirectory = 0;
     } else {
       _addressMap = &(processImage->GetVirtualAddressMap());
       _finder = processImage->GetAllocationFinder();
       _graph = processImage->GetAllocationGraph();
+      _moduleDirectory = &(processImage->GetModuleDirectory());
     }
   }
 
-  virtual bool Matches(AllocationIndex index,
-                       const Allocation& allocation,
+  virtual bool Matches(AllocationIndex index, const Allocation& allocation,
                        bool isUnsigned) const = 0;
 
   /*
@@ -55,6 +56,7 @@ class PatternRecognizer {
   const VirtualAddressMap<Offset>* _addressMap;
   const Finder<Offset>* _finder;
   const Graph<Offset>* _graph;
+  const ModuleDirectory<Offset>* _moduleDirectory;
 };
 }  // namespace Allocations
 }  // namespace chap
