@@ -256,8 +256,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         Offset numBytesFound =
             Base::_virtualAddressMap.FindMappedMemoryImage(nameStart, &name);
         if (numBytesFound < 2 || name[0] == 0) {
-          std::cerr << "Module chain entry at 0x" << std::hex << link
-                    << " has an empty or invalid name.\n";
           continue;
         }
       }
