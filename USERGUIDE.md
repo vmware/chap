@@ -4,7 +4,7 @@
 * [Overview](#overview)
     * [Where to Run `chap`](#where-to-run-chap)
     * [Supported Process Image File Formats](#supported-process-image-file-formats)
-    * [Supported Memory Allocators](#supported memory-allocators)
+    * [Supported Memory Allocators](#supported-memory-allocators)
     * [How to Start and Stop `chap`](#how-to-start-and-stop-chap)
     * [Getting Help](#getting-help)
     * [General Concepts](#general-concepts)
@@ -22,8 +22,8 @@
 * [Allocation Patterns](#allocation-patterns)
 * [Allocation Sets](#allocation-sets)
 * [Allocation Set Modifications](#allocation-set-modifications)
-    * [Restricting by Signatures or Patterns](restricting-by-signatures-or-patterns)
-    * [Restricting by Counts of Incoming or Outgoing References](restricting-by-counts-of-incoming-or-outgoing-references)
+    * [Restricting by Signatures or Patterns](#restricting-by-signatures-or-patterns)
+    * [Restricting by Counts of Incoming or Outgoing References](#restricting-by-counts-of-incoming-or-outgoing-references)
     * [Set Extensions](#set-extensions)
 * [Use Cases](#use-cases)
     * [Detecting Memory Leaks](#detecting-memory-leaks)
@@ -169,8 +169,8 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * SSL_CTX - SSL_CTX type associated with openssl
 
 ## Use Cases
-### Detecting Memory Leaks](#detecting-memory-leaks)
-### Analyzing Memory Leaks](#analyzing-memory-leaks)
-### Supplementing gdb](#supplementing-gdb)
-### Analyzing Memory Growth](#analyzing-memory-growth)
+### Detecting Memory Leaks]
+### Analyzing Memory Leaks]
+### Supplementing gdb]
+### Analyzing Memory Growth]
 ### Detecting Memory Corruption
