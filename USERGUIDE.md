@@ -11,6 +11,7 @@
 * [Allocations](#allocations)
     * [Used Allocations](#used-allocations)
     * [Free Allocations](#free-allocations)
+    * [An Example](#an-example-of-used-and-free-allocations)
 * [References](#references)
     * [Real References](#real-references)
     * [False References](#false-references)
@@ -64,9 +65,54 @@ Many of the remaining commands are related to redirection of output (try "help r
 
 ## Allocations
 
-### Used Allocations
+An *allocation*, from the perspective of `chap` is a contiguous region of virtual memory that was made available to the caller by an allocation function or is currently reserved as writable memory by the process for that purpose.  At present the only allocations recognized by chap are those associated with libc malloc, and so made available to the caller by malloc(), calloc() or realloc() and freed by free() or realloc().  At present, regions of memory made available by other means, such as direct use of mmap(), are not considered allocations.
 
-### Free allocations
+
+### Used Allocations
+A *used allocation* is an *allocation* that was never given back to the allocator.  From the perspective of `chap`, this explicitly excludes regions of memory that are used for book-keeping about the allocation but does include the region starting from the address returned by the caller and including the full contiguous region that the caller might reasonably modify.  This region may be larger than the size requested at allocation, because the allocation function is always free to return more bytes than were requested.
+
+We can show all the used allocations from `chap`:
+
+
+### Free Allocations
+A *free allocation* is a range of writable memory that can be used to satisfy allocation requests.  It is worthwhile to understand these regions because typically memory is requested from the operating system in multiples of 4K pages, which are subdivided into allocations.  It is more common than not that when an allocation gets freed, it just gets given back to the allocator but the larger region containing that allocation just freed cannot yet be returned to the operating system.
+
+### An Example of Used and Free Allocations
+
+Consider the following nonsense code from [here in the test code](https://github.com/vmware/chap/blob/master/test/generators/generic/singleThreaded/OneAllocated/OneAllocated.c), which allocates an int, sets it to 92, and crashes:
+
+```
+#include <malloc.h>
+int main(int argc, const char**argv) {
+   int *pI = (int *) (malloc(sizeof(int)));
+   *pI = 92;
+   *((int *) 0) = 92; // crash
+   return 0;
+}
+```
+
+If we look at a 64 bit core compiled from this process, we can understand more about the allocations.  We can see that the one used allocation is a bit larger than requested and that at the time the core was generated the glibc malloc was holding on to a single free allocation of size 0x20fe0.  Any of those commands shown (count, list, show) could have been run with any of those arguments (allocations, used, free) but one probably wouldn't want to show that large free allocation to the screen.
+
+```
+-bash-4.1$ chap core.48555
+chap> count allocations
+2 allocations use 0x20fe8 (135,144) bytes.
+chap> count used
+1 allocations use 0x18 (24) bytes.
+chap> count free
+1 allocations use 0x20fd0 (135,120) bytes.
+chap> list allocations
+Used allocation at 601010 of size 18
+
+Free allocation at 601030 of size 20fd0
+
+2 allocations use 0x20fe8 (135,144) bytes.
+chap> show used
+Used allocation at 601010 of size 18
+              5c                0                0
+
+1 allocations use 0x18 (24) bytes.
+```
 
 ## References
 
@@ -169,8 +215,60 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * SSL_CTX - SSL_CTX type associated with openssl
 
 ## Use Cases
-### Detecting Memory Leaks]
-### Analyzing Memory Leaks]
-### Supplementing gdb]
-### Analyzing Memory Growth]
+### Detecting Memory Leaks
+To detect whether a process has exercised any code paths that cause memory leaks, one basically just needs to do the following 3 steps:
+1. Gather an image for the process.  For example, one might use gcore to do gather a live core.
+2. Open the process image using `chap`.
+3. Use **count leaked** to get a counts for the number of leaked allocations and the total number of bytes used by those allocations.
+
+Two caveats to the above are that the quality of the leak check is at most as good as the code coverage leading up to the point at which the process image was gathered, and also some leaks may be missed because allocations may be falsely anchored by false references.
+
+### Analyzing Memory Leaks
+### Supplementing gdb
+### Analyzing Memory Growth
+Generally, the first thing one will want to do in analyzing memory growth is to understand in a very general sense, using various commands from chap, where the memory is used in the process.  Here are some sample commands that will provide this high level information:
+* **count used** will tell you how much memory is taken by used allocations.
+* **count leaked** will tell you how much memory is taken by leaked allocations, which are a subset of all the used allocations.  This number may be quite small even if the result from **count used** is quite large because the most common cause of growth is generally container growth, which some people consider to be a "logical leak" but is not counted as a leak by `chap`.
+* **count free** will tell you how much memory is being used by free allocations.
+* **count stacks** will tell you how much memory is used by stacks for threads.  It can be surprising to people but in some cases the default stack sizes are quite large and coupled with a large number of threads the stack usage can dominate.  Even though a stack in one sense shrinks as function calls return, it is common that the entire stack is counted in the committed memory for a process, even if the stack is rather inactive and so has no resident pages.  This distinction matters because when the sum of the committed memory across all the processes gets large enough, even processes that aren't unduly large can be refused the opportunity to grow further, because mmap calls will start failing.
+
+What you do after running some or all of the above commands is determined by which of those numbers are the largest.
+
+TODO: add some examples here.
+
+#### Analyzing Memory Growth Due to Used Allocations
+If the results of **count used** suggest that used allocations dominate, probably the next thing you will want to do is to use **redirect on** to redirect output to a file then **summarize used** to get an overall summary of the used allocations.  It is quite common that unsigned allocations will dominate but it can be useful to scan down to the tallies for particular signatures because often one particular count can stand out as being too high and often allocations with the given suspect signature can hold many unsigned allocations in memory, particularly if the class or struct in question has a field that is some sort of collection.  In the special case that the results of **count leaked** are similar to the results of **count used**, one can fall back on techniques for analyzing memory leaks but otherwise one is typically looking for container growth (for example,  a large set or map or queue).
+
+Once one has a theory about the cause of the growth (for example, which container is too large) it is desirable to assess the actual cost of the growth associated with that theory.  For example in the case of a large std::map one might want to understand the cost of the allocations used to represent the std::map, as well as any other objects held in memory by this map.  The best way to do this is often to use the **/extend** switch to attempt to walk a graph of the relevant objects, generally as part of the **summarize** command or the **describe** command.
+
+TODO: Add at least one example here.
+
+#### Analyzing Memory Growth Due to Free allocations
+
+There are definitely cases where free allocations can dominate the memory growth.  This can surprise people because it is not always obvious why, if most of the allocations were freed, the memory wasn't given back to the operating system.  At times it can also appear that the total amount of memory associated with free allocations can be much larger than the total amount of memory that was ever associated with used allocations.  To understand these behaviors in the case of glibc malloc, which at present is the only variant of malloc that `chap` understands, here are some brief explanations and examples.  
+
+glibc malloc grabs memory from the operating system in multiple 4k pages at a time and typically carves those pages up into smaller allocations. A given page cannot be returned to the operating system as long as any allocations are present on that page and in fact the restrictions are much worse than that, as I will describe below. The key point here is that those pages that have not been given back to the operating systems can be used to satisfy subsequent requests and that the process will not grow in such cases where part of an existing page can be used to satisfy the request.
+
+TODO: put an example here with sample code from a single threaded process here that leaves one allocation on the last page.
+
+glibc malloc has the notion of an "arena", which loosely is to allow different threads to allocate memory without waiting for each other, by allocating memory from different arenas. An arena has the characteristic that an allocation from that arena must be returned to that arena. When a thread calls malloc, libc malloc attempts to find a free (not locked by another thread) arena and creates a new arena if no arena is currently unlocked. Once it has selected an arena for a given malloc call, which it does without regard to how much free memory is associated with that arena, it will use that arena for the duration of that single malloc call, even if using that arena forces the process to grow and using a different arena would not.
+
+TODO: put an example here with multiple arenas
+
+3) The arenas other than the main arena, which is the one arena that is initialized as of the first malloc, have the characteristic that they are divided into 64MB heaps and no memory within a heap that precedes the last used allocation within that heap can be freed. This would even be true with a single allocation in the very last page of that heap and nothing actually still in use in that heap before that last allocation. The main arena has plenty of issues where an allocation on one page can prevent others from being freed, but those are more difficult to describe here.
+
+4) As a performance optimization, glibc malloc remembers the last arena used by a given thread, and attempts to use it on the next allocation request for that thread, as long as the arena is not already locked by some other thread. The reason that in many cases this improves performances is that if you have k threads and k arenas, the process can reach a steady state where each thread is effectively using a different arena and so there are no collisions. In practice the number of arenas is typically smaller than the number of threads because a new arena is allocated only if no unlocked arena can be found.
+
+TODO: put another example here.  Perhaps one of the demos from the talk.
+
+Now to understand a particularly bad case that can occur given the above constraints, consider the case where we have had sufficient collisions on malloc that we have roughly 20 arenas. Consider the case that there is some operation that happens on a single thread and uses a large amount of memory on a temporary basis (for example to store the results of a large reply from a request to a server). When the operation is finished, that memory has been returned to malloc but not to the operating system, for reasons along the line of what I mentioned above.
+
+At this point (4) can become a big problem. For the sake of specific numbers, suppose the operation uses 40MB, mostly on a temporary basis and gets "lucky" so that each time it makes a request, the previously used arena is already unlocked. All the allocations will happen on that arena in such a case, until the given thread sees a collision on a malloc request, which at times may not happen for the duration of the entire operation. In the worst case, which is not uncommon, even though much of the 40MB get free they only get returned to the arena, and the pages don't go back to the operating system.
+
+Suppose that same operation later happens on another thread that, based on the last allocation done by that thread attempts and succeeds to use a different arena throughout the course of that operation. Potentially that thread can cause the process to grow by 40MB to satisfy requests on this other arena, even though the arena used the previous time the operation occurred already has 40MB free. I am oversimplifying a bit but one can see that if this should eventually happen on all 20 of the arenas, the overhead in free allocations might approach 20 * 40MB = 800 MB.
+
+There is no actual leak associated with the above, but the process memory size can be much larger than one might see without (4) being true, and an observer gets the false impression of unbounded growth because the way in which an arena is selected makes it possible that it may take a very long time before the piggish operation in question uses any particular arena. Each time the piggish operation happens on an arena where it had never happened, that arena grows and so the process grows.
+
+TODO: Provide examples of the specific case where we can find and eliminate the piggish operation (one finding it by looking at free allocations and one gathering a core at the point that the arena grows).
+
 ### Detecting Memory Corruption
