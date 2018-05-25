@@ -7,6 +7,7 @@
 #include "LongStringRecognizer.h"
 #include "SSLRecognizer.h"
 #include "SSL_CTXRecognizer.h"
+#include "Subcommands/DescribeArenas.h"
 
 namespace chap {
 namespace Linux {
@@ -24,11 +25,21 @@ class ProcessImageCommandHandler
         .Register(new SSL_CTXRecognizer<Offset>(processImage));
     chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
         .Register(new SSLRecognizer<Offset>(processImage));
+    SetProcessImage(processImage);
+  }
+
+  void SetProcessImage(const ProcessImage<Offset> *processImage) {
+    _describeArenasSubcommand.SetProcessImage(processImage);
   }
 
   virtual void AddCommands(Commands::Runner &r) {
     chap::ProcessImageCommandHandler<Offset>::AddCommands(r);
+    chap::ProcessImageCommandHandler<Offset>::RegisterSubcommand(
+        r, _describeArenasSubcommand);
   }
+
+ private:
+  Subcommands::DescribeArenas<Offset> _describeArenasSubcommand;
 };
 
 }  // namespace Linux

@@ -218,6 +218,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     MarkThreadCachedAllocationsAsFree();
 
     CheckForCorruption();
+
+    SetCountsForArenas();
   }
 
   virtual ~LibcMallocAllocationFinder() {}
@@ -275,6 +277,33 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   const char* LIBC_MALLOC_MAIN_ARENA_PAGES;
   const char* LIBC_MALLOC_LARGE_ALLOCATIONS;
 
+  struct Arena {
+    Arena(Offset address)
+        : _address(address),
+          _nextArena(0),
+          _top(0),
+          _size(0),
+          _freeCount(0),
+          _freeBytes(0),
+          _usedCount(0),
+          _usedBytes(0),
+          _hasFastBinCorruption(false),
+          _hasFreeListCorruption(false) {}
+    Offset _address;
+    Offset _nextArena;
+    Offset _top;
+    Offset _size;
+    Offset _freeCount;
+    Offset _freeBytes;
+    Offset _usedCount;
+    Offset _usedBytes;
+    bool _hasFastBinCorruption;
+    bool _hasFreeListCorruption;  // ... in doubly linked list
+  };
+  typedef std::map<Offset, Arena> ArenaMap;
+
+  const ArenaMap& GetArenas() const { return _arenas; }
+
  private:
   VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -285,22 +314,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   static const Offset OFFSET_SIZE = sizeof(Offset);
   static const Offset DEFAULT_MAX_HEAP_SIZE =
       (OFFSET_SIZE == 4) ? 0x100000 : 0x4000000;
-  struct Arena {
-    Arena(Offset address)
-        : _address(address),
-          _nextArena(0),
-          _top(0),
-          _size(0),
-          _hasFastBinCorruption(false),
-          _hasFreeListCorruption(false) {}
-    Offset _address;
-    Offset _nextArena;
-    Offset _top;
-    Offset _size;
-    bool _hasFastBinCorruption;
-    bool _hasFreeListCorruption;  // ... in doubly linked list
-  };
-  typedef std::map<Offset, Arena> ArenaMap;
   typedef typename ArenaMap::iterator ArenaMapIterator;
   typedef typename ArenaMap::const_iterator ArenaMapConstIterator;
 
@@ -2230,6 +2243,22 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
   }
   void CheckForCorruption() { CheckForDoublyLinkedListCorruption(); }
+
+  void SetCountsForArenas() {
+    for (auto allocation : _allocations) {
+      ArenaMapIterator it =
+          _arenas.find(ArenaAddressFor(allocation.Address()));
+      Arena& arena = it->second;
+      Offset size = allocation.Size();
+      if (allocation.IsUsed()) {
+        arena._usedCount++;
+        arena._usedBytes += size;
+      } else {
+        arena._freeCount++;
+        arena._freeBytes += size;
+      }
+    }
+  }
 };
 
 }  // namespace Linux
