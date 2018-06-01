@@ -51,7 +51,7 @@ class PatternRecognizer {
                         bool explain) const = 0;
 
  protected:
-  const std::string& _name;
+  const std::string _name;
   const ProcessImage<Offset>* _processImage;
   const VirtualAddressMap<Offset>* _addressMap;
   const Finder<Offset>* _finder;
