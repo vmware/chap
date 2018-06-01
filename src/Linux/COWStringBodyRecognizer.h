@@ -63,10 +63,14 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
 
     Offset maxCapacity = allocationSize - (Offset)(3 * sizeof(Offset) - 1);
     Offset capacity = ((Offset*)(image))[1];
-    if (capacity == 0 || capacity > maxCapacity) {
+    if (capacity == 0 || capacity > maxCapacity ||
+        capacity < (maxCapacity >> 1)) {
       /*
        * The assumption is that for a string body with 0 capacity, as
        * opposed to 0 length, one would just use the existing static.
+       * The capacity cannot actually exceed what would fit in the remainder
+       * of the buffer and it is suspect if malloc gave back a much bigger
+       * buffer than was needed to support the given capacity.
        */
       return false;
     }
