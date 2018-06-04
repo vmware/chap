@@ -1254,6 +1254,25 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         isNonMainArena = true;
       }
       if (!isNonMainArena) {
+        /*
+         * This is a minor hack for the case that the difference between the
+         * run base and the arena start was calculated incorrectly.  It
+         * needs to be made more robust but for now I am using this to
+         * support glibc 2.27.
+         */
+        for (Offset nextOffset = 0xc0 * sizeof(Offset);
+             nextOffset < 0x140 * sizeof(Offset);
+             nextOffset += sizeof(Offset)) {
+          Offset next =
+              reader.ReadOffset(mainArenaCandidate + nextOffset, 0xbad);
+          if (next == mainArenaCandidate || next == 0xbad) {
+            break;
+          }
+          if (next == mainArenaCandidate - sizeof(Offset)) {
+            mainArenaCandidate -= sizeof(Offset);
+            break;
+          }
+        }
         _mainArenaAddress = mainArenaCandidate;
       }
     }
