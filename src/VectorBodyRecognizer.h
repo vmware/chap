@@ -59,7 +59,7 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
           Offset endUsable =
               reader.ReadOffset(anchor + 2 * sizeof(Offset), 0xbad);
           if (endUsed >= allocationAddress && endUsable >= endUsed &&
-              endUsable <= allocationLimit) {
+              endUsable > allocationAddress && endUsable <= allocationLimit) {
             vectors.emplace_back(locationType, anchor,
                                  endUsed - allocationAddress, 0);
           }
@@ -109,6 +109,7 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
         if (candidates[candidateIndex] == allocationAddress &&
             candidates[candidateIndex + 1] >= allocationAddress &&
             candidates[candidateIndex + 2] >= candidates[candidateIndex + 1] &&
+            candidates[candidateIndex + 2] > allocationAddress &&
             candidates[candidateIndex + 2] <= allocationLimit) {
           vectors.emplace_back(
               InAllocation, incomingAddress,
