@@ -14,4 +14,4 @@
 [0x7ff37da63000, 0x7ff37dc7c000)
 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 uses the following ranges:
 [0x7ff37de96000, 0x7ff37e214000)
-7 modules use 0xea7000 bytes.
+7 modules use 0xea7000 (15,364,096) bytes.

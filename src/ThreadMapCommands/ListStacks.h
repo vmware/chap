@@ -5,6 +5,7 @@
 #include "../Commands/Runner.h"
 #include "../Commands/Subcommand.h"
 #include "../ThreadMap.h"
+#include "../SizedTally.h"
 namespace chap {
 namespace ThreadMapCommands {
 template <class Offset>
@@ -40,7 +41,7 @@ class ListStacks : public Commands::Subcommand {
       }
       return;
     }
-    Offset totalBytes = 0;
+    SizedTally<Offset> tally(context, "stacks");
     typename ThreadMap<Offset>::const_iterator itEnd = _threadMap->end();
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap->begin();
          it != itEnd; ++it) {
@@ -48,10 +49,8 @@ class ListStacks : public Commands::Subcommand {
              << " uses stack block [0x" << std::hex << it->_stackBase << ", "
              << it->_stackLimit << ") current sp: 0x" << it->_stackPointer
              << "\n";
-      totalBytes += (it->_stackLimit - it->_stackBase);
+      tally.AdjustTally(it->_stackLimit - it->_stackBase);
     }
-    output << std::dec << _threadMap->NumThreads() << " threads use 0x"
-           << std::hex << totalBytes << " bytes.\n";
   }
 
  private:

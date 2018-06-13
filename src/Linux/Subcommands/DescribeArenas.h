@@ -5,6 +5,7 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../LibcMallocAllocationFinder.h"
+#include "../../SizedTally.h"
 namespace chap {
 namespace Linux {
 namespace Subcommands {
@@ -53,14 +54,14 @@ class DescribeArenas : public Commands::Subcommand {
       }
       return;
     }
-    Offset totalBytes = 0;
+    SizedTally<Offset> tally(context, "arenas");
     const typename LibcMallocAllocationFinder<Offset>::ArenaMap& arenaMap =
         _allocationFinder->GetArenas();
     for (const auto& addressAndInfo : arenaMap) {
       Offset address = addressAndInfo.first;
       const typename LibcMallocAllocationFinder<Offset>::Arena arena =
           addressAndInfo.second;
-      totalBytes += arena._size;
+      tally.AdjustTally(arena._size);
       output << "Arena at 0x" << std::hex << address << " has size 0x"
              << arena._size << ".\n"
              << std::dec << arena._freeCount << " free allocations take 0x"
@@ -68,8 +69,6 @@ class DescribeArenas : public Commands::Subcommand {
              << std::dec << arena._usedCount << " used allocations take 0x"
              << std::hex << arena._usedBytes << " bytes.\n\n";
     }
-    output << std::dec << arenaMap.size() << " arenas use 0x" << std::hex
-           << totalBytes << " bytes.\n";
   }
 
  private:

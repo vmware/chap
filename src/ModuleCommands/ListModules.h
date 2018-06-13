@@ -5,6 +5,7 @@
 #include "../Commands/Runner.h"
 #include "../Commands/Subcommand.h"
 #include "../ModuleDirectory.h"
+#include "../SizedTally.h"
 namespace chap {
 namespace ModuleCommands {
 template <class Offset>
@@ -39,26 +40,27 @@ class ListModules : public Commands::Subcommand {
       }
       return;
     }
-    Offset totalBytes = 0;
-    typename ModuleDirectory<Offset>::const_iterator itEnd = _moduleDirectory->end();
+    SizedTally<Offset> tally(context, "modules");
+    typename ModuleDirectory<Offset>::const_iterator itEnd =
+        _moduleDirectory->end();
     for (typename ModuleDirectory<Offset>::const_iterator it =
              _moduleDirectory->begin();
          it != itEnd; ++it) {
       const std::string& moduleName = it->first;
       const RangeMapper<Offset, Offset>& ranges = it->second;
+      Offset totalBytesForModule = 0;
       typename RangeMapper<Offset, Offset>::const_iterator itRangeEnd =
           ranges.end();
       output << moduleName << " uses the following ranges:\n";
       for (typename RangeMapper<Offset, Offset>::const_iterator itRange =
                ranges.begin();
            itRange != itRangeEnd; ++itRange) {
-        totalBytes += itRange->_size;
+        totalBytesForModule += itRange->_size;
         output << "[0x" << std::hex << itRange->_base << ", 0x"
-                  << itRange->_limit << ")\n";
+               << itRange->_limit << ")\n";
       }
+      tally.AdjustTally(totalBytesForModule);
     }
-    output << std::dec << _moduleDirectory->NumModules() << " modules use 0x"
-           << std::hex << totalBytes << " bytes.\n";
   }
 
  private:
