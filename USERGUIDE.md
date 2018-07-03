@@ -19,7 +19,7 @@
 * [Allocation Signatures](#allocation-signatures)
     * [Finding Class Names and Struct Names from the Core](#finding-class-names-and-struct-names-from-the-core)
     * [Finding Class Names and Struct Names from the Core and Binaries](#finding-class-names-and-struct-names-from-the-core-and-binaries)
-    * [Depending on gdb to Convert Numbers to Symbols](#depending-on-gdb-to-Convert-Numbers-to-symbols)
+    * [Depending on gdb to Convert Addresses to Symbols](#depending-on-gdb-to-Convert-Numbers-to-symbols)
 * [Allocation Patterns](#allocation-patterns)
 * [Allocation Sets](#allocation-sets)
 * [Allocation Set Modifications](#allocation-set-modifications)
@@ -44,7 +44,7 @@ At present this has only been tested on Linux, with the `chap` binary built for 
 At the time of this writing, the only process image file formats supported by `chap` are little-endian 32 bit ELF cores and little-endian 64 bit ELF cores, both of which are expected to be complete.  Run `chap` without any arguments to get a current list of supported process image file formats.
 
 ### Supported Memory Allocators
-At present the only memory allocator for which `chap` will be able to find allocations in the process image is the version of malloc used by glibc on Linux.  Even lacking support for jemalloc or tcmalloc there are many processes for which `chap` is useful, because many processes use glibc malloc, including many processes that are mostly using C++, C, Python, or Java code.  The relevance in the case of Python or Java is mostly related to the use of native libraries.
+At present the only memory allocator for which `chap` will be able to find allocations in the process image is the version of malloc used by glibc on Linux.  Even lacking support for jemalloc or tcmalloc there are many processes for which `chap` is useful, because many processes use glibc malloc, including many processes that are mostly using C++, C, Python, or Java code.  Python, at least on Linux, heavily uses glibc malloc.   The use of glibc malloc in programs written mostly in java is often due to use of shared libraries written in C.
 
 A quick way to determine whether `chap` is likely to be useful for your process is to gather a core (for example, using gcore) then open chap and use **count allocations**.  If the count is non-zero, `chap` is applicable.
 
@@ -66,7 +66,7 @@ Most of the commands in `chap` operate on sets.  Normally, for any set that is u
 
 Most of the sets that one can identify with `chap` are related to **allocations**, which roughly correspond to memory ranges made available by memory allocation functions, such as malloc, in response to requests.  Allocations are considered **used** or **free**, where **used** allocations are ones that have not been freed since they last were made available by the allocator.  One can run any of the commands listed above (count, list ...) on **used**, the set of used allocations, **free**, the set of free allocations, or **allocations**, which includes all of them.  If a given type is recognizable by a [signature](#allocation-signatures) or by a [pattern](#allocation-patterns), one can further restrict any given set to contain only instances of that type. A very small set that is sometimes of interest is "allocation *address*"  which is non-empty only if there is an allocation that contains the given address.  Any specified allocation set can also be restricted in various other ways, such as constraining the size.  Use the help command, for example, **help count used**, for details.
 
-Other interesting sets available in `chap` are related to how various allocations are referenced.  For now this document will not provide a thorough discussion of references to allocations but will briefly address how `chap` understands such references to allocations.  From the perspective of `chap` a reference to an allocation is a pointer-sized value, either in a register or at a pointer-aligned location in memory, that points somewhere within the allocation.  Note that under these rules, `chap` currently often identifies things as references that really aren't, for example, because the given register or memory region is not really currently live.  It is also possible for certain programs, for example ones that put pointers in misaligned places such as in fields of packed structures, but this in general is easy to fix by constraining programs not to do that.  Given an address within an allocation one can look at the **outgoing** allocations (meaning the used allocations referenced by the specified allocation) or the **incoming** allocations (meaning the allocations that reference the specified allocation).  Use the help command, for example, **help list incoming** or **help show exactincoming**, or **help summarize outgoing** for details of some of the information one can gather about references to allocations.
+Other interesting sets available in `chap` are related to how various allocations are referenced.  For now this document will not provide a thorough discussion of references to allocations but will briefly address how `chap` understands such references to allocations.  From the perspective of `chap` a reference to an allocation is normally a pointer-sized value, either in a register or at a pointer-aligned location in memory, that points somewhere within the allocation.  Note that under these rules, `chap` currently often identifies things as references that really aren't, for example, because the given register or memory region is not really currently live.  It is also possible for certain programs, for example ones that put pointers in misaligned places such as in fields of packed structures, but this in general is easy to fix by constraining programs not to do that.  Given an address within an allocation one can look at the **outgoing** allocations (meaning the used allocations referenced by the specified allocation) or the **incoming** allocations (meaning the allocations that reference the specified allocation).  Use the help command, for example, **help list incoming** or **help show exactincoming**, or **help summarize outgoing** for details of some of the information one can gather about references to allocations.
 
 References from outside of dynamically allocated memory (for example, from the stack or registers for a thread or from statically allocated memory) are of interest because they help clarify how a given allocation is used.  A used allocation that is directly referenced from outside of dynamically allocated memory is considered to be an **anchor point**, and the reference itself is considered to be an **anchor**.  Any **anchor point** or any used allocation referenced by that **anchor point** is considered to be **anchored**, as are any used allocations referenced by any **anchored** allocations. A **used allocation** that is not **anchored** is considered to be **leaked**.  A **leaked** allocation that is not referenced by any other **leaked** allocation is considered to be **unreferenced**.  Try **help count leaked** or **help summarize unreferenced** for some examples.
 
@@ -122,12 +122,23 @@ Used allocation at 601010 of size 18
 
 ## References
 
-Aside, from allocations, the most important thing to understand about ```chap``` is what it considers to be a **reference**.  Basically a **reference** is any contiguous region of memory or
+Aside, from allocations, the most important thing to understand about ```chap``` is what it considers to be a **reference**.  Basically a **reference** is an interpretation of any range of memory or contents of a register as a live address to somewhere in that allocation.  In the most straight-forward case this is just a pointer in the native order (which is little-endian everywhere `chap` has been tested.).
+
 ### Real References
+
+A real reference is a case where the interpretation is valid and in fact the given register or memory is still in use to reach the given allocation.
 
 ### False References
 
+A false reference is where the interpretation is wrong.  This can happen for many reasons.  The most common cause of false references is that the allocator has returned a range of memory that is bigger than what was requested and so the bytes at the end are simply left over from the last time.
+
+Another cause of false references is that some part of the allocation, even in the part of the range actually known to the code that requested the allocation, is simply not currently in use.  This is common with std::vector, which often has a capacity that is larger than the number of elements used or in any similar case where the allocation contains some range of memory that can be used as a buffer but for which the part of that range is actually in use varies.
+
+Another case of false references are when the range just happens to look like it contains a reference but in fact contains one or more smaller values.
+
 ### Missing References
+
+A missing reference would be a case where a reference exists but `chap` can't detect it.  One example of this might be if the reference was intentionally obscured by some reversible function.  Fortunately, this is extremely rare on Linux.  This is a good thing because, as will be seen below, accurate leak detection depends on not having any missing references.
 
 ## Allocation Signatures
 
@@ -175,7 +186,7 @@ chap> summarize signatures
 ```
 
 
-### Depending on gdb to Convert Numbers to Symbols
+### Depending on gdb to Convert Addresses to Symbols
 
 In a case where none of the signatures could be found based on the core alone or based on the core and binaries, the output of "summarize signatures" will show a large number of signatures "pending.symdefs file creation" as shown:
 ```
