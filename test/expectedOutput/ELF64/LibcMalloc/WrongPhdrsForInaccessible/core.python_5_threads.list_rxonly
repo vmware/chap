@@ -1,0 +1,4 @@
+Range [0x7f51eda65000, 0x7f51eda8b000) uses 0x26000 bytes.
+Range [0x7fffe22fd000, 0x7fffe22ff000) uses 0x2000 bytes.
+Range [0xffffffffff600000, 0xffffffffff601000) uses 0x1000 bytes.
+3 rx-only ranges use 0x29000 (167,936) bytes.

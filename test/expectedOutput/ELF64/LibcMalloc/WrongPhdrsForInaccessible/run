@@ -1,0 +1,37 @@
+# Copyright (c) 2018 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a live core from a simple python program
+# that starts 4 extra threads, each of which sleeps an hour.
+# In this particular case, the core was gathered against a recent redhat
+# distribution for which gdb has a bug that when it creates a core it
+# marks any inaccessible sections as read-only, rather than as inaccessible.
+# The test expects chap to mostly behave as if those sections are marked
+# correctly but to find any such sections that are used as stack guards,
+# module alignment regions, or heap tails.
+
+chap=$1
+
+# Warning: the core is rather large here due to the fact that the
+# inaccessible regions with the wrong (read-only) permissions actually
+# get rather useless but huge 0-filled images in the core.
+bunzip2 -q core.python_5_threads.bz2
+$1 core.python_5_threads << DONE
+redirect on
+count inaccessible
+list inaccessible
+describe inaccessible
+count readonly
+list readonly
+describe readonly
+count rxonly
+list rxonly
+describe rxonly
+count writable
+list writable
+describe writable
+count used
+count free
+count stacks
+DONE
+bzip2 -q core.python_5_threads

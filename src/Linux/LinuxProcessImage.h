@@ -6,6 +6,7 @@
 #include <map>
 #include "../Allocations/SignatureDirectory.h"
 #include "../ProcessImage.h"
+#include "../RangeMapper.h"
 #include "../Unmangler.h"
 #include "ELFImage.h"
 #include "LibcMallocAllocationFinder.h"
@@ -25,7 +26,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       : ProcessImage<Offset>(elfImage.GetVirtualAddressMap(),
                              elfImage.GetThreadMap()),
         _elfImage(elfImage),
-        _symdefsRead(false) {
+        _symdefsRead(false),
+        STACK("stack"),
+        STACK_OVERFLOW_GUARD("stack overflow guard"),
+        MODULE_ALIGNMENT_GAP("module alignment gap"),
+        USED_BY_MODULE("used by module") {
     if (_elfImage.GetELFType() != ET_CORE) {
       /*
        * It is the responsibilty of the caller to avoid passing in an ELFImage
@@ -41,8 +46,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        * won't be any need to find the allocations.
        */
 
-      Base::_allocationFinder =
-          new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition);
+      Base::_allocationFinder = new LibcMallocAllocationFinder<Offset>(
+          Base::_virtualMemoryPartition, Base::_inaccessibleRanges,
+          Base::_readOnlyRanges, Base::_writableRanges);
 
       /*
        * Find any modules after checking for the libc malloc allocation
@@ -82,6 +88,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       FindSignatureNamesFromBinaries();
 
       WriteSymreqsFileIfNeeded();
+
+      MarkStackGuardsAsInaccessibleOrReadOnly();
     }
   }
 
@@ -97,6 +105,75 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   }
 
  protected:
+  void MarkStackGuardsAsInaccessibleOrReadOnly() {
+    Reader reader(Base::_virtualAddressMap);
+    typename AddressMap::const_iterator itMapEnd =
+        Base::_virtualAddressMap.end();
+    for (typename ThreadMap<Offset>::const_iterator it =
+             Base::_threadMap.begin();
+         it != Base::_threadMap.end(); ++it) {
+      Offset base = it->_stackBase;
+      Offset limit = it->_stackLimit;
+      if (!Base::_writableRanges.ClaimRange(base, limit - base, STACK)) {
+        std::cerr << "Warning: unexpected overlap found for stack for thread "
+                  << std::dec << it->_threadNum << ".\n";
+      }
+      Offset lastPageBase = limit - 0x1000;
+      Offset guardBase = base - 0x1000;
+      Offset sizeWithGuard = limit - guardBase;
+      for (Offset check = limit - 3 * sizeof(Offset); check >= lastPageBase;
+           check -= sizeof(Offset)) {
+        if (reader.ReadOffset(check) == guardBase &&
+            reader.ReadOffset(check + sizeof(Offset)) == sizeWithGuard &&
+            reader.ReadOffset(check + 2 * sizeof(Offset)) == 0x1000) {
+          typename AddressMap::const_iterator itMap =
+              Base::_virtualAddressMap.find(guardBase);
+          if (itMap != itMapEnd) {
+            int permissions =
+                (itMap.Flags() & RangeAttributes::PERMISSIONS_MASK);
+            if ((permissions & (RangeAttributes::PERMISSIONS_MASK ^
+                                RangeAttributes::IS_READABLE)) !=
+                RangeAttributes::HAS_KNOWN_PERMISSIONS) {
+              std::cerr
+                  << "Warning: unexpected permissions found for overflow guard "
+                  << "for thread " << std::dec << it->_threadNum << ".\n";
+              break;
+            }
+            if ((permissions & RangeAttributes::IS_READABLE) != 0) {
+              /*
+               * This has been seen in some cores where the guard region
+               * has been improperly marked as read-only, even after having
+               * been verified as inaccessible at the time the process was
+               * running.  We'll grudgingly accept the core's version of the
+               * facts here.
+               */
+              if (!Base::_readOnlyRanges.ClaimRange(guardBase, 0x1000,
+                                                    STACK_OVERFLOW_GUARD)) {
+                std::cerr
+                    << "Warning: unexpected overlap found for overflow guard "
+                    << "for thread " << std::dec << it->_threadNum << ".\n";
+              }
+              break;
+            }
+          }
+          /*
+           * If we reach here, the range was mentioned in the core as
+           * inaccessible or not mentioned at all.  The expected thing
+           * to do when the core is created is to record the inaccessible
+           * guard region in a Phdr, but not to bother providing an image.
+           * Unfortunately, some versions of gdb stray from this and either
+           * don't have a Phdr or waste core space on an image.
+           */
+          if (!Base::_inaccessibleRanges.ClaimRange(guardBase, 0x1000,
+                                                    STACK_OVERFLOW_GUARD)) {
+            std::cerr << "Warning: unexpected overlap found for overflow guard "
+                      << "for thread " << std::dec << it->_threadNum << ".\n";
+          }
+          break;
+        }
+      }
+    }
+  }
   bool CheckChainMember(Offset candidate,
                         typename VirtualAddressMap<Offset>::Reader& reader) {
     Offset BAD = 0xbadbad;
@@ -293,7 +370,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       const Offset* arrayLimit = arrayStart + 3 * numEntries;
       for (const Offset* entry = arrayStart; entry < arrayLimit; entry += 3) {
         Offset base = entry[0];
-        Offset size = entry[1] - base;
+        Offset limit = entry[1];
+        Offset size = limit - base;
         Base::_moduleDirectory.AddRange(base, size, std::string(stringStart));
         stringStart += strlen(stringStart) + 1;
       }
@@ -616,10 +694,182 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       }
     }
   }
+  struct ModuleRange {
+    ModuleRange() : _base(0), _size(0), _permissions(0), _image(0) {}
+    ModuleRange(Offset base, Offset size, int permissions, const char* image)
+        : _base(base), _size(size), _permissions(permissions), _image(image) {}
+    ModuleRange(const ModuleRange& other) {
+      _base = other._base;
+      _size = other._size;
+      _permissions = other._permissions;
+      _image = other._image;
+    }
+    Offset _base;
+    Offset _size;
+    int _permissions;
+    const char* _image;
+  };
+  void FindRangesForModule(typename ModuleDirectory<Offset>::const_iterator it,
+                           std::vector<ModuleRange>& ranges) {
+    typename RangeMapper<Offset, Offset>::const_iterator itRange =
+        it->second.begin();
+    typename RangeMapper<Offset, Offset>::const_iterator itRangeEnd =
+        it->second.end();
+    Offset base = itRange->_base;
+    Offset rangeLimit = itRange->_limit;
+    typename VirtualAddressMap<Offset>::const_iterator itVirt =
+        Base::_virtualAddressMap.find(base);
+    typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
+        Base::_virtualAddressMap.end();
+    if (itVirt == itVirtEnd) {
+      return;
+    }
+    if (base < itVirt.Base()) {
+      base = itVirt.Base();
+    }
+    Offset virtLimit = itVirt.Limit();
+    int permissionsBits = itVirt.Flags() & RangeAttributes::PERMISSIONS_MASK;
+
+    while (true) {
+      Offset limit = virtLimit;
+      if (limit > rangeLimit) {
+        limit = rangeLimit;
+      }
+      const char* image = itVirt.GetImage();
+      if (image != (const char*)(0)) {
+        image += (base - itVirt.Base());
+      }
+      ranges.emplace_back(base, limit - base, permissionsBits, image);
+      base = limit;
+      while (base >= rangeLimit) {
+        if (++itRange == itRangeEnd) {
+          return;
+        }
+        if (base < itRange->_base) {
+          base = itRange->_base;
+        }
+        rangeLimit = itRange->_limit;
+      }
+      while (base >= virtLimit) {
+        if (++itVirt == itVirtEnd) {
+          return;
+        }
+        Offset virtBase = itVirt.Base();
+        virtLimit = itVirt.Limit();
+        if (base < virtBase) {
+          base = virtBase;
+        }
+
+        permissionsBits = itVirt.Flags() & RangeAttributes::PERMISSIONS_MASK;
+      }
+    }
+  }
+  void ClaimRangesForModule(
+      typename ModuleDirectory<Offset>::const_iterator it) {
+    std::vector<ModuleRange> ranges;
+    FindRangesForModule(it, ranges);
+    size_t numRanges = ranges.size();
+    bool gapFound;
+    for (const auto& range : ranges) {
+      if ((range._permissions & (RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                                 RangeAttributes::IS_WRITABLE)) ==
+          (RangeAttributes::HAS_KNOWN_PERMISSIONS |
+           RangeAttributes::IS_WRITABLE)) {
+        if (!Base::_writableRanges.ClaimRange(range._base, range._size,
+                                              USED_BY_MODULE)) {
+          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
+                    << range._base << ", 0x" << (range._base + range._size)
+                    << ")\nused by module " << it->first << "\n";
+        }
+
+      } else if (range._permissions == (RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                                        RangeAttributes::IS_READABLE |
+                                        RangeAttributes::IS_EXECUTABLE)) {
+        if (!Base::_rxOnlyRanges.ClaimRange(range._base, range._size,
+                                            USED_BY_MODULE)) {
+          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
+                    << range._base << ", 0x" << (range._base + range._size)
+                    << ")\nused by module " << it->first << "\n";
+        }
+      } else if (range._permissions == RangeAttributes::HAS_KNOWN_PERMISSIONS) {
+        gapFound = true;
+        if (!Base::_inaccessibleRanges.ClaimRange(range._base, range._size,
+                                                  MODULE_ALIGNMENT_GAP)) {
+          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
+                    << range._base << ", 0x" << (range._base + range._size)
+                    << ")\nalignment gap for module " << it->first << "\n";
+        }
+      }
+    }
+    for (size_t i = 0; i < numRanges; i++) {
+      const ModuleRange& range = ranges[i];
+      Offset size = range._size;
+      if (range._permissions == (RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                                 RangeAttributes::IS_READABLE)) {
+        if (!gapFound && ((size == 0x200000) || (size == 0x1ff000)) && i > 0 &&
+            i < numRanges - 1 && ranges[i + 1]._base == range._base + size) {
+          bool knownZeroImage = false;
+          if (range._image != (const char*)(0)) {
+            const char* limit = range._image + range._size;
+            knownZeroImage = true;
+            for (const char* pC = range._image; pC != limit; ++pC) {
+              if (*pC != '\000') {
+                knownZeroImage = false;
+                break;
+              }
+            }
+          }
+          if (knownZeroImage) {
+            /*
+             * Some versions of gdb incorrectly record inaccessible regions as
+             * being readonly and store 0-filled images of such ranges, which
+             * makes the core a bit larger.  We do this claiming as a way
+             * for the user to understand how the given range is used, but
+             * leave it as considered read-only to be consistent with how
+             * the range is marked in the core.
+             */
+            if (!Base::_readOnlyRanges.ClaimRange(range._base, range._size,
+                                                  MODULE_ALIGNMENT_GAP)) {
+              std::cerr << "Warning: unexpected overlap found for [0x"
+                        << std::hex << range._base << ", 0x"
+                        << (range._base + range._size)
+                        << ")\nalignment gap for module " << it->first << "\n";
+            }
+            gapFound = true;
+            continue;
+          }
+        }
+        if (!Base::_readOnlyRanges.ClaimRange(range._base, range._size,
+                                              USED_BY_MODULE)) {
+          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
+                    << range._base << ", 0x" << (range._base + range._size)
+                    << ")\nused by module " << it->first << "\n";
+        }
+      }
+    }
+    if (!gapFound && numRanges > 1) {
+      for (size_t i = 1; i < numRanges; i++) {
+        Offset prevRangeLimit = ranges[i - 1]._base + ranges[i - 1]._size;
+        Offset gapSize = ranges[i]._base - prevRangeLimit;
+        if (gapSize == 0x200000 || gapSize == 0x1ff000) {
+          if (Base::_inaccessibleRanges.ClaimRange(prevRangeLimit, gapSize,
+                                                   MODULE_ALIGNMENT_GAP)) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
   void FindModules() {
     if (!FindModulesByPTNote() && !FindModulesByAlignedLink(0x1000) &&
         !FindModulesByAlignedLink(sizeof(Offset))) {
       FindModulesByMappedImages();
+    }
+    for (typename ModuleDirectory<Offset>::const_iterator it =
+             Base::_moduleDirectory.begin();
+         it != Base::_moduleDirectory.end(); ++it) {
+      ClaimRangesForModule(it);
     }
   }
 
@@ -641,6 +891,10 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   ElfImage& _elfImage;
   mutable bool _symdefsRead;
   std::map<Offset, Offset> _staticAnchorLimits;
+  const char* STACK;
+  const char* STACK_OVERFLOW_GUARD;
+  const char* MODULE_ALIGNMENT_GAP;
+  const char* USED_BY_MODULE;
 
   bool ParseOffset(const std::string& s, Offset& value) const {
     if (!s.empty()) {

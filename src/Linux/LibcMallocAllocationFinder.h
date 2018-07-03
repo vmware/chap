@@ -4,6 +4,7 @@
 #pragma once
 #include "../Allocations/Finder.h"
 #include "../ModuleDirectory.h"
+#include "../PermissionsConstrainedRanges.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
 
@@ -25,13 +26,20 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   typedef typename std::set<Offset> OffsetSet;
 
   LibcMallocAllocationFinder(
-      VirtualMemoryPartition<Offset>& virtualMemoryPartition)
+      VirtualMemoryPartition<Offset>& virtualMemoryPartition,
+      PermissionsConstrainedRanges<Offset>& inaccessibleRanges,
+      PermissionsConstrainedRanges<Offset>& readOnlyRanges,
+      PermissionsConstrainedRanges<Offset>& writableRanges)
       : Allocations::Finder<Offset>(virtualMemoryPartition.GetAddressMap()),
         LIBC_MALLOC_HEAP("libc malloc heap"),
+        LIBC_MALLOC_HEAP_TAIL_RESERVATION("libc malloc heap tail reservation"),
         LIBC_MALLOC_MAIN_ARENA("libc malloc main arena"),
         LIBC_MALLOC_MAIN_ARENA_PAGES("libc malloc main arena pages"),
-        LIBC_MALLOC_LARGE_ALLOCATIONS("libc malloc large allocations"),
+        LIBC_MALLOC_LARGE_ALLOCATION("libc malloc large allocation"),
         _virtualMemoryPartition(virtualMemoryPartition),
+        _inaccessibleRanges(inaccessibleRanges),
+        _readOnlyRanges(readOnlyRanges),
+        _writableRanges(writableRanges),
         _addressMap(virtualMemoryPartition.GetAddressMap()),
         _mainArenaAddress(0),
         _mainArenaIsContiguous(false),
@@ -168,13 +176,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
     }
 
-    HeapMapConstIterator itHeapsEnd = _heaps.end();
-    for (HeapMapConstIterator itHeaps = _heaps.begin(); itHeaps != itHeapsEnd;
-         ++itHeaps) {
-      _virtualMemoryPartition.ClaimRange(itHeaps->first, _maxHeapSize,
-                                         LIBC_MALLOC_HEAP);
-    }
-
+    ClaimHeapRanges();
     if (_mainArenaAddress != 0) {
       /*
        * It is necessary to claim the arena itself to avoid any false
@@ -273,9 +275,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   const char* LIBC_MALLOC_HEAP;
+  const char* LIBC_MALLOC_HEAP_TAIL_RESERVATION;
   const char* LIBC_MALLOC_MAIN_ARENA;
   const char* LIBC_MALLOC_MAIN_ARENA_PAGES;
-  const char* LIBC_MALLOC_LARGE_ALLOCATIONS;
+  const char* LIBC_MALLOC_LARGE_ALLOCATION;
 
   struct Arena {
     Arena(Offset address)
@@ -306,6 +309,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
  private:
   VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
+  PermissionsConstrainedRanges<Offset>& _inaccessibleRanges;
+  PermissionsConstrainedRanges<Offset>& _readOnlyRanges;
+  PermissionsConstrainedRanges<Offset>& _writableRanges;
   const VirtualAddressMap<Offset>& _addressMap;
 
   std::vector<Allocation> _allocations;
@@ -1467,6 +1473,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                                               LIBC_MALLOC_MAIN_ARENA_PAGES)) {
         abort();
       }
+      if (!_writableRanges.ClaimRange(base, size,
+                                      LIBC_MALLOC_MAIN_ARENA_PAGES)) {
+        std::cerr << "Warning: unexpected overlap for main arena pages at 0x"
+                  << std::hex << base << "\n";
+      }
       return;
     }
 
@@ -1492,6 +1503,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if (!_virtualMemoryPartition.ClaimRange(base, size,
                                               LIBC_MALLOC_MAIN_ARENA_PAGES)) {
         abort();
+      }
+      if (!_writableRanges.ClaimRange(base, size,
+                                      LIBC_MALLOC_MAIN_ARENA_PAGES)) {
+        std::cerr << "Warning: unexpected overlap for main arena pages at 0x"
+                  << std::hex << base << "\n";
       }
       _mainArenaRuns.emplace_back(base, size);
       totalMainArenaRunSizes += size;
@@ -1627,6 +1643,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                 << topLimit << "] may be inaccurate for main arena pages.\n";
       return false;
     }
+    if (!_writableRanges.ClaimRange(base, mainArena._size,
+                                    LIBC_MALLOC_MAIN_ARENA_PAGES)) {
+      std::cerr << "Warning: unexpected overlap for main arena pages at 0x"
+                << std::hex << base << "\n";
+    }
     _mainArenaRuns.emplace_back(base, topLimit - base);
     return true;
   }
@@ -1694,7 +1715,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (LargeAllocationsConstIterator itLarge = _largeAllocations.begin();
          itLarge != _largeAllocations.end(); ++itLarge) {
       _virtualMemoryPartition.ClaimRange(itLarge->first, itLarge->second,
-                                         LIBC_MALLOC_LARGE_ALLOCATIONS);
+                                         LIBC_MALLOC_LARGE_ALLOCATION);
+      if (!_writableRanges.ClaimRange(itLarge->first, itLarge->second,
+                                      LIBC_MALLOC_LARGE_ALLOCATION)) {
+        std::cerr << "Warning: unexpected overlap for large allocation at 0x"
+                  << std::hex << itLarge->first << "\n";
+      }
     }
   }
 
@@ -2265,8 +2291,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   void SetCountsForArenas() {
     for (auto allocation : _allocations) {
-      ArenaMapIterator it =
-          _arenas.find(ArenaAddressFor(allocation.Address()));
+      ArenaMapIterator it = _arenas.find(ArenaAddressFor(allocation.Address()));
       Arena& arena = it->second;
       Offset size = allocation.Size();
       if (allocation.IsUsed()) {
@@ -2275,6 +2300,76 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       } else {
         arena._freeCount++;
         arena._freeBytes += size;
+      }
+    }
+  }
+
+  void ClaimHeapRanges() {
+    typename VirtualAddressMap<Offset>::const_iterator itMapEnd =
+        _addressMap.end();
+    HeapMapConstIterator itHeapsEnd = _heaps.end();
+    for (HeapMapConstIterator itHeaps = _heaps.begin(); itHeaps != itHeapsEnd;
+         ++itHeaps) {
+      Offset heapBase = itHeaps->first;
+      _virtualMemoryPartition.ClaimRange(heapBase, _maxHeapSize,
+                                         LIBC_MALLOC_HEAP);
+      typename VirtualAddressMap<Offset>::const_iterator itMap =
+          _addressMap.find(heapBase);
+      if (itMap == itMapEnd) abort();
+      Offset limit = itMap.Limit();
+      if (limit > heapBase + _maxHeapSize) {
+        limit = heapBase + _maxHeapSize;
+      }
+      if (!_writableRanges.ClaimRange(heapBase, limit - heapBase,
+                                      LIBC_MALLOC_HEAP)) {
+        std::cerr << "Warning: unexpected overlap for heap at 0x" << std::hex
+                  << heapBase << "\n";
+      }
+
+      if (limit < heapBase + _maxHeapSize) {
+        ++itMap;
+        if ((itMap != itMapEnd) && (itMap.Base() == limit)) {
+          int permissions = itMap.Flags() & RangeAttributes::PERMISSIONS_MASK;
+          if ((permissions & (RangeAttributes::PERMISSIONS_MASK ^
+                              RangeAttributes::IS_READABLE)) !=
+              RangeAttributes::HAS_KNOWN_PERMISSIONS) {
+            std::cerr
+                << "Warning: unexpected permissions for tail for heap at 0x"
+                << std::hex << heapBase << "\n";
+            continue;
+          }
+          if ((permissions & RangeAttributes::IS_READABLE) != 0) {
+            /*
+             * This has been seen in some cores where the tail region
+             * has been improperly marked as read-only, even after having
+             * been verified as inaccessible at the time the process was
+             * running.  We'll grudgingly accept the core's version of the
+             * facts here although actually saving images the tail regions can
+             * make the core much larger and slower to create.
+             */
+            if (!_readOnlyRanges.ClaimRange(
+                    limit, _maxHeapSize - (limit - heapBase),
+                    LIBC_MALLOC_HEAP_TAIL_RESERVATION)) {
+              std::cerr << "Warning: unexpected overlap for tail for heap at 0x"
+                        << std::hex << heapBase << "\n";
+            }
+            continue;
+          }
+        }
+        /*
+         * If we reach here, the range was mentioned in the core as
+         * inaccessible or not mentioned at all.  The expected thing
+         * to do when the core is created is to record the inaccessible
+         * tail region in a Phdr, but not to bother providing an image.
+         * Unfortunately, some versions of gdb stray from this and either
+         * don't have a Phdr or waste core space on an image.
+         */
+        if (!_inaccessibleRanges.ClaimRange(
+                limit, _maxHeapSize - (limit - heapBase),
+                LIBC_MALLOC_HEAP_TAIL_RESERVATION)) {
+          std::cerr << "Warning: unexpected overlap for tail for heap at 0x"
+                    << std::hex << heapBase << "\n";
+        }
       }
     }
   }

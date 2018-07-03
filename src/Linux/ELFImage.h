@@ -427,7 +427,10 @@ class ELFImage {
          * the limit.
          *
          * The following sequence generally works for pthreads but not,
-         * for example, for the main thread.
+         * for example, for the main thread.  When such a self reference
+         * does not appear in the last page of the region that is used for
+         * the stack, we are effectively having to guess the highest address
+         * that is used for the stack.
          */
 
         typename VirtualAddressMap<Offset>::Reader reader(_virtualAddressMap);

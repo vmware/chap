@@ -29,9 +29,6 @@ class ThreadMap {
     threadInfo._stackLimit = stackLimit;
     threadInfo._registers = registers;
     threadInfo._threadNum = threadNum;
-    // TODO: The following statement is a bug because the vector body will get
-    // swapped as the vector grows, rendering the pointer invalid. Use an index
-    // instead.  Nobody is using _threadNum so this can be changed arbitrarily.
     _stackRanges.MapRange(stackBase, stackLimit - stackBase,
                           &threadInfo - &(*_threads.begin()));
   }

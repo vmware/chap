@@ -75,3 +75,5 @@ exout_test(PATH ELF64/LibcMalloc/LongStringTest
            FILES core.26368)
 exout_test(PATH ELF32/LibcMalloc/LongStringTest
            FILES core.26548)
+exout_test(PATH ELF64/LibcMalloc/WrongPhdrsForInaccessible
+           FILES core.python_5_threads.bz2)

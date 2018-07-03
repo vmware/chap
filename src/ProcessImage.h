@@ -7,6 +7,7 @@
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
 #include "ModuleDirectory.h"
+#include "PermissionsConstrainedRanges.h"
 #include "ThreadMap.h"
 #include "VirtualAddressMap.h"
 #include "VirtualMemoryPartition.h"
@@ -25,12 +26,33 @@ class ProcessImage {
         _virtualAddressMap(virtualAddressMap),
         _threadMap(threadMap),
         _virtualMemoryPartition(virtualAddressMap),
+        _inaccessibleRanges(virtualAddressMap,
+                            RangeAttributes::PERMISSIONS_MASK,
+                            RangeAttributes::HAS_KNOWN_PERMISSIONS, false),
+        _readOnlyRanges(virtualAddressMap, RangeAttributes::PERMISSIONS_MASK,
+                        RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                            RangeAttributes::IS_READABLE,
+                        true),
+        _rxOnlyRanges(virtualAddressMap, RangeAttributes::PERMISSIONS_MASK,
+                      RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                          RangeAttributes::IS_READABLE |
+                          RangeAttributes::IS_EXECUTABLE,
+                      true),
+        _writableRanges(virtualAddressMap,
+                        RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                            RangeAttributes::IS_WRITABLE,
+                        RangeAttributes::HAS_KNOWN_PERMISSIONS |
+                            RangeAttributes::IS_WRITABLE,
+                        true),
         _allocationFinder((Allocations::Finder<Offset> *)(0)),
         _allocationGraph((Allocations::Graph<Offset> *)(0)) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
-      _virtualMemoryPartition.ClaimRange(
-          it->_stackBase, it->_stackLimit - it->_stackBase, STACK_AREA);
+      if (!_virtualMemoryPartition.ClaimRange(
+              it->_stackBase, it->_stackLimit - it->_stackBase, STACK_AREA)) {
+        std::cerr << "Warning: overlap found for stack range "
+                  << "for thread " << std::dec << it->_threadNum << ".\n";
+      }
     }
   }
 
@@ -43,6 +65,18 @@ class ProcessImage {
     }
   }
   const AddressMap &GetVirtualAddressMap() const { return _virtualAddressMap; }
+  const PermissionsConstrainedRanges<Offset> &GetInaccessibleRanges() const {
+    return _inaccessibleRanges;
+  }
+  const PermissionsConstrainedRanges<Offset> &GetReadOnlyRanges() const {
+    return _readOnlyRanges;
+  }
+  const PermissionsConstrainedRanges<Offset> &GetRXOnlyRanges() const {
+    return _rxOnlyRanges;
+  }
+  const PermissionsConstrainedRanges<Offset> &GetWritableRanges() const {
+    return _writableRanges;
+  }
 
   const ThreadMap<Offset> &GetThreadMap() const { return _threadMap; }
 
@@ -82,6 +116,10 @@ class ProcessImage {
   const ThreadMap<OffsetType> &_threadMap;
   ModuleDirectory<Offset> _moduleDirectory;
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
+  PermissionsConstrainedRanges<Offset> _inaccessibleRanges;
+  PermissionsConstrainedRanges<Offset> _readOnlyRanges;
+  PermissionsConstrainedRanges<Offset> _rxOnlyRanges;
+  PermissionsConstrainedRanges<Offset> _writableRanges;
   Allocations::Finder<Offset> *_allocationFinder;
   Allocations::Graph<Offset> *_allocationGraph;
 
