@@ -8,11 +8,14 @@ src=$2
 
 # Get rid of any files that were created after the last time this
 # test was run, then remember the start time of the current run.
+# Allow the run script to be newer (in case it was changed in $src)
+# but for now this script will break if other inputs, such as any core
+# files, change.
 
 timestamp=`pwd`.timestamp
 if [ -f $timestamp ]
 then
-   rm $timestamp `find -newer $timestamp`
+   rm $timestamp `find -newer $timestamp | grep -v '^\./run$'`
 fi
 touch $timestamp
 
