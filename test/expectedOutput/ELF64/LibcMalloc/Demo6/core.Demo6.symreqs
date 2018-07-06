@@ -3,6 +3,8 @@ set logging overwrite 1
 set logging redirect 1
 set logging on
 set height 0
+printf "SIGNATURE 401888\n"
+info symbol 0x401888
 printf "ANCHOR 7ff37e213d28\n"
 info symbol 0x7ff37e213d28
 printf "ANCHOR 7ff37e213d30\n"

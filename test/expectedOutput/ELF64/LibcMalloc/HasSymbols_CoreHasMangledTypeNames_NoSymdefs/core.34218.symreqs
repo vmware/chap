@@ -3,6 +3,10 @@ set logging overwrite 1
 set logging redirect 1
 set logging on
 set height 0
+printf "ANCHOR 7ffff7dd2d28\n"
+info symbol 0x7ffff7dd2d28
+printf "ANCHOR 7ffff7dd2d30\n"
+info symbol 0x7ffff7dd2d30
 set logging off
 set logging overwrite 0
 set logging redirect 0

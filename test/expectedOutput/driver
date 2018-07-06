@@ -2,10 +2,23 @@
 # SPDX-License-Identifier: GPL-2.0
 
 # Test driver for expectedOutput tests.
-# Run ./run and then compare working directory contents with $src.
 
 chap=$1
 src=$2
 
+# Get rid of any files that were created after the last time this
+# test was run, then remember the start time of the current run.
+
+timestamp=`pwd`.timestamp
+if [ -f $timestamp ]
+then
+   rm $timestamp `find -newer $timestamp`
+fi
+touch $timestamp
+
+# Run ./run and then compare working directory contents with $src.
+# Basically, $src contains any inputs to the test, which were copied
+# to the working directory during cmake, and any files expected to be
+# created during the test.
 ./run $chap
-diff --recursive --unified=0 $2 .
+diff --recursive --unified=0 $src .
