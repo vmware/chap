@@ -26,6 +26,7 @@
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
+#include "VirtualAddressMapCommands/SummarizeRanges.h"
 
 namespace chap {
 template <typename Offset>
@@ -44,21 +45,28 @@ class ProcessImageCommandHandler {
         _countInaccessibleSubcommand(
             "inaccessible",
             "This command provides totals of the number of "
-            "inaccesible ranges\n(not readable, writable or "
+            "inaccessible ranges\n(not readable, writable or "
             "executable) and the space they occupy.\n",
+            "inaccessible ranges",
+            &ProcessImage<Offset>::GetInaccessibleRanges),
+        _summarizeInaccessibleSubcommand(
+            "inaccessible",
+            "This command summarizes (by use) the number of ranges and "
+            "byte counts for\ninaccessible ranges (not readable, writable or "
+            "executable).\n",
             "inaccessible ranges",
             &ProcessImage<Offset>::GetInaccessibleRanges),
         _listInaccessibleSubcommand(
             "inaccessible",
             "This command lists the address, limit and size of "
-            "inaccesible ranges (not\nreadable, writable or "
+            "inaccessible ranges (not\nreadable, writable or "
             "executable) and gives totals for ranges and space used.\n",
             "inaccessible ranges",
             &ProcessImage<Offset>::GetInaccessibleRanges),
         _describeInaccessibleSubcommand(
             "inaccessible",
             "This command gives the address, limit, size and rough use of "
-            "inaccesible ranges\n(not readable, writable or "
+            "inaccessible ranges\n(not readable, writable or "
             "executable) and gives totals for ranges and space used.\n",
             "inaccessible ranges",
             &ProcessImage<Offset>::GetInaccessibleRanges),
@@ -67,6 +75,12 @@ class ProcessImageCommandHandler {
             "This command provides totals of the number of "
             "read-only ranges\nand the space they occupy.\n",
             "read-only ranges", &ProcessImage<Offset>::GetReadOnlyRanges),
+        _summarizeReadOnlySubcommand(
+            "readonly",
+            "This command summarizes (by use) the number of ranges and "
+            "byte counts for\nread-only ranges.\n",
+            "read-only ranges",
+            &ProcessImage<Offset>::GetReadOnlyRanges),
         _listReadOnlySubcommand(
             "readonly",
             "This command lists the address, limit and size of "
@@ -82,6 +96,13 @@ class ProcessImageCommandHandler {
                                "rx-only ranges\nand the space they occupy.\n",
                                "rx-only ranges",
                                &ProcessImage<Offset>::GetRXOnlyRanges),
+        _summarizeRXOnlySubcommand(
+            "rxonly",
+            "This command summarizes (by use) the number of ranges and "
+            "byte counts for rx-only\nranges (readable and executable "
+            "but not writable).\n",
+            "rx-only ranges",
+            &ProcessImage<Offset>::GetRXOnlyRanges),
         _listRXOnlySubcommand(
             "rxonly",
             "This command lists the address, limit and size of "
@@ -97,6 +118,12 @@ class ProcessImageCommandHandler {
             "This command provides totals of the number of "
             "writable ranges\nand the space they occupy.\n",
             "writable ranges", &ProcessImage<Offset>::GetWritableRanges),
+        _summarizeWritableSubcommand(
+            "writable",
+            "This command summarizes (by use) the number of ranges and "
+            "byte counts for\nwritable ranges.\n",
+            "writable ranges",
+            &ProcessImage<Offset>::GetWritableRanges),
         _listWritableSubcommand(
             "writable",
             "This command lists the address, limit and size of "
@@ -133,15 +160,19 @@ class ProcessImageCommandHandler {
     _countStacksSubcommand.SetProcessImage(processImage);
     _listStacksSubcommand.SetProcessImage(processImage);
     _countInaccessibleSubcommand.SetProcessImage(processImage);
+    _summarizeInaccessibleSubcommand.SetProcessImage(processImage);
     _listInaccessibleSubcommand.SetProcessImage(processImage);
     _describeInaccessibleSubcommand.SetProcessImage(processImage);
     _countReadOnlySubcommand.SetProcessImage(processImage);
+    _summarizeReadOnlySubcommand.SetProcessImage(processImage);
     _listReadOnlySubcommand.SetProcessImage(processImage);
     _describeReadOnlySubcommand.SetProcessImage(processImage);
     _countRXOnlySubcommand.SetProcessImage(processImage);
+    _summarizeRXOnlySubcommand.SetProcessImage(processImage);
     _listRXOnlySubcommand.SetProcessImage(processImage);
     _describeRXOnlySubcommand.SetProcessImage(processImage);
     _countWritableSubcommand.SetProcessImage(processImage);
+    _summarizeWritableSubcommand.SetProcessImage(processImage);
     _listWritableSubcommand.SetProcessImage(processImage);
     _describeWritableSubcommand.SetProcessImage(processImage);
     _listModulesSubcommand.SetProcessImage(processImage);
@@ -162,15 +193,19 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _listStacksSubcommand);
     RegisterSubcommand(r, _listModulesSubcommand);
     RegisterSubcommand(r, _countInaccessibleSubcommand);
+    RegisterSubcommand(r, _summarizeInaccessibleSubcommand);
     RegisterSubcommand(r, _listInaccessibleSubcommand);
     RegisterSubcommand(r, _describeInaccessibleSubcommand);
     RegisterSubcommand(r, _countReadOnlySubcommand);
+    RegisterSubcommand(r, _summarizeReadOnlySubcommand);
     RegisterSubcommand(r, _listReadOnlySubcommand);
     RegisterSubcommand(r, _describeReadOnlySubcommand);
     RegisterSubcommand(r, _countRXOnlySubcommand);
+    RegisterSubcommand(r, _summarizeRXOnlySubcommand);
     RegisterSubcommand(r, _listRXOnlySubcommand);
     RegisterSubcommand(r, _describeRXOnlySubcommand);
     RegisterSubcommand(r, _countWritableSubcommand);
+    RegisterSubcommand(r, _summarizeWritableSubcommand);
     RegisterSubcommand(r, _listWritableSubcommand);
     RegisterSubcommand(r, _describeWritableSubcommand);
     RegisterSubcommand(r, _summarizeSignaturesSubcommand);
@@ -196,16 +231,24 @@ class ProcessImageCommandHandler {
   ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
   ModuleCommands::ListModules<Offset> _listModulesSubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countInaccessibleSubcommand;
+  VirtualAddressMapCommands::SummarizeRanges<Offset>
+      _summarizeInaccessibleSubcommand;
   VirtualAddressMapCommands::ListRanges<Offset> _listInaccessibleSubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset>
       _describeInaccessibleSubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countReadOnlySubcommand;
+  VirtualAddressMapCommands::SummarizeRanges<Offset>
+      _summarizeReadOnlySubcommand;
   VirtualAddressMapCommands::ListRanges<Offset> _listReadOnlySubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset> _describeReadOnlySubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countRXOnlySubcommand;
+  VirtualAddressMapCommands::SummarizeRanges<Offset>
+      _summarizeRXOnlySubcommand;
   VirtualAddressMapCommands::ListRanges<Offset> _listRXOnlySubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset> _describeRXOnlySubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countWritableSubcommand;
+  VirtualAddressMapCommands::SummarizeRanges<Offset>
+      _summarizeWritableSubcommand;
   VirtualAddressMapCommands::ListRanges<Offset> _listWritableSubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset> _describeWritableSubcommand;
   Allocations::Subcommands::SummarizeSignatures<Offset>

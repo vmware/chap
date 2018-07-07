@@ -1,0 +1,7 @@
+6 ranges take 0x1b1000 bytes for use: unknown
+5 ranges take 0x2021000 bytes for use: stack
+8 ranges take 0x7f000 bytes for use: used by module
+4 ranges take 0x84000 bytes for use: libc malloc heap
+1 ranges take 0xe1000 bytes for use: libc malloc main arena pages
+1 ranges take 0x31000 bytes for use: libc malloc large allocation
+25 writable ranges use 0x23e7000 (37,646,336) bytes.

@@ -19,15 +19,19 @@ bunzip2 -q core.python_5_threads.bz2
 $1 core.python_5_threads << DONE
 redirect on
 count inaccessible
+summarize inaccessible
 list inaccessible
 describe inaccessible
 count readonly
+summarize readonly
 list readonly
 describe readonly
 count rxonly
+summarize rxonly
 list rxonly
 describe rxonly
 count writable
+summarize writable
 list writable
 describe writable
 count used
