@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <map>
+#include <vector>
+#include <algorithm>
 #include "../Commands/Runner.h"
 #include "../Commands/Subcommand.h"
 #include "../PermissionsConstrainedRanges.h"
@@ -23,16 +26,56 @@ class SummarizeRanges : public RangesSubcommand<Offset> {
       : RangesSubcommand<Offset>("summarize", subcommandName, helpMessage,
                                  rangesAccessor),
         _tallyDescriptor(tallyDescriptor) {}
+
+ private:
+  typedef std::map<const char*, std::pair<Offset, Offset> > UseTallies;
+  typedef typename UseTallies::value_type UseTalliesValue;
+  struct Compare {
+    bool operator()(const UseTalliesValue& left,
+                    const UseTalliesValue& right) {
+      // Sort in decreasing order of total bytes.
+      if (left.second.second > right.second.second) {
+        return true;
+      }
+      if (left.second.second < right.second.second) {
+        return false;
+      }
+      // In case of matching total bytes, sort by decreasing
+      // total number of ranges.
+      if (left.second.first > right.second.first) {
+        return true;
+      }
+      if (left.second.first < right.second.first) {
+        return false;
+      }
+      // in case of matching # bytes and #ranges, sort by increasing lexical
+      // order of usage.
+
+      std::string leftString("unknown");
+      if (left.first != (const char *)(0)) {
+        leftString.assign(left.first);
+      }
+      std::string rightString("unknown");
+      if (right.first != (const char *)(0)) {
+        rightString.assign(right.first);
+      }
+      return leftString < rightString;
+    }
+  };
+protected:
   void VisitRanges(Commands::Context& context) {
     Commands::Output& output = context.GetOutput();
     SizedTally<Offset> tally(context, _tallyDescriptor);
     typename PermissionsConstrainedRanges<Offset>::const_iterator itEnd =
         RangesSubcommand<Offset>::_ranges->end();
-    std::map<const char*, std::pair<Offset, Offset> > useTallies;
+    UseTallies useTallies;
     for (typename PermissionsConstrainedRanges<Offset>::const_iterator it =
              RangesSubcommand<Offset>::_ranges->begin();
          it != itEnd; ++it) {
       const char* regionUse = it->_value;
+      if (regionUse == (const char *)(0)) {
+        regionUse = "unknown";
+      }
       typename std::map<const char*, std::pair<Offset, Offset> >::iterator
           itUse = useTallies.find(regionUse);
       if (itUse == useTallies.end()) {
@@ -43,18 +86,18 @@ class SummarizeRanges : public RangesSubcommand<Offset> {
       }
       tally.AdjustTally(it->_size);
     }
+    std::set<UseTalliesValue, Compare> sorted(useTallies.begin(),
+                                              useTallies.end());
+
     /*
-     * For now just dump the summary in order of usage type because the number
-     * of usage types is sufficiently small that there is no point sorting it.
+     * Show range information in decreasing order of bytes used, resolving
+     * ties by decreasing order of number of ranges, resolving ties by
+     * increasing lexical order of usage.
      */
-    for (const auto& useAndTallies : useTallies) {
-      const char *usage = useAndTallies.first;
-      if (usage == (const char *)(0)) {
-        usage = "unknown";
-      }
+    for (const auto& useAndTallies: sorted) {
       output << std::dec << useAndTallies.second.first << " ranges take 0x"
              << std::hex << useAndTallies.second.second
-             << " bytes for use: " << usage << "\n";
+             << " bytes for use: " << useAndTallies.first << "\n";
     }
   }
 

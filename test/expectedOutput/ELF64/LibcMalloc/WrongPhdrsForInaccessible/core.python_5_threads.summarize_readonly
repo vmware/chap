@@ -1,4 +1,4 @@
-4 ranges take 0x4000 bytes for use: stack overflow guard
-8 ranges take 0xb000 bytes for use: used by module
 4 ranges take 0xff7c000 bytes for use: libc malloc heap tail reservation
+8 ranges take 0xb000 bytes for use: used by module
+4 ranges take 0x4000 bytes for use: stack overflow guard
 16 read-only ranges use 0xff8b000 (267,956,224) bytes.
