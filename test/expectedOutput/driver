@@ -15,7 +15,7 @@ src=$2
 timestamp=`pwd`.timestamp
 if [ -f $timestamp ]
 then
-   rm $timestamp `find -newer $timestamp | grep -v '^\./run$'`
+   rm $timestamp `find -newer $timestamp -type f | grep -v '^\./run$'`
 fi
 touch $timestamp
 
