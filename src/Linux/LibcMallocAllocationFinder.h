@@ -2253,15 +2253,29 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
               Offset prevNode = list;
               for (Offset node = firstNode; node != list;
                    node = reader.ReadOffset(node + 2 * OFFSET_SIZE)) {
-                Offset allocation = node + 2 * OFFSET_SIZE;
-                AllocationIndex index = AllocationIndexOf(allocation);
+                Offset allocationAddr = node + 2 * OFFSET_SIZE;
+                AllocationIndex index = AllocationIndexOf(allocationAddr);
                 if (index == noAllocation) {
                   ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
                                            "not matching an allocation");
                   break;
                 }
-                Offset allocationSize = AllocationAt(index)->Size();
-                if ((reader.ReadOffset(allocation + allocationSize) & 1) != 0) {
+                const Allocation& allocation = _allocations[index];
+                if (allocation.Address() != allocationAddr) {
+                  if (prevNode == list) {
+                    ReportFreeListCorruption(
+                        arena, list + 2 * OFFSET_SIZE, node,
+                        "with wrong offset from allocation");
+                  } else {
+                    ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
+                                             prevNode,
+                                             "with an unexpected forward link");
+                  }
+                  break;
+                }
+                Offset allocationSize = allocation.Size();
+                if ((reader.ReadOffset(allocationAddr + allocationSize) & 1) !=
+                    0) {
                   ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
                                            "with a wrong used/free status bit");
                   break;
