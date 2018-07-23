@@ -64,7 +64,7 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
     Offset maxCapacity = allocationSize - (Offset)(3 * sizeof(Offset) - 1);
     Offset capacity = ((Offset*)(image))[1];
     if (capacity == 0 || capacity > maxCapacity ||
-        capacity < (maxCapacity >> 1)) {
+        (maxCapacity > 5 * sizeof(Offset) && capacity < (maxCapacity >> 1))) {
       /*
        * The assumption is that for a string body with 0 capacity, as
        * opposed to 0 length, one would just use the existing static.
