@@ -216,12 +216,6 @@ chap> summarize signatures
 1585 signatures are unwritable addresses missing from the .symdefs file.
 1585 signatures in total were found.
 ```
-## Allocation Sets
-## Allocation Set Modifications
-### Restricting by Signatures or Patterns
-### Restricting by Counts of Incoming or Outgoing References
-### Set Extensions
-
 
 ## Allocation Patterns
 
@@ -231,6 +225,76 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * VectorBody - dynamically allocated memory for std::vector
 * SSL - SSL type associated with openssl
 * SSL_CTX - SSL_CTX type associated with openssl
+
+## Allocation Sets
+
+`chap` commands operate on sets of allocations.  The simplest of the sets are based on whether the allocations are used or free and for the used ones whether they are anchored or leaked, and for the anchored allocations, whether or not they are allocated in a certain way.  For all of these sets, the allocations are visited in increasing order of address.  Here is a rough hierarchy:
+
+* **allocations** refers to the set of all allocations, used or free.
+  * **used** refers to the subset of **allocations** consisting of allocations that have been returned by an allocation call such as malloc() but not yet been freed.
+    * **anchored** refers the subset of **used** consisting of allocations that are reachable by following from a reference outside of dynamically allocated memory (for example, from a stack or a register or statically allocated memory) to an allocation then following one or more references starting from that allocation.
+      * **anchorpoints** refers to the subset of **anchored** that is referenced from outside of dynamically allocated memory.
+        * **stackanchorpoints** refers to the subset of **anchorpoints** that is referenced from the stack for at least one thread.
+        * **registeranchorpoints** refers to the subset of **anchorpoints** that is referenced from at least one register for at least on thread.
+        * **staticanchorpoints** refers to the subset of **anchorpoints** that is referenced from at least one region considered to be statically allocated.  Not that one should be somewhat skeptical of this set because `chap` generally considers writable memory that it cannot otherwise explain to be statically allocated.  Some cases where this is incorrect includes memory used for python objects or java objects or memory otherwise dynamically allocated using mmap.  The reason `chap` behaves this way is to avoid reporting false leaks.
+        * **threadonlyanchorpoints** refers to the subset of **anchorpoints** directly referenced by registers or stack for at least one thread but not anchored in any other way.
+      * **stackanchored** refers to the subset of **anchored** that is reachable by following zero or more references from a stack anchor point.
+      * **registeranchored** refers to the subset of **anchored** that is reachable by following zero or more references from a register anchor point.
+      * **staticanchored** refers to the subset of **anchored** that is reachable by following zero or more references from a static anchor point.
+      * **threadonlyanchored** refers to the subset of **anchored** that is reachable by following zero or more references from a member of **threadonlyanchored** minus the members of **stackanchored**.  This is useful for understanding temporary allocations.
+  * **leaked** refers to the subset of **used** that is not **anchored**.
+    * **unreferenced** refers to the subset of **leaked** that are not referenced by any other members of **leaked**.
+* **free** refers to the subset of **allocations** that are not **used**.
+
+Other sets are defined relative to a particular allocation:
+
+* **allocation** *address* refers to the allocation that contains the given address.  It is an error here and for any of the sets described in this section to specify an address that does not belong to an allocation.
+* **outgoing** *address* refers to the subset of **used** that is referenced by the allocation that contains the given address, specifically excluding that allocation.
+* **incoming** *address* refers to the subset of **used** that has at least one reference to the allocation that contains the given address, again specifically excluding that allocation.
+  * **exactincoming** *address* refers to the subset of **incoming** *address* that has a reference to the start of the allocation containing the given address.
+* **freeoutgoing** *address* refers to the subset of **free** that has at least one reference to the allocation that contains the given address, again specifically excluding that allocation.
+* **chain** *address* *offset-in-hex* refers to the subset of **used** starting at the
+allocation containing the specified address and following links at the given
+offset until the link offset doesn't fit in the allocation or the target is not
+in an allocation.  Note that unlike most of the sets, allocations are visited in the order of the chain.  The **chain** set specification was defined before the notion of set extensions described below, and is deprecated but is kept for backwards compatibility with existing chap scripts.
+* **reversechain** *address-in-hex* *source-offset* *target-offset* refers to the subset of **used** starting at the allocation containing the specified address and following incoming edges that are constrained so that the reference is at the specified offset in the source and points to the specified offset in the target. This is intended for following long singly linked lists backwards.  The chain is terminated either when no suitable incoming edge exists or when multiple such edges do.
+
+## Allocation Set Modifications
+
+Any of the allocation sets as describe above can be further restricted or, if the set does not already match **allocations** can generally be extended.
+
+### Restricting by Signatures or Patterns
+
+One way to restrict a set is to provide a signature or a pattern following the set specification.  Here is a `chap` script with a few examples:
+
+`
+# Provide the addresses of all allocations that, based on the signature, appear to be of type Foo:
+enumerate used follow
+
+# Show all the leaked allocations that appear to be instances of SSL_CTX from openssl.
+show leaked %SSL_CTX
+`
+
+### Restricting by Counts of Incoming or Outgoing References
+
+Sets can be further constrained by requiring a minimum or maximum number of incoming or outgoing references possibly constraining the type of the referencing or referenced object.  For example here is a script with some commands preceded by comments about what they do:
+
+`
+# This possibly useless command counts all the leaked allocations that are not
+# also unreferenced.
+count leaked /minincoming=1
+
+# This overly verbose command is equivalent to "count unreferenced".
+count leaked /maxincoming=0
+
+# This describes all used allocations of type Foo that are referenced by at
+# least 100 allocations of type Bar.
+
+describe used Foo /minincoming Bar=100
+`
+
+### Set Extensions
+
 
 ## Use Cases
 ### Detecting Memory Leaks
@@ -247,7 +311,9 @@ Two caveats to the above are that the quality of the leak check is at most as go
 To analyze memory leaks, starting from a core for which **count leaks** gave a non-zero count, probably the first thing you will want to do (assuming that you have set up symbols properly as describe in an earlier section) is to distinguish which leaked allocations are also **unreferenced**, because if one can explain why all the **unreferenced** objects were leaked, this will often explain the remaining leaked objects.  To start with this, use something like **show unreferenced**.
 
 One of the most common causes of leaks is a failure to do the last dereference on a reference counted object (or failing to take a reference in the first place and allowing any raw pointers to the object to go out of scope).  For such objects you basically want to figure out the type, which `chap` might help you with based on a **signature** or a **pattern** then use gdb or some such thing to figure out where the reference count resides if you don't already know.
+
 ### Supplementing gdb
+
 When you look at a core with gdb it is very desirable to know the how various addresses seen in registers on the stack are used.  Try **describe** *address* to get an understanding of whether the given address points to a used allocation or a free allocation or stack or something else.  If the address corresponds to a used allocation, use **list incoming** *allocation-address* to understand whether that allocation is referenced elsewhere.
 
 ### Analyzing Memory Growth
