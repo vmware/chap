@@ -22,6 +22,7 @@
 #include "StackDescriber.h"
 #include "ThreadMapCommands/CountStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
+#include "ThreadMapCommands/DescribeStacks.h"
 #include "VectorBodyRecognizer.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
@@ -159,6 +160,7 @@ class ProcessImageCommandHandler {
     _inModuleDescriber.SetProcessImage(processImage);
     _countStacksSubcommand.SetProcessImage(processImage);
     _listStacksSubcommand.SetProcessImage(processImage);
+    _describeStacksSubcommand.SetProcessImage(processImage);
     _countInaccessibleSubcommand.SetProcessImage(processImage);
     _summarizeInaccessibleSubcommand.SetProcessImage(processImage);
     _listInaccessibleSubcommand.SetProcessImage(processImage);
@@ -191,6 +193,7 @@ class ProcessImageCommandHandler {
     r.AddCommand(_explainCommand);
     RegisterSubcommand(r, _countStacksSubcommand);
     RegisterSubcommand(r, _listStacksSubcommand);
+    RegisterSubcommand(r, _describeStacksSubcommand);
     RegisterSubcommand(r, _listModulesSubcommand);
     RegisterSubcommand(r, _countInaccessibleSubcommand);
     RegisterSubcommand(r, _summarizeInaccessibleSubcommand);
@@ -229,6 +232,7 @@ class ProcessImageCommandHandler {
   Commands::ExplainCommand<Offset> _explainCommand;
   ThreadMapCommands::CountStacks<Offset> _countStacksSubcommand;
   ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
+  ThreadMapCommands::DescribeStacks<Offset> _describeStacksSubcommand;
   ModuleCommands::ListModules<Offset> _listModulesSubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countInaccessibleSubcommand;
   VirtualAddressMapCommands::SummarizeRanges<Offset>

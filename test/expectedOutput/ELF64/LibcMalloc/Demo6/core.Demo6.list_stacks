@@ -1,0 +1,3 @@
+Thread 1 uses stack block [0x7ff37cb91000, 7ff37d391000) current sp: 0x7ff37d38fef8
+Thread 2 uses stack block [0x7fffe54f8000, 7fffe551a000) current sp: 0x7fffe55185c8
+2 stacks use 0x822000 (8,527,872) bytes.
