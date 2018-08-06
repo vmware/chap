@@ -269,7 +269,7 @@ One way to restrict a set is to provide a signature or a pattern following the s
 
 `
 # Provide the addresses of all allocations that, based on the signature, appear to be of type Foo:
-enumerate used follow
+enumerate used Foo
 
 # Show all the leaked allocations that appear to be instances of SSL_CTX from openssl.
 show leaked %SSL_CTX
@@ -294,6 +294,18 @@ describe used Foo /minincoming Bar=100
 `
 
 ### Set Extensions
+
+Any sets created in the above manner can be created by applying one or more **/extend** switches.  Each **/extend** switch takes a single extension rule specification argument and declares an **extension rule**.  The **declaration order** of an **extension rule** is just the order in which the corresponding **/extend** switch appeared in the given chap command.
+
+An extension rule specifation has the following parts, some optional as indicated by [],  in the given order:
+
+[*member-constraints*] *direction* [*extension-constraints*] [*new-extension-state*]
+
+The *member-constraints*, which may be omitted, are checked as an allocation in the set is being visited for the first time during the command.  If the *member-constraints* are not satisfied, the extension will not be applied.  More detail on *member-constraints* will be given later.  
+
+The *direction*, which is always present and currently must be either **->** or **<-** determines, when one is visiting an allocation for the first time, whether the objects to be added to the set are ones referenced by that allocation (**->**) or ones that reference that allocation (**<-**).
+
+The *extension-constraints*, which may be omitted, apply to allocations in the specified *direction* from 
 
 
 ## Use Cases
