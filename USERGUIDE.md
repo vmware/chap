@@ -267,19 +267,20 @@ Any of the allocation sets as describe above can be further restricted or, if th
 
 One way to restrict a set is to provide a signature or a pattern following the set specification.  Here is a `chap` script with a few examples:
 
-`
+```
 # Provide the addresses of all allocations that, based on the signature, appear to be of type Foo:
 enumerate used Foo
 
 # Show all the leaked allocations that appear to be instances of SSL_CTX from openssl.
 show leaked %SSL_CTX
-`
+
+```
 
 ### Restricting by Counts of Incoming or Outgoing References
 
 Sets can be further constrained by requiring a minimum or maximum number of incoming or outgoing references possibly constraining the type of the referencing or referenced object.  For example here is a script with some commands preceded by comments about what they do:
 
-`
+```
 # This possibly useless command counts all the leaked allocations that are not
 # also unreferenced.
 count leaked /minincoming=1
@@ -291,21 +292,74 @@ count leaked /maxincoming=0
 # least 100 allocations of type Bar.
 
 describe used Foo /minincoming Bar=100
-`
+```
 
 ### Set Extensions
 
 Any sets created in the above manner can be created by applying one or more **/extend** switches.  Each **/extend** switch takes a single extension rule specification argument and declares an **extension rule**.  The **declaration order** of an **extension rule** is just the order in which the corresponding **/extend** switch appeared in the given chap command.
 
-An extension rule specifation has the following parts, some optional as indicated by [],  in the given order:
+To understand the extension rules it is helpful to understand the general notion of set extensions.  Basically, if any **/extend** switch is present, as the members of the base set are visited for the first time in the order associated with that base set (often in increasing order of allocation address but sometimes in other orders for some outlying set-specifications mentioned earlier in this guide) the extension rules are visited in **declaration order** to see which ones apply to the given member of the base set.  Any given extension rule may add one or more new members to the set (adjacent to the given member).  Extension rules are applied at most once to any given member, including both members of the base allocation set or allocations added via an extension rule.  Note that the traversal is DFS, in the sense that allocation rules are applied to the most newly added member first.
 
-[*member-constraints*] *direction* [*extension-constraints*] [*new-extension-state*]
+An extension rule specification has the following parts, some optional as indicated by [],  in the given order (but without any embedded blanks):
 
-The *member-constraints*, which may be omitted, are checked as an allocation in the set is being visited for the first time during the command.  If the *member-constraints* are not satisfied, the extension will not be applied.  More detail on *member-constraints* will be given later.  
+[*member-constraints*] *direction* [*extension-constraints*] [**=>** *new-extension-state*]
+
+The *member-constraints*, which may be omitted, are checked as an allocation in the set is being visited for the first time during the command.  If the *member-constraints* are not satisfied, either for the given member or for the offset within the member, the extension will not be applied.  More detail on *member-constraints* will be given later.  
 
 The *direction*, which is always present and currently must be either **->** or **<-** determines, when one is visiting an allocation for the first time, whether the objects to be added to the set are ones referenced by that allocation (**->**) or ones that reference that allocation (**<-**).
 
-The *extension-constraints*, which may be omitted, apply to allocations in the specified *direction* from 
+The *extension-constraints*, which may be omitted, apply to allocations in the specified *direction* from the member being visited for the first time.  If the *extension-constraints* are not satisfied, either for the allocation under consideration for extending the set or for the offset within that allocation, the given extension candidate will not be added to the set.
+
+The *new-extension-state* gives a name to the extension state used for evaluating the *member-constraints*.  For any member of the original set being visited for the first time, the default extension state always applies.  For an extension being visited for the first time, the extension state by the given name applies or the default extension state applies if none is specified.
+
+The *member-constraints*, if present, have the following parts:
+
+[ *extension-state* | *signature* | *pattern* ][ ``@`` *offset-in-hex*]
+
+If an *extension-state* is supplied, the given *extension-rule* is applicable only in that *extension-state*.  If a *signature* or *pattern* is supplied, extensions can only be applied to members of the set that have that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.  If the *direction* is **->** the reference from the member allocation must appear at that offset in the member allocation.  If the *direction* is **<-** the reference from the extension candidate to the member allocation must refer to that offset in the member allocation.
+
+The *extension-constraints*, if present, have the following parts:
+
+[ *signature* | *pattern* ][``@`` *offset-in-hex*]
+
+If a *signature* or *pattern* is supplied, allocations reachable from the given member by traversing in the specified *direction* can be added only if they match that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.   If the *direction* is **->** the reference from the member allocation must refer to the specified offset in the extension candidate.  If the *direction* is **<-** the reference to the member allocation must appear at the specified offset in the extension candidate.
+
+Some examples:
+
+```
+# Count the set formed by starting at the allocation containing address 0x7ffbe0840 then traversing to
+# anything reachable by traversing one or more outgoing edges.
+count allocation 7ffbe0840 /extend ->
+
+# List the given allocation and allocations that it references directly.  The reason the traversal
+# stops is that the extension rule as defined applies only in the default state.
+list allocation 7ffbe0840 /extend ->=>StopHere
+
+# List the given allocation and anything reachable from it by traversing up to 2 outgoing references.
+list allocation 7ffbe0840 /extend ->=>Out1 /extend Out1->=>Out2
+
+# Show all anchored allocations, but reflecting the way they are reached from the anchor points rather
+# than in increasing order of address.
+show anchored /extend ->
+
+# For every object that matches signature Foo, describe it and any adjacent allocations that match the
+# pattern %COWStringBody.
+describe used Foo /extend Foo->%COWStringBody
+
+# This is almost the same as the previous command, but as a way to help avoid false edges, insist that any
+# reference from an instance of Foo to an instance of %COWStringBody must point to offset 0x18 of that
+# %COWStringBody.  This hard-coded offset would be for a 64-bit process.
+describe used Foo /extend Foo->%COWStringBody@18
+
+# Summarize the set with every allocation that matches the pattern %SSL_CTX and every allocation that
+# points to the start of an allocation that matches the pattern %SSL_CTX.
+summarize used %SSL_CTX /extend %SSL_CTX@0<-
+
+# List every instance of Foo that is referenced by at least 100 instances of Bar, as well as all the
+# referencing instances of Bar.
+list Foo /minincoming Bar=100 /extend Foo<-Bar
+
+```
 
 
 ## Use Cases
