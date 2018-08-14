@@ -85,6 +85,12 @@ class SummarizeSignatures : public Commands::Subcommand {
       output << count << " signatures are vtable pointers "
                          "with names from the process image.\n";
     }
+    count = counts[SignatureDirectory<
+        Offset>::WRITABLE_VTABLE_WITH_NAME_FROM_PROCESS_IMAGE];
+    if (count > 0) {
+      output << count << " signatures point to writable vtables "
+                         "with names from the process image.\n";
+    }
     count = counts[SignatureDirectory<Offset>::VTABLE_WITH_NAME_FROM_BINARY];
     if (count > 0) {
       output << count << " signatures are vtable pointers "

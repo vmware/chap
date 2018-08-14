@@ -48,6 +48,10 @@ class VirtualMemoryPartition {
     return _claimedRanges.find(member);
   }
 
+  bool IsClaimed(Offset address) {
+    return _claimedRanges.find(address) != _claimedRanges.end();
+  }
+
   ClaimedRangesConstIterator end() const { return _claimedRanges.end(); }
 
   const AddressMap &GetAddressMap() const { return _addressMap; }

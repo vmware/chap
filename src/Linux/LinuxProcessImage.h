@@ -947,7 +947,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     Offset typeInfoNameAddress =
         reader.ReadOffset(typeInfoAddress + sizeof(Offset), 0);
     if (typeInfoNameAddress != 0) {
-      return CopyAndUnmangle(virtualAddressMap, typeInfoNameAddress);
+      typename VirtualAddressMap<Offset>::const_iterator it =
+         Base::_virtualAddressMap.find(typeInfoNameAddress);
+      if ((it != Base::_virtualAddressMap.end()) &&
+          ((it.Flags() & RangeAttributes::IS_WRITABLE) == 0)) {
+        return CopyAndUnmangle(virtualAddressMap, typeInfoNameAddress);
+      }
     }
     return emptySignatureName;
   }
@@ -1065,18 +1070,50 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         continue;
       }
 
+      bool writableVtable = false;
       if ((it.Flags() & RangeAttributes::IS_WRITABLE) != 0) {
-        continue;
+        /*
+         * Some recent linkers end up causing vtables to be writable
+         * at times.  This is a security bug, but we want chap to
+         * support such signatures.  For now they are supported only
+         * if the mangled name is actually in the core.  In the case that
+         * the vtable is writable, it will not be in the static area associated
+         * with the module and will be in an area of memory that is not yet
+         * analyzed by chap.
+         */
+        if (Base::_virtualMemoryPartition.IsClaimed(signature)) {
+          continue;
+        }
+        writableVtable = true;
       }
 
       std::string typeinfoName =
           GetUnmangledTypeinfoName(Base::_virtualAddressMap, signature);
-
-      Base::_signatureDirectory.MapSignatureNameAndStatus(
-          signature, typeinfoName,
-          typeinfoName.empty()
-              ? SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS
-              : SignatureDirectory::VTABLE_WITH_NAME_FROM_PROCESS_IMAGE);
+      typename Allocations::SignatureDirectory<Offset>::Status status =
+         SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS;
+      if (writableVtable) {
+        if (typeinfoName.empty()) {
+          /*
+           * If we were guessing that this was possibly a writable vtable
+           * pointer, but didn't actually reach a mangled type name, assume
+           * we just had a pointer to some arbitrary writable area outside
+           * of normal allocations.
+           */
+          continue;
+        }
+        std::cerr << "Warning: type " << typeinfoName
+                  << " has a writable vtable at 0x" << std::hex << signature
+                  << ".\n";
+        std::cerr << "... This is a security violation.\n";
+        status =
+            SignatureDirectory::WRITABLE_VTABLE_WITH_NAME_FROM_PROCESS_IMAGE;
+      } else {
+        if (!typeinfoName.empty()) {
+          status = SignatureDirectory::VTABLE_WITH_NAME_FROM_PROCESS_IMAGE;
+        }
+      }
+      Base::_signatureDirectory.MapSignatureNameAndStatus(signature,
+                                                          typeinfoName, status);
     }
   }
 
