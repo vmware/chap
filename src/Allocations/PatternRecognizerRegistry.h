@@ -59,8 +59,9 @@ class PatternRecognizerRegistry {
       }
     }
     if (numPatternsMatched > 1) {
-      context.GetError()
-          << "Warning: This allocation matches multiple patterns.\n";
+      context.GetError() << "Warning: Allocation at 0x" << std::hex
+                         << allocation.Address()
+                         << " matches multiple patterns.\n";
     }
   }
 
