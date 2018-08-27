@@ -47,8 +47,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        */
 
       Base::_allocationFinder = new LibcMallocAllocationFinder<Offset>(
-          Base::_virtualMemoryPartition, Base::_inaccessibleRanges,
-          Base::_readOnlyRanges, Base::_writableRanges);
+          Base::_virtualMemoryPartition, Base::_unfilledImages,
+          Base::_inaccessibleRanges, Base::_readOnlyRanges,
+          Base::_writableRanges);
 
       /*
        * Find any modules after checking for the libc malloc allocation

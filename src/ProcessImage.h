@@ -11,6 +11,7 @@
 #include "ThreadMap.h"
 #include "VirtualAddressMap.h"
 #include "VirtualMemoryPartition.h"
+#include "UnfilledImages.h"
 namespace chap {
 template <typename OffsetType>
 class ProcessImage {
@@ -26,6 +27,7 @@ class ProcessImage {
         _virtualAddressMap(virtualAddressMap),
         _threadMap(threadMap),
         _virtualMemoryPartition(virtualAddressMap),
+        _unfilledImages(virtualAddressMap),
         _inaccessibleRanges(virtualAddressMap,
                             RangeAttributes::PERMISSIONS_MASK,
                             RangeAttributes::HAS_KNOWN_PERMISSIONS, false),
@@ -116,6 +118,7 @@ class ProcessImage {
   const ThreadMap<OffsetType> &_threadMap;
   ModuleDirectory<Offset> _moduleDirectory;
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
+  UnfilledImages<Offset> _unfilledImages;
   PermissionsConstrainedRanges<Offset> _inaccessibleRanges;
   PermissionsConstrainedRanges<Offset> _readOnlyRanges;
   PermissionsConstrainedRanges<Offset> _rxOnlyRanges;

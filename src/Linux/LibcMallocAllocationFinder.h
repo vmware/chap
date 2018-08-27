@@ -5,6 +5,7 @@
 #include "../Allocations/Finder.h"
 #include "../ModuleDirectory.h"
 #include "../PermissionsConstrainedRanges.h"
+#include "../UnfilledImages.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
 
@@ -27,6 +28,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   LibcMallocAllocationFinder(
       VirtualMemoryPartition<Offset>& virtualMemoryPartition,
+      UnfilledImages<Offset>& unfilledImages,
       PermissionsConstrainedRanges<Offset>& inaccessibleRanges,
       PermissionsConstrainedRanges<Offset>& readOnlyRanges,
       PermissionsConstrainedRanges<Offset>& writableRanges)
@@ -37,12 +39,15 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         LIBC_MALLOC_MAIN_ARENA_PAGES("libc malloc main arena pages"),
         LIBC_MALLOC_LARGE_ALLOCATION("libc malloc large allocation"),
         _virtualMemoryPartition(virtualMemoryPartition),
+        _unfilledImages(unfilledImages),
         _inaccessibleRanges(inaccessibleRanges),
         _readOnlyRanges(readOnlyRanges),
         _writableRanges(writableRanges),
         _addressMap(virtualMemoryPartition.GetAddressMap()),
         _mainArenaAddress(0),
         _mainArenaIsContiguous(false),
+        _completeArenaRingFound(false),
+        _unfilledImagesFound(false),
         _maxHeapSize(DEFAULT_MAX_HEAP_SIZE) {
     FindHeapAndArenaCandidates();
 
@@ -66,27 +71,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
          * an incomplete core (which could cause the following call
          * to fail if one of the headers from the ring were not present).
          */
-        if (!FindNonMainArenasByRingFromMainArena()) {
-          if (!DeriveArenaOffsets(true)) {
-            abort();
-          }
-        }
-      } else {
-        /*
-         * If no arenas were found probably some other allocation finder
-         * is needed.
-         */
-        std::cerr << "Failed to find any arenas, main or not." << std::endl;
-        if (_heaps.size() > 0) {
-          std::cerr << "However, " << std::dec << _heaps.size()
-                    << " heaps were found.\n";
-          std::cerr << "An attempt will be made to used this partial "
-                       " information.\n";
-          std::cerr
-              << "Leaked status and used/free status cannot be trusted.\n";
-        } else {
-          return;
-        }
+        FindNonMainArenasByRingFromMainArena();
       }
 
     } else {
@@ -96,8 +81,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
        * at least two arenas, one of which was the main arena.
        */
 
-      bool foundArenasByRing = FindArenasByRingFromNonMainArenas();
-      if (!foundArenasByRing) {
+      if (!FindArenasByRingFromNonMainArenas()) {
         /*
          * It was not possible to complete the ring, least not
          * based on the default maximum heap size.
@@ -108,75 +92,108 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
            * The main arena was found.  Perhaps someone reduced the
            * default max heap size at compilation time.  Check that.
            */
-          foundArenasByRing = FindNonMainArenasByRingFromMainArena();
-        }
-      }
-      if (!foundArenasByRing) {
-        /*
-         * It was not possible to correct the set of arenas and heaps
-         * by finding an arena ring.  Offsets are not yet known yet
-         * because they would only be set at this point if all the
-         * arenas had been found.  The main arena is often found
-         * during this derivation but may not if the arena that
-         * refers to the main arena is missing from the core.
-         * An incomplete arena ring will also prevent any checking
-         * for non-standard maximum heap size values.
-         */
-
-        bool hadMainArenaBeforeDerivation = (_mainArenaAddress != 0);
-
-        if (!DeriveArenaOffsets(true)) {
-          abort();
-        }
-
-        if (_mainArenaAddress != 0 && !hadMainArenaBeforeDerivation) {
-          Reader reader(_addressMap);
-          try {
-            Offset nextArena =
-                reader.ReadOffset(_mainArenaAddress + _arenaNextOffset);
-            Offset top = reader.ReadOffset(_mainArenaAddress + _arenaTopOffset);
-            Offset size =
-                reader.ReadOffset(_mainArenaAddress + _arenaSizeOffset);
-            bool isContiguous =
-                (reader.ReadU32(nextArena + sizeof(uint32_t)) & 2) == 0;
-            ArenaMapIterator itMainArena =
-                _arenas
-                    .insert(std::make_pair(_mainArenaAddress,
-                                           Arena(_mainArenaAddress)))
-                    .first;
-            Arena& mainArena = itMainArena->second;
-            mainArena._nextArena = nextArena;
-            mainArena._top = top;
-            mainArena._size = size;
-            _mainArenaIsContiguous = isContiguous;
-          } catch (NotMapped&) {
-            std::cerr << "Derived main arena address at " << std::hex
-                      << _mainArenaAddress << " appears to be suspect."
-                      << std::endl;
-            std::cerr << "One possibility is an incomplete core." << std::endl;
-          }
-          /*
-           * For detected heaps that do not refer to valid non-main arenas
-           * do further checking to see whether the issue is an arena that
-           * is missing from the core or whether the heap is actually
-           * appears to be invalid.  The count can't go to 0 because
-           * there is at least one valid heap per detected non-main arena.
-           */
-
-          CheckHeapArenaReferences();
-
-          CheckArenaTops();
-
-          /*
-           * Report any issues with the arena nexts.
-           */
-
-          CheckArenaNexts();
+          FindNonMainArenasByRingFromMainArena();
         }
       }
     }
 
+    if (!_completeArenaRingFound) {
+      /*
+       * It was not possible to correct the set of arenas and heaps
+       * by finding an arena ring.  Offsets are not yet known yet
+       * because they would only be set at this point if all the
+       * arenas had been found.  The main arena is often found
+       * during this derivation but may not if the arena that
+       * refers to the main arena is missing from the core.
+       * An incomplete arena ring will also prevent any checking
+       * for non-standard maximum heap size values.
+       */
+
+      bool hadMainArenaBeforeDerivation = (_mainArenaAddress != 0);
+
+      if (!DeriveArenaOffsets(true)) {
+        abort();
+      }
+
+      if (_mainArenaAddress != 0 && !hadMainArenaBeforeDerivation) {
+        Reader reader(_addressMap);
+        try {
+          Offset nextArena =
+              reader.ReadOffset(_mainArenaAddress + _arenaNextOffset);
+          Offset top = reader.ReadOffset(_mainArenaAddress + _arenaTopOffset);
+          Offset size = reader.ReadOffset(_mainArenaAddress + _arenaSizeOffset);
+          bool isContiguous =
+              (reader.ReadU32(nextArena + sizeof(uint32_t)) & 2) == 0;
+          ArenaMapIterator itMainArena =
+              _arenas
+                  .insert(std::make_pair(_mainArenaAddress,
+                                         Arena(_mainArenaAddress)))
+                  .first;
+          Arena& mainArena = itMainArena->second;
+          mainArena._nextArena = nextArena;
+          mainArena._top = top;
+          mainArena._size = size;
+          _mainArenaIsContiguous = isContiguous;
+        } catch (NotMapped&) {
+          std::cerr << "Derived main arena address at " << std::hex
+                    << _mainArenaAddress << " appears to be suspect."
+                    << std::endl;
+          std::cerr << "One possibility is an incomplete core." << std::endl;
+        }
+      }
+      /*
+       * For detected heaps that do not refer to valid non-main arenas
+       * do further checking to see whether the issue is an arena that
+       * is missing from the core or whether the heap is actually
+       * appears to be invalid.  The count can't go to 0 because
+       * there is at least one valid heap per detected non-main arena.
+       */
+
+      CheckHeapArenaReferences();
+
+      /*
+       * Given that the full arena was not found, some of the arena nexts
+       * may point to areas that never got copied into images in the core
+       * or (much less likely) might be corrupt.
+       */
+
+      CheckArenaNexts();
+      if (_arenas.size() == 0) {
+        std::cerr << "Failed to find any arenas, main or not." << std::endl;
+        if (_heaps.size() > 0) {
+          std::cerr << "However, " << std::dec << _heaps.size()
+                    << " heaps were found.\n";
+          std::cerr << "An attempt will be made to used this partial "
+                       " information.\n";
+          std::cerr
+              << "Leaked status and used/free status cannot be trusted.\n";
+        } else {
+          /*
+           * No arenas or heaps were found at all.  It will not be possible
+           * to find any allocations.
+           */
+          return;
+        }
+      }
+    }
+
+    /*
+     * Whether or not the full arena ring has been found, for the arenas that
+     * are known we haven't verified that the top values are sound and in the
+     * case of a non-main-arena we also need to check whether all the heaps are
+     * present.
+     */
+
+    CheckArenaTops();
+
+    /*
+     * Now that the set of heap ranges is roughly trusted, it is good to mark
+     * them so that they don't need to be scanned unnecessarily for other
+     * possible uses.
+     */
+
     ClaimHeapRanges();
+
     if (_mainArenaAddress != 0) {
       /*
        * It is necessary to claim the arena itself to avoid any false
@@ -291,7 +308,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           _usedCount(0),
           _usedBytes(0),
           _hasFastBinCorruption(false),
-          _hasFreeListCorruption(false) {}
+          _hasFreeListCorruption(false),
+          _missingOrUnfilledHeader(false) {}
     Offset _address;
     Offset _nextArena;
     Offset _top;
@@ -302,6 +320,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Offset _usedBytes;
     bool _hasFastBinCorruption;
     bool _hasFreeListCorruption;  // ... in doubly linked list
+    bool _missingOrUnfilledHeader;
   };
   typedef std::map<Offset, Arena> ArenaMap;
 
@@ -309,6 +328,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
  private:
   VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
+  UnfilledImages<Offset>& _unfilledImages;
   PermissionsConstrainedRanges<Offset>& _inaccessibleRanges;
   PermissionsConstrainedRanges<Offset>& _readOnlyRanges;
   PermissionsConstrainedRanges<Offset>& _writableRanges;
@@ -361,6 +381,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   LargeAllocations _largeAllocations;
   Offset _mainArenaAddress;
   bool _mainArenaIsContiguous;
+  bool _completeArenaRingFound;
+  bool _unfilledImagesFound;
   Offset _arenaNextOffset;
   Offset _arenaSizeOffset;
   Offset _arenaTopOffset;
@@ -612,6 +634,14 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     if (!DeriveArenaOffsets(false)) {
       return false;
     }
+
+    /*
+     * At this point the function is always going to return true because
+     * the full ring has been found and the arena offsets have been derived
+     * successfully.
+     */
+
+    _completeArenaRingFound = true;
 
     /*
      * Calculate the sum of the non-main arena sizes, as for use below in
@@ -1018,7 +1048,37 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     return true;
   }
-
+  void UnfilledImagesFound() {
+    if (!_unfilledImagesFound) {
+      _unfilledImagesFound = true;
+      std::cerr << "Apparently this core file was not completely filled in.\n"
+                << "Probably the process was killed while the core was being "
+                   "generated.\n"
+                << "As a result any commands related to allocations will be "
+                   "very inaccurate.\n";
+    }
+  }
+  bool CheckUnfilledHeapStart(Offset address) {
+    if (_unfilledImages.RegisterIfUnfilled(
+            address, _maxHeapSize, LIBC_MALLOC_HEAP) == LIBC_MALLOC_HEAP) {
+      UnfilledImagesFound();
+      return true;
+    }
+    return false;
+  }
+  bool CheckUnfilledMainArenaStartPage(Offset address) {
+    if (_unfilledImages.RegisterIfUnfilled(
+            address, 1, LIBC_MALLOC_MAIN_ARENA) == LIBC_MALLOC_MAIN_ARENA) {
+      UnfilledImagesFound();
+      return true;
+    }
+    return false;
+  }
+  bool CheckUnfilledArenaStart(Offset address) {
+    return ((address & (_maxHeapSize - 1)) == (4 * sizeof(Offset)))
+               ? CheckUnfilledHeapStart(address & ~(_maxHeapSize - 1))
+               : CheckUnfilledMainArenaStartPage(address);
+  }
   void CheckHeapArenaReferences() {
     /*
      * Consider any heap that doesn't refer to an arena in a heap to be a
@@ -1040,20 +1100,33 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
          * a run in the heap.
          */
         Reader reader(_addressMap);
-        try {
-          Offset chunkAddr = heapAddress + OFFSET_SIZE * 5;
-          Offset sizeAndFlags = reader.ReadOffset(chunkAddr);
-          Offset mask = ~0x80000 | 2;
-          int numSizesOk = 0;
-          while ((sizeAndFlags & mask) == 0 && ++numSizesOk < 10) {
-            chunkAddr += (sizeAndFlags & (Offset)(~7));
-            if (chunkAddr > heapAddress + _maxHeapSize) {
-              break;
-            }
-            sizeAndFlags = reader.ReadOffset(chunkAddr);
+        Offset chunkAddr = heapAddress + OFFSET_SIZE * 5;
+        Offset bytesLeft = _maxHeapSize - OFFSET_SIZE * 5;
+        Offset sizeAndFlags = reader.ReadOffset(chunkAddr, 0);
+        int numSizesOk = 0;
+        for (; numSizesOk < 10; ++numSizesOk) {
+          Offset chunkSize = sizeAndFlags & (Offset)(~7);
+          if (chunkSize < 4 * sizeof(Offset) || chunkSize > bytesLeft) {
+            break;
           }
-          if (numSizesOk == 10 || chunkAddr > heapAddress + _maxHeapSize) {
-            _arenas.insert(std::make_pair(arenaAddress, Arena(arenaAddress)));
+          chunkAddr += chunkSize;
+          bytesLeft -= chunkSize;
+          if (bytesLeft == 0) {
+            break;
+          }
+          sizeAndFlags = reader.ReadOffset(chunkAddr, 0);
+        }
+        if (numSizesOk == 10 || bytesLeft < 2 * sizeof(Offset)) {
+          _arenas.insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
+              .first->second._missingOrUnfilledHeader = true;
+          if (!CheckUnfilledArenaStart(arenaAddress)) {
+            /*
+             * If the arena was not found because the image of that arena
+             * was never filled in in the core, let the checks for unfilled
+             * heap starts report that.  Otherwise generate a warning.  Note
+             * that missing from the core here is intended to mean entirely
+             * unknown in the table of contents.
+             */
             std::cerr << "Arena at " << std::hex << arenaAddress
                       << " appears to be "
                       << ((_addressMap.find(arenaAddress) == _addressMap.end())
@@ -1061,10 +1134,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                               : "corrupt.")
                       << std::endl
                       << "Leak analysis will not be reliable." << std::endl;
-            ++it;
-            continue;
           }
-        } catch (NotMapped&) {
+          ++it;
+          continue;
         }
         std::cerr << "Ignoring false heap at " << std::hex << heapAddress
                   << std::endl;
@@ -1072,6 +1144,48 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       } else {
         ++it;
       }
+    }
+  }
+
+  void CheckMainArenaTop(Arena&) {
+    // TODO: check for a 0 filled page in arena run here
+  }
+
+  /*
+   * Check the top of the given non-main arena and report any errors found.
+   * A side effect may be that the core is detected as not being completely
+   * filled in.
+   */
+  void CheckNonMainArenaTop(Arena& arena) {
+    Offset arenaHeapAddr = arena._address & ~(_maxHeapSize - 1);
+    Offset topHeapAddr = arena._top & ~(_maxHeapSize - 1);
+    for (Offset heapAddr = topHeapAddr; heapAddr != arenaHeapAddr;) {
+      HeapMapIterator it = _heaps.find(heapAddr);
+      if (it == _heaps.end()) {
+        // We don't know about this heap yet.
+        if (!CheckUnfilledHeapStart(heapAddr)) {
+          /*
+           * If the reason we don't know about the heap is that the image
+           * in the core never got filled in, let the logic to check that
+           * report it.  Otherwise, report the error here.
+           */
+          if (heapAddr == topHeapAddr) {
+            std::cerr << "Arena at 0x" << std::hex << arena._address
+                      << " appears to have an invalid top address 0x"
+                      << arena._top << "\n";
+          } else {
+            /*
+             * The last heap was already found, so we consider the arena
+             * to be reasonable.
+             */
+            std::cerr << "Arena at 0x" << std::hex << arena._address
+                      << " appears to have a corrupt or missing heap at 0x"
+                      << heapAddr << "\n";
+          }
+        }
+        break;
+      }
+      heapAddr = it->second._nextHeap;
     }
   }
 
@@ -1083,22 +1197,14 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
      * continue if not.
      */
 
-    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end();) {
+    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
-      if (arena._address == _mainArenaAddress) {
-        ++it;
-        continue;
-      }
-      HeapMapIterator topHeap = _heaps.find(arena._top & ~(_maxHeapSize - 1));
-      if (topHeap == _heaps.end()) {
-        std::cerr << "Arena with invalid top found at " << std::hex
-                  << arena._address << std::endl;
-        // TODO: deal with possible corruption here
-        _heaps.erase(arena._address & ~(_maxHeapSize - 1));
-        _arenas.erase(it++);
-        continue;
-      } else {
-        ++it;
+      if (!arena._missingOrUnfilledHeader) {
+        if (arena._address == _mainArenaAddress) {
+          CheckMainArenaTop(arena);
+        } else {
+          CheckNonMainArenaTop(arena);
+        }
       }
     }
   }
@@ -1106,23 +1212,28 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   void CheckArenaNexts() {
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Arena& arena = it->second;
+      if (arena._missingOrUnfilledHeader) {
+        continue;
+      }
       Offset nextArena = arena._nextArena;
       if (_arenas.find(nextArena) == _arenas.end()) {
         /*
-         * Regrettably, with some recent versions of gdb that produce
-         * incomplete cores, possibly due to mishandling of swapping and
-         * sometimes because the user can specifically configure things
-         * to allow incomplete cores, the ring can be broken by an
-         * incomplete core and we don't know whether the next field was
-         * valid or not.
+         * We have a pointer for the next arena but it wasn't detected as
+         * an arena.
          */
-        std::cerr << std::hex << "Arena at 0x" << arena._address
-                  << " has questionable next pointer 0x" << nextArena
-                  << std::endl;
-        std::cerr << "The core may be incomplete and leak analysis "
-                  << " is compromised" << std::endl;
+        if (CheckUnfilledArenaStart(nextArena)) {
+          /* If it appears that the arena was not detected because the image
+           * of
+           * the arena was never filled in, let the logic that checks for such
+           * unfilled areas report it.  Otherwise, report it here.
+           */
+          std::cerr << std::hex << "Arena at 0x" << arena._address
+                    << " has questionable next pointer 0x" << nextArena
+                    << std::endl;
+          std::cerr << "The core may be incomplete and leak analysis "
+                    << " is compromised" << std::endl;
+        }
       }
-      // TODO: clean up handling of incomplete cores.
     }
   }
 
