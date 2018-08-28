@@ -31,6 +31,8 @@
     * [Analyzing Memory Leaks](#analyzing-memory-leaks)
     * [Supplementing gdb](#supplementing-gdb)
     * [Analyzing Memory Growth](#analyzing-memory-growth)
+        * [Analyzing Growth Due to Used Allocations](#analyzing-memory-growth-due-to-used-allocations)
+        * [Analyzing Growth Due to Free Allocations](#analyzing-memory-growth-due-to-free-allocations)
     * [Detecting Memory Corruption](#detecting-memory-corruption)
 
 
@@ -394,7 +396,7 @@ Generally, the first thing one will want to do in analyzing memory growth is to 
 TODO: add some examples here.
 
 #### Analyzing Memory Growth Due to Used Allocations
-If the results of **count writable** and **count used** suggest that used allocations occupy most of the writable memory, probably the next thing you will want to do is to use **redirect on** to redirect output to a file then **summarize used** to get an overall summary of the used allocations.  It is quite common that unsigned allocations will dominate but it can be useful to scan down to the tallies for particular signatures because often one particular count can stand out as being too high and often allocations with the given suspect signature can hold many unsigned allocations in memory, particularly if the class or struct in question has a field that is some sort of collection.  In the special case that the results of **count leaked** are similar to the results of **count used**, one can fall back on techniques for analyzing memory leaks but otherwise one is typically looking for container growth (for example,  a large set or map or queue).
+If the results of **count writable** and **count used** suggest that used allocations occupy most of the writable memory, probably the next thing you will want to do is to make sure that chap is set up properly to handle named signatures, as described [here](#allocation-signatures) then use **redirect on** to redirect output to a file then **summarize used** to get an overall summary of the used allocations.  It is quite common that unsigned allocations will dominate but it can be useful to scan down to the tallies for particular signatures because often one particular count can stand out as being too high and often allocations with the given suspect signature can hold many unsigned allocations in memory, particularly if the class or struct in question has a field that is some sort of collection.  In the special case that the results of **count leaked** are similar to the results of **count used**, one can fall back on techniques for analyzing memory leaks but otherwise one is typically looking for container growth (for example,  a large set or map or queue).
 
 Once one has a theory about the cause of the growth (for example, which container is too large) it is desirable to assess the actual cost of the growth associated with that theory.  For example in the case of a large std::map one might want to understand the cost of the allocations used to represent the std::map, as well as any other objects held in memory by this map.  The best way to do this is often to use the **/extend** switch to attempt to walk a graph of the relevant objects, generally as part of the **summarize** command or the **describe** command.
 
