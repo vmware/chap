@@ -1841,6 +1841,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   Offset SkipArenaCorruption(Offset arenaAddress, Offset corruptionPoint,
                              Offset repairLimit) {
+    ArenaMapIterator it = _arenas.find(arenaAddress);
+    if (it == _arenas.end() || it->second._missingOrUnfilledHeader) {
+      return 0;
+    }
     Offset pastArenaCorruption = 0;
     repairLimit -= 6 * OFFSET_SIZE;
 
@@ -1856,54 +1860,55 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (Offset fastBinCheck = arenaAddress + 2 * sizeof(int);
          fastBinCheck < fastBinLimit; fastBinCheck += OFFSET_SIZE) {
       int loopGuard = 0;
-      try {
-        for (Offset listNode = reader.ReadOffset(fastBinCheck); listNode != 0;
-             listNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE)) {
-          if (++loopGuard == 10000000) {
-            break;
-          }
-          if (listNode > corruptionPoint && listNode <= repairLimit) {
-            Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE);
-            if (((sizeAndFlags & expectClearMask) == 0) &&
-                ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
-              if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
-                pastArenaCorruption = listNode;
-              }
+      for (Offset listNode = reader.ReadOffset(fastBinCheck); listNode != 0;
+           listNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE, 0)) {
+        if (++loopGuard == 10000000) {
+          break;
+        }
+        if (listNode > corruptionPoint && listNode <= repairLimit) {
+          Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE, 0);
+          if (sizeAndFlags != 0 && ((sizeAndFlags & expectClearMask) == 0) &&
+              ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
+            if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
+              pastArenaCorruption = listNode;
             }
           }
         }
-      } catch (NotMapped&) {
       }
     }
     for (Offset listHeader =
              arenaAddress + _arenaDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
          ; listHeader += (2 * OFFSET_SIZE)) {
-      try {
-        Offset listNode = reader.ReadOffset(listHeader + 2 * OFFSET_SIZE);
-        if (listNode == listHeader) {
-          continue;
-        }
-        if (reader.ReadOffset(listNode + 3 * OFFSET_SIZE) != listHeader) {
-          break;
-        }
-        do {
-          if (listNode > corruptionPoint && listNode <= repairLimit) {
-            Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE);
-            if (((sizeAndFlags & expectClearMask) == 0) &&
-                ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
-              if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
-                pastArenaCorruption = listNode;
-              }
+      Offset listNode = reader.ReadOffset(listHeader + 2 * OFFSET_SIZE, 0);
+      if (listNode == listHeader) {
+        // The list was empty.
+        continue;
+      }
+      if (reader.ReadOffset(listNode + 3 * OFFSET_SIZE, 0) != listHeader) {
+        break;
+      }
+      do {
+        if (listNode > corruptionPoint && listNode <= repairLimit) {
+          Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE, 0);
+          if (sizeAndFlags != 0 && ((sizeAndFlags & expectClearMask) == 0) &&
+              ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
+            if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
+              pastArenaCorruption = listNode;
             }
           }
-          Offset nextNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE);
-          if (reader.ReadOffset(nextNode + 3 * OFFSET_SIZE) != listNode) {
-            break;
-          }
-          listNode = nextNode;
-        } while (listNode != listHeader);
-      } catch (NotMapped&) {
-      }
+        }
+        Offset nextNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE, 0);
+        if (nextNode != 0 ||
+            reader.ReadOffset(nextNode + 3 * OFFSET_SIZE, 0) != listNode) {
+          /*
+           * We reached a break in the list, most likely due to corruption
+           * but possibly due to a zero-filled part of a heap given that we
+           * attempt to extract what we can from such incomplete cores.
+           */
+          break;
+        }
+        listNode = nextNode;
+      } while (listNode != listHeader);
     }
     return pastArenaCorruption;
   }
@@ -2341,6 +2346,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     AllocationIndex noAllocation = _allocations.size();
     Reader reader(_addressMap);
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
+      if (it->second._missingOrUnfilledHeader) {
+        continue;
+      }
       Offset arenaAddress = it->first;
       Offset firstList =
           arenaAddress + _arenaDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
