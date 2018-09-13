@@ -7,6 +7,7 @@
 #include "LongStringRecognizer.h"
 #include "SSLRecognizer.h"
 #include "SSL_CTXRecognizer.h"
+#include "PyDictKeysObjectRecognizer.h"
 #include "Subcommands/DescribeArenas.h"
 
 namespace chap {
@@ -25,6 +26,8 @@ class ProcessImageCommandHandler
         .Register(new SSL_CTXRecognizer<Offset>(processImage));
     chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
         .Register(new SSLRecognizer<Offset>(processImage));
+    chap::ProcessImageCommandHandler<Offset>::_patternRecognizerRegistry
+        .Register(new PyDictKeysObjectRecognizer<Offset>(processImage));
     SetProcessImage(processImage);
   }
 

@@ -1,0 +1,14 @@
+# Copyright (c) 2018 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests that the %PyDictKeysObject pattern works (for python 3.5
+# cores) by checking against such a core.
+
+chap=$1
+
+$1 core.21887 << DONE
+redirect on
+count used %PyDictKeysObject
+show used %PyDictKeysObject
+describe used %PyDictKeysObject
+DONE
