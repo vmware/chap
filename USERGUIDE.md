@@ -227,6 +227,7 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * VectorBody - dynamically allocated memory for std::vector
 * SSL - SSL type associated with openssl
 * SSL_CTX - SSL_CTX type associated with openssl
+* PyDictKeysObject -PyDictKeysObject associated with python (at least for 3.5)
 
 ## Allocation Sets
 
@@ -277,6 +278,8 @@ enumerate used Foo
 show leaked %SSL_CTX
 
 ```
+
+<img alt="Unlabeled" src="doc/img/UnlabeledGraph.png">
 
 ### Restricting by Counts of Incoming or Outgoing References
 
