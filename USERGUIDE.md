@@ -357,8 +357,8 @@ count allocation Orange /extend ->
  # to any allocations directly referenced by Orange allocations.
  list allocation Orange /extend Orange->
  ```
- <img alt="OrangePlusReferencedByOrange"
-  src="doc/img/OrangePlusReferencedByOrange.png">
+ <img alt="OrangePlusReferencedFromOrange"
+  src="doc/img/OrangePlusReferencedFromOrange.png">
 
 ```
 # List the set formed by starting with all Orange allocations then extending
@@ -420,7 +420,9 @@ describe allocation Orange /extend Orange->- /extend -->%COWStringBody
 # by the first extension rule the "OneFromBlue" state applies, meaning that only
 # extension rules that start with OneFromBlue are applicable.  The second rule
 # applies only to allocations that were reached by an extension rule that
-# ended in "=>OneFromBlue".
+# ended in "=>OneFromBlue".  By contrast, rules that do not contain "=>"
+# cause the allocations reached that way to be visited in the default state,
+# meaning that only rules that do not start with state names are applicable.
 # "=>", which controls extension state, should not be confused with "->",
 # which refers to outgoing references.
 describe allocation Blue /extend Blue->=>OneFromBlue /extend OneFromBlue->
