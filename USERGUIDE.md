@@ -279,7 +279,6 @@ show leaked %SSL_CTX
 
 ```
 
-<img alt="Unlabeled" src="doc/img/UnlabeledGraph.png">
 
 ### Restricting by Counts of Incoming or Outgoing References
 
@@ -302,6 +301,8 @@ describe used Foo /minincoming Bar=100
 ### Set Extensions
 
 Any sets created in the above manner can be created by applying one or more **/extend** switches.  Each **/extend** switch takes a single extension rule specification argument and declares an **extension rule**.  The **declaration order** of an **extension rule** is just the order in which the corresponding **/extend** switch appeared in the given chap command.
+
+
 
 To understand the extension rules it is helpful to understand the general notion of set extensions.  Basically, if any **/extend** switch is present, as the members of the base set are visited for the first time in the order associated with that base set (often in increasing order of allocation address but sometimes in other orders for some outlying set-specifications mentioned earlier in this guide) the extension rules are visited in **declaration order** to see which ones apply to the given member of the base set.  Any given extension rule may add one or more new members to the set (adjacent to the given member).  Extension rules are applied at most once to any given member, including both members of the base allocation set or allocations added via an extension rule.  Note that the traversal is DFS, in the sense that allocation rules are applied to the most newly added member first.
 
@@ -331,15 +332,105 @@ If a *signature* or *pattern* is supplied, allocations reachable from the given 
 
 Some examples:
 
+Minor variants of the following picture, which represents allocations and references between them, but doesn't deal with anchoring at all, will be used for examples throughout this section.  The variants of this picture will look mostly like this first one, in that the allocations and references will be the same, but they will have markings to explain a particular command, typically numbers on the allocations to show the sequence in which they are visited.  
+
+
+<img alt="Unlabeled" src="doc/img/UnlabeledGraph.png">
+
+Each picture has circles for **used allocations** can be read as a graph of those allocations, where an arrow pointing from allocation A to allocation B indicates that allocation A references allocation B.  For example, the allocation represented by the orange circle references allocations represented by green and gray circles and is referenced by the allocation represented by the blue circle.
+
+The red, orange, green and blue circles represent allocations of types that have signatures recognized by `chap` where the types are Red, Orange, Green, and Blue, respectively.  The gray circles represent allocations that `chap` considers unsigned, with the ones marked with a star indicating allocations that match the **COWStringBody** pattern.
+
+The addresses are not marked in this picture but, given that the order of visiting nodes in various commands is often related to address order it is important to represent address order in the graph.  In these drawings, circles closest to the top of the picture have the lowest addresses and if there were any circles at the same height in the picture, the leftmost one would have the lowest address.  So for example in this picture, an unsigned allocation that matches pattern %VectorBody is the allocation with the lowest address.  
+
+
 ```
-# Count the set formed by starting at the allocation containing address 0x7ffbe0840 then traversing to
-# anything reachable by traversing one or more outgoing edges.
-count allocation 7ffbe0840 /extend ->
+# Count the set formed by starting with all Orange allocations then extending to
+# any allocations reachable by traversing one or more outgoing references.
+count allocation Orange /extend ->
+```
+<img alt="OrangePlusReachableFromOrange"
+ src="doc/img/OrangePlusReachableFromOrange.png">
 
-# List the given allocation and allocations that it references directly.  The reason the traversal
-# stops is that the extension rule as defined applies only in the default state.
-list allocation 7ffbe0840 /extend ->=>StopHere
+ ```
+ # List the set formed by starting with all Orange allocations then extending
+ # to any allocations directly referenced by Orange allocations.
+ list allocation Orange /extend Orange->
+ ```
+ <img alt="OrangePlusReferencedByOrange"
+  src="doc/img/OrangePlusReferencedByOrange.png">
 
+```
+# List the set formed by starting with all Orange allocations then extending
+# to anything that directly reference Orange allocations.  Note the change
+# in the direction of the arrow.
+list allocation Orange /extend Orange<-
+```
+<img alt="OrangePlusReferrersToOrange"
+ src="doc/img/OrangePlusReferrersToOrange.png">
+
+```
+ # Enumerate the set formed by starting with all Orange allocations then
+ # extending to any referenced Green allocations.
+  enumerate allocation Orange /extend ->green
+```
+
+ <img alt="OrangePlusReferencedGreen"
+  src="doc/img/OrangePlusReferencedGreen.png">
+
+```
+# Enumerate the set formed by starting with all Orange allocations then extending
+# to any Green allocations directly referenced by Orange allocations.
+# This visits a different set from the previous command because it doesn't visit
+# Green allocations that are not referenced by Orange allocations.
+count allocation Orange /extend Orange->Green
+```
+
+<img alt="OrangePlusGreenReferencedByOrange"
+ src="doc/img/OrangePlusGreenReferencedByOrange.png">
+
+```
+# Count the set formed by starting with all Orange allocations then extending
+# to any unsigned allocations directly referenced by Orange allocations.
+count allocation Orange /extend Orange->-
+```
+
+<img alt="OrangePlusUnsignedReferencedByOrange"
+  src="doc/img/OrangePlusUnsignedReferencedByOrange.png">
+
+```
+# Describe the set formed by starting with all Orange allocations then extending
+# to any unsigned allocations directly referenced by Orange allocations and
+# from there to any allocations that match the pattern COWSTringBody.
+# Note that the "-" after the first "->" constrains that extension rule
+# to apply only in the case an unsigned allocation is referenced and
+# the "-" before the second "->" constrains that extension rule to apply only
+# when extending from an unsigned allocation.
+describe allocation Orange /extend Orange->- /extend -->%COWStringBody
+```
+
+ <img alt="OrangePlusUnsignedThenCOWStringBody"
+  src="doc/img/OrangePlusUnsignedThenCOWStringBody.png">
+
+```
+# Describe the set formed by starting with all Blue allocations then extending
+# to any allocations directly referenced by Blue allocations,
+# and to any allocations directly referenced by those allocations.
+# Note the use of "=>OneFromBlue", which says that any for allocations reached
+# by the first extension rule the "OneFromBlue" state applies, meaning that only
+# extension rules that start with OneFromBlue are applicable.  The second rule
+# applies only to allocations that were reached by an extension rule that
+# ended in "=>OneFromBlue".
+# "=>", which controls extension state, should not be confused with "->",
+# which refers to outgoing references.
+describe allocation Blue /extend Blue->=>OneFromBlue /extend OneFromBlue->
+```
+
+   <img alt="BluePlusTwoFromBlue"
+    src="doc/img/BluePlusTwoFromBlue.png">
+
+
+```
 # List the given allocation and anything reachable from it by traversing up to 2 outgoing references.
 list allocation 7ffbe0840 /extend ->=>Out1 /extend Out1->=>Out2
 
