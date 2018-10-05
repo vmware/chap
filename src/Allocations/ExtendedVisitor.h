@@ -45,7 +45,7 @@ class ExtendedVisitor {
     //  indicator>[signature][@offset-in-signature][:stateLabel]
     std::regex extensionRegex(
         "([^@]*)(@([[:xdigit:]]+))?"   // specify the starting members
-        "((->)|(<-))"                  // extend by outgoing or incoming refs
+        "((->)|(~>)|(<-))"             // extend by outgoing or incoming refs
         "([^@=]*)(@([[:xdigit:]]+))?"  // constrain the type of extension
         "(=>(\\w+))?");                // select a new extension state
     std::smatch extensionSmatch;
@@ -77,23 +77,25 @@ class ExtendedVisitor {
           _hasErrors = true;
         }
       }
-      spec._referenceIsOutgoing = (extensionSmatch[5].length() > 0);
-      spec._extensionSignature = extensionSmatch[7];
-      if (extensionSmatch[9].length() > 0) {
+      spec._referenceIsOutgoing = (extensionSmatch[5].length() > 0) ||
+                                  (extensionSmatch[6].length() > 0);
+      spec._extensionMustBeLeaked = (extensionSmatch[6].length() > 0);
+      spec._extensionSignature = extensionSmatch[8];
+      if (extensionSmatch[10].length() > 0) {
         spec._useOffsetInExtension = true;
         size_t offsetInExtension;
-        std::istringstream is(extensionSmatch[9]);
+        std::istringstream is(extensionSmatch[10]);
         is >> std::hex >> offsetInExtension;
         if (!is.fail() && is.eof()) {
           spec._offsetInExtension = offsetInExtension;
         } else {
-          error << "Offset in extension \"" << extensionSmatch[9]
+          error << "Offset in extension \"" << extensionSmatch[10]
                 << " is not well formed as hexadecimal.\n";
           _hasErrors = true;
         }
       }
 
-      std::string stateLabel = extensionSmatch[11];
+      std::string stateLabel = extensionSmatch[12];
       size_t stateIndex = 0;
       std::map<std::string, size_t>::iterator it =
           labelToStateNumber.find(stateLabel);
@@ -358,6 +360,10 @@ class ExtendedVisitor {
         continue;
       }
 
+      if (rule._extensionMustBeLeaked && !(_graph->IsLeaked(candidateIndex))) {
+        continue;
+      }
+
       if (!candidateAllocation->IsUsed() ||
           !rule._extensionSignatureChecker.Check(candidateIndex,
                                                  *candidateAllocation)) {
@@ -455,6 +461,7 @@ class ExtendedVisitor {
     bool _useOffsetInMember;
     bool _useOffsetInExtension;
     bool _referenceIsOutgoing;
+    bool _extensionMustBeLeaked;
     std::string _memberSignature;
     std::string _extensionSignature;
     size_t _baseState;
@@ -469,6 +476,7 @@ class ExtendedVisitor {
           _useOffsetInMember(spec._useOffsetInMember),
           _useOffsetInExtension(spec._useOffsetInExtension),
           _referenceIsOutgoing(spec._referenceIsOutgoing),
+          _extensionMustBeLeaked(spec._extensionMustBeLeaked),
           _memberSignatureChecker(directory, patternRecognizerRegistry,
                                   addressMap, spec._memberSignature),
           _extensionSignatureChecker(directory, patternRecognizerRegistry,
@@ -481,6 +489,7 @@ class ExtendedVisitor {
     bool _useOffsetInMember;
     bool _useOffsetInExtension;
     bool _referenceIsOutgoing;
+    bool _extensionMustBeLeaked;
     SignatureChecker<Offset> _memberSignatureChecker;
     SignatureChecker<Offset> _extensionSignatureChecker;
     size_t _baseState;
