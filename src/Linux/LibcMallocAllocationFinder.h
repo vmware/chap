@@ -385,6 +385,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   bool _unfilledImagesFound;
   Offset _arenaNextOffset;
   Offset _arenaSizeOffset;
+  Offset _fastBinStartOffset;
+  Offset _fastBinLimitOffset;
   Offset _arenaTopOffset;
   Offset _arenaDoublyLinkedFreeListOffset;
   Offset _arenaLastDoublyLinkedFreeListOffset;
@@ -883,6 +885,59 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return false;  // The ring was never found or failed verfication.
   }
 
+  void DeriveFastBinLimits() {
+    _fastBinLimitOffset = _arenaTopOffset;
+    /*
+     * Guess the start of the fast bin lists.  This was made necessary by
+     * a change in malloc_state as of libc 2.27.  The guess may be wrong
+     * if all the fast bin lists are empty for all the arenas, but in such
+     * a case it doesn't matter so much if it is wrong because the
+     * the offset is basically to get a bound on the range of fast bin
+     * lists to check for free items and corruption, and empty lists don't
+     * matter for that.
+     */
+    _fastBinStartOffset = 2 * sizeof(int);
+    size_t votesForFirstOffset = 0;
+    size_t votesForSecondOffset = 0;
+    Reader reader(_addressMap);
+    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
+      Arena& arena = it->second;
+      if (reader.ReadU8(arena._address + _fastBinStartOffset, 0) ==
+          ((uint8_t)(1))) {
+        votesForSecondOffset++;
+      } else {
+        Offset firstOnList =
+            reader.ReadOffset(arena._address + _fastBinStartOffset, 0);
+        if (firstOnList != 0) {
+          Offset sizeAndStatus =
+              reader.ReadOffset(firstOnList + OFFSET_SIZE, 0);
+          if (sizeAndStatus / (2 * OFFSET_SIZE) == 2) {
+            votesForFirstOffset++;
+          }
+        }
+      }
+      Offset expectForSecondOffset = 2;
+      for (Offset inFastBin = _fastBinStartOffset + OFFSET_SIZE;
+           inFastBin < _fastBinLimitOffset; inFastBin += OFFSET_SIZE) {
+        Offset firstOnList = reader.ReadOffset(arena._address + inFastBin, 0);
+        if (firstOnList != 0) {
+          Offset sizeAndStatus =
+              reader.ReadOffset(firstOnList + OFFSET_SIZE, 0);
+          Offset indexPlus2 = sizeAndStatus / (2 * OFFSET_SIZE);
+          if (indexPlus2 == expectForSecondOffset) {
+            votesForSecondOffset++;
+          } else if (indexPlus2 == expectForSecondOffset + 1) {
+            votesForFirstOffset++;
+          }
+        }
+        expectForSecondOffset++;
+      }
+    }
+    if (votesForSecondOffset > votesForFirstOffset) {
+      _fastBinStartOffset += OFFSET_SIZE;
+    }
+  }
+
   bool DeriveArenaOffsets(bool showErrors) {
     size_t numArenas = _arenas.size();
     _arenaTopOffset = 0xb * OFFSET_SIZE;
@@ -912,6 +967,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         break;
       }
     }
+
+    DeriveFastBinLimits();
+
     if (numListOffsetVotes < numArenas) {
       if (numListOffsetVotes == 0) {
         if (showErrors) {
@@ -1856,8 +1914,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       expectClearMask = expectClearMask | 8;
     }
     Reader reader(_addressMap);
-    Offset fastBinLimit = arenaAddress + _arenaTopOffset;
-    for (Offset fastBinCheck = arenaAddress + 2 * sizeof(int);
+    Offset fastBinLimit = arenaAddress + _fastBinLimitOffset;
+    for (Offset fastBinCheck = arenaAddress + _fastBinStartOffset;
          fastBinCheck < fastBinLimit; fastBinCheck += OFFSET_SIZE) {
       int loopGuard = 0;
       for (Offset listNode = reader.ReadOffset(fastBinCheck); listNode != 0;
@@ -2150,9 +2208,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
       Offset arenaAddress = it->first;
       Arena& arena = it->second;
-      Offset fastBinLimit = arenaAddress + _arenaTopOffset;
+      Offset fastBinLimit = arenaAddress + _fastBinLimitOffset;
       Reader reader(_addressMap);
-      for (Offset fastBinCheck = arenaAddress + 2 * sizeof(int);
+      for (Offset fastBinCheck = arenaAddress + _fastBinStartOffset;
            fastBinCheck < fastBinLimit; fastBinCheck += OFFSET_SIZE) {
         try {
           for (Offset nextNode = reader.ReadOffset(fastBinCheck); nextNode != 0;
