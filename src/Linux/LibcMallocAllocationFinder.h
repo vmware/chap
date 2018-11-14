@@ -1897,6 +1897,65 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     RecordAllocated(start + 2 * OFFSET_SIZE, size - 2 * OFFSET_SIZE);
   }
 
+  Offset FindBackChain(Offset libcChunkStart, Offset corruptionPoint) {
+    Offset lowestChainStart = libcChunkStart;
+    Reader reader(_addressMap);
+    Offset sizeCheckMask = (sizeof(Offset) == 8) ? 0xa : 2;
+    for (Offset check = libcChunkStart - 4 * sizeof(Offset);
+         check > corruptionPoint; check -= (2 * sizeof(Offset))) {
+      Offset sizeAndStatus = reader.ReadOffset(check + sizeof(Offset), 2);
+      if ((sizeAndStatus & sizeCheckMask) != 0) {
+        continue;
+      }
+      Offset length = sizeAndStatus & ~7;
+      if (length == 0 || length > (libcChunkStart = check)) {
+        continue;
+      }
+      if ((sizeAndStatus & 1) == 0) {
+        Offset prevSizeAndStatus = reader.ReadOffset(check, 2);
+        if ((prevSizeAndStatus & sizeCheckMask) != 0) {
+          continue;
+        }
+        Offset prevLength = prevSizeAndStatus & ~7;
+        if (check - corruptionPoint <= prevLength) {
+          continue;
+        }
+        if ((reader.ReadOffset(check - prevLength, 0) & ~7) != prevLength) {
+          continue;
+        }
+      }
+
+      if (check + length == lowestChainStart) {
+        lowestChainStart = check;
+      } else {
+        Offset checkForward = check + length;
+        Offset prevLength = length;
+        while (checkForward != libcChunkStart) {
+          Offset forwardSizeAndStatus =
+              reader.ReadOffset(checkForward + sizeof(Offset), 2);
+          if ((forwardSizeAndStatus & sizeCheckMask) != 0) {
+            break;
+          }
+          if ((forwardSizeAndStatus & 1) == 0 &&
+              (reader.ReadOffset(checkForward, 0) & ~7) != prevLength) {
+            break;
+          }
+          Offset forwardLength = forwardSizeAndStatus & ~7;
+          if (forwardLength == 0 ||
+              forwardLength > (libcChunkStart - checkForward)) {
+            break;
+          }
+          prevLength = forwardLength;
+          checkForward += forwardLength;
+        }
+        if (checkForward == libcChunkStart) {
+          lowestChainStart = check;
+        }
+      }
+    }
+    return lowestChainStart;
+  }
+
   Offset SkipArenaCorruption(Offset arenaAddress, Offset corruptionPoint,
                              Offset repairLimit) {
     ArenaMapIterator it = _arenas.find(arenaAddress);
@@ -1904,7 +1963,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       return 0;
     }
     Offset pastArenaCorruption = 0;
-    repairLimit -= 6 * OFFSET_SIZE;
+    Offset top = it->second._top;
+    if (corruptionPoint <= top && top <= repairLimit) {
+      repairLimit = top;
+    } else {
+      repairLimit -= 6 * OFFSET_SIZE;
+    }
 
     Offset expectClearMask = 2;
     if (arenaAddress == _mainArenaAddress) {
@@ -1968,17 +2032,22 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         listNode = nextNode;
       } while (listNode != listHeader);
     }
+    if (pastArenaCorruption == 0) {
+      if (repairLimit == top) {
+        pastArenaCorruption = FindBackChain(top, corruptionPoint);
+      }
+    } else {
+      pastArenaCorruption = FindBackChain(pastArenaCorruption, corruptionPoint);
+    }
     return pastArenaCorruption;
   }
 
-  Offset HandleMainArenaCorruption(Offset corruptionPoint) {
+  Offset HandleMainArenaCorruption(Offset corruptionPoint, Offset limit) {
     std::cerr << "Corruption was found in main arena run near 0x" << std::hex
               << corruptionPoint << "\n";
     std::cerr << "The main arena is at 0x" << std::hex << _mainArenaAddress
               << "\n";
-    // TODO: This repairLimit is probably too cautious.
-    Offset repairLimit = (corruptionPoint & ~0xfff) + 0x2000;
-    return SkipArenaCorruption(_mainArenaAddress, corruptionPoint, repairLimit);
+    return SkipArenaCorruption(_mainArenaAddress, corruptionPoint, limit);
   }
   /*
    * Note that the checks can be more strict here because the allocations
@@ -1994,7 +2063,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     for (Offset check = base; check != limit;
          prevCheck = check, check += chunkSize) {
       if ((sizeAndFlags & (OFFSET_SIZE | 6)) != 0) {
-        check = HandleMainArenaCorruption(prevCheck);
+        check = HandleMainArenaCorruption(prevCheck, limit);
         if (check != 0) {
           chunkSize = 0;
           sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
@@ -2006,7 +2075,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
       if ((chunkSize == 0) || (chunkSize >= 0x10000000) ||
           (chunkSize > (limit - check))) {
-        check = HandleMainArenaCorruption(prevCheck);
+        check = HandleMainArenaCorruption(prevCheck, limit);
         if (check != 0) {
           chunkSize = 0;
           sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
