@@ -312,7 +312,7 @@ An extension rule specification has the following parts, some optional as indica
 
 The *member-constraints*, which may be omitted, are checked as an allocation in the set is being visited for the first time during the command.  If the *member-constraints* are not satisfied, either for the given member or for the offset within the member, the extension will not be applied.  More detail on *member-constraints* will be given later.  
 
-The *direction*, which is always present and currently must be either **->** or **<-** determines, when one is visiting an allocation for the first time, whether the objects to be added to the set are ones referenced by that allocation (**->**) or ones that reference that allocation (**<-**).
+The *direction*, which is always present and currently must be either **->** or **~>** or **<-** determines, when one is visiting an allocation for the first time, whether the allocations to be added to the set are all allocations directly referenced by that allocation (**->**) or only leaked allocations directly referenced by that allocation (**~>**) or all allocations that directly reference that allocation (**<-**).
 
 The *extension-constraints*, which may be omitted, apply to allocations in the specified *direction* from the member being visited for the first time.  If the *extension-constraints* are not satisfied, either for the allocation under consideration for extending the set or for the offset within that allocation, the given extension candidate will not be added to the set.
 
@@ -322,13 +322,13 @@ The *member-constraints*, if present, have the following parts:
 
 [ *extension-state* | *signature* | *pattern* ][ ``@`` *offset-in-hex*]
 
-If an *extension-state* is supplied, the given *extension-rule* is applicable only in that *extension-state*.  If a *signature* or *pattern* is supplied, extensions can only be applied to members of the set that have that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.  If the *direction* is **->** the reference from the member allocation must appear at that offset in the member allocation.  If the *direction* is **<-** the reference from the extension candidate to the member allocation must refer to that offset in the member allocation.
+If an *extension-state* is supplied, the given *extension-rule* is applicable only in that *extension-state*.  If a *signature* or *pattern* is supplied, extensions can only be applied to members of the set that have that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.  If the *direction* is **->** or **~>** the reference from the member allocation must appear at that offset in the member allocation.  If the *direction* is **<-** the reference from the extension candidate to the member allocation must refer to that offset in the member allocation.
 
 The *extension-constraints*, if present, have the following parts:
 
 [ *signature* | *pattern* ][``@`` *offset-in-hex*]
 
-If a *signature* or *pattern* is supplied, allocations reachable from the given member by traversing in the specified *direction* can be added only if they match that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.   If the *direction* is **->** the reference from the member allocation must refer to the specified offset in the extension candidate.  If the *direction* is **<-** the reference to the member allocation must appear at the specified offset in the extension candidate.
+If a *signature* or *pattern* is supplied, allocations reachable from the given member by traversing in the specified *direction* can be added only if they match that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.   If the *direction* is **->** or **~>** the reference from the member allocation must refer to the specified offset in the extension candidate.  If the *direction* is **<-** the reference to the member allocation must appear at the specified offset in the extension candidate.
 
 Some examples:
 
@@ -453,9 +453,18 @@ describe used Foo /extend Foo->%COWStringBody@18
 # points to the start of an allocation that matches the pattern %SSL_CTX.
 summarize used %SSL_CTX /extend %SSL_CTX@0<-
 
+# Summarize the set with every leaked allocation that matches the pattern %SSL and every leaked allocation
+# directly or indirectly reachable from those allocations.
+summarize leaked %SSL ~>
+
 # List every instance of Foo that is referenced by at least 100 instances of Bar, as well as all the
 # referencing instances of Bar.
-list Foo /minincoming Bar=100 /extend Foo<-Bar
+list used Foo /minincoming Bar=100 /extend Foo<-Bar
+
+# Show every unreferenced allocation of type Foo and every leaked allocation that is reachable, directly
+# or indirectly from those allocations.  Note that use of -> would be different, and likely less useful
+# in this case, because it would also reach anchored allocations.
+show unreferenced Foo ~>
 
 ```
 
@@ -473,6 +482,17 @@ Two caveats to the above are that the quality of the leak check is at most as go
 ### Analyzing Memory Leaks
 
 To analyze memory leaks, starting from a core for which **count leaks** gave a non-zero count, probably the first thing you will want to do (assuming that you have set up symbols properly as describe in an earlier section) is to distinguish which leaked allocations are also **unreferenced**, because if one can explain why all the **unreferenced** objects were leaked, this will often explain the remaining leaked objects.  To start with this, use something like **show unreferenced**.
+
+If you want to understand whether all the leaked objects are reachable from unreferenced objects, you can compare the results of the following two commands.
+
+```
+summarize leaked
+
+summarize unreferenced ~>
+
+```
+
+Sometimes a leak can still be rooted even if no unreferenced objects are involved, because sometimes there are back pointers.  For example, consider a class Foo that contains an std::map.  All the allocations for the std::map point to the parent, with the root of the red black tree pointing to a header node embedded in the allocation that has the std::map.
 
 One of the most common causes of leaks is a failure to do the last dereference on a reference counted object (or failing to take a reference in the first place and allowing any raw pointers to the object to go out of scope).  For such objects you basically want to figure out the type, which `chap` might help you with based on a **signature** or a **pattern** then use gdb or some such thing to figure out where the reference count resides if you don't already know.
 
