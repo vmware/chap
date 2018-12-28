@@ -144,7 +144,7 @@ A missing reference would be a case where a reference exists but `chap` can't de
 
 ## Allocation Signatures
 
-A **signature** is a pointer at the very start of an allocation to memory that is not writable.   In the case of 'C++' a **signature** might point to a vtable, which can be used to identify the name of a class or struct associated with the given allocation.  A **signature** might also point to a function or a constant string literal.  Many commands in chap allow one to use a signature to limit the scope of the command.
+A **signature** is a pointer at the very start of an allocation to memory that is not writable.   In the case of 'C++' a **signature** might point to a vtable, which can be used to identify the name of a class or struct associated with the given allocation.  A **signature** might also point to a function or a constant string literal.  Many commands in chap allow one to use a signature, either by name or numeric value to limit the scope of the command.
 
 `chap` has several ways to attempt to map signatures to names.  One is that `chap` will always attempt, using just the core, to follow the signature to a vtable to the typeinfo to the mangled type name and unmangle the name.  Another, if the mangled name is not available in the core, is to use a combination of the core and the associated binaries to obtain the mangled type name.  Another is to create requests for gdb, in a file called _core-path_.symreqs, depend on the user to run that as a script from gdb, and read the results from a file called _core-path_.symdefs.  
 
@@ -268,11 +268,14 @@ Any of the allocation sets as describe above can be further restricted or, if th
 
 ### Restricting by Signatures or Patterns
 
-One way to restrict a set is to provide a signature or a pattern following the set specification.  Here is a `chap` script with a few examples:
+One way to restrict a set is to provide a signature or a pattern following the set specification.  A **-** may be used in place of a signature name or number, to constrain the selection to only allocations that have no signature. Here is a `chap` script with a few examples:
 
 ```
-# Provide the addresses of all allocations that, based on the signature, appear to be of type Foo:
+# Provide the addresses of all used allocations that, based on the signature, appear to be of type Foo:
 enumerate used Foo
+
+# Show all used allocations that have no signature:
+show used -
 
 # Show all the leaked allocations that appear to be instances of SSL_CTX from openssl.
 show leaked %SSL_CTX
@@ -371,7 +374,8 @@ list allocation Orange /extend Orange<-
 
 ```
  # Enumerate the set formed by starting with all Orange allocations then
- # extending to any referenced Green allocations.
+ # extending to any Green allocations directly or indirectly referenced
+ # starting from those Orange allocations.
   enumerate allocation Orange /extend ->green
 ```
 
@@ -382,7 +386,7 @@ list allocation Orange /extend Orange<-
 # Enumerate the set formed by starting with all Orange allocations then extending
 # to any Green allocations directly referenced by Orange allocations.
 # This visits a different set from the previous command because it doesn't visit
-# Green allocations that are not referenced by Orange allocations.
+# Green allocations that are not directly referenced by Orange allocations.
 count allocation Orange /extend Orange->Green
 ```
 
@@ -391,7 +395,10 @@ count allocation Orange /extend Orange->Green
 
 ```
 # Count the set formed by starting with all Orange allocations then extending
-# to any unsigned allocations directly referenced by Orange allocations.
+# to any unsigned allocations directly referenced by Orange allocations.  As
+# a reminder, the "-" after the "->" is in the place of a signature in an
+# extension constraint and constrains the extension to apply only to outgoing
+# references to unsigned allocations.
 count allocation Orange /extend Orange->-
 ```
 
