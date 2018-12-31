@@ -2536,6 +2536,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
                                            "with an unexpected back pointer");
                   break;
                 }
+                if (reader.ReadOffset(allocationAddr + allocationSize -
+                                      OFFSET_SIZE) !=
+                    allocationSize + OFFSET_SIZE) {
+                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
+                                           "with a wrong prev size at end");
+                  break;
+                }
                 prevNode = node;
               }
             }
