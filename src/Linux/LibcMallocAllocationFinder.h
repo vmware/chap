@@ -1964,7 +1964,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     }
     Offset pastArenaCorruption = 0;
     Offset top = it->second._top;
-    if (corruptionPoint <= top && top <= repairLimit) {
+    if (corruptionPoint == top) {
+      return 0;
+    }
+    if (corruptionPoint < top && top <= repairLimit) {
       repairLimit = top;
     } else {
       repairLimit -= 6 * OFFSET_SIZE;
@@ -2033,7 +2036,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       } while (listNode != listHeader);
     }
     if (pastArenaCorruption == 0) {
-      if (repairLimit == top) {
+      if (repairLimit == top && top > corruptionPoint) {
         pastArenaCorruption = FindBackChain(top, corruptionPoint);
       }
     } else {
