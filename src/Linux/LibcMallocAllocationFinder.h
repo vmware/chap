@@ -2076,7 +2076,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
       chunkSize = sizeAndFlags & ~7;
 
-      if ((chunkSize == 0) || (chunkSize >= 0x10000000) ||
+      if ((chunkSize == 0) ||
           (chunkSize > (limit - check))) {
         check = HandleMainArenaCorruption(prevCheck, limit);
         if (check != 0) {
