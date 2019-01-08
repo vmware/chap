@@ -13,6 +13,7 @@ class PermissionsConstrainedRanges {
   typedef VirtualAddressMap<Offset> AddressMap;
   typedef RangeMapper<Offset, const char *> Ranges;
   typedef typename Ranges::const_iterator const_iterator;
+  typedef typename Ranges::const_reverse_iterator const_reverse_iterator;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
 
   PermissionsConstrainedRanges(const AddressMap &addressMap,
@@ -107,6 +108,10 @@ class PermissionsConstrainedRanges {
   const_iterator begin() const { return _ranges.begin(); }
 
   const_iterator end() const { return _ranges.end(); }
+
+  const_reverse_iterator rbegin() const { return _ranges.rbegin(); }
+
+  const_reverse_iterator rend() const { return _ranges.rend(); }
 
   const_iterator find(Offset member) const { return _ranges.find(member); }
 
