@@ -13,6 +13,7 @@ $1 core.38066 << DONE
 redirect on
 count used
 summarize used
+summarize used /sortby bytes
 enumerate used
 list used
 show used

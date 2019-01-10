@@ -5,8 +5,8 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../../SizedTally.h"
-#include "../SignatureSummary.h"
 #include "../Finder.h"
+#include "../SignatureSummary.h"
 namespace chap {
 namespace Allocations {
 namespace Visitors {
@@ -21,8 +21,26 @@ class Summarizer {
     Factory() : _commandName("summarize") {}
     Summarizer* MakeVisitor(Commands::Context& context,
                             const ProcessImage<Offset>& processImage) {
+      bool sortByCount = true;
+      size_t numSortBy = context.GetNumArguments("sortby");
+      if (numSortBy > 0) {
+        if (numSortBy > 1) {
+          context.GetError() << "At most one /sortby switch is allowed.\n";
+          return (Summarizer*)(0);
+        }
+        const std::string sortBy = context.Argument("sortby", 0);
+        if (sortBy == "bytes") {
+          sortByCount = false;
+        } else {
+          if (sortBy != "count") {
+            context.GetError() << "Unknown /sortby argument \"" << sortBy
+                               << "\"\n";
+            return (Summarizer*)(0);
+          }
+        }
+      }
       return new Summarizer(context, processImage.GetSignatureDirectory(),
-                            processImage.GetVirtualAddressMap());
+                            processImage.GetVirtualAddressMap(), sortByCount);
     }
     const std::string& GetCommandName() const { return _commandName; }
     // TODO: allow adding taints
@@ -33,6 +51,8 @@ class Summarizer {
                 " count associated with\neach type (as determined by the"
                 " signature, if any) and with a separate tally\n"
                 "and byte count for unsigned allocations.\n";
+      output << "Use \"/sortby bytes\" to sort summary by total bytes "
+                "rather than allocation count\n";
     }
 
    private:
@@ -42,14 +62,19 @@ class Summarizer {
 
   Summarizer(Commands::Context& context,
              const SignatureDirectory<Offset>& signatureDirectory,
-             const VirtualAddressMap<Offset>& addressMap)
+             const VirtualAddressMap<Offset>& addressMap, bool sortByCount)
       : _context(context),
         _signatureSummary(signatureDirectory),
         _addressMap(addressMap),
-        _sizedTally(context, "allocations") {}
+        _sizedTally(context, "allocations"),
+        _sortByCount(sortByCount) {}
   ~Summarizer() {
     std::vector<SummaryItem> items;
-    _signatureSummary.SummarizeByCount(items);
+    if (_sortByCount) {
+      _signatureSummary.SummarizeByCount(items);
+    } else {
+      _signatureSummary.SummarizeByBytes(items);
+    }
     DumpSummaryItems(items);
   }
   void Visit(AllocationIndex /* index */, const Allocation& allocation) {
@@ -70,6 +95,7 @@ class Summarizer {
   SignatureSummary<Offset> _signatureSummary;
   const VirtualAddressMap<Offset>& _addressMap;
   SizedTally<Offset> _sizedTally;
+  bool _sortByCount;
   static std::string InDecimalWithCommas(Offset n) {  // treat as positive
     if (n == 0) {
       return "0";
@@ -104,10 +130,10 @@ class Summarizer {
       } else {
         if (it->_name == "-") {
           // Unsigned allocations.
-          output << "Unsigned allocations have "
-                 << std::dec << it->_totals._count
-                 << " instances taking 0x" << std::hex << it->_totals._bytes
-                 << "(" << InDecimalWithCommas(it->_totals._bytes) << ")"
+          output << "Unsigned allocations have " << std::dec
+                 << it->_totals._count << " instances taking 0x" << std::hex
+                 << it->_totals._bytes << "("
+                 << InDecimalWithCommas(it->_totals._bytes) << ")"
                  << " bytes.\n";
           for (typename std::vector<std::pair<
                    Offset, typename SignatureSummary<Offset>::Tally> >::
