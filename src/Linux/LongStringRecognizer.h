@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,12 +14,12 @@ class LongStringRecognizer : public Allocations::PatternRecognizer<Offset> {
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
-  LongStringRecognizer(const ProcessImage<Offset>* processImage)
+  LongStringRecognizer(const ProcessImage<Offset>& processImage)
       : Allocations::PatternRecognizer<Offset>(processImage, "LongString") {}
 
   bool Matches(AllocationIndex index, const Allocation& allocation,
                bool isUnsigned) const {
-    return Visit((Commands::Context*)(0), index, allocation, isUnsigned, false);
+    return Visit(nullptr, index, allocation, isUnsigned, false);
   }
 
   /*
@@ -54,7 +54,7 @@ class LongStringRecognizer : public Allocations::PatternRecognizer<Offset> {
                    const std::vector<Offset>* anchors,
                    std::vector<StringInfo>& strings) const {
     if (anchors != 0) {
-      typename VirtualAddressMap<Offset>::Reader reader(*(Base::_addressMap));
+      typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
       for (Offset anchor : *anchors) {
         if (reader.ReadOffset(anchor, 0xbad) == allocationAddress) {
           Offset stringLengthCandidate =
@@ -86,7 +86,7 @@ class LongStringRecognizer : public Allocations::PatternRecognizer<Offset> {
     Offset allocationAddress = allocation.Address();
 
     const char* allocationImage;
-    Offset numBytesFound = Base::_addressMap->FindMappedMemoryImage(
+    Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
         allocationAddress, &allocationImage);
 
     if (numBytesFound < allocationSize) {
@@ -119,7 +119,7 @@ class LongStringRecognizer : public Allocations::PatternRecognizer<Offset> {
       }
       Offset incomingAddress = incoming->Address();
       const char* incomingImage;
-      Offset numBytesFound = Base::_addressMap->FindMappedMemoryImage(
+      Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
           incomingAddress, &incomingImage);
 
       if (numBytesFound < incomingSize) {
@@ -160,11 +160,11 @@ class LongStringRecognizer : public Allocations::PatternRecognizer<Offset> {
       }
       std::string label;
       if (strings.size() == 1) {
-        label.assign("The string");
+        label.assign("The referencing std::string");
         output << "The capacity is considered to be 0x" << std::hex
                << strings.begin()->_capacity << ".\n";
       } else {
-        label.assign("One possible string");
+        label.assign("One possible referencing std::string");
         output << "It is strange that there are multiple string candidates.\n";
       }
       if (explain) {

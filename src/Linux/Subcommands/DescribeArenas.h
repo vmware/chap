@@ -1,30 +1,19 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../LibcMallocAllocationFinder.h"
 #include "../../SizedTally.h"
+#include "../LibcMallocAllocationFinder.h"
 namespace chap {
 namespace Linux {
 namespace Subcommands {
 template <class Offset>
 class DescribeArenas : public Commands::Subcommand {
  public:
-  DescribeArenas()
-      : Commands::Subcommand("describe", "arenas"), _processImage(0) {}
-
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    if (processImage != NULL) {
-      _allocationFinder =
-          dynamic_cast<const LibcMallocAllocationFinder<Offset>*>(
-              processImage->GetAllocationFinder());
-    } else {
-      _allocationFinder = (const LibcMallocAllocationFinder<Offset>*)(0);
-    }
-  }
+  DescribeArenas(const LibcMallocAllocationFinder<Offset>* finder)
+      : Commands::Subcommand("describe", "arenas"), _allocationFinder(finder) {}
 
   void ShowHelpMessage(Commands::Context& context) {
     context.GetOutput()
@@ -36,15 +25,6 @@ class DescribeArenas : public Commands::Subcommand {
     Commands::Output& output = context.GetOutput();
     Commands::Error& error = context.GetError();
     bool isRedirected = context.IsRedirected();
-    if (_processImage == 0) {
-      error << "This command is currently disabled.\n";
-      error << "There is no process image.\n";
-      if (isRedirected) {
-        output << "This command is currently disabled.\n";
-        output << "There is no process image.\n";
-      }
-      return;
-    }
     if (_allocationFinder == 0) {
       error << "This command is currently disabled.\n";
       error << "The process didn't use libc malloc.\n";
@@ -72,7 +52,6 @@ class DescribeArenas : public Commands::Subcommand {
   }
 
  private:
-  const ProcessImage<Offset>* _processImage;
   const LibcMallocAllocationFinder<Offset>* _allocationFinder;
 };
 }  // namespace Subcommands

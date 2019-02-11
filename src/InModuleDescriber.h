@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -10,56 +10,47 @@ namespace chap {
 template <typename Offset>
 class InModuleDescriber : public Describer<Offset> {
  public:
-  InModuleDescriber(const ProcessImage<Offset> *processImage,
+  InModuleDescriber(const ProcessImage<Offset> &processImage,
                     const KnownAddressDescriber<Offset> &addressDescriber)
-      : _knownAddressDescriber(addressDescriber) {
-    SetProcessImage(processImage);
-  }
-
-  void SetProcessImage(const ProcessImage<Offset> *processImage) {
-    if (processImage == 0) {
-      _moduleDirectory = 0;
-    } else {
-      _moduleDirectory = &(processImage->GetModuleDirectory());
-    }
-  }
+      : _knownAddressDescriber(addressDescriber),
+        _moduleDirectory(processImage.GetModuleDirectory()) {}
 
   /*
    * If the address is understood, provide a description for the address,
    * optionally with an additional explanation of why the address matches
    * the description, and return true.  Otherwise don't write anything
-   * and return false.
+   * and return false.  Show addresses only if requested.
    */
-  bool Describe(Commands::Context &context, Offset address,
-                bool explain) const {
+  bool Describe(Commands::Context &context, Offset address, bool explain,
+                bool showAddresses) const {
     std::string name;
     Offset base;
     Offset size;
-    Offset fileOffset;
     Offset relativeVirtualAddress;
-    if (_moduleDirectory != 0 &&
-        _moduleDirectory->Find(address, name, base, size, fileOffset,
-                               relativeVirtualAddress)) {
+    if (_moduleDirectory.Find(address, name, base, size,
+                              relativeVirtualAddress)) {
       Commands::Output &output = context.GetOutput();
-      output << "Address 0x" << std::hex << address << " is at offset 0x"
-             << (address - base) << " in range starting at 0x" << base
-             << "\nfor module " << name << ".\n";
-      output << "The relative virtual address in the module is 0x"
-             << relativeVirtualAddress << "\n";
-      if (fileOffset != ModuleDirectory<Offset>::MODULE_OFFSET_UNKNOWN) {
-        output << "This corresponds to offset 0x" << std::hex << fileOffset
-               << " in the binary.\n";
+      if (showAddresses) {
+        output << "Address 0x" << std::hex << address << " is at offset 0x"
+               << (address - base) << " in range\n[0x" << base << ", "
+               << (base + size) << ")\nfor module " << name << "\n"
+               << "and at module-relative virtual address 0x"
+               << relativeVirtualAddress << ".\n";
+        _knownAddressDescriber.Describe(context, address, explain, false);
+      } else {
+        // Note that we don't want to use the KnownAddressDescriber as currently
+        // written for the range case because it shows information such as
+        // permissions but we don't want this when we are displaying all the
+        // ranges associated with certain permissions.
+        output << "This is for module " << name << ".\n";
       }
-      _knownAddressDescriber.Describe(context, address, explain);
 
-      /*
-       * This should also give some indication as to whether it is text
-       * or data or something else.
-       */
       if (explain) {
         /*
          * At some point this should explain why this area was identified
          * as belonging to a module.  This logic will be environment specific.
+         * It probably should show the file path and whether it is present
+         * on the current host and whether the ELF headers match.
          */
       }
       return true;
@@ -68,7 +59,7 @@ class InModuleDescriber : public Describer<Offset> {
   }
 
  protected:
-  const ModuleDirectory<Offset> *_moduleDirectory;
   const KnownAddressDescriber<Offset> &_knownAddressDescriber;
+  const ModuleDirectory<Offset> &_moduleDirectory;
 };
 }  // namespace chap

@@ -1,7 +1,10 @@
-# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
 # This tests various commands against a core from the Demo6 program.
+# The core is correct with respect to inaccessible regions in that they are
+# recorded with correct permissions and in-process size and also have no image
+# in the core file.
 
 # Note that in general we don't do show free because the output may be
 # quite large.
@@ -20,4 +23,26 @@ summarize signatures
 list stacks
 describe stacks
 describe arenas
+summarize writable
+summarize rxonly
+summarize readonly
+summarize inaccessible
+describe writable
+describe rxonly
+describe readonly
+describe inaccessible
+count writable
+count rxonly
+count readonly
+count inaccessible
+list writable
+list rxonly
+list readonly
+list inaccessible
+# Start of a module alignment gap
+describe 7ff37da7b000
+explain 7ff37da7b000
+# End of that module alignment gap
+describe 7ff37dc79fff
+explain 7ff37dc79fff
 DONE

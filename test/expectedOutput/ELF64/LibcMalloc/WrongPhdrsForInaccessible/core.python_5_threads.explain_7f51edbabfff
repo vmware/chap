@@ -1,0 +1,5 @@
+Address 7f51edbabfff is at offset 30fef of
+an anchored allocation at 7f51edb7b010 of size 30ff0
+The allocation at 0x7f51edb7b010 appears to be directly statically anchored.
+Static address 0x7f51edc2e190 references 0x7f51edb7b010.
+

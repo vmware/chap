@@ -3,39 +3,42 @@ This allocation matches pattern LongString.
 The string has 0x10 bytes, containing
 "0123456789abcdef".
 The capacity is considered to be 0x10.
-The string is at address 0xffffcffc on the stack.
-Allocation at 8050a40 appears to be directly anchored from at least one stack.
+The referencing std::string is at address 0xffffcffc on the stack.
+The allocation at 0x8050a40 appears to be directly anchored from
+at least one stack.
 Address 0xffffcffc is on the live part of the stack for thread 1.
-Stack address ffffcffc references 8050a40
+Stack address 0xffffcffc references 0x8050a40.
 
 Anchored allocation at 8050aa0 of size 14
 This allocation matches pattern LongString.
 The string has 0x11 bytes, containing
 "another bogus key".
 The capacity is considered to be 0x11.
-The string is at offset 0x10 in the allocation at 0x8050a70.
-Allocation at 8050aa0 appears to be indirectly statically anchored
-... via anchor point 8050a70
-Address 0x804b090 is at offset 0x3090 in range starting at 0x8048000
-for module /home/tim/LongStringTest32.
-The relative virtual address in the module is 0x3090
-Address 0x804b090 is readable and writable.
-Address 0x804b090 is mapped into the process image.
-Static address 804b090 references anchor point 8050a70
-... which references 8050aa0
+The referencing std::string is at offset 0x10 in the allocation at 0x8050a70.
+The allocation at 0x8050aa0 appears to be indirectly statically anchored
+via anchor point 0x8050a70.
+Address 0x804b090 is at offset 0x90 in range
+[0x804b000, 804c000)
+for module /home/tim/LongStringTest32
+and at module-relative virtual address 0x3090.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x804b090 references anchor point 0x8050a70
+which references 0x8050aa0
 
 Anchored allocation at 8050ab8 of size 2c
 This allocation matches pattern LongString.
 The string has 0x26 bytes, containing
 "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
 The capacity is considered to be 0x26.
-The string is at address 0x804b06c in statically allocated memory.
-Allocation at 8050ab8 appears to be directly statically anchored.
-Address 0x804b06c is at offset 0x306c in range starting at 0x8048000
-for module /home/tim/LongStringTest32.
-The relative virtual address in the module is 0x306c
-Address 0x804b06c is readable and writable.
-Address 0x804b06c is mapped into the process image.
-Static address 804b06c references 8050ab8
+The referencing std::string is at address 0x804b06c in statically allocated memory.
+The allocation at 0x8050ab8 appears to be directly statically anchored.
+Address 0x804b06c is at offset 0x6c in range
+[0x804b000, 804c000)
+for module /home/tim/LongStringTest32
+and at module-relative virtual address 0x306c.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x804b06c references 0x8050ab8.
 
 3 allocations use 0x54 (84) bytes.

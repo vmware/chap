@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017, 2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -16,6 +16,8 @@ class RangeMapper {
   typedef typename Map::const_iterator MapConstIterator;
   typedef typename Map::const_reverse_iterator MapConstReverseIterator;
 
+  RangeMapper(bool coallesceMatchingValues = true)
+      : _coallesceMatchingValues(coallesceMatchingValues) {}
   struct Range {
     Range() : _limit(0), _size(0), _base(0) {}
     void Set(Offset limit, Offset size, ValueType value) {
@@ -118,11 +120,11 @@ class RangeMapper {
          * There is a touching range just after this one and no overlapping
          * range before it.
          */
-        if (it->second.second == value) {
+        if (it->second.second == value && _coallesceMatchingValues) {
           /*
-           * The touching range has the same value and would have the same
-           * key in the map so we can coallesce in the existing node
-           * by changing the range size.
+           * The touching range has the same value and this RangeMapper has
+           * been configured to coallese adjacent ranges that have matching
+           * values.
            */
           it->second.first += rangeSize;
           return true;
@@ -140,7 +142,7 @@ class RangeMapper {
           // There is overlap with the range after that one.
           return false;
         }
-        if (it->second.second == value) {
+        if (it->second.second == value && _coallesceMatchingValues) {
           // The ranges can be coallesced into a range with a new end.
           rangeSize += it->second.first;
           _map.erase(it);
@@ -236,6 +238,11 @@ class RangeMapper {
   }
 
   /*
+   * Clear the map.
+   */
+  void clear() { _map.clear(); }
+
+  /*
    * If a range containing the given member exists, return true and
    * set rangeBase, rangeSize and valueType accordingly.  If not, return
    * false and leave rangeBase, rangeSize and valueType untouched.
@@ -281,6 +288,7 @@ class RangeMapper {
 
  private:
   Map _map;
+  bool _coallesceMatchingValues;
 };
 
 }  // namespace chap

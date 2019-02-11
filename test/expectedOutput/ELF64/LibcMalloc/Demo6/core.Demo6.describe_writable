@@ -1,0 +1,47 @@
+Range [0x602000, 0x603000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /home/tim/Demo6.
+
+Range [0x134c000, 0x137e000) uses 0x32000 bytes.
+Region use: libc malloc main arena pages
+This is a run of pages used for allocations for the main arena.
+
+Range [0x7ff37cb91000, 0x7ff37d391000) uses 0x800000 bytes.
+Region use: stack
+This stack is used for thread 1.
+
+Range [0x7ff37d699000, 0x7ff37d69a000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib/x86_64-linux-gnu/libm-2.23.so.
+
+Range [0x7ff37da5d000, 0x7ff37da63000) uses 0x6000 bytes.
+Region use: used by module
+This is for module /lib/x86_64-linux-gnu/libc-2.23.so.
+
+Range [0x7ff37dc7b000, 0x7ff37dc80000) uses 0x5000 bytes.
+Region use: used by module
+This is for module /lib/x86_64-linux-gnu/libpthread-2.23.so.
+
+Range [0x7ff37de95000, 0x7ff37de96000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib/x86_64-linux-gnu/libgcc_s.so.1.
+
+Range [0x7ff37e212000, 0x7ff37e218000) uses 0x6000 bytes.
+Region use: used by module
+This is for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.
+
+Range [0x7ff37e41f000, 0x7ff37e425000) uses 0x6000 bytes.
+Region use: unknown
+
+Range [0x7ff37e43b000, 0x7ff37e43d000) uses 0x2000 bytes.
+Region use: unknown
+
+Range [0x7ff37e43e000, 0x7ff37e440000) uses 0x2000 bytes.
+Region use: used by module
+This is for module /lib/x86_64-linux-gnu/ld-2.23.so.
+
+Range [0x7fffe54f8000, 0x7fffe551a000) uses 0x22000 bytes.
+Region use: stack
+This stack is used for thread 2.
+
+12 writable ranges use 0x872000 (8,855,552) bytes.

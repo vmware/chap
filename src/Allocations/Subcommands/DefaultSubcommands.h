@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -41,107 +41,81 @@ template <class Offset>
 class DefaultSubcommands {
  public:
   DefaultSubcommands(
+      const ProcessImage<Offset> &processImage,
       const Describer<Offset> &describer,
       const PatternRecognizerRegistry<Offset> &patternRecognizerRegistry)
-      : _processImage(0),
-        _defaultVisitorFactories(describer),
-        _singleAllocationSubcommands(_singleAllocationIteratorFactory,
-                                     _defaultVisitorFactories,
-                                     patternRecognizerRegistry),
-        _allocationsSubcommands(_allocationsIteratorFactory,
+      : _defaultVisitorFactories(describer),
+        _singleAllocationSubcommands(
+            processImage, _singleAllocationIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _allocationsSubcommands(processImage, _allocationsIteratorFactory,
                                 _defaultVisitorFactories,
                                 patternRecognizerRegistry),
-        _usedSubcommands(_usedIteratorFactory, _defaultVisitorFactories,
-                         patternRecognizerRegistry),
-        _freeSubcommands(_freeIteratorFactory, _defaultVisitorFactories,
-                         patternRecognizerRegistry),
-        _threadCachedSubcommands(_threadCachedIteratorFactory,
+        _usedSubcommands(processImage, _usedIteratorFactory,
+                         _defaultVisitorFactories, patternRecognizerRegistry),
+        _freeSubcommands(processImage, _freeIteratorFactory,
+                         _defaultVisitorFactories, patternRecognizerRegistry),
+        _threadCachedSubcommands(processImage, _threadCachedIteratorFactory,
                                  _defaultVisitorFactories,
                                  patternRecognizerRegistry),
-        _leakedSubcommands(_leakedIteratorFactory, _defaultVisitorFactories,
-                           patternRecognizerRegistry),
-        _unreferencedSubcommands(_unreferencedIteratorFactory,
+        _leakedSubcommands(processImage, _leakedIteratorFactory,
+                           _defaultVisitorFactories, patternRecognizerRegistry),
+        _unreferencedSubcommands(processImage, _unreferencedIteratorFactory,
                                  _defaultVisitorFactories,
                                  patternRecognizerRegistry),
-        _anchoredSubcommands(_anchoredIteratorFactory, _defaultVisitorFactories,
+        _anchoredSubcommands(processImage, _anchoredIteratorFactory,
+                             _defaultVisitorFactories,
                              patternRecognizerRegistry),
-        _anchorPointsSubcommands(_anchorPointsIteratorFactory,
+        _anchorPointsSubcommands(processImage, _anchorPointsIteratorFactory,
                                  _defaultVisitorFactories,
                                  patternRecognizerRegistry),
-        _staticAnchoredSubcommands(_staticAnchoredIteratorFactory,
+        _staticAnchoredSubcommands(processImage, _staticAnchoredIteratorFactory,
                                    _defaultVisitorFactories,
                                    patternRecognizerRegistry),
-        _staticAnchorPointsSubcommands(_staticAnchorPointsIteratorFactory,
-                                       _defaultVisitorFactories,
-                                       patternRecognizerRegistry),
-        _stackAnchoredSubcommands(_stackAnchoredIteratorFactory,
+        _staticAnchorPointsSubcommands(
+            processImage, _staticAnchorPointsIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _stackAnchoredSubcommands(processImage, _stackAnchoredIteratorFactory,
                                   _defaultVisitorFactories,
                                   patternRecognizerRegistry),
-        _stackAnchorPointsSubcommands(_stackAnchorPointsIteratorFactory,
-                                      _defaultVisitorFactories,
-                                      patternRecognizerRegistry),
-        _registerAnchoredSubcommands(_registerAnchoredIteratorFactory,
-                                     _defaultVisitorFactories,
-                                     patternRecognizerRegistry),
-        _registerAnchorPointsSubcommands(_registerAnchorPointsIteratorFactory,
-                                         _defaultVisitorFactories,
-                                         patternRecognizerRegistry),
-        _externalAnchoredSubcommands(_externalAnchoredIteratorFactory,
-                                     _defaultVisitorFactories,
-                                     patternRecognizerRegistry),
-        _externalAnchorPointsSubcommands(_externalAnchorPointsIteratorFactory,
-                                         _defaultVisitorFactories,
-                                         patternRecognizerRegistry),
-        _threadOnlyAnchoredSubcommands(_threadOnlyAnchoredIteratorFactory,
-                                       _defaultVisitorFactories,
-                                       patternRecognizerRegistry),
+        _stackAnchorPointsSubcommands(
+            processImage, _stackAnchorPointsIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _registerAnchoredSubcommands(
+            processImage, _registerAnchoredIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _registerAnchorPointsSubcommands(
+            processImage, _registerAnchorPointsIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _externalAnchoredSubcommands(
+            processImage, _externalAnchoredIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _externalAnchorPointsSubcommands(
+            processImage, _externalAnchorPointsIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _threadOnlyAnchoredSubcommands(
+            processImage, _threadOnlyAnchoredIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
         _threadOnlyAnchorPointsSubcommands(
-            _threadOnlyAnchorPointsIteratorFactory, _defaultVisitorFactories,
-            patternRecognizerRegistry),
-        _incomingSubcommands(_incomingIteratorFactory, _defaultVisitorFactories,
+            processImage, _threadOnlyAnchorPointsIteratorFactory,
+            _defaultVisitorFactories, patternRecognizerRegistry),
+        _incomingSubcommands(processImage, _incomingIteratorFactory,
+                             _defaultVisitorFactories,
                              patternRecognizerRegistry),
-        _exactIncomingSubcommands(_exactIncomingIteratorFactory,
+        _exactIncomingSubcommands(processImage, _exactIncomingIteratorFactory,
                                   _defaultVisitorFactories,
                                   patternRecognizerRegistry),
-        _outgoingSubcommands(_outgoingIteratorFactory, _defaultVisitorFactories,
+        _outgoingSubcommands(processImage, _outgoingIteratorFactory,
+                             _defaultVisitorFactories,
                              patternRecognizerRegistry),
-        _freeOutgoingSubcommands(_freeOutgoingIteratorFactory,
+        _freeOutgoingSubcommands(processImage, _freeOutgoingIteratorFactory,
                                  _defaultVisitorFactories,
                                  patternRecognizerRegistry),
-        _chainSubcommands(_chainIteratorFactory, _defaultVisitorFactories,
-                          patternRecognizerRegistry),
-        _reverseChainSubcommands(_reverseChainIteratorFactory,
+        _chainSubcommands(processImage, _chainIteratorFactory,
+                          _defaultVisitorFactories, patternRecognizerRegistry),
+        _reverseChainSubcommands(processImage, _reverseChainIteratorFactory,
                                  _defaultVisitorFactories,
                                  patternRecognizerRegistry) {}
-
-  void SetProcessImage(const ProcessImage<Offset> *processImage) {
-    _processImage = processImage;
-    _singleAllocationSubcommands.SetProcessImage(processImage);
-    _allocationsSubcommands.SetProcessImage(processImage);
-    _usedSubcommands.SetProcessImage(processImage);
-    _freeSubcommands.SetProcessImage(processImage);
-    _threadCachedSubcommands.SetProcessImage(processImage);
-    _leakedSubcommands.SetProcessImage(processImage);
-    _unreferencedSubcommands.SetProcessImage(processImage);
-    _anchoredSubcommands.SetProcessImage(processImage);
-    _anchorPointsSubcommands.SetProcessImage(processImage);
-    _staticAnchoredSubcommands.SetProcessImage(processImage);
-    _staticAnchorPointsSubcommands.SetProcessImage(processImage);
-    _stackAnchoredSubcommands.SetProcessImage(processImage);
-    _stackAnchorPointsSubcommands.SetProcessImage(processImage);
-    _registerAnchoredSubcommands.SetProcessImage(processImage);
-    _registerAnchorPointsSubcommands.SetProcessImage(processImage);
-    _externalAnchoredSubcommands.SetProcessImage(processImage);
-    _externalAnchorPointsSubcommands.SetProcessImage(processImage);
-    _threadOnlyAnchoredSubcommands.SetProcessImage(processImage);
-    _threadOnlyAnchorPointsSubcommands.SetProcessImage(processImage);
-    _incomingSubcommands.SetProcessImage(processImage);
-    _exactIncomingSubcommands.SetProcessImage(processImage);
-    _outgoingSubcommands.SetProcessImage(processImage);
-    _freeOutgoingSubcommands.SetProcessImage(processImage);
-    _chainSubcommands.SetProcessImage(processImage);
-    _reverseChainSubcommands.SetProcessImage(processImage);
-  }
 
   void RegisterSubcommands(Commands::Runner &runner) {
     _singleAllocationSubcommands.RegisterSubcommands(runner);
@@ -172,7 +146,6 @@ class DefaultSubcommands {
   }
 
  private:
-  const ProcessImage<Offset> *_processImage;
   typename Visitors::DefaultVisitorFactories<Offset> _defaultVisitorFactories;
 
   typedef typename Iterators::SingleAllocation<Offset> SingleAllocationIterator;

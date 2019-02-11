@@ -1,0 +1,29 @@
+Range [0x402000, 0x601000) uses 0x1ff000 bytes.
+Region use: module alignment gap
+This alignment gap is for module /home/tim/Demo6.
+
+Range [0x7ff37cb90000, 0x7ff37cb91000) uses 0x1000 bytes.
+Region use: stack overflow guard
+This is a stack overflow guard for the stack for thread 1.
+
+Range [0x7ff37d499000, 0x7ff37d698000) uses 0x1ff000 bytes.
+Region use: module alignment gap
+This alignment gap is for module /lib/x86_64-linux-gnu/libm-2.23.so.
+
+Range [0x7ff37d859000, 0x7ff37da59000) uses 0x200000 bytes.
+Region use: module alignment gap
+This alignment gap is for module /lib/x86_64-linux-gnu/libc-2.23.so.
+
+Range [0x7ff37da7b000, 0x7ff37dc7a000) uses 0x1ff000 bytes.
+Region use: module alignment gap
+This alignment gap is for module /lib/x86_64-linux-gnu/libpthread-2.23.so.
+
+Range [0x7ff37dc96000, 0x7ff37de95000) uses 0x1ff000 bytes.
+Region use: module alignment gap
+This alignment gap is for module /lib/x86_64-linux-gnu/libgcc_s.so.1.
+
+Range [0x7ff37e008000, 0x7ff37e208000) uses 0x200000 bytes.
+Region use: module alignment gap
+This alignment gap is for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21.
+
+7 inaccessible ranges use 0xbfd000 (12,570,624) bytes.

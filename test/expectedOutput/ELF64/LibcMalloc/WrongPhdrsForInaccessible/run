@@ -1,4 +1,4 @@
-# Copyright (c) 2018 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
 # This tests various commands against a live core from a simple python program
@@ -37,5 +37,65 @@ describe writable
 count used
 count free
 count stacks
+# start of a heap
+describe 7f51e8000000
+explain 7f51e8000000
+# end of heap header in heap
+describe 7f51e800001f
+explain 7f51e800001f
+# Start of arena in heap
+describe 7f51e8000020
+explain 7f51e8000020
+# Size/status word between allocations.
+describe 7f51e8000b08
+explain 7f51e8000b08
+# Just before an inaccessible heap tail.
+describe 7f51e8020fff
+explain 7f51e8020fff
+# Start of an inaccessible heap tail.
+describe 7f51e8021000
+explain 7f51e8021000
+# End of an inaccessible heap tail
+explain 7f51ebffffff
+explain 7f51ebffffff
+# Start of a stack range
+describe 7f51ec07c000
+explain 7f51ec07c000
+# End of the inaccessible overflow guard for that range
+describe 7f51ec07bfff
+explain 7f51ec07bfff
+# Start of the inaccessible overflow guard for that range
+describe 7f51ec07b000
+explain 7f51ec07b000
+# Start of a main arena run
+describe 235c000
+explain 235c000
+# Size status word for first allocation in main arena run.
+describe 235c008
+explain 235c008
+# Start of first allocation in main arena run.
+describe 235c010
+explain 235c010
+# Size/status word for second allocation in main arena run.
+describe 235c068
+explain 235c068
+# Just before the end of the main arena allocation run.
+describe 243cfff
+explain 243cfff
+# Just after the end of the main arena allocation run.
+describe 243d000
+explain 243d000
+# Start of the chunk header for an individually mmapped allocation
+describe 7f51edb7b000
+explain 7f51edb7b000
+# Size/status word for that individually mmapped allocation
+describe 7f51edb7b008
+explain 7f51edb7b008
+# Start of that individually mmapped allocation
+describe 7f51edb7b010
+explain 7f51edb7b010
+# End of that individually mmapped allocation
+describe 7f51edbabfff
+explain 7f51edbabfff
 DONE
 bzip2 -q core.python_5_threads

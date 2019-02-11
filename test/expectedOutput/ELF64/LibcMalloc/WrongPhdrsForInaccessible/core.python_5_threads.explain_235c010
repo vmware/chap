@@ -1,0 +1,135 @@
+Address 235c010 is at offset 0 of
+an anchored allocation at 235c010 of size 58
+The allocation at 0x235c010 appears to be directly statically anchored.
+Address 0x954e28 is at offset 0x76e28 in range
+[0x8de000, 955000)
+for module /usr/bin/python2.7
+and at module-relative virtual address 0x77e28.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x954e28 references 0x235c010.
+Static address 0x955908 references 0x235c010.
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one register via anchor point 0x23c5210.
+Register rbx for thread 2 references anchor point 0x23c5210
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one register via anchor point 0x240aa00.
+Register rbx for thread 4 references anchor point 0x240aa00
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x235c0a0.
+Address 0x7fffe22daa08 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22daa08 references anchor point 0x235c0a0
+Address 0x7fffe22daa60 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22daa60 references anchor point 0x235c0a0
+Address 0x7fffe22dab00 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dab00 references anchor point 0x235c0a0
+Address 0x7fffe22dab40 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dab40 references anchor point 0x235c0a0
+Address 0x7fffe22dabf8 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dabf8 references anchor point 0x235c0a0
+Address 0x7fffe22dac70 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dac70 references anchor point 0x235c0a0
+Address 0x7fffe22dad00 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dad00 references anchor point 0x235c0a0
+Address 0x7fffe22dadf8 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dadf8 references anchor point 0x235c0a0
+Address 0x7fffe22daf00 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22daf00 references anchor point 0x235c0a0
+Address 0x7fffe22dafc0 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22dafc0 references anchor point 0x235c0a0
+Address 0x7fffe22daff8 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22daff8 references anchor point 0x235c0a0
+Address 0x7fffe22db160 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22db160 references anchor point 0x235c0a0
+Address 0x7fffe22db1a8 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22db1a8 references anchor point 0x235c0a0
+Address 0x7fffe22db200 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22db200 references anchor point 0x235c0a0
+Address 0x7fffe22db290 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22db290 references anchor point 0x235c0a0
+Address 0x7fffe22db2d0 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22db2d0 references anchor point 0x235c0a0
+Address 0x7fffe22db350 is on the live part of the stack for thread 1.
+Stack address 0x7fffe22db350 references anchor point 0x235c0a0
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x2402a50.
+Address 0x7f51ec87af08 is on the live part of the stack for thread 2.
+Stack address 0x7f51ec87af08 references anchor point 0x2402a50
+Address 0x7f51ec87bd48 is on the live part of the stack for thread 2.
+Stack address 0x7f51ec87bd48 references anchor point 0x2402a50
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x240a630.
+Address 0x7f51e7ffef08 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffef08 references anchor point 0x240a630
+Address 0x7f51e7fffd48 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7fffd48 references anchor point 0x240a630
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x240a9d0.
+Address 0x7f51e77fdf08 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fdf08 references anchor point 0x240a9d0
+Address 0x7f51e77fed48 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fed48 references anchor point 0x240a9d0
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x240aa00.
+Address 0x7f51e77fd7e0 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fd7e0 references anchor point 0x240aa00
+Address 0x7f51e77fd8d0 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fd8d0 references anchor point 0x240aa00
+Address 0x7f51e77fd900 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fd900 references anchor point 0x240aa00
+Address 0x7f51e77fd9f0 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fd9f0 references anchor point 0x240aa00
+Address 0x7f51e77fda20 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fda20 references anchor point 0x240aa00
+Address 0x7f51e77fdb18 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fdb18 references anchor point 0x240aa00
+Address 0x7f51e77fde58 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fde58 references anchor point 0x240aa00
+Address 0x7f51e77fded0 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fded0 references anchor point 0x240aa00
+Address 0x7f51e77fdef8 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fdef8 references anchor point 0x240aa00
+Address 0x7f51e77fdf00 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fdf00 references anchor point 0x240aa00
+Address 0x7f51e77fdf10 is on the live part of the stack for thread 4.
+Stack address 0x7f51e77fdf10 references anchor point 0x240aa00
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x240af40.
+Address 0x7f51e6ffcf08 is on the live part of the stack for thread 5.
+Stack address 0x7f51e6ffcf08 references anchor point 0x240af40
+Address 0x7f51e6ffdd48 is on the live part of the stack for thread 5.
+Stack address 0x7f51e6ffdd48 references anchor point 0x240af40
+which references 0x235c010
+The allocation at 0x235c010 appears to be indirectly anchored from
+at least one stack via anchor point 0x240b9d0.
+Address 0x7f51e7ffe7e0 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffe7e0 references anchor point 0x240b9d0
+Address 0x7f51e7ffe8d0 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffe8d0 references anchor point 0x240b9d0
+Address 0x7f51e7ffe900 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffe900 references anchor point 0x240b9d0
+Address 0x7f51e7ffe9f0 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffe9f0 references anchor point 0x240b9d0
+Address 0x7f51e7ffea20 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffea20 references anchor point 0x240b9d0
+Address 0x7f51e7ffeb18 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffeb18 references anchor point 0x240b9d0
+Address 0x7f51e7ffee58 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffee58 references anchor point 0x240b9d0
+Address 0x7f51e7ffeed0 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffeed0 references anchor point 0x240b9d0
+Address 0x7f51e7ffeef8 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffeef8 references anchor point 0x240b9d0
+Address 0x7f51e7ffef00 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffef00 references anchor point 0x240b9d0
+Address 0x7f51e7ffef10 is on the live part of the stack for thread 3.
+Stack address 0x7f51e7ffef10 references anchor point 0x240b9d0
+which references 0x235c010
+

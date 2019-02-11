@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,20 +14,21 @@ class CompoundDescriber : public Describer<Offset> {
    * If the address is understood, provide a description for the address,
    * optionally with an additional explanation of why the address matches
    * the description, and return true.  Otherwise don't write anything
-   * and return false.
+   * and return false.  Show addresses only if requested.
    */
   bool Describe(Commands::Context &context, Offset addressToDescribe,
-                bool explain) const {
+                bool explain, bool showAddresses) const {
     for (auto describer : _describers) {
-      if (describer->Describe(context, addressToDescribe, explain)) {
+      if (describer->Describe(context, addressToDescribe, explain,
+                              showAddresses)) {
         return true;
       }
     }
     return false;
   }
 
-  void AddDescriber(const Describer<Offset> *describer) {
-    _describers.push_back(describer);
+  void AddDescriber(const Describer<Offset> &describer) {
+    _describers.push_back(&describer);
   }
 
  private:

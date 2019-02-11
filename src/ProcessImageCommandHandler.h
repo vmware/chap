@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -17,12 +17,14 @@
 #include "CompoundDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
+#include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/ListModules.h"
 #include "ProcessImage.h"
 #include "StackDescriber.h"
+#include "StackOverflowGuardDescriber.h"
 #include "ThreadMapCommands/CountStacks.h"
-#include "ThreadMapCommands/ListStacks.h"
 #include "ThreadMapCommands/DescribeStacks.h"
+#include "ThreadMapCommands/ListStacks.h"
 #include "VectorBodyRecognizer.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
@@ -34,151 +36,128 @@ template <typename Offset>
 class ProcessImageCommandHandler {
  public:
   typedef ProcessImageCommandHandler<Offset> ThisClass;
-  ProcessImageCommandHandler(const ProcessImage<Offset>* processImage)
-      : _stackDescriber(0),
-        _patternRecognizerRegistry(processImage),
+  ProcessImageCommandHandler(const ProcessImage<Offset>& processImage)
+      : _virtualMemoryPartition(processImage.GetVirtualMemoryPartition()),
+        _stackDescriber(processImage),
+        _knownAddressDescriber(processImage),
+        _inModuleDescriber(processImage, _knownAddressDescriber),
+        _moduleAlignmentGapDescriber(processImage),
+        _stackOverflowGuardDescriber(processImage),
         _allocationDescriber(_inModuleDescriber, _stackDescriber,
-                             _patternRecognizerRegistry, 0),
-        _knownAddressDescriber(0),
-        _inModuleDescriber(0, _knownAddressDescriber),
+                             _patternRecognizerRegistry, processImage),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
+        _countStacksSubcommand(processImage),
+        _listStacksSubcommand(processImage),
+        _describeStacksSubcommand(processImage),
+        _listModulesSubcommand(processImage),
         _countInaccessibleSubcommand(
             "inaccessible",
             "This command provides totals of the number of "
             "inaccessible ranges\n(not readable, writable or "
             "executable) and the space they occupy.\n",
             "inaccessible ranges",
-            &ProcessImage<Offset>::GetInaccessibleRanges),
+            _virtualMemoryPartition.GetClaimedInaccessibleRanges()),
         _summarizeInaccessibleSubcommand(
             "inaccessible",
             "This command summarizes (by use) the number of ranges and "
             "byte counts for\ninaccessible ranges (not readable, writable or "
             "executable).\n",
             "inaccessible ranges",
-            &ProcessImage<Offset>::GetInaccessibleRanges),
+            _virtualMemoryPartition.GetClaimedInaccessibleRanges()),
         _listInaccessibleSubcommand(
             "inaccessible",
             "This command lists the address, limit and size of "
             "inaccessible ranges (not\nreadable, writable or "
             "executable) and gives totals for ranges and space used.\n",
             "inaccessible ranges",
-            &ProcessImage<Offset>::GetInaccessibleRanges),
+            _virtualMemoryPartition.GetClaimedInaccessibleRanges()),
         _describeInaccessibleSubcommand(
             "inaccessible",
             "This command gives the address, limit, size and rough use of "
             "inaccessible ranges\n(not readable, writable or "
             "executable) and gives totals for ranges and space used.\n",
             "inaccessible ranges",
-            &ProcessImage<Offset>::GetInaccessibleRanges),
+            _virtualMemoryPartition.GetClaimedInaccessibleRanges(),
+            _compoundDescriber, _virtualMemoryPartition.UNKNOWN),
         _countReadOnlySubcommand(
             "readonly",
             "This command provides totals of the number of "
             "read-only ranges\nand the space they occupy.\n",
-            "read-only ranges", &ProcessImage<Offset>::GetReadOnlyRanges),
+            "read-only ranges",
+            _virtualMemoryPartition.GetClaimedReadOnlyRanges()),
         _summarizeReadOnlySubcommand(
             "readonly",
             "This command summarizes (by use) the number of ranges and "
             "byte counts for\nread-only ranges.\n",
             "read-only ranges",
-            &ProcessImage<Offset>::GetReadOnlyRanges),
+            _virtualMemoryPartition.GetClaimedReadOnlyRanges()),
         _listReadOnlySubcommand(
             "readonly",
             "This command lists the address, limit and size of "
             "read-only ranges\nand gives totals for ranges and space used.\n",
-            "read-only ranges", &ProcessImage<Offset>::GetReadOnlyRanges),
+            "read-only ranges",
+            _virtualMemoryPartition.GetClaimedReadOnlyRanges()),
         _describeReadOnlySubcommand(
             "readonly",
             "This command gives the address, limit, size and rough use of "
             "read-only ranges\nand gives totals for ranges and space used.\n",
-            "read-only ranges", &ProcessImage<Offset>::GetReadOnlyRanges),
-        _countRXOnlySubcommand("rxonly",
-                               "This command provides totals of the number of "
-                               "rx-only ranges\nand the space they occupy.\n",
-                               "rx-only ranges",
-                               &ProcessImage<Offset>::GetRXOnlyRanges),
+            "read-only ranges",
+            _virtualMemoryPartition.GetClaimedReadOnlyRanges(),
+            _compoundDescriber, _virtualMemoryPartition.UNKNOWN),
+        _countRXOnlySubcommand(
+            "rxonly",
+            "This command provides totals of the number of "
+            "rx-only ranges\nand the space they occupy.\n",
+            "rx-only ranges", _virtualMemoryPartition.GetClaimedRXOnlyRanges()),
         _summarizeRXOnlySubcommand(
             "rxonly",
             "This command summarizes (by use) the number of ranges and "
             "byte counts for rx-only\nranges (readable and executable "
             "but not writable).\n",
-            "rx-only ranges",
-            &ProcessImage<Offset>::GetRXOnlyRanges),
+            "rx-only ranges", _virtualMemoryPartition.GetClaimedRXOnlyRanges()),
         _listRXOnlySubcommand(
             "rxonly",
             "This command lists the address, limit and size of "
             "rx-only ranges\nand gives totals for ranges and space used.\n",
-            "rx-only ranges", &ProcessImage<Offset>::GetRXOnlyRanges),
+            "rx-only ranges", _virtualMemoryPartition.GetClaimedRXOnlyRanges()),
         _describeRXOnlySubcommand(
             "rxonly",
             "This command gives the address, limit, size and rough use of "
             "rx-only ranges\nand gives totals for ranges and space used.\n",
-            "rx-only ranges", &ProcessImage<Offset>::GetRXOnlyRanges),
+            "rx-only ranges", _virtualMemoryPartition.GetClaimedRXOnlyRanges(),
+            _compoundDescriber, _virtualMemoryPartition.UNKNOWN),
         _countWritableSubcommand(
             "writable",
             "This command provides totals of the number of "
             "writable ranges\nand the space they occupy.\n",
-            "writable ranges", &ProcessImage<Offset>::GetWritableRanges),
+            "writable ranges",
+            _virtualMemoryPartition.GetClaimedWritableRanges()),
         _summarizeWritableSubcommand(
             "writable",
             "This command summarizes (by use) the number of ranges and "
             "byte counts for\nwritable ranges.\n",
             "writable ranges",
-            &ProcessImage<Offset>::GetWritableRanges),
+            _virtualMemoryPartition.GetClaimedWritableRanges()),
         _listWritableSubcommand(
             "writable",
             "This command lists the address, limit and size of "
             "writable ranges\nand gives totals for ranges and space used.\n",
-            "writable ranges", &ProcessImage<Offset>::GetWritableRanges),
+            "writable ranges",
+            _virtualMemoryPartition.GetClaimedWritableRanges()),
         _describeWritableSubcommand(
             "writable",
             "This command gives the address, limit, size and rough use of "
             "writable ranges\nand gives totals for ranges and space used.\n",
-            "writable ranges", &ProcessImage<Offset>::GetWritableRanges),
-        _defaultAllocationsSubcommands(_allocationDescriber,
-                                       _patternRecognizerRegistry) {
-    SetProcessImage(processImage);
-    _compoundDescriber.AddDescriber(&_allocationDescriber);
-    _compoundDescriber.AddDescriber(&_stackDescriber);
-    _compoundDescriber.AddDescriber(&_inModuleDescriber);
-    /*
-     * The following should alway be added last because describers are
-     * checked in the order given and the first applicable describer applies.
-     */
-    _compoundDescriber.AddDescriber(&_knownAddressDescriber);
-    _patternRecognizerRegistry.Register(
-        new VectorBodyRecognizer<Offset>(processImage));
-  }
-
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    _defaultAllocationsSubcommands.SetProcessImage(processImage);
-    _patternRecognizerRegistry.SetProcessImage(processImage);
-    _allocationDescriber.SetProcessImage(processImage);
-    _stackDescriber.SetProcessImage(processImage);
-    _knownAddressDescriber.SetProcessImage(processImage);
-    _inModuleDescriber.SetProcessImage(processImage);
-    _countStacksSubcommand.SetProcessImage(processImage);
-    _listStacksSubcommand.SetProcessImage(processImage);
-    _describeStacksSubcommand.SetProcessImage(processImage);
-    _countInaccessibleSubcommand.SetProcessImage(processImage);
-    _summarizeInaccessibleSubcommand.SetProcessImage(processImage);
-    _listInaccessibleSubcommand.SetProcessImage(processImage);
-    _describeInaccessibleSubcommand.SetProcessImage(processImage);
-    _countReadOnlySubcommand.SetProcessImage(processImage);
-    _summarizeReadOnlySubcommand.SetProcessImage(processImage);
-    _listReadOnlySubcommand.SetProcessImage(processImage);
-    _describeReadOnlySubcommand.SetProcessImage(processImage);
-    _countRXOnlySubcommand.SetProcessImage(processImage);
-    _summarizeRXOnlySubcommand.SetProcessImage(processImage);
-    _listRXOnlySubcommand.SetProcessImage(processImage);
-    _describeRXOnlySubcommand.SetProcessImage(processImage);
-    _countWritableSubcommand.SetProcessImage(processImage);
-    _summarizeWritableSubcommand.SetProcessImage(processImage);
-    _listWritableSubcommand.SetProcessImage(processImage);
-    _describeWritableSubcommand.SetProcessImage(processImage);
-    _listModulesSubcommand.SetProcessImage(processImage);
-    _summarizeSignaturesSubcommand.SetProcessImage(processImage);
+            "writable ranges",
+            _virtualMemoryPartition.GetClaimedWritableRanges(),
+            _compoundDescriber, _virtualMemoryPartition.UNKNOWN),
+        _summarizeSignaturesSubcommand(processImage),
+        _defaultAllocationsSubcommands(processImage, _allocationDescriber,
+                                       _patternRecognizerRegistry),
+        _vectorBodyRecognizer(processImage) {
+    // Leave it to any derived class to add any describers.
+    _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
   }
 
   virtual void AddCommandCallbacks(Commands::Runner& /* r */) {}
@@ -216,12 +195,14 @@ class ProcessImageCommandHandler {
   }
 
  protected:
-  const ProcessImage<Offset>* _processImage;
+  VirtualMemoryPartition<Offset> _virtualMemoryPartition;
   StackDescriber<Offset> _stackDescriber;
   Allocations::PatternRecognizerRegistry<Offset> _patternRecognizerRegistry;
-  Allocations::Describer<Offset> _allocationDescriber;
   KnownAddressDescriber<Offset> _knownAddressDescriber;
   InModuleDescriber<Offset> _inModuleDescriber;
+  ModuleAlignmentGapDescriber<Offset> _moduleAlignmentGapDescriber;
+  StackOverflowGuardDescriber<Offset> _stackOverflowGuardDescriber;
+  Allocations::Describer<Offset> _allocationDescriber;
   CompoundDescriber<Offset> _compoundDescriber;
   Commands::CountCommand _countCommand;
   Commands::SummarizeCommand _summarizeCommand;
@@ -246,8 +227,7 @@ class ProcessImageCommandHandler {
   VirtualAddressMapCommands::ListRanges<Offset> _listReadOnlySubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset> _describeReadOnlySubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countRXOnlySubcommand;
-  VirtualAddressMapCommands::SummarizeRanges<Offset>
-      _summarizeRXOnlySubcommand;
+  VirtualAddressMapCommands::SummarizeRanges<Offset> _summarizeRXOnlySubcommand;
   VirtualAddressMapCommands::ListRanges<Offset> _listRXOnlySubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset> _describeRXOnlySubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countWritableSubcommand;
@@ -281,6 +261,7 @@ class ProcessImageCommandHandler {
  private:
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
+  VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
 };
 
 }  // namespace chap

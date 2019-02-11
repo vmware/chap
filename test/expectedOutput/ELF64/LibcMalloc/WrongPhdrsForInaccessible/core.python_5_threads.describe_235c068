@@ -1,0 +1,4 @@
+Address 0x235c068 is at offset 0x68 of the main arena allocation run
+at [0x235c000, 0x243d000).
+It is in the size/status field for the libc chunk for the allocation
+at 0x235c070.

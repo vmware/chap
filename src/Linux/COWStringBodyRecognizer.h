@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,12 +14,12 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
-  COWStringBodyRecognizer(const ProcessImage<Offset>* processImage)
+  COWStringBodyRecognizer(const ProcessImage<Offset>& processImage)
       : Allocations::PatternRecognizer<Offset>(processImage, "COWStringBody") {}
 
   bool Matches(AllocationIndex index, const Allocation& allocation,
                bool isUnsigned) const {
-    return Visit((Commands::Context*)(0), index, allocation, isUnsigned, false);
+    return Visit(nullptr, index, allocation, isUnsigned, false);
   }
 
   /*
@@ -55,7 +55,7 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
 
     const char* image;
     Offset numBytesFound =
-        Base::_addressMap->FindMappedMemoryImage(allocation.Address(), &image);
+        Base::_addressMap.FindMappedMemoryImage(allocation.Address(), &image);
 
     if (numBytesFound < allocationSize) {
       return false;

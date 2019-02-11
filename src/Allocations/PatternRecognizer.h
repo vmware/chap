@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,28 +13,16 @@ class PatternRecognizer {
  public:
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
-  PatternRecognizer(const ProcessImage<Offset>* processImage,
+  PatternRecognizer(const ProcessImage<Offset>& processImage,
                     const std::string& name)
-      : _name(name) {
-    SetProcessImage(processImage);
-  }
+      : _name(name),
+        _processImage(processImage),
+        _addressMap(processImage.GetVirtualAddressMap()),
+        _finder(processImage.GetAllocationFinder()),
+        _graph(processImage.GetAllocationGraph()),
+        _moduleDirectory(processImage.GetModuleDirectory()) {}
 
   const std::string& GetName() const { return _name; }
-
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    if (processImage == 0) {
-      _addressMap = 0;
-      _finder = 0;
-      _graph = 0;
-      _moduleDirectory = 0;
-    } else {
-      _addressMap = &(processImage->GetVirtualAddressMap());
-      _finder = processImage->GetAllocationFinder();
-      _graph = processImage->GetAllocationGraph();
-      _moduleDirectory = &(processImage->GetModuleDirectory());
-    }
-  }
 
   virtual bool Matches(AllocationIndex index, const Allocation& allocation,
                        bool isUnsigned) const = 0;
@@ -52,11 +40,11 @@ class PatternRecognizer {
 
  protected:
   const std::string _name;
-  const ProcessImage<Offset>* _processImage;
-  const VirtualAddressMap<Offset>* _addressMap;
+  const ProcessImage<Offset>& _processImage;
+  const VirtualAddressMap<Offset>& _addressMap;
   const Finder<Offset>* _finder;
   const Graph<Offset>* _graph;
-  const ModuleDirectory<Offset>* _moduleDirectory;
+  const ModuleDirectory<Offset>& _moduleDirectory;
 };
 }  // namespace Allocations
 }  // namespace chap

@@ -1,0 +1,4 @@
+Address 0x7f51ec07bfff is at offset 0xfff in stack overflow guard
+[0x7f51ec07b000, 0x7f51ec07c000)
+for the stack for thread 2.
+The guard is marked readable, likely due to a bug in creation of the core.

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -12,17 +12,9 @@ namespace Subcommands {
 template <class Offset>
 class SummarizeSignatures : public Commands::Subcommand {
  public:
-  SummarizeSignatures()
-      : Commands::Subcommand("summarize", "signatures"), _processImage(0) {}
-
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    if (processImage != NULL) {
-      _signatureDirectory = &processImage->GetSignatureDirectory();
-    } else {
-      _signatureDirectory = (const SignatureDirectory<Offset>*)(0);
-    }
-  }
+  SummarizeSignatures(const ProcessImage<Offset>& processImage)
+      : Commands::Subcommand("summarize", "signatures"),
+        _signatureDirectory(processImage.GetSignatureDirectory()) {}
 
   void ShowHelpMessage(Commands::Context& context) {
     context.GetOutput()
@@ -31,26 +23,15 @@ class SummarizeSignatures : public Commands::Subcommand {
 
   void Run(Commands::Context& context) {
     Commands::Output& output = context.GetOutput();
-    Commands::Error& error = context.GetError();
-    bool isRedirected = context.IsRedirected();
-    if (_processImage == 0) {
-      error << "This command is currently disabled.\n";
-      error << "There is no process image.\n";
-      if (isRedirected) {
-        output << "This command is currently disabled.\n";
-        output << "There is no process image.\n";
-      }
-      return;
-    }
     Offset numSignatures = 0;
     std::vector<size_t> counts;
     counts.resize(SignatureDirectory<Offset>::VTABLE_WITH_NAME_FROM_BINDEFS + 1,
                   0);
     typename SignatureDirectory<Offset>::SignatureNameAndStatusConstIterator
-        itEnd = _signatureDirectory->EndSignatures();
+        itEnd = _signatureDirectory.EndSignatures();
     for (typename SignatureDirectory<
              Offset>::SignatureNameAndStatusConstIterator it =
-             _signatureDirectory->BeginSignatures();
+             _signatureDirectory.BeginSignatures();
          it != itEnd; ++it) {
       typename SignatureDirectory<Offset>::Status status = it->second.second;
       counts[status]++;
@@ -106,8 +87,7 @@ class SummarizeSignatures : public Commands::Subcommand {
   }
 
  private:
-  const ProcessImage<Offset>* _processImage;
-  const SignatureDirectory<Offset>* _signatureDirectory;
+  const SignatureDirectory<Offset>& _signatureDirectory;
 };
 }  // namespace Subcommands
 }  // namespace Allocations

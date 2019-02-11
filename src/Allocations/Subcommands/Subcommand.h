@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -20,7 +20,9 @@ class Subcommand : public Commands::Subcommand {
  public:
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
-  Subcommand(typename Visitor::Factory& visitorFactory,
+  Subcommand(const ProcessImage<Offset>& processImage,
+
+             typename Visitor::Factory& visitorFactory,
              typename Iterator::Factory& iteratorFactory,
              const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
       : Commands::Subcommand(visitorFactory.GetCommandName(),
@@ -28,27 +30,14 @@ class Subcommand : public Commands::Subcommand {
         _visitorFactory(visitorFactory),
         _iteratorFactory(iteratorFactory),
         _patternRecognizerRegistry(patternRecognizerRegistry),
-        _processImage(0) {}
-
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-  }
+        _processImage(processImage) {}
 
   void Run(Commands::Context& context) {
     Commands::Output& output = context.GetOutput();
     Commands::Error& error = context.GetError();
     bool isRedirected = context.IsRedirected();
-    if (_processImage == 0) {
-      error << "This command is currently disabled.\n";
-      error << "There is no process image.\n";
-      if (isRedirected) {
-        output << "This command is currently disabled.\n";
-        output << "There is no process image.\n";
-      }
-      return;
-    }
     const Finder<Offset>* allocationFinder =
-        _processImage->GetAllocationFinder();
+        _processImage.GetAllocationFinder();
     if (allocationFinder == 0) {
       error << "This command is currently disabled.\n";
       error << "Allocations cannot be found.\n";
@@ -61,7 +50,7 @@ class Subcommand : public Commands::Subcommand {
     AllocationIndex numAllocations = allocationFinder->NumAllocations();
 
     std::unique_ptr<Iterator> iterator;
-    iterator.reset(_iteratorFactory.MakeIterator(context, *_processImage,
+    iterator.reset(_iteratorFactory.MakeIterator(context, _processImage,
                                                  *allocationFinder));
     if (iterator.get() == 0) {
       return;
@@ -71,9 +60,9 @@ class Subcommand : public Commands::Subcommand {
     size_t nextPositional = 2 + _iteratorFactory.GetNumArguments();
 
     const SignatureDirectory<Offset>& signatureDirectory =
-        _processImage->GetSignatureDirectory();
+        _processImage.GetSignatureDirectory();
     const VirtualAddressMap<Offset>& addressMap =
-        _processImage->GetVirtualAddressMap();
+        _processImage.GetVirtualAddressMap();
 
     std::string signatureString;
     if (nextPositional < numPositionals) {
@@ -168,7 +157,7 @@ class Subcommand : public Commands::Subcommand {
     if (numReferenceConstraints > 0) {
       referenceConstraints.reserve(numReferenceConstraints);
       // This is done lazily because it is an expensive calculation.
-      graph = _processImage->GetAllocationGraph();
+      graph = _processImage.GetAllocationGraph();
       if (graph == 0) {
         std::cerr
             << "Constraints were placed on incoming or outgoing references\n"
@@ -209,12 +198,12 @@ class Subcommand : public Commands::Subcommand {
     }
 
     ExtendedVisitor<Offset, Visitor> extendedVisitor(
-        context, *_processImage, _patternRecognizerRegistry);
+        context, _processImage, _patternRecognizerRegistry);
     if (extendedVisitor.HasErrors() || switchError || signatureOrPatternError) {
       return;
     }
     std::unique_ptr<Visitor> visitor;
-    visitor.reset(_visitorFactory.MakeVisitor(context, *_processImage));
+    visitor.reset(_visitorFactory.MakeVisitor(context, _processImage));
     if (visitor.get() == 0) {
       return;
     }
@@ -308,7 +297,7 @@ class Subcommand : public Commands::Subcommand {
   typename Visitor::Factory& _visitorFactory;
   typename Iterator::Factory& _iteratorFactory;
   const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
-  const ProcessImage<Offset>* _processImage;
+  const ProcessImage<Offset>& _processImage;
 
   bool AddReferenceConstraints(
       Commands::Context& context, const std::string& switchName,

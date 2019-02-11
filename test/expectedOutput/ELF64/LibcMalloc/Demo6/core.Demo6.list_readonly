@@ -1,0 +1,8 @@
+Range [0x601000, 0x602000) uses 0x1000 bytes.
+Range [0x7ff37d698000, 0x7ff37d699000) uses 0x1000 bytes.
+Range [0x7ff37da59000, 0x7ff37da5d000) uses 0x4000 bytes.
+Range [0x7ff37dc7a000, 0x7ff37dc7b000) uses 0x1000 bytes.
+Range [0x7ff37e208000, 0x7ff37e212000) uses 0xa000 bytes.
+Range [0x7ff37e43d000, 0x7ff37e43e000) uses 0x1000 bytes.
+Range [0x7fffe5580000, 0x7fffe5582000) uses 0x2000 bytes.
+7 read-only ranges use 0x14000 (81,920) bytes.

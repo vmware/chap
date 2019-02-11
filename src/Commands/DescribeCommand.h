@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -31,7 +31,7 @@ class DescribeCommand : public SetBasedCommand {
           error << "If an address is specified, only one is allowed.\n";
           return;
         }
-        if (!_describer.Describe(context, address, false)) {
+        if (!_describer.Describe(context, address, false, true)) {
           /*
            * Generally the describer will provide at least a minimal
            * description if the address is at all known in the process

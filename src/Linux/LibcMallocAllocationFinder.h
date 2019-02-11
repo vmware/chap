@@ -1,10 +1,9 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../Allocations/Finder.h"
 #include "../ModuleDirectory.h"
-#include "../PermissionsConstrainedRanges.h"
 #include "../UnfilledImages.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
@@ -28,21 +27,15 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   LibcMallocAllocationFinder(
       VirtualMemoryPartition<Offset>& virtualMemoryPartition,
-      UnfilledImages<Offset>& unfilledImages,
-      PermissionsConstrainedRanges<Offset>& inaccessibleRanges,
-      PermissionsConstrainedRanges<Offset>& readOnlyRanges,
-      PermissionsConstrainedRanges<Offset>& writableRanges)
+      UnfilledImages<Offset>& unfilledImages)
       : Allocations::Finder<Offset>(virtualMemoryPartition.GetAddressMap()),
         LIBC_MALLOC_HEAP("libc malloc heap"),
         LIBC_MALLOC_HEAP_TAIL_RESERVATION("libc malloc heap tail reservation"),
         LIBC_MALLOC_MAIN_ARENA("libc malloc main arena"),
         LIBC_MALLOC_MAIN_ARENA_PAGES("libc malloc main arena pages"),
-        LIBC_MALLOC_LARGE_ALLOCATION("libc malloc large allocation"),
+        LIBC_MALLOC_MMAPPED_ALLOCATION("libc malloc mmapped allocation"),
         _virtualMemoryPartition(virtualMemoryPartition),
         _unfilledImages(unfilledImages),
-        _inaccessibleRanges(inaccessibleRanges),
-        _readOnlyRanges(readOnlyRanges),
-        _writableRanges(writableRanges),
         _addressMap(virtualMemoryPartition.GetAddressMap()),
         _mainArenaAddress(0),
         _mainArenaIsContiguous(false),
@@ -214,8 +207,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       Offset approximateArenaSize = (_arenaSizeOffset != 0)
                                         ? (_arenaSizeOffset + OFFSET_SIZE)
                                         : (0x10 + 0x10f * OFFSET_SIZE);
-      _virtualMemoryPartition.ClaimRange(
-          _mainArenaAddress, approximateArenaSize, LIBC_MALLOC_MAIN_ARENA);
+      _virtualMemoryPartition.ClearStaticAnchorCandidates(_mainArenaAddress,
+                                                          approximateArenaSize);
     }
 
     /*
@@ -228,7 +221,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
     FindMainArenaRuns();
 
-    ScanForLargeChunks();
+    ScanForMmappedChunks();
 
     FindAllAllocations();
 
@@ -295,7 +288,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   const char* LIBC_MALLOC_HEAP_TAIL_RESERVATION;
   const char* LIBC_MALLOC_MAIN_ARENA;
   const char* LIBC_MALLOC_MAIN_ARENA_PAGES;
-  const char* LIBC_MALLOC_LARGE_ALLOCATION;
+  const char* LIBC_MALLOC_MMAPPED_ALLOCATION;
 
   struct Arena {
     Arena(Offset address)
@@ -323,23 +316,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     bool _missingOrUnfilledHeader;
   };
   typedef std::map<Offset, Arena> ArenaMap;
-
-  const ArenaMap& GetArenas() const { return _arenas; }
-
- private:
-  VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
-  UnfilledImages<Offset>& _unfilledImages;
-  PermissionsConstrainedRanges<Offset>& _inaccessibleRanges;
-  PermissionsConstrainedRanges<Offset>& _readOnlyRanges;
-  PermissionsConstrainedRanges<Offset>& _writableRanges;
-  const VirtualAddressMap<Offset>& _addressMap;
-
-  std::vector<Allocation> _allocations;
-  std::vector<bool> _isThreadCached;
-
-  static const Offset OFFSET_SIZE = sizeof(Offset);
-  static const Offset DEFAULT_MAX_HEAP_SIZE =
-      (OFFSET_SIZE == 4) ? 0x100000 : 0x4000000;
   typedef typename ArenaMap::iterator ArenaMapIterator;
   typedef typename ArenaMap::const_iterator ArenaMapConstIterator;
 
@@ -363,22 +339,43 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   // Keep the start and size for every run of arena pages, in order
   // of start address.
-  typedef std::vector<std::pair<Offset, Offset> > MainArenaRuns;
+  typedef std::map<Offset, Offset> MainArenaRuns;
   typedef typename MainArenaRuns::iterator MainArenaRunsIterator;
   typedef typename MainArenaRuns::const_iterator MainArenaRunsConstIterator;
 
-  // Keep the start and size for every memory range containing a large
+  // Keep the start and size for every memory range containing a mmapped
   // allocation, in order of start address, and including any overhead
   // before or after the allocation.
-  typedef std::vector<std::pair<Offset, Offset> > LargeAllocations;
-  typedef typename LargeAllocations::iterator LargeAllocationsIterator;
-  typedef
-      typename LargeAllocations::const_iterator LargeAllocationsConstIterator;
+  typedef std::map<Offset, Offset> MmappedAllocations;
+  typedef typename MmappedAllocations::iterator MmappedAllocationsIterator;
+  typedef typename MmappedAllocations::const_iterator
+      MmappedAllocationsConstIterator;
+
+  const ArenaMap& GetArenas() const { return _arenas; }
+  Offset GetArenaStructSize() const { return _arenaStructSize; }
+  const HeapMap& GetHeaps() const { return _heaps; }
+  Offset GetMaxHeapSize() const { return _maxHeapSize; }
+  const MainArenaRuns& GetMainArenaRuns() const { return _mainArenaRuns; }
+  const MmappedAllocations& GetMmappedAllocations() const {
+    return _mmappedAllocations;
+  }
+
+ private:
+  VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
+  UnfilledImages<Offset>& _unfilledImages;
+  const VirtualAddressMap<Offset>& _addressMap;
+
+  std::vector<Allocation> _allocations;
+  std::vector<bool> _isThreadCached;
+
+  static const Offset OFFSET_SIZE = sizeof(Offset);
+  static const Offset DEFAULT_MAX_HEAP_SIZE =
+      (OFFSET_SIZE == 4) ? 0x100000 : 0x4000000;
 
   HeapMap _heaps;
   ArenaMap _arenas;
   MainArenaRuns _mainArenaRuns;
-  LargeAllocations _largeAllocations;
+  MmappedAllocations _mmappedAllocations;
   Offset _mainArenaAddress;
   bool _mainArenaIsContiguous;
   bool _completeArenaRingFound;
@@ -1472,17 +1469,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   bool ScanForMainArena() {
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
-        itEnd = _virtualMemoryPartition.EndUnclaimedImages();
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
-        _virtualMemoryPartition.BeginUnclaimedImages();
-    for (it = _virtualMemoryPartition.BeginUnclaimedImages(); it != itEnd;
-         ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-      }
-      if (ScanForMainArenaByEmptyFreeLists(it->_base, it->_limit)) {
+    for (const auto& range :
+         _virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
+      if (ScanForMainArenaByEmptyFreeLists(range._base, range._limit)) {
         return true;
       }
     }
@@ -1509,7 +1498,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
      * Note that what is valid for the first entry on a run of pages
      * for the main arena is a subset of what is valid for an arbitrary
      * allocation.  That first value must be marked as for the main
-     * arena, not be marked as a large chunk, and have a size that
+     * arena, not be marked as a mmapped chunk, and have a size that
      * corresponsnds to a multiple of 2 times the size of a pointer.
      * In the case of a 4-byte offset that last check becomes irrelevant
      * because it can't fail given that the low 3 bits are for flags.
@@ -1599,18 +1588,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   void ScanForMainArenaRuns(Offset mainArenaSize) {
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
-        itEnd = _virtualMemoryPartition.EndUnclaimedImages();
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
-        _virtualMemoryPartition.BeginUnclaimedImages();
-
     RunCandidates runCandidates;
-    for (; it != itEnd; ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-        ScanForMainArenaRunsInRange(it->_base, it->_limit, runCandidates);
-      }
+    for (const auto& range :
+         _virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
+      ScanForMainArenaRunsInRange(range._base, range._limit, runCandidates);
     }
 
     /*
@@ -1636,14 +1617,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         // TODO, do this more precisely, taking into account the top
         // value.
       }
-      _mainArenaRuns.emplace_back(base, size);
+      _mainArenaRuns[base] = size;
 
-      if (!_virtualMemoryPartition.ClaimRange(base, size,
-                                              LIBC_MALLOC_MAIN_ARENA_PAGES)) {
-        abort();
-      }
-      if (!_writableRanges.ClaimRange(base, size,
-                                      LIBC_MALLOC_MAIN_ARENA_PAGES)) {
+      if (!_virtualMemoryPartition.ClaimRange(
+              base, size, LIBC_MALLOC_MAIN_ARENA_PAGES, false)) {
         std::cerr << "Warning: unexpected overlap for main arena pages at 0x"
                   << std::hex << base << "\n";
       }
@@ -1669,16 +1646,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if (base < prevLimit) {
         continue;
       }
-      if (!_virtualMemoryPartition.ClaimRange(base, size,
-                                              LIBC_MALLOC_MAIN_ARENA_PAGES)) {
-        abort();
-      }
-      if (!_writableRanges.ClaimRange(base, size,
-                                      LIBC_MALLOC_MAIN_ARENA_PAGES)) {
+      if (!_virtualMemoryPartition.ClaimRange(
+              base, size, LIBC_MALLOC_MAIN_ARENA_PAGES, false)) {
         std::cerr << "Warning: unexpected overlap for main arena pages at 0x"
                   << std::hex << base << "\n";
       }
-      _mainArenaRuns.emplace_back(base, size);
+      _mainArenaRuns[base] = size;
       totalMainArenaRunSizes += size;
       prevLimit = base + size;
     }
@@ -1806,18 +1779,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
     }
 
-    if (!_virtualMemoryPartition.ClaimRange(base, mainArena._size,
-                                            LIBC_MALLOC_MAIN_ARENA_PAGES)) {
+    if (!_virtualMemoryPartition.ClaimRange(
+            base, mainArena._size, LIBC_MALLOC_MAIN_ARENA_PAGES, false)) {
       std::cerr << "The region " << std::hex << "[0x" << base << ", "
                 << topLimit << "] may be inaccurate for main arena pages.\n";
       return false;
     }
-    if (!_writableRanges.ClaimRange(base, mainArena._size,
-                                    LIBC_MALLOC_MAIN_ARENA_PAGES)) {
-      std::cerr << "Warning: unexpected overlap for main arena pages at 0x"
-                << std::hex << base << "\n";
-    }
-    _mainArenaRuns.emplace_back(base, topLimit - base);
+    _mainArenaRuns[base] = topLimit - base;
     return true;
   }
 
@@ -1845,55 +1813,47 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     ScanForMainArenaRuns(mainArenaSize);
   }
 
-  void ScanForLargeChunksInRange(Offset base, Offset limit) {
+  void ScanForMmappedChunksInRange(Offset base, Offset limit) {
     Reader reader(_addressMap);
     Offset candidate = (base + 0xFFF) & ~0xFFF;
     while (candidate <= limit - 0x1000) {
       Offset expect0 = reader.ReadOffset(candidate, 0xbadbad);
       Offset chunkSizeAndFlags =
           reader.ReadOffset(candidate + OFFSET_SIZE, 0xbadbad);
-      bool foundLargeAlloc =
+      bool foundMmappedAlloc =
           (expect0 == 0) &&
           ((chunkSizeAndFlags & ((Offset)0xFFF)) == ((Offset)2)) &&
           (chunkSizeAndFlags >= ((Offset)0x1000)) &&
           (candidate + chunkSizeAndFlags - 2) > candidate &&
           (candidate + chunkSizeAndFlags - 2) <= limit;
-      if (!foundLargeAlloc) {
+      if (!foundMmappedAlloc) {
         candidate += 0x1000;
       } else {
         Offset chunkSize = chunkSizeAndFlags - 2;
-        _largeAllocations.emplace_back(candidate, chunkSize);
+        _mmappedAllocations[candidate] = chunkSize;
         candidate += chunkSize;
       }
     }
   }
 
-  void ScanForLargeChunks() {
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
-        itEnd = _virtualMemoryPartition.EndUnclaimedImages();
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
-        _virtualMemoryPartition.BeginUnclaimedImages();
-
-    for (; it != itEnd; ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-        ScanForLargeChunksInRange(it->_base, it->_limit);
-      }
+  void ScanForMmappedChunks() {
+    for (const auto& range :
+         _virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
+      ScanForMmappedChunksInRange(range._base, range._limit);
     }
-    for (LargeAllocationsConstIterator itLarge = _largeAllocations.begin();
-         itLarge != _largeAllocations.end(); ++itLarge) {
-      _virtualMemoryPartition.ClaimRange(itLarge->first, itLarge->second,
-                                         LIBC_MALLOC_LARGE_ALLOCATION);
-      if (!_writableRanges.ClaimRange(itLarge->first, itLarge->second,
-                                      LIBC_MALLOC_LARGE_ALLOCATION)) {
-        std::cerr << "Warning: unexpected overlap for large allocation at 0x"
-                  << std::hex << itLarge->first << "\n";
+    for (MmappedAllocationsConstIterator itMmapped =
+             _mmappedAllocations.begin();
+         itMmapped != _mmappedAllocations.end(); ++itMmapped) {
+      if (!_virtualMemoryPartition.ClaimRange(
+              itMmapped->first, itMmapped->second,
+              LIBC_MALLOC_MMAPPED_ALLOCATION, false)) {
+        std::cerr << "Warning: unexpected overlap for mmapped allocation at 0x"
+                  << std::hex << itMmapped->first << "\n";
       }
     }
   }
 
-  void AddLargeAllocation(Offset start, Offset size) {
+  void AddMmappedAllocation(Offset start, Offset size) {
     RecordAllocated(start + 2 * OFFSET_SIZE, size - 2 * OFFSET_SIZE);
   }
 
@@ -2076,8 +2036,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
       chunkSize = sizeAndFlags & ~7;
 
-      if ((chunkSize == 0) ||
-          (chunkSize > (limit - check))) {
+      if ((chunkSize == 0) || (chunkSize > (limit - check))) {
         check = HandleMainArenaCorruption(prevCheck, limit);
         if (check != 0) {
           chunkSize = 0;
@@ -2182,19 +2141,19 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   void FindAllAllocations() {
-    LargeAllocationsConstIterator itLarge = _largeAllocations.begin();
-    LargeAllocationsConstIterator itLargeEnd = _largeAllocations.end();
+    MmappedAllocationsConstIterator itMmapped = _mmappedAllocations.begin();
+    MmappedAllocationsConstIterator itMmappedEnd = _mmappedAllocations.end();
     HeapMapConstIterator itHeaps = _heaps.begin();
     HeapMapConstIterator itHeapsEnd = _heaps.end();
     MainArenaRunsConstIterator itPages = _mainArenaRuns.begin();
     MainArenaRunsConstIterator itPagesEnd = _mainArenaRuns.end();
-    while (itLarge != itLargeEnd) {
+    while (itMmapped != itMmappedEnd) {
       if (itHeaps != itHeapsEnd) {
         if (itPages != itPagesEnd) {
-          if (itLarge->first < itHeaps->first) {
-            if (itLarge->first < itPages->first) {
-              AddLargeAllocation(itLarge->first, itLarge->second);
-              ++itLarge;
+          if (itMmapped->first < itHeaps->first) {
+            if (itMmapped->first < itPages->first) {
+              AddMmappedAllocation(itMmapped->first, itMmapped->second);
+              ++itMmapped;
             } else {
               AddAllocationsForMainArenaRun(itPages->first, itPages->second);
               ++itPages;
@@ -2210,9 +2169,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           }
 
         } else {
-          if (itLarge->first < itHeaps->first) {
-            AddLargeAllocation(itLarge->first, itLarge->second);
-            ++itLarge;
+          if (itMmapped->first < itHeaps->first) {
+            AddMmappedAllocation(itMmapped->first, itMmapped->second);
+            ++itMmapped;
           } else {
             AddAllocationsForHeap(itHeaps->second);
             ++itHeaps;
@@ -2220,16 +2179,16 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         }
       } else {
         if (itPages != itPagesEnd) {
-          if (itLarge->first < itPages->first) {
-            AddLargeAllocation(itLarge->first, itLarge->second);
-            ++itLarge;
+          if (itMmapped->first < itPages->first) {
+            AddMmappedAllocation(itMmapped->first, itMmapped->second);
+            ++itMmapped;
           } else {
             AddAllocationsForMainArenaRun(itPages->first, itPages->second);
             ++itPages;
           }
         } else {
-          for (; itLarge != itLargeEnd; ++itLarge) {
-            AddLargeAllocation(itLarge->first, itLarge->second);
+          for (; itMmapped != itMmappedEnd; ++itMmapped) {
+            AddMmappedAllocation(itMmapped->first, itMmapped->second);
           }
           return;
         }
@@ -2577,12 +2536,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   void ClaimHeapRanges() {
     typename VirtualAddressMap<Offset>::const_iterator itMapEnd =
         _addressMap.end();
-    HeapMapConstIterator itHeapsEnd = _heaps.end();
-    for (HeapMapConstIterator itHeaps = _heaps.begin(); itHeaps != itHeapsEnd;
-         ++itHeaps) {
-      Offset heapBase = itHeaps->first;
-      _virtualMemoryPartition.ClaimRange(heapBase, _maxHeapSize,
-                                         LIBC_MALLOC_HEAP);
+    for (const auto& baseAndInfo : _heaps) {
+      Offset heapBase = baseAndInfo.first;
       typename VirtualAddressMap<Offset>::const_iterator itMap =
           _addressMap.find(heapBase);
       if (itMap == itMapEnd) abort();
@@ -2590,8 +2545,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if (limit > heapBase + _maxHeapSize) {
         limit = heapBase + _maxHeapSize;
       }
-      if (!_writableRanges.ClaimRange(heapBase, limit - heapBase,
-                                      LIBC_MALLOC_HEAP)) {
+      if (!_virtualMemoryPartition.ClaimRange(heapBase, limit - heapBase,
+                                              LIBC_MALLOC_HEAP, false)) {
         std::cerr << "Warning: unexpected overlap for heap at 0x" << std::hex
                   << heapBase << "\n";
       }
@@ -2617,9 +2572,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
              * facts here although actually saving images the tail regions can
              * make the core much larger and slower to create.
              */
-            if (!_readOnlyRanges.ClaimRange(
+            if (!_virtualMemoryPartition.ClaimRange(
                     limit, _maxHeapSize - (limit - heapBase),
-                    LIBC_MALLOC_HEAP_TAIL_RESERVATION)) {
+                    LIBC_MALLOC_HEAP_TAIL_RESERVATION, false)) {
               std::cerr << "Warning: unexpected overlap for tail for heap at 0x"
                         << std::hex << heapBase << "\n";
             }
@@ -2634,9 +2589,9 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
          * Unfortunately, some versions of gdb stray from this and either
          * don't have a Phdr or waste core space on an image.
          */
-        if (!_inaccessibleRanges.ClaimRange(
+        if (!_virtualMemoryPartition.ClaimRange(
                 limit, _maxHeapSize - (limit - heapBase),
-                LIBC_MALLOC_HEAP_TAIL_RESERVATION)) {
+                LIBC_MALLOC_HEAP_TAIL_RESERVATION, false)) {
           std::cerr << "Warning: unexpected overlap for tail for heap at 0x"
                     << std::hex << heapBase << "\n";
         }

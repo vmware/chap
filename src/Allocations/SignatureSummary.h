@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -63,10 +63,9 @@ class SignatureSummary {
 
   void SummarizeByCount(std::vector<Item>& items) const {
     FillItems(items);
-    for (typename std::vector<Item>::iterator it = items.begin();
-         it != items.end(); ++it) {
-      if (it->_subtotals.size() > 1) {
-        std::sort(it->_subtotals.begin(), it->_subtotals.end(),
+    for (auto& item : items) {
+      if (item._subtotals.size() > 1) {
+        std::sort(item._subtotals.begin(), item._subtotals.end(),
                   CompareSubtotalsByCount());
       }
     }
@@ -75,10 +74,9 @@ class SignatureSummary {
 
   void SummarizeByBytes(std::vector<Item>& items) const {
     FillItems(items);
-    for (typename std::vector<Item>::iterator it = items.begin();
-         it != items.end(); ++it) {
-      if (it->_subtotals.size() > 1) {
-        std::sort(it->_subtotals.begin(), it->_subtotals.end(),
+    for (auto& item : items) {
+      if (item._subtotals.size() > 1) {
+        std::sort(item._subtotals.begin(), item._subtotals.end(),
                   CompareSubtotalsByBytes());
       }
     }

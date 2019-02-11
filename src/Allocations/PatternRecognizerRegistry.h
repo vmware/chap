@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -16,29 +16,10 @@ class PatternRecognizerRegistry {
   typedef typename Finder<Offset>::Allocation Allocation;
   typedef typename std::multimap<std::string, PatternRecognizer<Offset>*>
       RecognizerMap;
-  PatternRecognizerRegistry(const ProcessImage<Offset>* processImage) {
-    SetProcessImage(processImage);
-  }
+  PatternRecognizerRegistry() {}
 
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    if (processImage == 0) {
-      _addressMap = 0;
-      _finder = 0;
-      _graph = 0;
-    } else {
-      _addressMap = &(processImage->GetVirtualAddressMap());
-      _finder = processImage->GetAllocationFinder();
-      _graph = processImage->GetAllocationGraph();
-    }
-    for (typename RecognizerMap::iterator it = _recognizers.begin();
-         it != _recognizers.end(); ++it) {
-      it->second->SetProcessImage(_processImage);
-    }
-  }
-
-  void Register(PatternRecognizer<Offset>* recognizer) {
-    _recognizers.insert(std::make_pair(recognizer->GetName(), recognizer));
+  void Register(PatternRecognizer<Offset>& recognizer) {
+    _recognizers.insert(std::make_pair(recognizer.GetName(), &recognizer));
   }
 
   /*
@@ -67,18 +48,10 @@ class PatternRecognizerRegistry {
 
   const PatternRecognizer<Offset>* Find(const std::string& name) const {
     typename RecognizerMap::const_iterator it = _recognizers.find(name);
-    if (it != _recognizers.end()) {
-      return it->second;
-    } else {
-      return (PatternRecognizer<Offset>*)(0);
-    }
+    return (it != _recognizers.end()) ? it->second : nullptr;
   }
 
  private:
-  const ProcessImage<Offset>* _processImage;
-  const VirtualAddressMap<Offset>* _addressMap;
-  const Finder<Offset>* _finder;
-  const Graph<Offset>* _graph;
   RecognizerMap _recognizers;
 };
 }  // namespace Allocations

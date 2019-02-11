@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -26,11 +26,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       : ProcessImage<Offset>(elfImage.GetVirtualAddressMap(),
                              elfImage.GetThreadMap()),
         _elfImage(elfImage),
-        _symdefsRead(false),
-        STACK("stack"),
-        STACK_OVERFLOW_GUARD("stack overflow guard"),
-        MODULE_ALIGNMENT_GAP("module alignment gap"),
-        USED_BY_MODULE("used by module") {
+        _symdefsRead(false) {
     if (_elfImage.GetELFType() != ET_CORE) {
       /*
        * It is the responsibilty of the caller to avoid passing in an ELFImage
@@ -46,10 +42,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        * won't be any need to find the allocations.
        */
 
-      Base::_allocationFinder = new LibcMallocAllocationFinder<Offset>(
-          Base::_virtualMemoryPartition, Base::_unfilledImages,
-          Base::_inaccessibleRanges, Base::_readOnlyRanges,
-          Base::_writableRanges);
+      Base::_allocationFinder = _libcMallocAllocationFinder =
+          new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition,
+                                                 Base::_unfilledImages);
 
       /*
        * Find any modules after checking for the libc malloc allocation
@@ -62,19 +57,22 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       FindModules();
 
       /*
-       * This has to be done after the allocations are found because the
-       * the current algorithm for static anchor ranges is to
-       * assume that all imaged writeable memory that is not otherwise claimed
-       * (for example by stack or memory allocators) is OK for anchors.
-       * At some point, we should change the algorithm to use the module
-       * ranges, but at present the module ranges are not found sufficiently
-       * consistently to allow that.
+       * Static anchor ranges should be found after the allocations and modules,
+       * both because both the writable regions for modules and all imaged
+       * writable
+       * memory is considered to be OK for anchors.  This is sometimes
+       * inaccurate,
+       * because mmapped memory not allocated by a known allocator is considered
+       * as
+       * anchors, but it is necessary to consider the unknown regions to be
+       * anchors
+       * to avoid false leaks.
        */
       FindStaticAnchorRanges();
 
       Base::_allocationGraph = new Allocations::Graph<Offset>(
           *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
-          (Allocations::ExternalAnchorPointChecker<Offset>*)(0));
+          nullptr);
 
       /*
        * In Linux processes the current approach is to wait until the
@@ -90,7 +88,13 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
       WriteSymreqsFileIfNeeded();
 
-      MarkStackGuardsAsInaccessibleOrReadOnly();
+      UpdateStacksAndStackGuards();
+
+      /*
+       * Once this constructor as finished, any classification of ranges is
+       * done.
+       */
+      Base::_virtualMemoryPartition.ClaimUnclaimedRangesAsUnknown();
     }
   }
 
@@ -101,12 +105,22 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
   };
 
-  const std::map<Offset, Offset>& GetStaticAnchorLimits() const {
-    return _staticAnchorLimits;
+  const LibcMallocAllocationFinder<Offset>* GetLibcMallocAllocationFinder()
+      const {
+    return _libcMallocAllocationFinder;
   }
 
+ private:
+  LibcMallocAllocationFinder<Offset>* _libcMallocAllocationFinder;
+
  protected:
-  void MarkStackGuardsAsInaccessibleOrReadOnly() {
+  /*
+   * Stacks that are associated with threads have already been registered at
+   * this point, but stack guards for those stacks, which are identified in
+   * a somewhat Linux-specific way, as well as idle stacks and their guards,
+   * still need to be found.
+   */
+  void UpdateStacksAndStackGuards() {
     Reader reader(Base::_virtualAddressMap);
     typename AddressMap::const_iterator itMapEnd =
         Base::_virtualAddressMap.end();
@@ -115,10 +129,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          it != Base::_threadMap.end(); ++it) {
       Offset base = it->_stackBase;
       Offset limit = it->_stackLimit;
-      if (!Base::_writableRanges.ClaimRange(base, limit - base, STACK)) {
-        std::cerr << "Warning: unexpected overlap found for stack for thread "
-                  << std::dec << it->_threadNum << ".\n";
-      }
       Offset lastPageBase = limit - 0x1000;
       Offset guardBase = base - 0x1000;
       Offset sizeWithGuard = limit - guardBase;
@@ -148,8 +158,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
                * running.  We'll grudgingly accept the core's version of the
                * facts here.
                */
-              if (!Base::_readOnlyRanges.ClaimRange(guardBase, 0x1000,
-                                                    STACK_OVERFLOW_GUARD)) {
+              if (!Base::_virtualMemoryPartition.ClaimRange(
+                      guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
                 std::cerr
                     << "Warning: unexpected overlap found for overflow guard "
                     << "for thread " << std::dec << it->_threadNum << ".\n";
@@ -165,13 +175,80 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
            * Unfortunately, some versions of gdb stray from this and either
            * don't have a Phdr or waste core space on an image.
            */
-          if (!Base::_inaccessibleRanges.ClaimRange(guardBase, 0x1000,
-                                                    STACK_OVERFLOW_GUARD)) {
+          if (!Base::_virtualMemoryPartition.ClaimRange(
+                  guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
             std::cerr << "Warning: unexpected overlap found for overflow guard "
                       << "for thread " << std::dec << it->_threadNum << ".\n";
           }
           break;
         }
+      }
+    }
+    /*
+     * Now that we have figured out the ranges associated with stacks and
+     * guards for threads, and figured out the ranges for pretty much anything
+     * that chap knows how to figure out for Linux, figure out any stacks
+     * associated with pthreads that have finished.
+     */
+
+    std::vector<std::pair<Offset, Offset> > basesAndLengths;
+    for (const auto& range :
+         Base::_virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
+      if (range._size < 0x2000) {
+        continue;
+      }
+      Offset base = range._base;
+      Offset limit = range._limit;
+      Offset secondPageBase = base + 0x1000;
+      Offset guardBase = base - 0x1000;
+      Offset sizeWithGuard = limit - guardBase;
+      typename AddressMap::const_iterator itMap =
+          Base::_virtualAddressMap.find(guardBase);
+      bool guardMappedReadOnly = false;
+      if (itMap != itMapEnd) {
+        int permissions = (itMap.Flags() & RangeAttributes::PERMISSIONS_MASK);
+        if ((permissions & (RangeAttributes::PERMISSIONS_MASK ^
+                            RangeAttributes::IS_READABLE)) !=
+            RangeAttributes::HAS_KNOWN_PERMISSIONS) {
+          continue;
+        }
+        if ((permissions & RangeAttributes::IS_READABLE) != 0) {
+          guardMappedReadOnly = true;
+        }
+      }
+      for (Offset check = limit - 3 * sizeof(Offset); check >= secondPageBase;
+           check -= sizeof(Offset)) {
+        if (reader.ReadOffset(check, 0) == guardBase &&
+            reader.ReadOffset(check + sizeof(Offset), 0) == sizeWithGuard &&
+            reader.ReadOffset(check + 2 * sizeof(Offset), 0) == 0x1000) {
+          /*
+           * There are some cores where the guard region
+           * has been improperly marked as read-only, even after having
+           * been verified as inaccessible at the time the process was
+           * running.  We'll grudgingly accept the core's version of the
+           * facts but still mark it as a guard.
+           */
+          if (!Base::_virtualMemoryPartition.ClaimRange(
+                  guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
+            std::cerr << "Warning: unexpected overlap found for overflow "
+                         "guard at 0x"
+                      << std::hex << guardBase << " for unused stack.\n";
+            break;
+          }
+          Offset length =
+              ((check + 3 * sizeof(Offset) + 0xfff) & ~0xfff) - base;
+          basesAndLengths.emplace_back(base, length);
+          break;
+        }
+      }
+    }
+    for (const auto& baseAndLength : basesAndLengths) {
+      Offset base = baseAndLength.first;
+      Offset length = baseAndLength.second;
+      if (!Base::_virtualMemoryPartition.ClaimRange(base, length, Base::STACK,
+                                                    false)) {
+        std::cerr << "Warning: unexpected overlap found for idle stack at [0x"
+                  << std::hex << base << ", " << (base + length) << ")\n";
       }
     }
   }
@@ -304,7 +381,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
     for (Offset link = chainHead; link != 0;
          link = reader.ReadOffset(link + 3 * sizeof(Offset), BAD)) {
-      const char* name = (char*)(0);
+      const char* name = nullptr;
       if (link == chainHead) {
         name = "main executable";
       } else {
@@ -329,6 +406,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         if ((it.Flags() & RangeAttributes::IS_MAPPED) == 0) {
           std::cerr << "Module chain entry at 0x" << std::hex << link
                     << " has an unmapped name.\n";
+          continue;
+        }
+        if ((it.Flags() & RangeAttributes::IS_TRUNCATED) != 0) {
+          std::cerr << "Module chain entry at 0x" << std::hex << link
+                    << " has a name lost to\nprocess image truncation.\n";
           continue;
         }
         Offset numBytesFound =
@@ -372,6 +454,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       for (const Offset* entry = arrayStart; entry < arrayLimit; entry += 3) {
         Offset base = entry[0];
         Offset limit = entry[1];
+        /*
+         * entry[2] is the offset at which the given section would appear in the
+         * corresponding shared libary or executable, but we don't bother
+         * keeping that
+         * information at present, because there is not any use for it yet.
+         */
         Offset size = limit - base;
         Base::_moduleDirectory.AddRange(base, size, std::string(stringStart));
         stringStart += strlen(stringStart) + 1;
@@ -381,6 +469,57 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     return false;
   }
 
+  bool PatchOneRegionBasedOnLink(Offset link, Offset pairRelLink,
+                                 Reader& reader) {
+    Offset base = reader.ReadOffset(link + pairRelLink, 0xbad);
+    if ((base & 0xfff) != 0 || base == 0) {
+      std::cerr << "Warning. The module chain has an ill formed base 0x"
+                << std::hex << base << " for link 0x" << link << ".\n";
+      return false;
+    }
+    Offset moduleRelativeOffset;
+    Offset rangeBase = 0;
+    Offset rangeSize = 0;
+    std::string moduleName;
+    if (!Base::_moduleDirectory.Find(base, moduleName, rangeBase, rangeSize,
+                                     moduleRelativeOffset)) {
+      // For now we ignore any entries in the chain that are not backed by the
+      // ELIF.
+      return true;
+    }
+    Offset newLimit =
+        reader.ReadOffset(link + pairRelLink + sizeof(Offset), 0xbad);
+    if (newLimit == 0xbad) {
+      std::cerr << "Warning. The module chain has a truncated link 0x" << link
+                << ".\n";
+      return false;
+    }
+    if (!Base::_moduleDirectory.ExtendLastRange(base,
+                                                (newLimit + 0xfff) & ~0xfff)) {
+      std::cerr << "Warning: Failed to update module directory based on link 0x"
+                << std::hex << link << ".\n";
+      return false;
+    }
+    return true;
+  }
+  void PatchLastModuleRegionsBasedOnChain(Offset chainStart,
+                                          Offset pairRelLink) {
+    bool errorsInChain = false;
+    Reader reader(Base::_virtualAddressMap);
+    Offset link = chainStart;
+    for (Offset link = chainStart; link != 0 && link != 0xbad;
+         link = reader.ReadOffset(link + 4 * sizeof(Offset), 0xbad)) {
+      if (!PatchOneRegionBasedOnLink(link, pairRelLink, reader)) {
+        errorsInChain = true;
+      }
+    }
+    if (link == 0xbad) {
+      std::cerr << "Warning: The module chain is ill formed.\n";
+    }
+    if (link == 0xbad || errorsInChain) {
+      std::cerr << "Warning: Some trailing regions may be truncated.\n";
+    }
+  }
   /*
    * Try to find modules by finding an entry in the PT_NOTE section that
    * is of type 0x46494c45 and reading the file paths and range boundaries
@@ -392,9 +531,69 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
    */
 
   bool FindModulesByPTNote() {
-    return _elfImage.VisitNotes(std::bind(
-        &LinuxProcessImage<ElfImage>::FindModulesFromELIFNote, this,
-        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    if (_elfImage.VisitNotes(
+            std::bind(&LinuxProcessImage<ElfImage>::FindModulesFromELIFNote,
+                      this, std::placeholders::_1, std::placeholders::_2,
+                      std::placeholders::_3))) {
+      /*
+       * We know where all the modules reside but it is unfortunately not
+       * uncommon
+       * for the ranges with the .bss for each module to have a limit that
+       * is too
+       * short.  This allows it to be corrected relatively cheaply.
+       */
+      for (const auto& moduleNameAndRanges : Base::_moduleDirectory) {
+        if (moduleNameAndRanges.first.find("/ld") == std::string::npos) {
+          continue;
+        }
+        auto itEnd = moduleNameAndRanges.second.end();
+        auto it = moduleNameAndRanges.second.begin();
+        if (it == itEnd) {
+          continue;
+        }
+        Offset loaderBase = it->_base;
+        while (++it != itEnd) {
+          auto itMap = Base::_virtualAddressMap.find(it->_base);
+          if (itMap == Base::_virtualAddressMap.end()) {
+            continue;
+          }
+          if ((itMap.Flags() & RangeAttributes::IS_WRITABLE) !=
+              RangeAttributes::IS_WRITABLE) {
+            continue;
+          }
+          const char* image = itMap.GetImage();
+          if (image == nullptr) {
+            continue;
+          }
+          Offset base = itMap.Base();
+          Offset firstRefToLoaderBase = 0;
+          Offset secondRefToLoaderBase = 0;
+          const char* imageLimit = image + (itMap.Limit() - base);
+          for (const char* candidate = image; candidate < imageLimit;
+               candidate += sizeof(Offset)) {
+            if (*((Offset*)(candidate)) == loaderBase) {
+              Offset ref = base + (candidate - image);
+              if (firstRefToLoaderBase == 0) {
+                firstRefToLoaderBase = ref;
+              } else {
+                if (ref - firstRefToLoaderBase > 5 * sizeof(Offset) &&
+                    ((Offset*)(image + (firstRefToLoaderBase - base)))[5] ==
+                        firstRefToLoaderBase) {
+                  secondRefToLoaderBase = ref;
+                  PatchLastModuleRegionsBasedOnChain(
+                      firstRefToLoaderBase, ref - firstRefToLoaderBase);
+                  break;
+                } else {
+                  firstRefToLoaderBase = ref;
+                }
+              }
+            }
+          }
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
   /*
@@ -403,23 +602,15 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   * of 2.
   */
   bool FindModulesByAlignedLink(Offset expectedAlignment) {
-    typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
-        itEnd = Base::_virtualMemoryPartition.EndUnclaimedImages();
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
-        Base::_virtualMemoryPartition.BeginUnclaimedImages();
-    for (; it != itEnd; ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) !=
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-        continue;
-      }
-      Offset base = it->_base;
+    Reader reader(Base::_virtualAddressMap);
+    for (const auto& range :
+         Base::_virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
+      Offset base = range._base;
       Offset align = base & (expectedAlignment - 1);
       if ((align) != 0) {
         base += (expectedAlignment - align);
       }
-      Offset limit = it->_limit - 0x2f;
+      Offset limit = range._limit - 0x2f;
       for (Offset candidate = base; candidate <= limit;
            candidate += expectedAlignment) {
         if (CheckChainMember(candidate, reader)) {
@@ -504,7 +695,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         continue;
       }
 
-      const char* name = (char*)(0);
+      const char* name = nullptr;
       if (executableAddress == base) {
         name = "main executable";
       }
@@ -671,16 +862,16 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
           }
         }
       }
-      if (name == (char*)(0)) {
+      if (name == nullptr) {
         if (dynStrAddr != 0 && nameInDynStr != 0) {
           Offset numBytesFound = Base::_virtualAddressMap.FindMappedMemoryImage(
               dynStrAddr + nameInDynStr, &name);
           if (numBytesFound < 2) {
-            name = (char*)(0);
+            name = nullptr;
           }
         }
       }
-      if (name == (char*)(0)) {
+      if (name == nullptr) {
 #if 0
       // This happens for the last image seen in pretty much every core.
       // It also happens for libraries for which the PT_DYNAMIC section
@@ -712,10 +903,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   };
   void FindRangesForModule(typename ModuleDirectory<Offset>::const_iterator it,
                            std::vector<ModuleRange>& ranges) {
-    typename RangeMapper<Offset, Offset>::const_iterator itRange =
+    typename ModuleDirectory<Offset>::RangeToFlags::const_iterator itRange =
         it->second.begin();
-    typename RangeMapper<Offset, Offset>::const_iterator itRangeEnd =
-        it->second.end();
+    const auto& itRangeEnd = it->second.end();
     Offset base = itRange->_base;
     Offset rangeLimit = itRange->_limit;
     typename VirtualAddressMap<Offset>::const_iterator itVirt =
@@ -737,7 +927,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         limit = rangeLimit;
       }
       const char* image = itVirt.GetImage();
-      if (image != (const char*)(0)) {
+      if (image != nullptr) {
         image += (base - itVirt.Base());
       }
       ranges.emplace_back(base, limit - base, permissionsBits, image);
@@ -746,6 +936,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         if (++itRange == itRangeEnd) {
           return;
         }
+
         if (base < itRange->_base) {
           base = itRange->_base;
         }
@@ -776,8 +967,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
                                  RangeAttributes::IS_WRITABLE)) ==
           (RangeAttributes::HAS_KNOWN_PERMISSIONS |
            RangeAttributes::IS_WRITABLE)) {
-        if (!Base::_writableRanges.ClaimRange(range._base, range._size,
-                                              USED_BY_MODULE)) {
+        if (!Base::_virtualMemoryPartition.ClaimRange(
+                range._base, range._size, Base::_moduleDirectory.USED_BY_MODULE,
+                true)) {
           std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
                     << range._base << ", 0x" << (range._base + range._size)
                     << ")\nused by module " << it->first << "\n";
@@ -786,16 +978,18 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       } else if (range._permissions == (RangeAttributes::HAS_KNOWN_PERMISSIONS |
                                         RangeAttributes::IS_READABLE |
                                         RangeAttributes::IS_EXECUTABLE)) {
-        if (!Base::_rxOnlyRanges.ClaimRange(range._base, range._size,
-                                            USED_BY_MODULE)) {
+        if (!Base::_virtualMemoryPartition.ClaimRange(
+                range._base, range._size, Base::_moduleDirectory.USED_BY_MODULE,
+                true)) {
           std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
                     << range._base << ", 0x" << (range._base + range._size)
                     << ")\nused by module " << it->first << "\n";
         }
       } else if (range._permissions == RangeAttributes::HAS_KNOWN_PERMISSIONS) {
         gapFound = true;
-        if (!Base::_inaccessibleRanges.ClaimRange(range._base, range._size,
-                                                  MODULE_ALIGNMENT_GAP)) {
+        if (!Base::_virtualMemoryPartition.ClaimRange(
+                range._base, range._size,
+                Base::_moduleDirectory.MODULE_ALIGNMENT_GAP, false)) {
           std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
                     << range._base << ", 0x" << (range._base + range._size)
                     << ")\nalignment gap for module " << it->first << "\n";
@@ -810,7 +1004,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         if (!gapFound && ((size == 0x200000) || (size == 0x1ff000)) && i > 0 &&
             i < numRanges - 1 && ranges[i + 1]._base == range._base + size) {
           bool knownZeroImage = false;
-          if (range._image != (const char*)(0)) {
+          if (range._image != nullptr) {
             const char* limit = range._image + range._size;
             knownZeroImage = true;
             for (const char* pC = range._image; pC != limit; ++pC) {
@@ -829,8 +1023,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
              * leave it as considered read-only to be consistent with how
              * the range is marked in the core.
              */
-            if (!Base::_readOnlyRanges.ClaimRange(range._base, range._size,
-                                                  MODULE_ALIGNMENT_GAP)) {
+            if (!Base::_virtualMemoryPartition.ClaimRange(
+                    range._base, range._size,
+                    Base::_moduleDirectory.MODULE_ALIGNMENT_GAP, false)) {
               std::cerr << "Warning: unexpected overlap found for [0x"
                         << std::hex << range._base << ", 0x"
                         << (range._base + range._size)
@@ -840,21 +1035,52 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
             continue;
           }
         }
-        if (!Base::_readOnlyRanges.ClaimRange(range._base, range._size,
-                                              USED_BY_MODULE)) {
+        if (!Base::_virtualMemoryPartition.ClaimRange(
+                range._base, range._size, Base::_moduleDirectory.USED_BY_MODULE,
+                true)) {
           std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
                     << range._base << ", 0x" << (range._base + range._size)
                     << ")\nused by module " << it->first << "\n";
         }
       }
     }
+    /*
+     * The gap wasn't found.  Perhaps it wasn't reported for the module and
+     * wasn't
+     * mapped in memory.
+     */
     if (!gapFound && numRanges > 1) {
       for (size_t i = 1; i < numRanges; i++) {
-        Offset prevRangeLimit = ranges[i - 1]._base + ranges[i - 1]._size;
-        Offset gapSize = ranges[i]._base - prevRangeLimit;
+        Offset gapBase = ranges[i - 1]._base + ranges[i - 1]._size;
+        Offset gapLimit = ranges[i]._base;
+        Offset gapSize = gapLimit - gapBase;
         if (gapSize == 0x200000 || gapSize == 0x1ff000) {
-          if (Base::_inaccessibleRanges.ClaimRange(prevRangeLimit, gapSize,
-                                                   MODULE_ALIGNMENT_GAP)) {
+          /*
+           * Guess that the gap has been found but we must still make sure that
+           * it is legitimately a gap.
+           */
+          gapFound = true;
+
+          typename VirtualAddressMap<Offset>::const_iterator itVirt =
+              Base::_virtualAddressMap.lower_bound(gapBase);
+          typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
+              Base::_virtualAddressMap.end();
+          for (; itVirt != itVirtEnd && itVirt.Base() < gapLimit; ++itVirt) {
+            if ((itVirt.Flags() & RangeAttributes::PERMISSIONS_MASK) !=
+                RangeAttributes::HAS_KNOWN_PERMISSIONS) {
+              gapFound = false;
+              break;
+            }
+          }
+          if (gapFound) {
+            if (!Base::_virtualMemoryPartition.ClaimRange(
+                    gapBase, gapSize,
+                    Base::_moduleDirectory.MODULE_ALIGNMENT_GAP, false)) {
+              std::cerr
+                  << "Warning: unexpected overlap found for alignment gap [0x"
+                  << std::hex << gapBase << ", 0x" << gapLimit
+                  << ")\nfor module " << it->first << "\n";
+            }
             break;
           }
         }
@@ -892,10 +1118,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   ElfImage& _elfImage;
   mutable bool _symdefsRead;
   std::map<Offset, Offset> _staticAnchorLimits;
-  const char* STACK;
-  const char* STACK_OVERFLOW_GUARD;
-  const char* MODULE_ALIGNMENT_GAP;
-  const char* USED_BY_MODULE;
 
   bool ParseOffset(const std::string& s, Offset& value) const {
     if (!s.empty()) {
@@ -920,7 +1142,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       buffer[sizeof(buffer) - 1] = '\000';
       size_t numToCopy = sizeof(buffer) - 1;
       const char* image = it.GetImage();
-      if (image != (const char*)(0)) {
+      if (image != nullptr) {
         Offset maxToCopy = it.Limit() - mangledNameAddr - 1;
         if (numToCopy > maxToCopy) {
           numToCopy = maxToCopy;
@@ -940,7 +1162,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     std::string emptySignatureName;
     Offset typeInfoPointerAddress = signature - sizeof(Offset);
 
-    typename VirtualAddressMap<Offset>::Reader reader(virtualAddressMap);
+    Reader reader(virtualAddressMap);
     Offset typeInfoAddress = reader.ReadOffset(typeInfoPointerAddress, 0);
     if (typeInfoAddress == 0) {
       return emptySignatureName;
@@ -949,7 +1171,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         reader.ReadOffset(typeInfoAddress + sizeof(Offset), 0);
     if (typeInfoNameAddress != 0) {
       typename VirtualAddressMap<Offset>::const_iterator it =
-         Base::_virtualAddressMap.find(typeInfoNameAddress);
+          Base::_virtualAddressMap.find(typeInfoNameAddress);
       if ((it != Base::_virtualAddressMap.end()) &&
           ((it.Flags() & RangeAttributes::IS_WRITABLE) == 0)) {
         return CopyAndUnmangle(virtualAddressMap, typeInfoNameAddress);
@@ -1047,7 +1269,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     const Allocations::Finder<Offset>& finder = *(Base::_allocationFinder);
     typename Allocations::Finder<Offset>::AllocationIndex numAllocations =
         finder.NumAllocations();
-    typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
+    Reader reader(Base::_virtualAddressMap);
     typename VirtualAddressMap<Offset>::const_iterator itEnd =
         Base::_virtualAddressMap.end();
     for (typename Allocations::Finder<Offset>::AllocationIndex i = 0;
@@ -1091,7 +1313,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       std::string typeinfoName =
           GetUnmangledTypeinfoName(Base::_virtualAddressMap, signature);
       typename Allocations::SignatureDirectory<Offset>::Status status =
-         SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS;
+          SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS;
       if (writableVtable) {
         if (typeinfoName.empty()) {
           /*
@@ -1122,7 +1344,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     std::string modulePath;
     std::unique_ptr<FileImage> fileImage;
     std::unique_ptr<ElfImage> elfImage;
-    typename VirtualAddressMap<Offset>::Reader reader(Base::_virtualAddressMap);
+    Reader reader(Base::_virtualAddressMap);
     typename SignatureDirectory::SignatureNameAndStatusConstIterator itEnd =
         Base::_signatureDirectory.EndSignatures();
     for (typename SignatureDirectory::SignatureNameAndStatusConstIterator it =
@@ -1133,14 +1355,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         continue;
       }
       Offset signature = it->first;
-      Offset fileOffset;
       Offset relativeSignature;
       Offset rangeBase = 0;
       Offset rangeSize = 0;
       std::string newModulePath;
       if (!Base::_moduleDirectory.Find(signature, newModulePath, rangeBase,
-                                       rangeSize, fileOffset,
-                                       relativeSignature)) {
+                                       rangeSize, relativeSignature)) {
         continue;
       }
       if (newModulePath != modulePath) {
@@ -1173,7 +1393,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         }
         Offset relativeNameAddr;
         if (!Base::_moduleDirectory.Find(mangledNameAddr, newModulePath,
-                                         rangeBase, rangeSize, fileOffset,
+                                         rangeBase, rangeSize,
                                          relativeNameAddr)) {
           continue;
         }
@@ -1276,16 +1496,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   }
 
   void FindStaticAnchorRanges() {
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator
-        itEnd = Base::_virtualMemoryPartition.EndUnclaimedImages();
-    typename VirtualMemoryPartition<Offset>::UnclaimedImagesConstIterator it =
-        Base::_virtualMemoryPartition.BeginUnclaimedImages();
-    for (; it != itEnd; ++it) {
-      if ((it->_value &
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE)) {
-        _staticAnchorLimits[it->_base] = it->_limit;
-      }
+    for (const auto& range :
+         Base::_virtualMemoryPartition.GetStaticAnchorCandidates()) {
+      _staticAnchorLimits[range._base] = range._limit;
     }
   }
 };

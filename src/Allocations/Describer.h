@@ -22,39 +22,25 @@ class Describer : public chap::Describer<Offset> {
   Describer(const InModuleDescriber<Offset>& inModuleDescriber,
             const StackDescriber<Offset>& stackDescriber,
             const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
-            const ProcessImage<Offset>* processImage)
+            const ProcessImage<Offset>& processImage)
       : _inModuleDescriber(inModuleDescriber),
         _stackDescriber(stackDescriber),
-        _patternRecognizerRegistry(patternRecognizerRegistry) {
-    SetProcessImage(processImage);
-  }
-
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    if (processImage == 0) {
-      _signatureDirectory = 0;
-      _anchorDirectory = 0;
-      _addressMap = 0;
-      _finder = 0;
-      _graph = 0;
-    } else {
-      _signatureDirectory = &(processImage->GetSignatureDirectory());
-      _anchorDirectory = &(processImage->GetAnchorDirectory());
-      _addressMap = &(processImage->GetVirtualAddressMap());
-      _finder = processImage->GetAllocationFinder();
-      _graph = processImage->GetAllocationGraph();
-    }
-  }
+        _patternRecognizerRegistry(patternRecognizerRegistry),
+        _signatureDirectory(processImage.GetSignatureDirectory()),
+        _anchorDirectory(processImage.GetAnchorDirectory()),
+        _addressMap(processImage.GetVirtualAddressMap()),
+        _finder(processImage.GetAllocationFinder()),
+        _graph(processImage.GetAllocationGraph()) {}
 
   /*
    * If the address is understood, provide a description for the address,
    * optionally with an additional explanation of why the address matches
    * the description, and return true.  Otherwise don't write anything
-   * and return false.
+   * and return false.  Show addresses only if requested.
    */
-  bool Describe(Commands::Context& context, Offset address,
-                bool explain) const {
-    if (_processImage == 0 || _finder == 0 || _graph == 0) {
+  bool Describe(Commands::Context& context, Offset address, bool explain,
+                bool showAddresses) const {
+    if (_finder == 0 || _graph == 0) {
       return false;
     }
     AllocationIndex index = _finder->AllocationIndexOf(address);
@@ -66,13 +52,13 @@ class Describer : public chap::Describer<Offset> {
       abort();
     }
     Describe(context, index, *allocation, explain,
-             address - allocation->Address(), true);
+             address - allocation->Address(), showAddresses);
     return true;
   }
 
   void Describe(Commands::Context& context, AllocationIndex index,
                 const Allocation& allocation, bool explain,
-                Offset offsetInAllocation, bool showOffset) const {
+                Offset offsetInAllocation, bool showAddresses) const {
     size_t size = allocation.Size();
     Commands::Output& output = context.GetOutput();
     bool isUsed = false;
@@ -91,7 +77,7 @@ class Describer : public chap::Describer<Offset> {
       isThreadCached = _finder->IsThreadCached(index);
     }
     Offset address = allocation.Address();
-    if (showOffset) {
+    if (showAddresses) {
       output << "Address " << std::hex << (address + offsetInAllocation)
              << " is at offset " << offsetInAllocation << " of\n"
              << (!isUsed ? (isThreadCached ? "a thread-cached free" : "a free")
@@ -107,14 +93,14 @@ class Describer : public chap::Describer<Offset> {
     output << " allocation at " << std::hex << address << " of size " << size
            << "\n";
     const char* image;
-    (void)_addressMap->FindMappedMemoryImage(address, &image);
+    (void)_addressMap.FindMappedMemoryImage(address, &image);
     bool isUnsigned = true;
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
-      if (_signatureDirectory->IsMapped(signature)) {
+      if (_signatureDirectory.IsMapped(signature)) {
         isUnsigned = false;
         output << "... with signature " << signature;
-        std::string name = _signatureDirectory->Name(signature);
+        std::string name = _signatureDirectory.Name(signature);
         if (!name.empty()) {
           output << "(" << name << ")";
         }
@@ -149,10 +135,9 @@ class Describer : public chap::Describer<Offset> {
   const InModuleDescriber<Offset>& _inModuleDescriber;
   const StackDescriber<Offset>& _stackDescriber;
   const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
-  const ProcessImage<Offset>* _processImage;
-  const SignatureDirectory<Offset>* _signatureDirectory;
-  const AnchorDirectory<Offset>* _anchorDirectory;
-  const VirtualAddressMap<Offset>* _addressMap;
+  const SignatureDirectory<Offset>& _signatureDirectory;
+  const AnchorDirectory<Offset>& _anchorDirectory;
+  const VirtualAddressMap<Offset>& _addressMap;
   const Finder<Offset>* _finder;
   const Graph<Offset>* _graph;
 };

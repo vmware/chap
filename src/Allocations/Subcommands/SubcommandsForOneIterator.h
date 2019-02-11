@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -15,36 +15,26 @@ template <class Offset, class Iterator>
 class SubcommandsForOneIterator {
  public:
   SubcommandsForOneIterator(
+      const ProcessImage<Offset>& processImage,
       typename Iterator::Factory& iteratorFactory,
       typename Visitors::DefaultVisitorFactories<Offset>& visitorFactories,
       const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
       : _iteratorFactory(iteratorFactory),
-        _countSubcommand(visitorFactories._counterFactory, iteratorFactory,
-                         patternRecognizerRegistry),
-        _summarizeSubcommand(visitorFactories._summarizerFactory,
+        _countSubcommand(processImage, visitorFactories._counterFactory,
+                         iteratorFactory, patternRecognizerRegistry),
+        _summarizeSubcommand(processImage, visitorFactories._summarizerFactory,
                              iteratorFactory, patternRecognizerRegistry),
-        _enumerateSubcommand(visitorFactories._enumeratorFactory,
+        _enumerateSubcommand(processImage, visitorFactories._enumeratorFactory,
                              iteratorFactory, patternRecognizerRegistry),
-        _listSubcommand(visitorFactories._listerFactory, iteratorFactory,
-                        patternRecognizerRegistry),
-        _showSubcommand(visitorFactories._showerFactory, iteratorFactory,
-                        patternRecognizerRegistry),
-        _describeSubcommand(visitorFactories._describerFactory, iteratorFactory,
-                            patternRecognizerRegistry),
-        _explainSubcommand(visitorFactories._explainerFactory, iteratorFactory,
-                           patternRecognizerRegistry),
-        _processImage(0) {}
+        _listSubcommand(processImage, visitorFactories._listerFactory,
+                        iteratorFactory, patternRecognizerRegistry),
+        _showSubcommand(processImage, visitorFactories._showerFactory,
+                        iteratorFactory, patternRecognizerRegistry),
+        _describeSubcommand(processImage, visitorFactories._describerFactory,
+                            iteratorFactory, patternRecognizerRegistry),
+        _explainSubcommand(processImage, visitorFactories._explainerFactory,
+                           iteratorFactory, patternRecognizerRegistry) {}
 
-  void SetProcessImage(const ProcessImage<Offset>* processImage) {
-    _processImage = processImage;
-    _countSubcommand.SetProcessImage(processImage);
-    _summarizeSubcommand.SetProcessImage(processImage);
-    _enumerateSubcommand.SetProcessImage(processImage);
-    _listSubcommand.SetProcessImage(processImage);
-    _showSubcommand.SetProcessImage(processImage);
-    _describeSubcommand.SetProcessImage(processImage);
-    _explainSubcommand.SetProcessImage(processImage);
-  }
   void RegisterSubcommands(Commands::Runner& runner) {
     RegisterSubcommand(runner, _countSubcommand);
     RegisterSubcommand(runner, _summarizeSubcommand);
@@ -77,7 +67,6 @@ class SubcommandsForOneIterator {
                           Iterator>
       _explainSubcommand;
 
-  const ProcessImage<Offset>* _processImage;
   void RegisterSubcommand(Commands::Runner& runner,
                           Commands::Subcommand& subcommand) {
     const std::string& commandName = subcommand.GetCommandName();

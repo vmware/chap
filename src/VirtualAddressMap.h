@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -489,16 +489,17 @@ class VirtualAddressMap {
 
     Offset limit = rangeAddr + rangeSize + adjustToFileOffset;
     bool overlap = false;
-    if (_fileSize >= limit) {
-      // The entire range has an image in the file.
+    if (!isMapped || _fileSize >= limit) {
+      // No image was expected, or it is entirely in the file.
       overlap = !_ranges.MapRange(rangeAddr, rangeSize,
                                   RangeAttributes(adjustToFileOffset, flags));
     } else if (_fileSize <= rangeAddr + adjustToFileOffset) {
-      // The entire image is missing due to truncation.
+      // The entire expected image is missing due to truncation of the file.
       flags |= RangeAttributes::IS_TRUNCATED;
       overlap = !_ranges.MapRange(rangeAddr, rangeSize,
                                   RangeAttributes(adjustToFileOffset, flags));
     } else {
+      // Some of the expected image was missing due to truncation of the file.
       Offset missing = limit - _fileSize;
       Offset present = rangeSize - missing;
       overlap = !_ranges.MapRange(rangeAddr, present,

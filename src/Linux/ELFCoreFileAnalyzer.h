@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -23,7 +23,7 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
           new LinuxProcessImage<ElfImage>(_elfImage, truncationCheckOnly));
       if (!truncationCheckOnly) {
         _processImageCommandHandler.reset(
-            new ProcessImageCommandHandler<Offset>(_processImage.get()));
+            new ProcessImageCommandHandler<ElfImage>(*(_processImage.get())));
       }
     } else {
       std::cerr << "This image is an ELF file but not an ELF core.\n";
@@ -84,7 +84,7 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
   const VirtualAddressMap<Offset>& _virtualAddressMap;
   VirtualAddressMapCommandHandler<Offset> _virtualAddressMapCommandHandler;
   std::unique_ptr<LinuxProcessImage<ElfImage> > _processImage;
-  std::unique_ptr<ProcessImageCommandHandler<Offset> >
+  std::unique_ptr<ProcessImageCommandHandler<ElfImage> >
       _processImageCommandHandler;
 };
 }  // namespace Linux

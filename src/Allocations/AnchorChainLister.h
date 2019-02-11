@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -15,8 +15,8 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
   AnchorChainLister(const InModuleDescriber<Offset>& inModuleDescriber,
                     const StackDescriber<Offset>& stackDescriber,
                     const Graph<Offset>& graph,
-                    const SignatureDirectory<Offset>* signatureDirectory,
-                    const AnchorDirectory<Offset>* anchorDirectory,
+                    const SignatureDirectory<Offset>& signatureDirectory,
+                    const AnchorDirectory<Offset>& anchorDirectory,
                     Commands::Context& context, Offset anchoree)
       : _graph(graph),
         _inModuleDescriber(inModuleDescriber),
@@ -44,28 +44,27 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
       // Report at most 10 static anchor chains.
       return true;
     }
-    output << "Allocation at " << std::hex << _anchoree << " appears to be ";
+    output << "The allocation at 0x" << std::hex << _anchoree
+           << " appears to be ";
     if (isDirect) {
       output << "directly statically anchored.\n";
     } else {
-      output << "indirectly statically anchored\n... via anchor point "
+      output << "indirectly statically anchored\nvia anchor point 0x"
              << address;
       ShowSignatureIfPresent(output, size, image);
-      output << "\n";
+      output << ".\n";
     }
     for (typename std::vector<Offset>::const_iterator it = staticAddrs.begin();
          it != staticAddrs.end(); ++it) {
       Offset staticAddr = *it;
-      _inModuleDescriber.Describe(_context, staticAddr, false);
-      output << "Static address " << staticAddr;
-      if (_anchorDirectory != 0) {
-        const std::string& name = _anchorDirectory->Name(staticAddr);
-        if (!name.empty()) {
-          output << " (" << name << ")";
-        }
+      _inModuleDescriber.Describe(_context, staticAddr, false, true);
+      output << "Static address 0x" << staticAddr;
+      const std::string& name = _anchorDirectory.Name(staticAddr);
+      if (!name.empty()) {
+        output << " (" << name << ")";
       }
-      output << " references" << (isDirect ? " " : " anchor point ") << address
-             << "\n";
+      output << " references" << (isDirect ? " 0x" : " anchor point 0x")
+             << address << (isDirect ? ".\n" : "\n");
     }
     _numStaticAnchorChainsShown++;
     if (isDirect) {
@@ -84,22 +83,24 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
       // Report at most 10 stack anchor chains.
       return true;
     }
-    output << "Allocation at " << std::hex << _anchoree << " appears to be ";
+    output << "The allocation at 0x" << std::hex << _anchoree
+           << " appears to be ";
     if (isDirect) {
-      output << "directly anchored from at least one stack.\n";
+      output << "directly anchored from\nat least one stack.\n";
     } else {
-      output << "indirectly anchored from at least one stack\n"
-                "via anchor point "
+      output << "indirectly anchored from\n"
+                "at least one stack via anchor point 0x"
              << address;
       ShowSignatureIfPresent(output, size, image);
-      output << "\n";
+      output << ".\n";
     }
     for (typename std::vector<Offset>::const_iterator it = stackAddrs.begin();
          it != stackAddrs.end(); ++it) {
       Offset stackAddr = *it;
-      _stackDescriber.Describe(_context, stackAddr, false);
-      output << "Stack address " << std::hex << stackAddr << " references"
-             << (isDirect ? " " : " anchor point ") << address << "\n";
+      _stackDescriber.Describe(_context, stackAddr, false, true);
+      output << "Stack address 0x" << std::hex << stackAddr << " references"
+             << (isDirect ? " 0x" : " anchor point 0x") << address
+             << (isDirect ? ".\n" : "\n");
     }
     _numStackAnchorChainsShown++;
     if (isDirect) {
@@ -118,23 +119,24 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
       // Report at most 10 register anchor chains.
       return true;
     }
-    output << "Allocation at " << std::hex << _anchoree << " appears to be ";
+    output << "The allocation at 0x" << std::hex << _anchoree
+           << " appears to be ";
     if (isDirect) {
-      output << "directly anchored from at least one register.\n";
+      output << "directly anchored from\nat least one register.\n";
     } else {
-      output << "indirectly anchored from at least one register\n"
-                "via anchor point "
+      output << "indirectly anchored from\n"
+                "at least one register via anchor point 0x"
              << address;
       ShowSignatureIfPresent(output, size, image);
-      output << "\n";
+      output << ".\n";
     }
     for (typename std::vector<std::pair<size_t, const char*> >::const_iterator
              it = anchors.begin();
          it != anchors.end(); ++it) {
       output << "Register " << (*it).second << " for thread " << std::dec
              << (*it).first << " references"
-             << (isDirect ? " " : " anchor point ") << std::hex << address
-             << "\n";
+             << (isDirect ? " 0x" : " anchor point 0x") << std::hex << address
+             << (isDirect ? ".\n" : "\n");
     }
     _numRegisterAnchorChainsShown++;
     if (isDirect) {
@@ -145,7 +147,7 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
 
   bool VisitChainLink(Offset address, Offset size, const char* image) {
     Commands::Output& output = _context.GetOutput();
-    output << "... which references " << std::hex << address;
+    output << "which references 0x" << std::hex << address;
     if (address != _anchoree) {
       ShowSignatureIfPresent(output, size, image);
     }
@@ -157,8 +159,8 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
   const Graph<Offset>& _graph;
   const InModuleDescriber<Offset>& _inModuleDescriber;
   const StackDescriber<Offset>& _stackDescriber;
-  const SignatureDirectory<Offset>* _signatureDirectory;
-  const AnchorDirectory<Offset>* _anchorDirectory;
+  const SignatureDirectory<Offset>& _signatureDirectory;
+  const AnchorDirectory<Offset>& _anchorDirectory;
   Commands::Context& _context;
   const Offset _anchoree;
   size_t _numStaticAnchorChainsShown;
@@ -172,10 +174,9 @@ class AnchorChainLister : public Graph<Offset>::AnchorChainVisitor {
                               const char* image) {
     if (size >= sizeof(Offset)) {
       Offset signature = *((Offset*)image);
-      if ((_signatureDirectory != ((SignatureDirectory<Offset>*)(0))) &&
-          _signatureDirectory->IsMapped(signature)) {
+      if (_signatureDirectory.IsMapped(signature)) {
         output << " with signature " << signature;
-        std::string name = _signatureDirectory->Name(signature);
+        std::string name = _signatureDirectory.Name(signature);
         if (!name.empty()) {
           output << "(" << name << ")";
         }

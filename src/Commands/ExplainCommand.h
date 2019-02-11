@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -32,7 +32,7 @@ class ExplainCommand : public SetBasedCommand {
           error << "If an address is specified, only one is allowed.\n";
           return;
         }
-        if (!_describer.Describe(context, address, true)) {
+        if (!_describer.Describe(context, address, true, true)) {
           error << "Currently no explanation is available for address 0x"
                 << std::hex << address << "\n";
         }

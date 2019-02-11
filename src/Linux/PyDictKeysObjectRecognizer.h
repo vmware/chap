@@ -1,5 +1,4 @@
-
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -16,14 +15,14 @@ class PyDictKeysObjectRecognizer
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
-  PyDictKeysObjectRecognizer(const ProcessImage<Offset>* processImage)
+  PyDictKeysObjectRecognizer(const ProcessImage<Offset>& processImage)
       : Allocations::PatternRecognizer<Offset>(processImage,
                                                "PyDictKeysObject"),
         _stringTypeObj(0) {}
 
   bool Matches(AllocationIndex index, const Allocation& allocation,
                bool isUnsigned) const {
-    return Visit((Commands::Context*)(0), index, allocation, isUnsigned, false);
+    return Visit(nullptr, index, allocation, isUnsigned, false);
   }
 
   /*
@@ -67,7 +66,7 @@ class PyDictKeysObjectRecognizer
 
     const char* allocationImage;
     Offset allocationAddress = allocation.Address();
-    Offset numBytesFound = Base::_addressMap->FindMappedMemoryImage(
+    Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
         allocationAddress, &allocationImage);
 
     if (numBytesFound < allocationSize) {
@@ -104,11 +103,9 @@ class PyDictKeysObjectRecognizer
       std::string moduleName;
       Offset rangeBase;
       Offset rangeSize;
-      Offset fileOffset;
       Offset relativeVirtualAddress;
-      if ((!Base::_moduleDirectory->Find(methodCandidate, moduleName, rangeBase,
-                                         rangeSize, fileOffset,
-                                         relativeVirtualAddress)) ||
+      if ((!Base::_moduleDirectory.Find(methodCandidate, moduleName, rangeBase,
+                                        rangeSize, relativeVirtualAddress)) ||
           (moduleName.find("python") == std::string::npos)) {
         return false;
       }
@@ -116,8 +113,8 @@ class PyDictKeysObjectRecognizer
       typedef
           typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
       typename VirtualAddressMap<Offset>::const_iterator it =
-          Base::_addressMap->find(methodCandidate);
-      if ((it == Base::_addressMap->end()) ||
+          Base::_addressMap.find(methodCandidate);
+      if ((it == Base::_addressMap.end()) ||
           ((it.Flags() &
             (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE |
              RangeAttributes::IS_EXECUTABLE)) !=
@@ -138,7 +135,7 @@ class PyDictKeysObjectRecognizer
         }
         const char* keyImage;
         Offset numKeyBytesFound =
-            Base::_addressMap->FindMappedMemoryImage(key, &keyImage);
+            Base::_addressMap.FindMappedMemoryImage(key, &keyImage);
 
         if (numKeyBytesFound < 7 * sizeof(Offset)) {
           continue;
@@ -147,7 +144,7 @@ class PyDictKeysObjectRecognizer
 
         const char* valueImage;
         Offset numValueBytesFound =
-            Base::_addressMap->FindMappedMemoryImage(value, &valueImage);
+            Base::_addressMap.FindMappedMemoryImage(value, &valueImage);
 
         if (numValueBytesFound < 7 * sizeof(Offset)) {
           continue;

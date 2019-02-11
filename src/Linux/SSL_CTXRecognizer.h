@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,12 +14,12 @@ class SSL_CTXRecognizer : public Allocations::PatternRecognizer<Offset> {
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
-  SSL_CTXRecognizer(const ProcessImage<Offset>* processImage)
+  SSL_CTXRecognizer(const ProcessImage<Offset>& processImage)
       : Allocations::PatternRecognizer<Offset>(processImage, "SSL_CTX") {}
 
   bool Matches(AllocationIndex index, const Allocation& allocation,
                bool isUnsigned) const {
-    return Visit((Commands::Context*)(0), index, allocation, isUnsigned, false);
+    return Visit(nullptr, index, allocation, isUnsigned, false);
   }
 
   /*
@@ -64,7 +64,7 @@ class SSL_CTXRecognizer : public Allocations::PatternRecognizer<Offset> {
 
     const char* allocationImage;
     Offset allocationAddress = allocation.Address();
-    Offset numBytesFound = Base::_addressMap->FindMappedMemoryImage(
+    Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
         allocationAddress, &allocationImage);
 
     if (numBytesFound < allocationSize) {
@@ -75,18 +75,16 @@ class SSL_CTXRecognizer : public Allocations::PatternRecognizer<Offset> {
     std::string moduleName;
     Offset rangeBase;
     Offset rangeSize;
-    Offset fileOffset;
     Offset relativeVirtualAddress;
-    if ((!Base::_moduleDirectory->Find(sslMethodCandidate, moduleName,
-                                       rangeBase, rangeSize, fileOffset,
-                                       relativeVirtualAddress)) ||
+    if ((!Base::_moduleDirectory.Find(sslMethodCandidate, moduleName, rangeBase,
+                                      rangeSize, relativeVirtualAddress)) ||
         (moduleName.find("libssl") == std::string::npos)) {
       return false;
     }
 
     const char* sslMethodImage;
-    numBytesFound = Base::_addressMap->FindMappedMemoryImage(sslMethodCandidate,
-                                                             &sslMethodImage);
+    numBytesFound = Base::_addressMap.FindMappedMemoryImage(sslMethodCandidate,
+                                                            &sslMethodImage);
 
     if (numBytesFound < 10 * sizeof(Offset)) {
       return false;
@@ -94,17 +92,17 @@ class SSL_CTXRecognizer : public Allocations::PatternRecognizer<Offset> {
 
     Offset* methodPointers = (Offset*)(sslMethodImage + sizeof(Offset));
     std::string methodModuleName;
-    if ((!Base::_moduleDirectory->Find(methodPointers[0], methodModuleName,
-                                       rangeBase, rangeSize, fileOffset,
-                                       relativeVirtualAddress)) ||
+    if ((!Base::_moduleDirectory.Find(methodPointers[0], methodModuleName,
+                                      rangeBase, rangeSize,
+                                      relativeVirtualAddress)) ||
         (methodModuleName != moduleName)) {
       return false;
     }
 
     typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
     typename VirtualAddressMap<Offset>::const_iterator it =
-        Base::_addressMap->find(methodPointers[0]);
-    if ((it == Base::_addressMap->end()) ||
+        Base::_addressMap.find(methodPointers[0]);
+    if ((it == Base::_addressMap.end()) ||
         ((it.Flags() &
           (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE |
            RangeAttributes::IS_EXECUTABLE)) !=

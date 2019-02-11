@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018,2019 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,12 +13,12 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
-  VectorBodyRecognizer(const ProcessImage<Offset>* processImage)
+  VectorBodyRecognizer(const ProcessImage<Offset>& processImage)
       : Allocations::PatternRecognizer<Offset>(processImage, "VectorBody") {}
 
   bool Matches(AllocationIndex index, const Allocation& allocation,
                bool isUnsigned) const {
-    return Visit((Commands::Context*)(0), index, allocation, isUnsigned, false);
+    return Visit(nullptr, index, allocation, isUnsigned, false);
   }
 
   /*
@@ -51,8 +51,8 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
   void FindVectors(LocationType locationType, Offset allocationAddress,
                    Offset allocationLimit, const std::vector<Offset>* anchors,
                    std::vector<VectorInfo>& vectors) const {
-    if (anchors != 0) {
-      typename VirtualAddressMap<Offset>::Reader reader(*(Base::_addressMap));
+    if (anchors != nullptr) {
+      typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
       for (Offset anchor : *anchors) {
         if (reader.ReadOffset(anchor, 0xbad) == allocationAddress) {
           Offset endUsed = reader.ReadOffset(anchor + sizeof(Offset), 0xbad);
@@ -97,7 +97,7 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
       Offset incomingAddress = incoming->Address();
       const char* image;
       Offset numBytesFound =
-          Base::_addressMap->FindMappedMemoryImage(incomingAddress, &image);
+          Base::_addressMap.FindMappedMemoryImage(incomingAddress, &image);
 
       if (numBytesFound < incomingSize) {
         return false;

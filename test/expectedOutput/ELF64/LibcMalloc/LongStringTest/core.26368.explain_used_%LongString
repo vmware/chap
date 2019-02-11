@@ -3,39 +3,42 @@ This allocation matches pattern LongString.
 The string has 0x10 bytes, containing
 "0123456789abcdef".
 The capacity is considered to be 0x10.
-The string is at address 0x7fffffffde20 on the stack.
-Allocation at 615c70 appears to be directly anchored from at least one stack.
+The referencing std::string is at address 0x7fffffffde20 on the stack.
+The allocation at 0x615c70 appears to be directly anchored from
+at least one stack.
 Address 0x7fffffffde20 is on the live part of the stack for thread 1.
-Stack address 7fffffffde20 references 615c70
+Stack address 0x7fffffffde20 references 0x615c70.
 
 Anchored allocation at 615d00 of size 18
 This allocation matches pattern LongString.
 The string has 0x11 bytes, containing
 "another bogus key".
 The capacity is considered to be 0x11.
-The string is at offset 0x20 in the allocation at 0x615cb0.
-Allocation at 615d00 appears to be indirectly statically anchored
-... via anchor point 615cb0
-Address 0x603138 is at offset 0x1138 in range starting at 0x602000
-for module /home/tim/LongStringTest.
-The relative virtual address in the module is 0x203138
-Address 0x603138 is readable and writable.
-Address 0x603138 is mapped into the process image.
-Static address 603138 references anchor point 615cb0
-... which references 615d00
+The referencing std::string is at offset 0x20 in the allocation at 0x615cb0.
+The allocation at 0x615d00 appears to be indirectly statically anchored
+via anchor point 0x615cb0.
+Address 0x603138 is at offset 0x138 in range
+[0x603000, 604000)
+for module /home/tim/LongStringTest
+and at module-relative virtual address 0x203138.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x603138 references anchor point 0x615cb0
+which references 0x615d00
 
 Anchored allocation at 615d20 of size 28
 This allocation matches pattern LongString.
 The string has 0x26 bytes, containing
 "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
 The capacity is considered to be 0x26.
-The string is at address 0x603100 in statically allocated memory.
-Allocation at 615d20 appears to be directly statically anchored.
-Address 0x603100 is at offset 0x1100 in range starting at 0x602000
-for module /home/tim/LongStringTest.
-The relative virtual address in the module is 0x203100
-Address 0x603100 is readable and writable.
-Address 0x603100 is mapped into the process image.
-Static address 603100 references 615d20
+The referencing std::string is at address 0x603100 in statically allocated memory.
+The allocation at 0x615d20 appears to be directly statically anchored.
+Address 0x603100 is at offset 0x100 in range
+[0x603000, 604000)
+for module /home/tim/LongStringTest
+and at module-relative virtual address 0x203100.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x603100 references 0x615d20.
 
 3 allocations use 0x58 (88) bytes.
