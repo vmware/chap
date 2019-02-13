@@ -290,7 +290,10 @@ class Subcommand : public Commands::Subcommand {
            " free allocations,\n"
            " with the caveat that normally such references are false, so this"
            " switch cannot\n"
-           " be used for automated bug detection.\n";
+           " be used for automated bug detection.\n\n"
+           "After restrictions have been applied, the /extend switch can be"
+           " used to extend\n"
+           " the set to adjacent allocations.  See USERGUIDE.md for details.\n";
   }
 
  private:
