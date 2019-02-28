@@ -36,6 +36,24 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
   }
 
  private:
+  /*
+   * Count things that look like instances of std::string, which should
+   * reference
+   * the start of the c-string in the candidate COWStringBody.
+   */
+  int CountStdStrings(Offset cStringAddress,
+                      const std::vector<Offset>* anchors) const {
+    int numStrings = 0;
+    if (anchors != nullptr) {
+      typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
+      for (Offset anchor : *anchors) {
+        if (reader.ReadOffset(anchor, 0xbad) == cStringAddress) {
+          numStrings++;
+        }
+      }
+    }
+    return numStrings;
+  }
   virtual bool Visit(Commands::Context* context, AllocationIndex index,
                      const Allocation& allocation, bool isUnsigned,
                      bool explain) const {
@@ -53,15 +71,17 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
       return false;
     }
 
+    Offset allocationAddress = allocation.Address();
     const char* image;
     Offset numBytesFound =
-        Base::_addressMap.FindMappedMemoryImage(allocation.Address(), &image);
+        Base::_addressMap.FindMappedMemoryImage(allocationAddress, &image);
 
     if (numBytesFound < allocationSize) {
       return false;
     }
+    Offset cStringAddress = allocationAddress + 3 * sizeof(Offset);
 
-    Offset maxCapacity = allocationSize - (Offset)(3 * sizeof(Offset) - 1);
+    Offset maxCapacity = allocationSize - (Offset)(3 * sizeof(Offset) + 1);
     Offset capacity = ((Offset*)(image))[1];
     if (capacity == 0 || capacity > maxCapacity ||
         (maxCapacity > 5 * sizeof(Offset) && capacity < (maxCapacity >> 1))) {
@@ -75,31 +95,18 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
       return false;
     }
 
-    Offset stringLength = ((Offset*)(image))[0];
-    if (stringLength > capacity) {
+    int numRefsMinus1 = *((int32_t*)(image + (2 * sizeof(Offset))));
+
+    if (numRefsMinus1 < 0) {
+      /*
+       * The value in the reference count area, which is off by 1 so that
+       * a 0 represents 1 reference, should never be negative.
+       */
       return false;
     }
 
-    const AllocationIndex* pFirstIncoming;
-    const AllocationIndex* pPastIncoming;
-    Base::_graph->GetIncoming(index, &pFirstIncoming, &pPastIncoming);
-
-    /*
-     * Note that after the following statement, numRefsTotal will include
-     * any references from either used or free allocations.
-     */
-
-    int numRefsTotal = pPastIncoming - pFirstIncoming;
-    int numRefsMinus1 = *((int32_t*)(image + (2 * sizeof(Offset))));
-
-    if (numRefsMinus1 < 0 || numRefsMinus1 > numRefsTotal + 5) {
-      /*
-       * This will still allow the case where a small number of references
-       * have been dropped without decrementing the reference count, as
-       * might happen in a slice-on-free of the object containing the
-       * string, but will not identify the case where there have been
-       * many such occurrences.
-       */
+    Offset stringLength = ((Offset*)(image))[0];
+    if (stringLength > capacity) {
       return false;
     }
 
@@ -108,6 +115,66 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
     size_t measuredLength = strnlen(stringStart, (size_t)stringLength + 1);
     if (measuredLength != (size_t)(stringLength)) {
       return false;
+    }
+
+    int numStdStrings = 0;
+
+    const AllocationIndex* pFirstIncoming;
+    const AllocationIndex* pPastIncoming;
+    Base::_graph->GetIncoming(index, &pFirstIncoming, &pPastIncoming);
+    for (const AllocationIndex* pNextIncoming = pFirstIncoming;
+         pNextIncoming < pPastIncoming; pNextIncoming++) {
+      const Allocation* incoming = Base::_finder->AllocationAt(*pNextIncoming);
+      if (incoming == 0) {
+        abort();
+      }
+      Offset incomingSize = incoming->Size();
+      if (!incoming->IsUsed() || incoming->Size() < sizeof(Offset)) {
+        continue;
+      }
+      Offset incomingAddress = incoming->Address();
+      const char* incomingImage;
+      Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
+          incomingAddress, &incomingImage);
+
+      if (numBytesFound < incomingSize) {
+        return false;
+      }
+      Offset numCandidates = incomingSize / sizeof(Offset);
+      const Offset* candidates = (const Offset*)(incomingImage);
+      for (size_t candidateIndex = 0; candidateIndex < numCandidates;
+           ++candidateIndex) {
+        if (candidates[candidateIndex] == cStringAddress) {
+          numStdStrings++;
+        }
+      }
+    }
+    numStdStrings +=
+        CountStdStrings(cStringAddress, Base::_graph->GetStaticAnchors(index));
+    numStdStrings +=
+        CountStdStrings(cStringAddress, Base::_graph->GetStackAnchors(index));
+
+    if (numRefsMinus1 > numStdStrings - 1) {
+      /*
+       * Some of the references have not been accounted for.  We give
+       * a bit of wiggle room here for the case that the string seems well
+       * formed and is referenced at the correct offset a few times, to
+       * allow for loss of references by corruption or slicing or zero-filled
+       * cores.
+       */
+      if (stringLength == 0) {
+        /*
+         * Don't be particularly forgiving in the case of an empty string
+         * because that is often done by a reference to statically allocated
+         * memory and basically the cases when empty strings take dynamically
+         * allocated COWString bodies, such as when a non-empty string is
+         * cleared, are less common.
+         */
+        return false;
+      }
+      if (numStdStrings * 4 < (numRefsMinus1 + 1) * 3) {
+        return false;
+      }
     }
 
     if (context != 0) {

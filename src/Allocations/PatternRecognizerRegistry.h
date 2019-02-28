@@ -31,18 +31,20 @@ class PatternRecognizerRegistry {
   void Describe(Commands::Context& context, AllocationIndex index,
                 const Allocation& allocation, bool isUnsigned,
                 bool explain) const {
-    size_t numPatternsMatched = 0;
     for (typename RecognizerMap::const_iterator it = _recognizers.begin();
          it != _recognizers.end(); ++it) {
-      if (it->second->Describe(context, index, allocation, isUnsigned,
-                               explain)) {
-        numPatternsMatched++;
-      }
-    }
-    if (numPatternsMatched > 1) {
-      context.GetError() << "Warning: Allocation at 0x" << std::hex
-                         << allocation.Address()
-                         << " matches multiple patterns.\n";
+      /*
+       * Allow any pattern recognizers where a match has occurred to report that
+       * match.  At times, particularly with std::vector, there will be false
+       * matches but this seems better than having no description at all and in
+       * any case both matches will appear in the output, giving the user a
+       * chance to make an educated decision.  Previously, the case of multiple
+       * pattern matches was also reported to standard error, but there were
+       * some
+       * cores for which this was really annoying.
+       */
+      (void)(it->second->Describe(context, index, allocation, isUnsigned,
+                                  explain));
     }
   }
 
