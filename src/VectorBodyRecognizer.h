@@ -83,6 +83,15 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
     const AllocationIndex* pPastIncoming;
     Base::_graph->GetIncoming(index, &pFirstIncoming, &pPastIncoming);
 
+    if (pPastIncoming - pFirstIncoming >= 1000) {
+      /*
+       * It is highly unlikely to have that many references, real or false,
+       * to a vector.   For now it is deemed better to fail to match a vector
+       * in such a case than to incur the cost of checking all the references
+       * for a possible match.
+       */
+      return false;
+    }
     std::vector<VectorInfo> vectors;
     for (const AllocationIndex* pNextIncoming = pFirstIncoming;
          pNextIncoming < pPastIncoming; pNextIncoming++) {

@@ -41,14 +41,16 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
    * reference
    * the start of the c-string in the candidate COWStringBody.
    */
-  int CountStdStrings(Offset cStringAddress,
-                      const std::vector<Offset>* anchors) const {
+  int CountStdStrings(Offset cStringAddress, const std::vector<Offset>* anchors,
+                      int limit) const {
     int numStrings = 0;
     if (anchors != nullptr) {
       typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
       for (Offset anchor : *anchors) {
         if (reader.ReadOffset(anchor, 0xbad) == cStringAddress) {
-          numStrings++;
+          if (++numStrings == limit) {
+            break;
+          }
         }
       }
     }
@@ -118,6 +120,7 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
     }
 
     int numStdStrings = 0;
+    int limit = 100;
 
     const AllocationIndex* pFirstIncoming;
     const AllocationIndex* pPastIncoming;
@@ -145,16 +148,24 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
       for (size_t candidateIndex = 0; candidateIndex < numCandidates;
            ++candidateIndex) {
         if (candidates[candidateIndex] == cStringAddress) {
-          numStdStrings++;
+          if (++numStdStrings == limit) {
+            break;
+          }
         }
       }
     }
-    numStdStrings +=
-        CountStdStrings(cStringAddress, Base::_graph->GetStaticAnchors(index));
-    numStdStrings +=
-        CountStdStrings(cStringAddress, Base::_graph->GetStackAnchors(index));
+    if (numStdStrings < limit) {
+      numStdStrings +=
+          CountStdStrings(cStringAddress, Base::_graph->GetStaticAnchors(index),
+                          limit - numStdStrings);
+      if (numStdStrings < limit) {
+        numStdStrings += CountStdStrings(cStringAddress,
+                                         Base::_graph->GetStackAnchors(index),
+                                         limit - numStdStrings);
+      }
+    }
 
-    if (numRefsMinus1 > numStdStrings - 1) {
+    if (numStdStrings < limit && numRefsMinus1 > numStdStrings - 1) {
       /*
        * Some of the references have not been accounted for.  We give
        * a bit of wiggle room here for the case that the string seems well
@@ -164,7 +175,7 @@ class COWStringBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
        */
       if (stringLength == 0) {
         /*
-         * Don't be particularly forgiving in the case of an empty string
+         * Don't be as forgiving in the case of an empty string
          * because that is often done by a reference to statically allocated
          * memory and basically the cases when empty strings take dynamically
          * allocated COWString bodies, such as when a non-empty string is
