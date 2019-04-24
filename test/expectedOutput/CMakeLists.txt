@@ -79,3 +79,5 @@ exout_test(PATH ELF64/LibcMalloc/WrongPhdrsForInaccessible
            FILES core.python_5_threads.bz2)
 exout_test(PATH ELF64/LibcMalloc/PyDictKeysObjectTest
            FILES core.21887)
+exout_test(PATH ELF64/LibcMalloc/ListTest
+           FILES core.52238)

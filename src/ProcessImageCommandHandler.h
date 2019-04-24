@@ -26,6 +26,7 @@
 #include "ThreadMapCommands/DescribeStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
 #include "VectorBodyRecognizer.h"
+#include "DoublyLinkedListNodeRecognizer.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
@@ -155,9 +156,11 @@ class ProcessImageCommandHandler {
         _summarizeSignaturesSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternRecognizerRegistry),
-        _vectorBodyRecognizer(processImage) {
-    // Leave it to any derived class to add any describers.
+        _vectorBodyRecognizer(processImage),
+        _doublyLinkedListNodeRecognizer(processImage) {
     _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
+    _patternRecognizerRegistry.Register(_doublyLinkedListNodeRecognizer);
+    // Leave it to any derived class to add any describers.
   }
 
   virtual void AddCommandCallbacks(Commands::Runner& /* r */) {}
@@ -262,6 +265,7 @@ class ProcessImageCommandHandler {
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
   VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
+  DoublyLinkedListNodeRecognizer<Offset> _doublyLinkedListNodeRecognizer;
 };
 
 }  // namespace chap

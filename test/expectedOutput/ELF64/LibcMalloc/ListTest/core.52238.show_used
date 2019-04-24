@@ -1,0 +1,257 @@
+Used allocation at 604010 of size 18
+          603ec0           603ec0               90 
+
+Used allocation at 604030 of size 28
+ 0:                c                c                0 6c666461736a6b6c
+20:         73646a6b 
+
+Used allocation at 604060 of size 18
+          603ed0           603ed0           604048 
+
+Used allocation at 604080 of size 18
+          6040a0           603ee0               a0 
+
+Used allocation at 6040a0 of size 18
+          6040c0           604080               a1 
+
+Used allocation at 6040c0 of size 18
+          603ee0           6040a0               a2 
+
+Used allocation at 6040e0 of size 18
+          604100           603ef0               a0 
+
+Used allocation at 604100 of size 18
+          604120           6040e0               a1 
+
+Used allocation at 604120 of size 18
+          604140           604100               a2 
+
+Used allocation at 604140 of size 18
+          604160           604120               a3 
+
+Used allocation at 604160 of size 18
+          604180           604140               a4 
+
+Used allocation at 604180 of size 18
+          6041a0           604160               a5 
+
+Used allocation at 6041a0 of size 18
+          6041c0           604180               a6 
+
+Used allocation at 6041c0 of size 18
+          6041e0           6041a0               a7 
+
+Used allocation at 6041e0 of size 18
+          604200           6041c0               a8 
+
+Used allocation at 604200 of size 18
+          604220           6041e0               a9 
+
+Used allocation at 604220 of size 18
+          604240           604200               aa 
+
+Used allocation at 604240 of size 18
+          604260           604220               ab 
+
+Used allocation at 604260 of size 18
+          604280           604240               ac 
+
+Used allocation at 604280 of size 18
+          6042a0           604260               ad 
+
+Used allocation at 6042a0 of size 18
+          6042c0           604280               ae 
+
+Used allocation at 6042c0 of size 18
+          603ef0           6042a0               af 
+
+Used allocation at 6042e0 of size 18
+    7fffffffe200     7fffffffe200                0 
+
+Used allocation at 604300 of size 18
+          604320     7fffffffe1f0               10 
+
+Used allocation at 604320 of size 18
+    7fffffffe1f0           604300               11 
+
+Used allocation at 604340 of size 18
+          604360     7fffffffe1e0               20 
+
+Used allocation at 604360 of size 18
+          604380           604340               21 
+
+Used allocation at 604380 of size 18
+    7fffffffe1e0           604360               22 
+
+Used allocation at 6043a0 of size 38
+ 0:           6043e0           6043e0           604430           604430
+20:           604450           604490                0 
+
+Used allocation at 6043e0 of size 18
+          6043a0           6043a0               30 
+
+Used allocation at 604400 of size 28
+ 0:                c                c                0 6c666461736a6b6c
+20:         73646a6b 
+
+Used allocation at 604430 of size 18
+          6043b0           6043b0           604418 
+
+Used allocation at 604450 of size 18
+          604470           6043c0               40 
+
+Used allocation at 604470 of size 18
+          604490           604450               41 
+
+Used allocation at 604490 of size 18
+          6043c0           604470               42 
+
+Used allocation at 6044b0 of size 18
+    7fffffffe190     7fffffffe190               50 
+
+Used allocation at 6044d0 of size 28
+ 0:                c                c                0 6c666461736a6b6c
+20:         73646a6b 
+
+Used allocation at 604500 of size 18
+    7fffffffe1a0     7fffffffe1a0           6044e8 
+
+Used allocation at 604520 of size 18
+          604540     7fffffffe1b0               60 
+
+Used allocation at 604540 of size 18
+          604560           604520               61 
+
+Used allocation at 604560 of size 18
+    7fffffffe1b0           604540               62 
+
+Used allocation at 604580 of size 18
+          6045a0     7fffffffe1c0               50 
+
+Used allocation at 6045a0 of size 18
+          6045c0           604580               51 
+
+Used allocation at 6045c0 of size 18
+          6045e0           6045a0               52 
+
+Used allocation at 6045e0 of size 18
+          604600           6045c0               53 
+
+Used allocation at 604600 of size 18
+          604620           6045e0               54 
+
+Used allocation at 604620 of size 18
+          604640           604600               55 
+
+Used allocation at 604640 of size 18
+          604660           604620               56 
+
+Used allocation at 604660 of size 18
+          604680           604640               57 
+
+Used allocation at 604680 of size 18
+          6046a0           604660               58 
+
+Used allocation at 6046a0 of size 18
+          6046c0           604680               59 
+
+Used allocation at 6046c0 of size 18
+          6046e0           6046a0               5a 
+
+Used allocation at 6046e0 of size 18
+          604700           6046c0               5b 
+
+Used allocation at 604700 of size 18
+          604720           6046e0               5c 
+
+Used allocation at 604720 of size 18
+          604740           604700               5d 
+
+Used allocation at 604740 of size 18
+          604760           604720               5e 
+
+Used allocation at 604760 of size 18
+          604780           604740               5f 
+
+Used allocation at 604780 of size 18
+          6047a0           604760               60 
+
+Used allocation at 6047a0 of size 18
+          6047c0           604780               61 
+
+Used allocation at 6047c0 of size 18
+          6047e0           6047a0               62 
+
+Used allocation at 6047e0 of size 18
+          604800           6047c0               63 
+
+Used allocation at 604800 of size 18
+          604820           6047e0               64 
+
+Used allocation at 604820 of size 18
+          604840           604800               65 
+
+Used allocation at 604840 of size 18
+          604860           604820               66 
+
+Used allocation at 604860 of size 18
+          604880           604840               67 
+
+Used allocation at 604880 of size 18
+          6048a0           604860               68 
+
+Used allocation at 6048a0 of size 18
+          6048c0           604880               69 
+
+Used allocation at 6048c0 of size 18
+          6048e0           6048a0               6a 
+
+Used allocation at 6048e0 of size 18
+          604900           6048c0               6b 
+
+Used allocation at 604900 of size 18
+          604920           6048e0               6c 
+
+Used allocation at 604920 of size 18
+          604940           604900               6d 
+
+Used allocation at 604940 of size 18
+          604960           604920               6e 
+
+Used allocation at 604960 of size 18
+    7fffffffe1c0           604940               6f 
+
+Used allocation at 604980 of size 18
+          6049a0           604a80             7000 
+
+Used allocation at 6049a0 of size 18
+          6049c0           604980               70 
+
+Used allocation at 6049c0 of size 18
+          6049e0           6049a0               71 
+
+Used allocation at 6049e0 of size 18
+          604a00           6049c0               72 
+
+Used allocation at 604a00 of size 18
+          604a20           6049e0               73 
+
+Used allocation at 604a20 of size 18
+          604a40           604a00               74 
+
+Used allocation at 604a40 of size 18
+          604a60           604a20               75 
+
+Used allocation at 604a60 of size 18
+          604a80           604a40               76 
+
+Used allocation at 604a80 of size 18
+          604980           604a60               77 
+
+Used allocation at 604aa0 of size 18
+          604ac0           604ac0             7800 
+
+Used allocation at 604ac0 of size 18
+          604aa0           604aa0               78 
+
+84 allocations use 0x830 (2,096) bytes.

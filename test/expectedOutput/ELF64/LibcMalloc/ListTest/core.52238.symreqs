@@ -1,0 +1,25 @@
+set logging file core.52238.symdefs
+set logging overwrite 1
+set logging redirect 1
+set logging on
+set height 0
+printf "ANCHOR 603ec0\n"
+info symbol 0x603ec0
+printf "ANCHOR 603ec8\n"
+info symbol 0x603ec8
+printf "ANCHOR 603ed0\n"
+info symbol 0x603ed0
+printf "ANCHOR 603ed8\n"
+info symbol 0x603ed8
+printf "ANCHOR 603ee0\n"
+info symbol 0x603ee0
+printf "ANCHOR 603ee8\n"
+info symbol 0x603ee8
+printf "ANCHOR 603ef0\n"
+info symbol 0x603ef0
+printf "ANCHOR 603ef8\n"
+info symbol 0x603ef8
+set logging off
+set logging overwrite 0
+set logging redirect 0
+printf "output written to core.52238.symdefs\n"
