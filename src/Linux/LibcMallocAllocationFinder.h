@@ -2103,8 +2103,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         check = HandleNonMainArenaCorruption(heap, prevCheck);
         if (check != 0) {
           chunkSize = 0;
-          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
-          continue;
+          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE, 0xbadbad);
+          if (sizeAndFlags != 0xbadbad) {
+            continue;
+          }
         }
         return;
       }
@@ -2114,8 +2116,10 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         check = HandleNonMainArenaCorruption(heap, prevCheck);
         if (check != 0) {
           chunkSize = 0;
-          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
-          continue;
+          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE, 0xbadbad);
+          if (sizeAndFlags != 0xbadbad) {
+            continue;
+          }
         }
         return;
       }
@@ -2124,7 +2128,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if (check + chunkSize == limit) {
         allocationSize -= OFFSET_SIZE;
       } else {
-        sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE + chunkSize);
+        sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE + chunkSize,
+                                         0xbadbad);
+        if (sizeAndFlags == 0xbadbad) {
+          return;
+        }
         isFree =
             ((sizeAndFlags & 1) == 0) || (allocationSize < 3 * OFFSET_SIZE);
       }
@@ -2292,6 +2300,11 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           // in rare cases can be huge, the used/free status
           // will be wrong for remaining entries on that
           // particular fast bin list.
+          if (e._address == fastBinCheck) {
+            std::cerr << "The arena header at 0x" << std::hex << arenaAddress
+                      << " is not in the core.\n";
+            return;
+          }
           ReportFastBinCorruption(arena, fastBinCheck, e._address,
                                   "not in the core");
         }
