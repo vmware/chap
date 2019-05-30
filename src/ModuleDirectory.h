@@ -101,10 +101,10 @@ class ModuleDirectory {
     return true;
   }
 
-  RangeToFlags* Find(const std::string& name) const {
+  const RangeToFlags* Find(const std::string& name) const {
     const_iterator it = _rangesByName.find(name);
     if (it != _rangesByName.end()) {
-      return it->second;
+      return &(it->second);
     } else {
       return (RangeToFlags*)(0);
     }
