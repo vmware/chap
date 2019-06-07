@@ -115,6 +115,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
               reader.ReadOffset(_mainArenaAddress + _arenaNextOffset);
           Offset top = reader.ReadOffset(_mainArenaAddress + _arenaTopOffset);
           Offset size = reader.ReadOffset(_mainArenaAddress + _arenaSizeOffset);
+          Offset maxSize =
+              reader.ReadOffset(_mainArenaAddress + _arenaMaxSizeOffset);
           bool isContiguous =
               (reader.ReadU32(nextArena + sizeof(uint32_t)) & 2) == 0;
           ArenaMapIterator itMainArena =
@@ -126,6 +128,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           mainArena._nextArena = nextArena;
           mainArena._top = top;
           mainArena._size = size;
+          mainArena._maxSize = maxSize;
           _mainArenaIsContiguous = isContiguous;
         } catch (NotMapped&) {
           std::cerr << "Derived main arena address at " << std::hex
@@ -296,6 +299,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
           _nextArena(0),
           _top(0),
           _size(0),
+          _maxSize(0),
           _freeCount(0),
           _freeBytes(0),
           _usedCount(0),
@@ -307,6 +311,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     Offset _nextArena;
     Offset _top;
     Offset _size;
+    Offset _maxSize;
     Offset _freeCount;
     Offset _freeBytes;
     Offset _usedCount;
@@ -382,6 +387,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   bool _unfilledImagesFound;
   Offset _arenaNextOffset;
   Offset _arenaSizeOffset;
+  Offset _arenaMaxSizeOffset;
   Offset _fastBinStartOffset;
   Offset _fastBinLimitOffset;
   Offset _arenaTopOffset;
@@ -1032,6 +1038,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if (bestSizeOffsetVotes < numVotes) {
         bestSizeOffsetVotes = numVotes;
         _arenaSizeOffset = sizeOffset;
+        _arenaMaxSizeOffset = sizeOffset + sizeof(Offset);
         if (numVotes == numArenas) {
           break;
         }
@@ -1094,6 +1101,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         arena._top = reader.ReadOffset(arenaAddress + _arenaTopOffset);
         arena._nextArena = reader.ReadOffset(arenaAddress + _arenaNextOffset);
         arena._size = reader.ReadOffset(arenaAddress + _arenaSizeOffset);
+        arena._maxSize = reader.ReadOffset(arenaAddress + _arenaMaxSizeOffset);
       } catch (NotMapped&) {
         if (showErrors) {
           std::cerr << "Arena at " << std::hex << arenaAddress
@@ -1461,6 +1469,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       mainArena._top = reader.ReadOffset(_mainArenaAddress + 12 * OFFSET_SIZE);
       mainArena._size =
           reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10e * OFFSET_SIZE);
+      mainArena._maxSize =
+          reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10f * OFFSET_SIZE);
       _mainArenaIsContiguous =
           (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
       return true;
@@ -2091,6 +2101,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       base += 4 * OFFSET_SIZE;
     }
 
+    Offset top = 0;
+    ArenaMapConstIterator itArena = _arenas.find(heap._arenaAddress);
+    if (itArena != _arenas.end()) {
+      top = itArena->second._top;
+    }
+
     Reader reader(_addressMap);
     Offset sizeAndFlags = reader.ReadOffset(base + OFFSET_SIZE);
     Offset chunkSize = 0;
@@ -2128,8 +2144,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       if (check + chunkSize == limit) {
         allocationSize -= OFFSET_SIZE;
       } else {
-        sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE + chunkSize,
-                                         0xbadbad);
+        sizeAndFlags =
+            reader.ReadOffset(check + OFFSET_SIZE + chunkSize, 0xbadbad);
         if (sizeAndFlags == 0xbadbad) {
           return;
         }
@@ -2141,6 +2157,25 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         break;
       }
       if (isFree) {
+        if (check == top) {
+          /*
+           * If the entry is the top value for an arena, we want the size of the
+           * allocation to include any writable bytes in the heap that follow
+           * the top allocation so that the results of "count free" reflect
+           * the bytes that are actually available for allocation.  Otherwise,
+           * if the end of the top allocation has shifted to a lower address
+           * without a corresponding shift in the end of the writable region for
+           * the heap, the total free count will be misleading.
+           */
+          typename VirtualAddressMap<Offset>::const_iterator itMap =
+              _addressMap.find(top);
+          Offset endWritableInHeap = itMap.Limit();
+          Offset endHeapRange = base + _maxHeapSize;
+          if (endWritableInHeap > endHeapRange) {
+            endWritableInHeap = endHeapRange;
+          }
+          allocationSize = endWritableInHeap - (check + 2 * OFFSET_SIZE);
+        }
         RecordFree(check + 2 * OFFSET_SIZE, allocationSize);
       } else {
         RecordAllocated(check + 2 * OFFSET_SIZE, allocationSize);

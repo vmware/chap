@@ -41,9 +41,9 @@ class DescribeArenas : public Commands::Subcommand {
       Offset address = addressAndInfo.first;
       const typename LibcMallocAllocationFinder<Offset>::Arena arena =
           addressAndInfo.second;
-      tally.AdjustTally(arena._size);
+      tally.AdjustTally(arena._maxSize);
       output << "Arena at 0x" << std::hex << address << " has size 0x"
-             << arena._size << ".\n"
+             << arena._size << " and max size 0x" << arena._maxSize << ".\n"
              << std::dec << arena._freeCount << " free allocations take 0x"
              << std::hex << arena._freeBytes << " bytes.\n"
              << std::dec << arena._usedCount << " used allocations take 0x"
