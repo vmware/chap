@@ -29,18 +29,50 @@ class ExtendedVisitor {
   ExtendedVisitor(
       Commands::Context& context, const ProcessImage<Offset>& processImage,
       const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
-      : _isEnabled(false),
+      : _context(context),
+        _isEnabled(false),
         _hasErrors(false),
         _patternRecognizerRegistry(patternRecognizerRegistry),
         _graph(0),
         _finder(processImage.GetAllocationFinder()),
         _addressMap(processImage.GetVirtualAddressMap()),
-        _numAllocations(_finder->NumAllocations()) {
+        _numAllocations(_finder->NumAllocations()),
+        _commentExtensions(false) {
+    Commands::Error& error = context.GetError();
     size_t numExtensionArguments = context.GetNumArguments("extend");
     if (numExtensionArguments == 0) {
       return;
     }
-    Commands::Error& error = context.GetError();
+    size_t numCommentExtensionsArguments =
+        context.GetNumArguments("commentExtensions");
+    if (numCommentExtensionsArguments > 0) {
+      for (size_t i = 0; i < numCommentExtensionsArguments; ++i) {
+        const std::string arg = context.Argument("commentExtensions", i);
+        if (arg == "true") {
+          if (i > 0) {
+            if (!_commentExtensions) {
+              error << "Conflicting arguments to multiple /commentExtensions "
+                       " switches.\n";
+              _hasErrors = true;
+            }
+          } else {
+            _commentExtensions = true;
+          }
+        } else if (arg == "false") {
+          if (i > 0 && _commentExtensions) {
+            error << "Conflicting arguments to multiple /commentExtensions "
+                     " switches.\n";
+            _hasErrors = true;
+          }
+        } else {
+          error << "Unexpected argument \"" << arg
+                << "\" to "
+                   "/commentExtensions switch.\n";
+          _hasErrors = true;
+        }
+      }
+    }
+
     //  [signature-or-label][@offset-in-member]<direction
     //  indicator>[signature][@offset-in-signature][:stateLabel]
     std::regex extensionRegex(
@@ -250,10 +282,16 @@ class ExtendedVisitor {
 
     /*
      * If the extended visitor is enabled, but we already visited the given
-     * set member as an extension to the set, don't visit it again.
+     * set member as an extension to the set, don't visit it again, but possibly
+     * add some comments to the output if commentExtensions is true.
      */
 
     if (_visited[memberIndex]) {
+      if (_commentExtensions) {
+        _context.GetOutput()
+            << "# Base set member at 0x" << std::hex << allocation.Address()
+            << " was already visited via an extension rule.\n\n";
+      }
       return;
     }
 
@@ -356,7 +394,8 @@ class ExtendedVisitor {
         }
       }
 
-      if (_visited[candidateIndex]) {
+      bool alreadyVisited = _visited[candidateIndex];
+      if (!_commentExtensions && alreadyVisited) {
         continue;
       }
 
@@ -410,6 +449,27 @@ class ExtendedVisitor {
         }
       }
 
+      if (_commentExtensions) {
+        _context.GetOutput() << std::hex;
+        if (rule._referenceIsOutgoing) {
+          _context.GetOutput() << "# Allocation at 0x"
+                               << memberAllocation->Address()
+                               << " references allocation at 0x"
+                               << candidateAllocation->Address() << ".\n";
+        } else {
+          _context.GetOutput() << "# Allocation at 0x"
+                               << memberAllocation->Address()
+                               << " is referenced by allocation at 0x"
+                               << candidateAllocation->Address() << ".\n";
+        }
+        if (alreadyVisited) {
+          _context.GetOutput() << "# Allocation at 0x"
+                               << candidateAllocation->Address()
+                               << " was already visited.\n\n";
+          continue;
+        }
+      }
+
       /*
        * The point of this next part is that we don't want to bother pushing
        * context for a member for which all the rules have been checked.  This
@@ -422,6 +482,7 @@ class ExtendedVisitor {
         extensionContexts.emplace(memberIndex, ruleIndex, numCandidatesLeft,
                                   ruleCheckProgress, pNextCandidate);
       }
+
       memberIndex = candidateIndex;
       memberAllocation = candidateAllocation;
       _visited[memberIndex] = true;
@@ -515,6 +576,7 @@ class ExtendedVisitor {
     }
     return false;
   }
+  Commands::Context& _context;
   bool _isEnabled;
   bool _hasErrors;
   bool _canRun;
@@ -526,6 +588,7 @@ class ExtendedVisitor {
   std::vector<bool> _visited;
   std::vector<Rule> _rules;
   std::vector<size_t> _stateToBase;
+  bool _commentExtensions;
 };
 }  // namespace Allocations
 }  // namespace chap

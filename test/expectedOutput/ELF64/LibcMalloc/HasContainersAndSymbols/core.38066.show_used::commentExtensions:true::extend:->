@@ -1,0 +1,123 @@
+Used allocation at 603010 of size 38
+... with signature 401f30(HasSet)
+ 0:           401f30                0                0           6033e0
+20:           6033b0           603380                3 
+
+# Allocation at 0x603010 references allocation at 0x603380.
+Used allocation at 603380 of size 28
+ 0:                0           6033e0                0                0
+20:           603360 
+
+# Allocation at 0x603380 references allocation at 0x603360.
+Used allocation at 603360 of size 18
+... with signature 402050(HasList)
+          402050           603368           603368 
+
+# Allocation at 0x603380 references allocation at 0x6033e0.
+Used allocation at 6033e0 of size 28
+ 0:                1           603020           6033b0           603380
+20:           603070 
+
+# Allocation at 0x6033e0 references allocation at 0x603010.
+# Allocation at 0x603010 was already visited.
+
+# Allocation at 0x6033e0 references allocation at 0x603070.
+Used allocation at 603070 of size 58
+... with signature 401fb0(HasDeque)
+ 0:           401fb0           6030d0                8           603120
+20:           603120           603320           6030e8           603130
+40:           603120           603320           6030e8 
+
+# Allocation at 0x603070 references allocation at 0x6030d0.
+Used allocation at 6030d0 of size 48
+ 0:                0                0                0           603120
+20:                0                0                0                0
+40:                0 
+
+# Allocation at 0x6030d0 references allocation at 0x603120.
+Used allocation at 603120 of size 208
+  0:           603050           603330                0                0
+ 20:                0                0                0                0
+ 40:                0                0                0                0
+ 60:                0                0                0                0
+ 80:                0                0                0                0
+ a0:                0                0                0                0
+ c0:                0                0                0                0
+ e0:                0                0                0                0
+100:                0                0                0                0
+120:                0                0                0                0
+140:                0                0                0                0
+160:                0                0                0                0
+180:                0                0                0                0
+1a0:                0                0                0                0
+1c0:                0                0                0                0
+1e0:                0                0                0                0
+200:                0 
+
+# Allocation at 0x603120 references allocation at 0x603050.
+Used allocation at 603050 of size 18
+... with signature 402050(HasList)
+          402050           603058           603058 
+
+# Allocation at 0x603120 references allocation at 0x603330.
+Used allocation at 603330 of size 28
+... with signature 402000(HasVector)
+ 0:           402000                0                0                0
+20:                0 
+
+# Allocation at 0x603070 references allocation at 0x603120.
+# Allocation at 0x603120 was already visited.
+
+# Allocation at 0x6033e0 references allocation at 0x603380.
+# Allocation at 0x603380 was already visited.
+
+# Allocation at 0x6033e0 references allocation at 0x6033b0.
+Used allocation at 6033b0 of size 28
+ 0:                0           6033e0                0                0
+20:           603050 
+
+# Allocation at 0x6033b0 references allocation at 0x603050.
+# Allocation at 0x603050 was already visited.
+
+# Allocation at 0x6033b0 references allocation at 0x6033e0.
+# Allocation at 0x6033e0 was already visited.
+
+# Allocation at 0x603010 references allocation at 0x6033b0.
+# Allocation at 0x6033b0 was already visited.
+
+# Allocation at 0x603010 references allocation at 0x6033e0.
+# Allocation at 0x6033e0 was already visited.
+
+# Base set member at 0x603050 was already visited via an extension rule.
+
+# Base set member at 0x603070 was already visited via an extension rule.
+
+# Base set member at 0x6030d0 was already visited via an extension rule.
+
+# Base set member at 0x603120 was already visited via an extension rule.
+
+# Base set member at 0x603330 was already visited via an extension rule.
+
+# Base set member at 0x603360 was already visited via an extension rule.
+
+# Base set member at 0x603380 was already visited via an extension rule.
+
+# Base set member at 0x6033b0 was already visited via an extension rule.
+
+# Base set member at 0x6033e0 was already visited via an extension rule.
+
+Used allocation at 603410 of size 18
+... with signature 402050(HasList)
+          402050           603418           603418 
+
+Used allocation at 603430 of size 18
+... with signature 4020a0(HasPair)
+          4020a0           603010           603410 
+
+# Allocation at 0x603430 references allocation at 0x603010.
+# Allocation at 0x603010 was already visited.
+
+# Allocation at 0x603430 references allocation at 0x603410.
+# Allocation at 0x603410 was already visited.
+
+12 allocations use 0x3e0 (992) bytes.
