@@ -81,6 +81,7 @@ class ExtendedVisitor {
         "([^@=]*)(@([[:xdigit:]]+))?"  // constrain the type of extension
         "(=>(\\w+))?");                // select a new extension state
     std::smatch extensionSmatch;
+    _stateLabels.push_back("");
     std::map<std::string, size_t> labelToStateNumber;
     labelToStateNumber[""] = 0;
     std::vector<Specification> specifications;
@@ -135,6 +136,7 @@ class ExtendedVisitor {
         stateIndex = it->second;
       } else {
         stateIndex = labelToStateNumber.size();
+        _stateLabels.push_back(stateLabel);
         labelToStateNumber[stateLabel] = stateIndex;
       }
       spec._newState = stateIndex;
@@ -468,6 +470,12 @@ class ExtendedVisitor {
                                << " was already visited.\n\n";
           continue;
         }
+        if (rule._newState != 0) {
+          _context.GetOutput()
+              << "# Allocation at 0x" << candidateAllocation->Address()
+              << " will be extended in state " << _stateLabels[rule._newState]
+              << ".\n";
+        }
       }
 
       /*
@@ -589,6 +597,7 @@ class ExtendedVisitor {
   std::vector<Rule> _rules;
   std::vector<size_t> _stateToBase;
   bool _commentExtensions;
+  std::vector<std::string> _stateLabels;
 };
 }  // namespace Allocations
 }  // namespace chap

@@ -87,5 +87,12 @@ show used HasPair /extend HasPair->HasSet /extend HasSet->-
 # of a member signature.
 show used HasSet /extend HasSet@18->@0=>mapNode \
  /extend mapNode@10->@0=>mapNode \
- /extend mapNode@18->@0=>mapNode /extend mapNode@20->=>StopHere
+ /extend mapNode@18->@0=>mapNode \
+ /extend mapNode@20->=>StopHere
+# Do the same command but comment what is happening with extensions
+show used HasSet /extend HasSet@18->@0=>mapNode \
+ /extend mapNode@10->@0=>mapNode \
+ /extend mapNode@18->@0=>mapNode \
+ /extend mapNode@20->=>StopHere \
+ /commentExtensions true
 DONE
