@@ -77,6 +77,10 @@ class SummarizeSignatures : public Commands::Subcommand {
       output << count << " signatures are vtable pointers "
                          "with names from libraries or executables.\n";
     }
+    count = counts[SignatureDirectory<Offset>::WRITABLE_MODULE_REFERENCE];
+    if (count > 0) {
+      output << count << " signatures point to writable memory for modules.\n";
+    }
     count = counts[SignatureDirectory<Offset>::VTABLE_WITH_NAME_FROM_BINDEFS];
     if (count > 0) {
       output << count << " signatures are vtable pointers "

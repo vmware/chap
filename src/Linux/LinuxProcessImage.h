@@ -1294,42 +1294,93 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       }
 
       bool writableVtable = false;
+      typename Allocations::SignatureDirectory<Offset>::Status status =
+          SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS;
       if ((it.Flags() & RangeAttributes::IS_WRITABLE) != 0) {
         /*
          * Some recent linkers end up causing vtables to be writable
          * at times.  This is a security bug, but we want chap to
          * support such signatures.  For now they are supported only
          * if the mangled name is actually in the core.  In the case that
-         * the vtable is writable, it will not be in the static area associated
-         * with the module and will be in an area of memory that is not yet
-         * analyzed by chap.
+         * the vtable is writable, it may be in the static area associated
+         * with a module or if not it will be in an area of memory that is not
+         * yet analyzed by chap.
          */
         if (Base::_virtualMemoryPartition.IsClaimed(signature)) {
-          continue;
+          Offset relativeSignature;
+          Offset rangeBase = 0;
+          Offset rangeSize = 0;
+          std::string newModulePath;
+          if (!Base::_moduleDirectory.Find(signature, newModulePath, rangeBase,
+                                           rangeSize, relativeSignature)) {
+            /*
+             * If the signature points to a claimed region, we expect it to
+             * refer to a module, as opposed to, for example, dynamically
+             * allocated memory.
+             */
+            continue;
+          }
+          Offset typeinfoAddr =
+              reader.ReadOffset(signature - sizeof(Offset), 0xbadbad);
+          if (typeinfoAddr == 0xbadbad) {
+            /*
+             * If the typeinfo is not in the process image, perhaps the
+             * signature does not point to a vtable.  At any rate, excluding
+             * this case is needed to avoid false signatures.
+             */
+            continue;
+          }
+          Offset toVtableStart =
+              reader.ReadOffset(signature - 2 * sizeof(Offset), 0xbadbad);
+          if (toVtableStart != 0 &&
+              (toVtableStart >= 0x10000 ||
+               reader.ReadOffset(signature - 2 * sizeof(Offset) - toVtableStart,
+                                 0xbadbad) != 0)) {
+            /*
+             * Just before the pointer to the typeinfo there should be an offset
+             * from that location to the start of the vtable, which always has
+             * a 0.
+             */
+            continue;
+          }
+          if (!Base::_moduleDirectory.Find(typeinfoAddr, newModulePath,
+                                           rangeBase, rangeSize,
+                                           relativeSignature)) {
+            /*
+             * Again to avoid false signatures in this case, we insist that the
+             * typeinfo is associated with a module.
+             */
+            continue;
+          }
+          status = SignatureDirectory::WRITABLE_MODULE_REFERENCE;
         }
         writableVtable = true;
       }
 
       std::string typeinfoName =
           GetUnmangledTypeinfoName(Base::_virtualAddressMap, signature);
-      typename Allocations::SignatureDirectory<Offset>::Status status =
-          SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS;
       if (writableVtable) {
         if (typeinfoName.empty()) {
           /*
-           * If we were guessing that this was possibly a writable vtable
-           * pointer, but didn't actually reach a mangled type name, assume
-           * we just had a pointer to some arbitrary writable area outside
-           * of normal allocations.
+           * We were guessing that this was possibly a writable vtable
+           * pointer, but didn't actually reach a mangled type name.
            */
-          continue;
+          if (status != SignatureDirectory::WRITABLE_MODULE_REFERENCE) {
+            /*
+             * In the case that both the signature and the possible typeinfo
+             * pointers were to modules, we should be willing to try for
+             * this as a signature via symreqs/symdefs.  If not, give up.
+             */
+            continue;
+          }
+        } else {
+          std::cerr << "Warning: type " << typeinfoName
+                    << " has a writable vtable at 0x" << std::hex << signature
+                    << ".\n";
+          std::cerr << "... This is a security violation.\n";
+          status =
+              SignatureDirectory::WRITABLE_VTABLE_WITH_NAME_FROM_PROCESS_IMAGE;
         }
-        std::cerr << "Warning: type " << typeinfoName
-                  << " has a writable vtable at 0x" << std::hex << signature
-                  << ".\n";
-        std::cerr << "... This is a security violation.\n";
-        status =
-            SignatureDirectory::WRITABLE_VTABLE_WITH_NAME_FROM_PROCESS_IMAGE;
       } else {
         if (!typeinfoName.empty()) {
           status = SignatureDirectory::VTABLE_WITH_NAME_FROM_PROCESS_IMAGE;
@@ -1351,7 +1402,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
              Base::_signatureDirectory.BeginSignatures();
          it != itEnd; ++it) {
       typename SignatureDirectory::Status status = it->second.second;
-      if (status != SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS) {
+      if (status != SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS &&
+          status != SignatureDirectory::WRITABLE_MODULE_REFERENCE) {
         continue;
       }
       Offset signature = it->first;
@@ -1427,7 +1479,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          it != itEnd; ++it) {
       Offset signature = it->first;
       typename SignatureDirectory::Status status = it->second.second;
-      if (status == SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS) {
+      if (status == SignatureDirectory::UNWRITABLE_PENDING_SYMDEFS ||
+          status == SignatureDirectory::WRITABLE_MODULE_REFERENCE) {
         gdbScriptFile << "printf \"SIGNATURE " << std::hex << signature
                       << "\\n\"" << '\n'
                       << "info symbol 0x" << signature << '\n';
