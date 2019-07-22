@@ -334,6 +334,8 @@ The *extension-constraints*, if present, have the following parts:
 
 If a *signature* or *pattern* is supplied, allocations reachable from the given member by traversing in the specified *direction* can be added only if they match that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.   If the *direction* is **->** or **~>** the reference from the member allocation must refer to the specified offset in the extension candidate.  If the *direction* is **<-** the reference to the member allocation must appear at the specified offset in the extension candidate.
 
+If you want to understand a bit more how the extensions are being applied, or perhaps to have information about references even when they would extend to an allocation that has already been reached, add **/commentExtensions true** to the end of your chap command.
+
 Some examples:
 
 Minor variants of the following picture, which represents allocations and references between them, but doesn't deal with anchoring at all, will be used for examples throughout this section.  The variants of this picture will look mostly like this first one, in that the allocations and references will be the same, but they will have markings to explain a particular command, typically numbers on the allocations to show the sequence in which they are visited.  
@@ -474,6 +476,10 @@ list used Foo /minincoming Bar=100 /extend Foo<-Bar
 # in this case, because it would also reach anchored allocations.
 show unreferenced Foo ~>
 
+# Describe every unreferenced allocation as well as every leaked allocation that
+# is reachable from those allocations, adding comments explaining a bit about
+# the application of extension rules.
+describe unreferenced ~> /commentExtensions true
 ```
 
 
@@ -494,11 +500,35 @@ To analyze memory leaks, starting from a core for which **count leaks** gave a n
 If you want to understand whether all the leaked objects are reachable from unreferenced objects, you can compare the results of the following two commands.
 
 ```
+count leaked
+count unreferenced
+```
+
+If you want a bit more detail, you can change the verb to summarize:
+
+
+```
 summarize leaked
 
 summarize unreferenced ~>
 
 ```
+
+If you want still more detail about the leaked allocations reached from unreferenced allocations, one of the following two commands can give you more information.  The use of **describe**  has the advantage that it will give information about matched patterns, which may be particularly helpful if all the allocations are unsigned whereas the use of **show** is helpful to see the contents.
+
+```
+describe unreferenced ~> /commentExtensions true
+show unreferenced ~> /commentExtensions true
+```
+
+One additional advantage to the previous commands is that by grouping the leaked allocations they become much more recognizable, because once one figures out the type of an allocation one can (by hand at present because chap doesn't yet handle DWARF information) easily recognize the allocations referenced by that allocation, and with a bit more work figure out possibilities for any allocations that reference the one you have just identified.
+
+Here are some strategies for figuring out the type of an unsigned, unreferenced allocation:
+
+* Look at the contents of the allocation itself.  For example, if it contains a recognizable string you might be able to check the source code for where that string is used.  A possible source of error here might be that the contents of the allocation may be residue and left over from some previous use of that memory.
+* Look at the size of the allocation, keeping in mind that typically the caller of malloc() or calloc() or realloc() receives a result that is at least large enough to satisfy the request.  If the allocation is sufficiently large, and the size happens to be fixed in the code (as opposed to the result of some runtime calculation) you can run **objdump -Cd** on each of the modules reported by **list modules** and look for uses of that constant size.  For example, for an allocation of size 0x708 you might look for "$0x708" or for "$0x700" in the output of **objdump -Cd**.
+* Look for similar anchored allocations of the same size.  If you find such an anchored allocation you can always follow the path from the anchor point to the given allocation to understand the type of that allocation.
+* Look for anchored allocations referenced by the given leaked allocation, again with the idea that the type of an anchored allocation is more easily derived.
 
 Sometimes a leak can still be rooted even if no unreferenced objects are involved, because sometimes there are back pointers.  For example, consider a class Foo that contains an std::map.  All the allocations for the std::map point to the parent, with the root of the red black tree pointing to a header node embedded in the allocation that has the std::map.
 
