@@ -465,7 +465,7 @@ summarize used %SSL_CTX /extend %SSL_CTX@0<-
 
 # Summarize the set with every leaked allocation that matches the pattern %SSL and every leaked allocation
 # directly or indirectly reachable from those allocations.
-summarize leaked %SSL ~>
+summarize leaked %SSL /extend ~>
 
 # List every instance of Foo that is referenced by at least 100 instances of Bar, as well as all the
 # referencing instances of Bar.
@@ -474,12 +474,12 @@ list used Foo /minincoming Bar=100 /extend Foo<-Bar
 # Show every unreferenced allocation of type Foo and every leaked allocation that is reachable, directly
 # or indirectly from those allocations.  Note that use of -> would be different, and likely less useful
 # in this case, because it would also reach anchored allocations.
-show unreferenced Foo ~>
+show unreferenced Foo /extend ~>
 
 # Describe every unreferenced allocation as well as every leaked allocation that
 # is reachable from those allocations, adding comments explaining a bit about
 # the application of extension rules.
-describe unreferenced ~> /commentExtensions true
+describe unreferenced /extend ~> /commentExtensions true
 ```
 
 
@@ -510,15 +510,15 @@ If you want a bit more detail, you can change the verb to summarize:
 ```
 summarize leaked
 
-summarize unreferenced ~>
+summarize unreferenced /extend ~>
 
 ```
 
 If you want still more detail about the leaked allocations reached from unreferenced allocations, one of the following two commands can give you more information.  The use of **describe**  has the advantage that it will give information about matched patterns, which may be particularly helpful if all the allocations are unsigned whereas the use of **show** is helpful to see the contents.
 
 ```
-describe unreferenced ~> /commentExtensions true
-show unreferenced ~> /commentExtensions true
+describe unreferenced /extend ~> /commentExtensions true
+show unreferenced /extend ~> /commentExtensions true
 ```
 
 One additional advantage to the previous commands is that by grouping the leaked allocations they become much more recognizable, because once one figures out the type of an allocation one can (by hand at present because chap doesn't yet handle DWARF information) easily recognize the allocations referenced by that allocation, and with a bit more work figure out possibilities for any allocations that reference the one you have just identified.
