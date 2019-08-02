@@ -1,5 +1,6 @@
-Arena at 0x7ff37da5db20 has size 0x32000 and max size 0x32000.
-13 free allocations take 0x20110 bytes.
-5 used allocations take 0x11e58 bytes.
+Arena at 0x7ff37da5db20 has size 0x32000 (204800)
+and maximum size 0x32000 (204800).
+13 free allocations take 0x20110 (131344) bytes.
+5 used allocations take 0x11e58 (73304) bytes.
 
 1 arenas use 0x32000 (204,800) bytes.

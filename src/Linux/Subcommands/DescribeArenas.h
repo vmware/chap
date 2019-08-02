@@ -43,11 +43,15 @@ class DescribeArenas : public Commands::Subcommand {
           addressAndInfo.second;
       tally.AdjustTally(arena._maxSize);
       output << "Arena at 0x" << std::hex << address << " has size 0x"
-             << arena._size << " and max size 0x" << arena._maxSize << ".\n"
+             << arena._size << " (" << std::dec << arena._size
+             << ")\nand maximum size 0x" << std::hex << arena._maxSize << " ("
+             << std::dec << arena._maxSize << ").\n"
              << std::dec << arena._freeCount << " free allocations take 0x"
-             << std::hex << arena._freeBytes << " bytes.\n"
+             << std::hex << arena._freeBytes << " (" << std::dec
+             << arena._freeBytes << ") bytes.\n"
              << std::dec << arena._usedCount << " used allocations take 0x"
-             << std::hex << arena._usedBytes << " bytes.\n\n";
+             << std::hex << arena._usedBytes << " (" << std::dec
+             << arena._usedBytes << ") bytes.\n\n";
     }
   }
 
