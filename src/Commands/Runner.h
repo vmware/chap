@@ -351,25 +351,41 @@ class Context {
     }
   }
 
+  bool SetRedirectPathBySuffix() {
+    const std::string& suffix = Argument("redirectSuffix", 0);
+    if (!suffix.empty()) {
+      _redirectPath.append(".");
+      _redirectPath.append(suffix);
+      return true;
+    }
+    return false;
+  }
+
+  void SetRedirectPathByArguments() {
+    for (size_t i = 0; i < _positionalArguments.size(); i++) {
+      _redirectPath.append((i == 0) ? "." : "_");
+      _redirectPath.append(_positionalArguments[i]);
+    }
+
+    for (std::map<std::string, std::vector<std::string> >::const_iterator it =
+             _switchedArguments.begin();
+         it != _switchedArguments.end(); ++it) {
+      _redirectPath.append("::");
+      _redirectPath.append(it->first);
+      for (std::vector<std::string>::const_iterator itVector =
+               it->second.begin();
+           itVector != it->second.end(); ++itVector) {
+        _redirectPath.append(":");
+        _redirectPath.append(*itVector);
+      }
+    }
+  }
+
   void StartRedirect() {
     if (_redirectPath.empty()) {
       _redirectPath = _redirectPrefix;
-      for (size_t i = 0; i < _positionalArguments.size(); i++) {
-        _redirectPath.append((i == 0) ? "." : "_");
-        _redirectPath.append(_positionalArguments[i]);
-      }
-
-      for (std::map<std::string, std::vector<std::string> >::const_iterator it =
-               _switchedArguments.begin();
-           it != _switchedArguments.end(); ++it) {
-        _redirectPath.append("::");
-        _redirectPath.append(it->first);
-        for (std::vector<std::string>::const_iterator itVector =
-                 it->second.begin();
-             itVector != it->second.end(); ++itVector) {
-          _redirectPath.append(":");
-          _redirectPath.append(*itVector);
-        }
+      if (!SetRedirectPathBySuffix()) {
+        SetRedirectPathByArguments();
       }
 
       if (_redirectPath.size() > 255) {
@@ -739,7 +755,14 @@ class Runner {
               _input.TerminateAllScripts();
             } else {
               if (_redirect) {
-                // Redirect for the duration of the command context.
+                /*
+                 * Redirect for the duration of the command context.  Note
+                 * that we don't bother supporting /redirectSuffix for the
+                 * old style command callbacks because they are deprecated
+                 * and typically were written before switched arguments were
+                 * handled separately, so they generally not work as currently
+                 * written if the switch were supplied.
+                 */
                 redirectStarted = true;
                 context.StartRedirect();
               }
@@ -754,7 +777,8 @@ class Runner {
             _error << "Command " << command << " is not recognized\n";
             _error << "Type \"help\" to get help.\n";
           } else {
-            if (_redirect && !redirectStarted) {
+            if ((_redirect || !context.Argument("redirectSuffix", 0).empty()) &&
+                !redirectStarted) {
               // Redirect for the duration of the command context.
               redirectStarted = true;
               context.StartRedirect();
