@@ -98,6 +98,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
   }
 
+  void RefreshSignaturesAndAnchors() {
+    if (!_symdefsRead) {
+      ReadSymdefsFile();
+    }
+  }
+
   template <typename T>
   struct CompareByAddressField {
     bool operator()(const T& left, const T& right) {
@@ -1100,23 +1106,10 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
   }
 
-  void RefreshSignatureDirectory() const {
-    if (Base::_allocationFinder == 0) {
-      return;
-    }
-    if (!_symdefsRead) {
-      ReadSymdefsFile();
-    }
-  }
-
  private:
-  /*
-   * _symdefsRead is mutable because the symdefs file is read lazily the
-   * first time it is present and needed.
-   */
 
   ElfImage& _elfImage;
-  mutable bool _symdefsRead;
+  bool _symdefsRead;
   std::map<Offset, Offset> _staticAnchorLimits;
 
   bool ParseOffset(const std::string& s, Offset& value) const {
@@ -1180,8 +1173,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     return emptySignatureName;
   }
 
-  bool ReadSymdefsFile() const {
-    // TODO: This implies just one image per file.
+  bool ReadSymdefsFile() {
     std::string symDefsPath(
         Base::_virtualAddressMap.GetFileImage().GetFileName());
     symDefsPath.append(".symdefs");

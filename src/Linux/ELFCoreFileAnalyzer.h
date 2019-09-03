@@ -77,6 +77,9 @@ class ELFCoreFileAnalyzer : public FileAnalyzer {
     if (_processImageCommandHandler.get() != 0) {
       _processImageCommandHandler->AddCommands(r);
     }
+    r.SetPreCommandCallback([this]() {
+      this->_processImage->RefreshSignaturesAndAnchors();
+    });
   }
 
  private:

@@ -574,8 +574,8 @@ class Runner {
       : _redirectPrefix(redirectPrefix),
         _redirect(false),
         _input(_scriptContext),
-        _error(_scriptContext)
-
+        _error(_scriptContext),
+        _preCommandCallback(nullptr)
   {}
 
   void CompletionHook(char const* pref,
@@ -697,6 +697,10 @@ class Runner {
     }
   }
 
+  void SetPreCommandCallback(std::function<void()> callback) {
+    _preCommandCallback = callback;
+  }
+   
   void RunCommands() {
     replxx_install_window_change_handler();
     replxx_set_completion_callback(
@@ -784,6 +788,9 @@ class Runner {
               context.StartRedirect();
             }
             if (!hasIllFormedSwitch) {
+              if (_preCommandCallback != nullptr) {
+                _preCommandCallback();
+              }
               c->Run(context);
             }
           }
@@ -805,6 +812,7 @@ class Runner {
   Error _error;
   std::map<std::string, std::list<CommandCallback> > _commandCallbacks;
   std::map<std::string, Command*> _commands;
+  std::function<void()> _preCommandCallback;
 };
 
 }  // namespace Commands

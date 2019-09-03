@@ -79,7 +79,6 @@ class ProcessImage {
   }
 
   const Allocations::Finder<Offset> *GetAllocationFinder() const {
-    RefreshSignatureDirectory();
     return _allocationFinder;
   }
   const Allocations::Graph<Offset> *GetAllocationGraph() const {
@@ -89,7 +88,6 @@ class ProcessImage {
   const char *STACK_OVERFLOW_GUARD;
 
  protected:
-  virtual void RefreshSignatureDirectory() const {}
 
   const AddressMap &_virtualAddressMap;
   const ThreadMap<OffsetType> &_threadMap;
@@ -98,13 +96,7 @@ class ProcessImage {
   UnfilledImages<Offset> _unfilledImages;
   Allocations::Finder<Offset> *_allocationFinder;
   Allocations::Graph<Offset> *_allocationGraph;
-
-  /*
-   * At present this is mutable because some const functions cause these
-   * directories to be refreshed (because we are allowing the
-   * user to make a symdefs file between commands).
-   */
-  mutable Allocations::SignatureDirectory<Offset> _signatureDirectory;
-  mutable Allocations::AnchorDirectory<Offset> _anchorDirectory;
+  Allocations::SignatureDirectory<Offset> _signatureDirectory;
+  Allocations::AnchorDirectory<Offset> _anchorDirectory;
 };
 }  // namespace chap
