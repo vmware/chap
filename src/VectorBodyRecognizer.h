@@ -60,6 +60,40 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
               reader.ReadOffset(anchor + 2 * sizeof(Offset), 0xbad);
           if (endUsed >= allocationAddress && endUsable >= endUsed &&
               endUsable > allocationAddress && endUsable <= allocationLimit) {
+            if (endUsed == allocationAddress) {
+              /*
+               * An element block for a deque could potentially match the
+               * pattern if either the _M_start or _M_finish for the deque
+               * had _M_cur and _M_first pointing to the start of the element
+               * block.  We can further check whether the pointer after the 3
+               * for the vector would make sense as an _M_node.
+               */
+              Offset candidateMNode =
+                  reader.ReadOffset(anchor + 3 * sizeof(Offset), 0xbad);
+              if ((candidateMNode & (sizeof(Offset) - 1)) == 0 &&
+                  reader.ReadOffset(candidateMNode) == allocationAddress) {
+                Offset otherElementBlock =
+                    reader.ReadOffset(anchor + 5 * sizeof(Offset), 0xbad);
+                if ((otherElementBlock & (sizeof(Offset) - 1)) == 0) {
+                  Offset otherMNode =
+                      reader.ReadOffset(anchor + 7 * sizeof(Offset), 0xbad);
+                  if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
+                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                    continue;
+                  }
+                }
+                otherElementBlock =
+                    reader.ReadOffset(anchor - 3 * sizeof(Offset), 0xbad);
+                if ((otherElementBlock & (sizeof(Offset) - 1)) == 0) {
+                  Offset otherMNode =
+                      reader.ReadOffset(anchor - sizeof(Offset), 0xbad);
+                  if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
+                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                    continue;
+                  }
+                }
+              }
+            }
             vectors.emplace_back(locationType, anchor,
                                  endUsed - allocationAddress, 0);
           }
@@ -75,6 +109,14 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
      * a vector could contain pointers to read-only memory and such a
      * pointer at the first position would look like a signature.
      */
+    if (!allocation.IsUsed()) {
+      /*
+       * Given that a vector body is recognized on how it is referenced,
+       * rather than on the contents of the allocation, there is no point
+       * trying to recognize a freed vector body.
+       */
+      return false;
+    }
     Offset allocationSize = allocation.Size();
     Offset allocationAddress = allocation.Address();
     Offset allocationLimit = allocationAddress + allocationSize;
@@ -120,6 +162,41 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
             candidates[candidateIndex + 2] >= candidates[candidateIndex + 1] &&
             candidates[candidateIndex + 2] > allocationAddress &&
             candidates[candidateIndex + 2] <= allocationLimit) {
+          typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
+          if (candidates[candidateIndex + 1] == allocationAddress &&
+              candidateIndex + 1 < numCandidates) {
+            /*
+             * An element block for a deque could potentially match the
+             * pattern if either the _M_start or _M_finish for the deque
+             * had _M_cur and _M_first pointing to the start of the element
+             * block.  We can further check whether the pointer after the 3
+             * for the vector would make sense as an _M_node.
+             */
+            Offset candidateMNode = candidates[candidateIndex + 3];
+            if ((candidateMNode & (sizeof(Offset) - 1)) == 0 &&
+                reader.ReadOffset(candidateMNode) == allocationAddress) {
+              if (candidateIndex + 5 < numCandidates) {
+                Offset otherElementBlock = candidates[candidateIndex + 5];
+                if ((otherElementBlock & (sizeof(Offset) - 1)) == 0) {
+                  Offset otherMNode = candidates[candidateIndex + 7];
+                  if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
+                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                    continue;
+                  }
+                }
+              }
+              if (candidateIndex >= 4) {
+                Offset otherElementBlock = candidates[candidateIndex - 3];
+                if ((otherElementBlock & (sizeof(Offset) - 1)) == 0) {
+                  Offset otherMNode = candidates[candidateIndex - 1];
+                  if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
+                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                    continue;
+                  }
+                }
+              }
+            }
+          }
           vectors.emplace_back(
               InAllocation, incomingAddress,
               candidates[candidateIndex + 1] - allocationAddress,

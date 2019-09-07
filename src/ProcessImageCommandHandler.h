@@ -15,6 +15,8 @@
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
 #include "CompoundDescriber.h"
+#include "DequeMapRecognizer.h"
+#include "DoublyLinkedListNodeRecognizer.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
 #include "ModuleAlignmentGapDescriber.h"
@@ -26,7 +28,6 @@
 #include "ThreadMapCommands/DescribeStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
 #include "VectorBodyRecognizer.h"
-#include "DoublyLinkedListNodeRecognizer.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
@@ -156,8 +157,10 @@ class ProcessImageCommandHandler {
         _summarizeSignaturesSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternRecognizerRegistry),
+        _dequeMapRecognizer(processImage),
         _vectorBodyRecognizer(processImage),
         _doublyLinkedListNodeRecognizer(processImage) {
+    _patternRecognizerRegistry.Register(_dequeMapRecognizer);
     _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
     _patternRecognizerRegistry.Register(_doublyLinkedListNodeRecognizer);
     // Leave it to any derived class to add any describers.
@@ -264,6 +267,7 @@ class ProcessImageCommandHandler {
  private:
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
+  DequeMapRecognizer<Offset> _dequeMapRecognizer;
   VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
   DoublyLinkedListNodeRecognizer<Offset> _doublyLinkedListNodeRecognizer;
 };
