@@ -78,7 +78,7 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
                   Offset otherMNode =
                       reader.ReadOffset(anchor + 7 * sizeof(Offset), 0xbad);
                   if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
-                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                      reader.ReadOffset(otherMNode, 0) == otherElementBlock) {
                     continue;
                   }
                 }
@@ -88,7 +88,7 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
                   Offset otherMNode =
                       reader.ReadOffset(anchor - sizeof(Offset), 0xbad);
                   if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
-                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                      reader.ReadOffset(otherMNode, 0) == otherElementBlock) {
                     continue;
                   }
                 }
@@ -174,13 +174,13 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
              */
             Offset candidateMNode = candidates[candidateIndex + 3];
             if ((candidateMNode & (sizeof(Offset) - 1)) == 0 &&
-                reader.ReadOffset(candidateMNode) == allocationAddress) {
+                reader.ReadOffset(candidateMNode, 0) == allocationAddress) {
               if (candidateIndex + 5 < numCandidates) {
                 Offset otherElementBlock = candidates[candidateIndex + 5];
                 if ((otherElementBlock & (sizeof(Offset) - 1)) == 0) {
                   Offset otherMNode = candidates[candidateIndex + 7];
                   if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
-                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                      reader.ReadOffset(otherMNode, 0) == otherElementBlock) {
                     continue;
                   }
                 }
@@ -190,7 +190,7 @@ class VectorBodyRecognizer : public Allocations::PatternRecognizer<Offset> {
                 if ((otherElementBlock & (sizeof(Offset) - 1)) == 0) {
                   Offset otherMNode = candidates[candidateIndex - 1];
                   if (((otherMNode & (sizeof(Offset) - 1)) == 0) &&
-                      reader.ReadOffset(otherMNode) == otherElementBlock) {
+                      reader.ReadOffset(otherMNode, 0) == otherElementBlock) {
                     continue;
                   }
                 }
