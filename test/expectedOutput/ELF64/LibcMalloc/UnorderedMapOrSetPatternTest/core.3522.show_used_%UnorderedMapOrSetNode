@@ -1,0 +1,505 @@
+Used allocation at 555555575e70 of size 38
+ 0:                0     555555575e88                1               61
+20:                0                1 454ddee488c1ed6b 
+
+Used allocation at 555555575ed0 of size 38
+ 0:                0     555555575ee8                1               62
+20:                0 96694f8e93f5c77d                0 
+
+Used allocation at 555555575f30 of size 18
+               0        300000003                0 
+
+Used allocation at 555555575f70 of size 18
+               0                4                0 
+
+Used allocation at 555555575fb0 of size 38
+ 0:                0     555555575fc8                2             3165
+20:                0               51 604d922e24661c1b 
+
+Used allocation at 555555576010 of size 38
+ 0:     555555575fb0     555555576028                2             3265
+20:                0               52 f59f25a5455690b1 
+
+Used allocation at 555555576050 of size 38
+ 0:                0     555555576068                2             3166
+20:                0 55614503530ad0dd                0 
+
+Used allocation at 5555555760b0 of size 38
+ 0:     555555576050     5555555760c8                2             3266
+20:                0 da22ba5c494717f5                0 
+
+Used allocation at 5555555760f0 of size 18
+               0       7100000071                0 
+
+Used allocation at 555555576130 of size 18
+    5555555760f0       7200000072                0 
+
+Used allocation at 555555576150 of size 18
+               0               81                0 
+
+Used allocation at 555555576190 of size 18
+    555555576150               82                0 
+
+Used allocation at 5555555761b0 of size 38
+ 0:     555555576210     5555555761c8                2             3169
+20:                0               91 22f1c265629782c0 
+
+Used allocation at 5555555761f0 of size 18
+    5555555763d0       b1000000b1                0 
+
+Used allocation at 555555576210 of size 38
+ 0:                0     555555576228                2             3269
+20:                0               92 2ee4cdc046a8ae9c 
+
+Used allocation at 555555576250 of size 38
+ 0:     5555555761b0     555555576268                2             3369
+20:                0               93 66e1725c82665247 
+
+Used allocation at 5555555762c0 of size 38
+ 0:     555555576300     5555555762d8                2             316a
+20:                0 e522020832f04078                0 
+
+Used allocation at 555555576300 of size 38
+ 0:                0     555555576318                2             326a
+20:                0 622f2e7ef33cbc54                0 
+
+Used allocation at 555555576340 of size 38
+ 0:     5555555762c0     555555576358                2             336a
+20:                0 16189e880144b30b                0 
+
+Used allocation at 5555555763b0 of size 18
+    555555576460               c1                0 
+
+Used allocation at 5555555763d0 of size 18
+               0       b2000000b2                0 
+
+Used allocation at 5555555763f0 of size 18
+    5555555761f0       b3000000b3                0 
+
+Used allocation at 555555576440 of size 18
+    5555555764f0                0                0 
+
+Used allocation at 555555576460 of size 18
+               0               c2                0 
+
+Used allocation at 555555576480 of size 18
+    5555555763b0               c3                0 
+
+Used allocation at 5555555764d0 of size 18
+    555555576510              300                0 
+
+Used allocation at 5555555764f0 of size 18
+    555555576580              100                0 
+
+Used allocation at 555555576510 of size 18
+    555555576440              200                0 
+
+Used allocation at 555555576560 of size 18
+    5555555764d0              400                0 
+
+Used allocation at 555555576580 of size 18
+    555555576600              500                0 
+
+Used allocation at 555555576600 of size 18
+    555555576620              600                0 
+
+Used allocation at 555555576620 of size 18
+    555555576640              700                0 
+
+Used allocation at 555555576640 of size 18
+    555555576660              800                0 
+
+Used allocation at 555555576660 of size 18
+    555555576680              900                0 
+
+Used allocation at 555555576680 of size 18
+               0              a00                0 
+
+Used allocation at 5555555766a0 of size 18
+    555555576560              b00                0 
+
+Used allocation at 555555576780 of size 18
+    5555555766a0              c00                0 
+
+Used allocation at 5555555767a0 of size 18
+    555555576780              d00                0 
+
+Used allocation at 5555555767c0 of size 18
+    5555555767a0              e00                0 
+
+Used allocation at 5555555767e0 of size 18
+    5555555767c0              f00                0 
+
+Used allocation at 555555576840 of size 18
+               0               f2                0 
+
+Used allocation at 555555576860 of size 18
+               0               f3                0 
+
+Used allocation at 555555576880 of size 18
+               0               f4                0 
+
+Used allocation at 5555555768a0 of size 18
+    555555576880               f5                0 
+
+Used allocation at 5555555768f0 of size 18
+               0               f1                0 
+
+Used allocation at 555555576910 of size 18
+               0               f0                0 
+
+Used allocation at 555555576930 of size 18
+               0               f7                0 
+
+Used allocation at 555555576950 of size 18
+    555555576970               f8                0 
+
+Used allocation at 555555576970 of size 18
+    555555576930               f6                0 
+
+Used allocation at 555555576a10 of size 18
+               0               f9                0 
+
+Used allocation at 555555576a30 of size 18
+               0               fa                0 
+
+Used allocation at 555555576a50 of size 18
+    555555576a30               fb                0 
+
+Used allocation at 555555576a90 of size 38
+ 0:                0     555555576aa8                1         ffff0061
+20:                0                1 454ddee488c1ed6b 
+
+Used allocation at 555555576af0 of size 38
+ 0:                0     555555576b08                1         ffff0062
+20:                0 96694f8e93f5c77d                0 
+
+Used allocation at 555555576b50 of size 18
+               0        300000003                0 
+
+Used allocation at 555555576b90 of size 18
+               0                4                0 
+
+Used allocation at 555555576bd0 of size 38
+ 0:                0     555555576be8                2         ff003165
+20:                0               51 604d922e24661c1b 
+
+Used allocation at 555555576c30 of size 38
+ 0:     555555576bd0     555555576c48                2         ff003265
+20:                0               52 f59f25a5455690b1 
+
+Used allocation at 555555576c70 of size 38
+ 0:                0     555555576c88                2         ff003166
+20:                0 55614503530ad0dd                0 
+
+Used allocation at 555555576cd0 of size 38
+ 0:     555555576c70     555555576ce8                2         ff003266
+20:                0 da22ba5c494717f5                0 
+
+Used allocation at 555555576d10 of size 18
+               0       7100000071                0 
+
+Used allocation at 555555576d50 of size 18
+    555555576d10       7200000072                0 
+
+Used allocation at 555555576d70 of size 18
+               0               81                0 
+
+Used allocation at 555555576db0 of size 18
+    555555576d70               82                0 
+
+Used allocation at 555555576dd0 of size 38
+ 0:     555555576e30     555555576de8                2         ff003169
+20:                0               91 22f1c265629782c0 
+
+Used allocation at 555555576e10 of size 18
+    555555576ff0       b1000000b1                0 
+
+Used allocation at 555555576e30 of size 38
+ 0:                0     555555576e48                2         ff003269
+20:                0               92 2ee4cdc046a8ae9c 
+
+Used allocation at 555555576e70 of size 38
+ 0:     555555576dd0     555555576e88                2         ff003369
+20:                0               93 66e1725c82665247 
+
+Used allocation at 555555576ee0 of size 38
+ 0:     555555576f20     555555576ef8                2         ff00316a
+20:                0 e522020832f04078                0 
+
+Used allocation at 555555576f20 of size 38
+ 0:                0     555555576f38                2         ff00326a
+20:                0 622f2e7ef33cbc54                0 
+
+Used allocation at 555555576f60 of size 38
+ 0:     555555576ee0     555555576f78                2         ff00336a
+20:                0 16189e880144b30b                0 
+
+Used allocation at 555555576fd0 of size 18
+    555555577080               c1                0 
+
+Used allocation at 555555576ff0 of size 18
+               0       b2000000b2                0 
+
+Used allocation at 555555577010 of size 18
+    555555576e10       b3000000b3                0 
+
+Used allocation at 555555577060 of size 18
+    555555577110                0                0 
+
+Used allocation at 555555577080 of size 18
+               0               c2                0 
+
+Used allocation at 5555555770a0 of size 18
+    555555576fd0               c3                0 
+
+Used allocation at 5555555770f0 of size 18
+    555555577130              300                0 
+
+Used allocation at 555555577110 of size 18
+    5555555771a0              100                0 
+
+Used allocation at 555555577130 of size 18
+    555555577060              200                0 
+
+Used allocation at 555555577180 of size 18
+    5555555770f0              400                0 
+
+Used allocation at 5555555771a0 of size 18
+    555555577220              500                0 
+
+Used allocation at 555555577220 of size 18
+    555555577240              600                0 
+
+Used allocation at 555555577240 of size 18
+    555555577260              700                0 
+
+Used allocation at 555555577260 of size 18
+    555555577280              800                0 
+
+Used allocation at 555555577280 of size 18
+    5555555772a0              900                0 
+
+Used allocation at 5555555772a0 of size 18
+               0              a00                0 
+
+Used allocation at 5555555772c0 of size 18
+    555555577180              b00                0 
+
+Used allocation at 5555555773a0 of size 18
+    5555555772c0              c00                0 
+
+Used allocation at 5555555773c0 of size 18
+    5555555773a0              d00                0 
+
+Used allocation at 5555555773e0 of size 18
+    5555555773c0              e00                0 
+
+Used allocation at 555555577400 of size 18
+    5555555773e0              f00                0 
+
+Used allocation at 555555577460 of size 18
+               0               f2                0 
+
+Used allocation at 555555577480 of size 18
+               0               f3                0 
+
+Used allocation at 5555555774a0 of size 18
+               0               f4                0 
+
+Used allocation at 5555555774c0 of size 18
+    5555555774a0               f5                0 
+
+Used allocation at 555555577510 of size 18
+               0               f1                0 
+
+Used allocation at 555555577530 of size 18
+               0               f0                0 
+
+Used allocation at 555555577550 of size 18
+               0               f7                0 
+
+Used allocation at 555555577570 of size 18
+    555555577590               f8                0 
+
+Used allocation at 555555577590 of size 18
+    555555577550               f6                0 
+
+Used allocation at 555555577630 of size 18
+               0               f9                0 
+
+Used allocation at 555555577650 of size 18
+               0               fa                0 
+
+Used allocation at 555555577670 of size 18
+    555555577650               fb                0 
+
+Used allocation at 555555577ce0 of size 38
+ 0:                0     555555577cf8                1         ff000061
+20:              620                1 454ddee488c1ed6b 
+
+Used allocation at 555555577d40 of size 38
+ 0:                0     555555577d58                1         ff000062
+20:              620 96694f8e93f5c77d                0 
+
+Used allocation at 555555577da0 of size 18
+               0        300000003                0 
+
+Used allocation at 555555577de0 of size 18
+               0                4                0 
+
+Used allocation at 555555577e20 of size 38
+ 0:                0     555555577e38                2         ff003165
+20:              620               51 604d922e24661c1b 
+
+Used allocation at 555555577e80 of size 38
+ 0:     555555577e20     555555577e98                2         ff003265
+20:              620               52 f59f25a5455690b1 
+
+Used allocation at 555555577ec0 of size 38
+ 0:                0     555555577ed8                2         ff003166
+20:              620 55614503530ad0dd                0 
+
+Used allocation at 555555577f20 of size 38
+ 0:     555555577ec0     555555577f38                2         ff003266
+20:              620 da22ba5c494717f5                0 
+
+Used allocation at 555555577f60 of size 18
+               0       7100000071                0 
+
+Used allocation at 555555577fa0 of size 18
+    555555577f60       7200000072                0 
+
+Used allocation at 555555577fc0 of size 18
+               0               81                0 
+
+Used allocation at 555555578000 of size 18
+    555555577fc0               82                0 
+
+Used allocation at 555555578020 of size 38
+ 0:     555555578080     555555578038                2         ff003169
+20:              620               91 22f1c265629782c0 
+
+Used allocation at 555555578060 of size 18
+    555555578240       b1000000b1                0 
+
+Used allocation at 555555578080 of size 38
+ 0:                0     555555578098                2         ff003269
+20:              620               92 2ee4cdc046a8ae9c 
+
+Used allocation at 5555555780c0 of size 38
+ 0:     555555578020     5555555780d8                2         ff003369
+20:              620               93 66e1725c82665247 
+
+Used allocation at 555555578130 of size 38
+ 0:     555555578170     555555578148                2         ff00316a
+20:              620 e522020832f04078                0 
+
+Used allocation at 555555578170 of size 38
+ 0:                0     555555578188                2         ff00326a
+20:              620 622f2e7ef33cbc54                0 
+
+Used allocation at 5555555781b0 of size 38
+ 0:     555555578130     5555555781c8                2         ff00336a
+20:              620 16189e880144b30b                0 
+
+Used allocation at 555555578220 of size 18
+    5555555782d0               c1                0 
+
+Used allocation at 555555578240 of size 18
+               0       b2000000b2                0 
+
+Used allocation at 555555578260 of size 18
+    555555578060       b3000000b3                0 
+
+Used allocation at 5555555782b0 of size 18
+    555555578360                0                0 
+
+Used allocation at 5555555782d0 of size 18
+               0               c2                0 
+
+Used allocation at 5555555782f0 of size 18
+    555555578220               c3                0 
+
+Used allocation at 555555578340 of size 18
+    555555578380              300                0 
+
+Used allocation at 555555578360 of size 18
+    5555555783f0              100                0 
+
+Used allocation at 555555578380 of size 18
+    5555555782b0              200                0 
+
+Used allocation at 5555555783d0 of size 18
+    555555578340              400                0 
+
+Used allocation at 5555555783f0 of size 18
+    555555578470              500                0 
+
+Used allocation at 555555578470 of size 18
+    555555578490              600                0 
+
+Used allocation at 555555578490 of size 18
+    5555555784b0              700                0 
+
+Used allocation at 5555555784b0 of size 18
+    5555555784d0              800                0 
+
+Used allocation at 5555555784d0 of size 18
+    5555555784f0              900                0 
+
+Used allocation at 5555555784f0 of size 18
+               0              a00                0 
+
+Used allocation at 555555578510 of size 18
+    5555555783d0              b00                0 
+
+Used allocation at 5555555785f0 of size 18
+    555555578510              c00                0 
+
+Used allocation at 555555578610 of size 18
+    5555555785f0              d00                0 
+
+Used allocation at 555555578630 of size 18
+    555555578610              e00                0 
+
+Used allocation at 555555578650 of size 18
+    555555578630              f00                0 
+
+Used allocation at 5555555786b0 of size 18
+               0               f2                0 
+
+Used allocation at 5555555786d0 of size 18
+               0               f3                0 
+
+Used allocation at 5555555786f0 of size 18
+               0               f4                0 
+
+Used allocation at 555555578710 of size 18
+    5555555786f0               f5                0 
+
+Used allocation at 555555578760 of size 18
+               0               f1                0 
+
+Used allocation at 555555578780 of size 18
+               0               f0                0 
+
+Used allocation at 5555555787a0 of size 18
+               0               f7                0 
+
+Used allocation at 5555555787c0 of size 18
+    5555555787e0               f8                0 
+
+Used allocation at 5555555787e0 of size 18
+    5555555787a0               f6                0 
+
+Used allocation at 555555578880 of size 18
+               0               f9                0 
+
+Used allocation at 5555555788a0 of size 18
+               0               fa                0 
+
+Used allocation at 5555555788c0 of size 18
+    5555555788a0               fb                0 
+
+156 allocations use 0x1320 (4,896) bytes.

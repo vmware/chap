@@ -6,9 +6,11 @@
 #include "Allocations/Finder.h"
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
+#include "Allocations/TagHolder.h"
 #include "ModuleDirectory.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
+#include "UnorderedMapOrSetAllocationsTagger.h"
 #include "VirtualAddressMap.h"
 #include "VirtualMemoryPartition.h"
 namespace chap {
@@ -48,6 +50,9 @@ class ProcessImage {
     if (_allocationFinder != nullptr) {
       delete _allocationFinder;
     }
+    if (_allocationTagHolder != nullptr) {
+      delete _allocationTagHolder;
+    }
   }
 
   const AddressMap &GetVirtualAddressMap() const { return _virtualAddressMap; }
@@ -81,22 +86,38 @@ class ProcessImage {
   const Allocations::Finder<Offset> *GetAllocationFinder() const {
     return _allocationFinder;
   }
+
+  const Allocations::TagHolder<Offset> *GetAllocationTagHolder() const {
+    return _allocationTagHolder;
+  }
+
+  Allocations::TagHolder<Offset> *GetAllocationTagHolder() {
+    return _allocationTagHolder;
+  }
+
   const Allocations::Graph<Offset> *GetAllocationGraph() const {
     return _allocationGraph;
+  }
+
+  const UnorderedMapOrSetAllocationsTagger<Offset>
+      *GetUnorderedMapOrSetAllocationsTagger() const {
+    return _unorderedMapOrSetAllocationsTagger;
   }
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
  protected:
-
   const AddressMap &_virtualAddressMap;
   const ThreadMap<OffsetType> &_threadMap;
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
   ModuleDirectory<Offset> _moduleDirectory;
   UnfilledImages<Offset> _unfilledImages;
   Allocations::Finder<Offset> *_allocationFinder;
+  Allocations::TagHolder<Offset> *_allocationTagHolder;
   Allocations::Graph<Offset> *_allocationGraph;
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
+  UnorderedMapOrSetAllocationsTagger<Offset>
+      *_unorderedMapOrSetAllocationsTagger;
 };
 }  // namespace chap

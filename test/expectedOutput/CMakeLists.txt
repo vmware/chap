@@ -81,3 +81,5 @@ exout_test(PATH ELF64/LibcMalloc/PyDictKeysObjectTest
            FILES core.21887)
 exout_test(PATH ELF64/LibcMalloc/ListTest
            FILES core.52238)
+exout_test(PATH ELF64/LibcMalloc/UnorderedMapOrSetPatternTest
+           FILES core.3522)

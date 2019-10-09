@@ -1,0 +1,631 @@
+Anchored allocation at 555555575eb0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555575eb0 appears to be directly statically anchored.
+Address 0x555555563120 is at offset 0x120 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe120.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563120 references 0x555555575eb0.
+
+Anchored allocation at 555555575f10 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555575f10 appears to be directly statically anchored.
+Address 0x555555563158 is at offset 0x158 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe158.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563158 references 0x555555575f10.
+
+Anchored allocation at 555555575f50 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555575f50 appears to be directly statically anchored.
+Address 0x555555563190 is at offset 0x190 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe190.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563190 references 0x555555575f50.
+
+Anchored allocation at 555555575f90 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555575f90 appears to be directly statically anchored.
+Address 0x5555555631c8 is at offset 0x1c8 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe1c8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555631c8 references 0x555555575f90.
+
+Anchored allocation at 555555575ff0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555575ff0 appears to be directly statically anchored.
+Address 0x555555563200 is at offset 0x200 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe200.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563200 references 0x555555575ff0.
+
+Anchored allocation at 555555576090 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576090 appears to be directly statically anchored.
+Address 0x555555563238 is at offset 0x238 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe238.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563238 references 0x555555576090.
+
+Anchored allocation at 555555576110 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576110 appears to be directly statically anchored.
+Address 0x555555563270 is at offset 0x270 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe270.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563270 references 0x555555576110.
+
+Anchored allocation at 555555576170 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576170 appears to be directly statically anchored.
+Address 0x5555555632a8 is at offset 0x2a8 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe2a8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555632a8 references 0x555555576170.
+
+Anchored allocation at 555555576290 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576290 appears to be directly statically anchored.
+Address 0x5555555632e0 is at offset 0x2e0 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe2e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555632e0 references 0x555555576290.
+
+Anchored allocation at 555555576380 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576380 appears to be directly statically anchored.
+Address 0x555555563318 is at offset 0x318 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe318.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563318 references 0x555555576380.
+
+Anchored allocation at 555555576410 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576410 appears to be directly statically anchored.
+Address 0x555555563350 is at offset 0x350 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe350.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563350 references 0x555555576410.
+
+Anchored allocation at 5555555764a0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555764a0 appears to be directly statically anchored.
+Address 0x555555563388 is at offset 0x388 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe388.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563388 references 0x5555555764a0.
+
+Anchored allocation at 555555576530 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576530 appears to be directly statically anchored.
+Address 0x555555563430 is at offset 0x430 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe430.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563430 references 0x555555576530.
+
+Anchored allocation at 5555555765a0 of size 58
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555765a0 appears to be directly statically anchored.
+Address 0x555555563468 is at offset 0x468 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe468.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563468 references 0x5555555765a0.
+
+Anchored allocation at 5555555766c0 of size b8
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555766c0 appears to be directly statically anchored.
+Address 0x5555555633c0 is at offset 0x3c0 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe3c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555633c0 references 0x5555555766c0.
+
+Anchored allocation at 555555576800 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576800 appears to be directly statically anchored.
+Address 0x5555555634d8 is at offset 0x4d8 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe4d8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555634d8 references 0x555555576800.
+
+Anchored allocation at 555555576820 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576820 appears to be directly statically anchored.
+Address 0x5555555633f8 is at offset 0x3f8 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe3f8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555633f8 references 0x555555576820.
+
+Anchored allocation at 5555555768c0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555768c0 appears to be directly statically anchored.
+Address 0x5555555634a0 is at offset 0x4a0 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe4a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555634a0 references 0x5555555768c0.
+
+Anchored allocation at 555555576990 of size 58
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576990 appears to be directly statically anchored.
+Address 0x555555563510 is at offset 0x510 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe510.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563510 references 0x555555576990.
+
+Anchored allocation at 5555555769f0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555769f0 appears to be directly statically anchored.
+Address 0x5555555635b8 is at offset 0x5b8 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe5b8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x5555555635b8 references 0x5555555769f0.
+
+Anchored allocation at 555555576a70 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576a70 appears to be directly statically anchored.
+Address 0x555555563628 is at offset 0x628 in range
+[0x555555563000, 555555564000)
+for module /home/tim/UnorderedMapOrSetPatternTest
+and at module-relative virtual address 0xe628.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x555555563628 references 0x555555576a70.
+
+Anchored allocation at 555555576ad0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576ad0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffda60 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda60 references 0x555555576ad0.
+
+Anchored allocation at 555555576b30 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576b30 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffda98 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda98 references 0x555555576b30.
+
+Anchored allocation at 555555576b70 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576b70 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdad0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdad0 references 0x555555576b70.
+
+Anchored allocation at 555555576bb0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576bb0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdb08 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb08 references 0x555555576bb0.
+
+Anchored allocation at 555555576c10 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576c10 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdb40 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb40 references 0x555555576c10.
+
+Anchored allocation at 555555576cb0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576cb0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdb78 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb78 references 0x555555576cb0.
+
+Anchored allocation at 555555576d30 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576d30 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdbb0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbb0 references 0x555555576d30.
+
+Anchored allocation at 555555576d90 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576d90 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdbe8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbe8 references 0x555555576d90.
+
+Anchored allocation at 555555576eb0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576eb0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdc20 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc20 references 0x555555576eb0.
+
+Anchored allocation at 555555576fa0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555576fa0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdc58 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc58 references 0x555555576fa0.
+
+Anchored allocation at 555555577030 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577030 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdc90 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc90 references 0x555555577030.
+
+Anchored allocation at 5555555770c0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555770c0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdcc8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdcc8 references 0x5555555770c0.
+
+Anchored allocation at 555555577150 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577150 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdd70 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd70 references 0x555555577150.
+
+Anchored allocation at 5555555771c0 of size 58
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555771c0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdda8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdda8 references 0x5555555771c0.
+
+Anchored allocation at 5555555772e0 of size b8
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555772e0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd00 references 0x5555555772e0.
+
+Anchored allocation at 555555577420 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577420 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffde18 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde18 references 0x555555577420.
+
+Anchored allocation at 555555577440 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577440 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdd38 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd38 references 0x555555577440.
+
+Anchored allocation at 5555555774e0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555774e0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdde0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdde0 references 0x5555555774e0.
+
+Anchored allocation at 5555555775b0 of size 58
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555775b0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffde50 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde50 references 0x5555555775b0.
+
+Anchored allocation at 555555577610 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577610 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdef8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdef8 references 0x555555577610.
+
+Anchored allocation at 555555577690 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577690 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdf68 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf68 references 0x555555577690.
+
+Anchored allocation at 555555577d20 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577d20 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577d20
+The allocation at 0x555555577d20 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577d20
+
+Anchored allocation at 555555577d80 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577d80 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577d80
+The allocation at 0x555555577d80 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577d80
+
+Anchored allocation at 555555577dc0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577dc0 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577dc0
+The allocation at 0x555555577dc0 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577dc0
+
+Anchored allocation at 555555577e00 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577e00 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577e00
+The allocation at 0x555555577e00 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577e00
+
+Anchored allocation at 555555577e60 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577e60 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577e60
+The allocation at 0x555555577e60 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577e60
+
+Anchored allocation at 555555577f00 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577f00 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577f00
+The allocation at 0x555555577f00 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577f00
+
+Anchored allocation at 555555577f80 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577f80 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577f80
+The allocation at 0x555555577f80 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577f80
+
+Anchored allocation at 555555577fe0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555577fe0 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555577fe0
+The allocation at 0x555555577fe0 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555577fe0
+
+Anchored allocation at 555555578100 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578100 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578100
+The allocation at 0x555555578100 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578100
+
+Anchored allocation at 5555555781f0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555781f0 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x5555555781f0
+The allocation at 0x5555555781f0 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x5555555781f0
+
+Anchored allocation at 555555578280 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578280 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578280
+The allocation at 0x555555578280 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578280
+
+Anchored allocation at 555555578310 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578310 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578310
+The allocation at 0x555555578310 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578310
+
+Anchored allocation at 5555555783a0 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555783a0 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x5555555783a0
+The allocation at 0x5555555783a0 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x5555555783a0
+
+Anchored allocation at 555555578410 of size 58
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578410 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578410
+The allocation at 0x555555578410 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578410
+
+Anchored allocation at 555555578530 of size b8
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578530 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578530
+The allocation at 0x555555578530 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578530
+
+Anchored allocation at 555555578670 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578670 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578670
+The allocation at 0x555555578670 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578670
+
+Anchored allocation at 555555578690 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578690 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578690
+The allocation at 0x555555578690 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578690
+
+Anchored allocation at 555555578730 of size 28
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578730 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578730
+The allocation at 0x555555578730 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578730
+
+Anchored allocation at 555555578800 of size 58
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578800 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578800
+The allocation at 0x555555578800 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578800
+
+Anchored allocation at 555555578860 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x555555578860 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x555555578860
+The allocation at 0x555555578860 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x555555578860
+
+Anchored allocation at 5555555788e0 of size 18
+This allocation matches pattern UnorderedMapOrSetBuckets.
+The allocation at 0x5555555788e0 appears to be indirectly anchored from
+at least one register via anchor point 0x5555555776b0.
+Register rbx for thread 1 references anchor point 0x5555555776b0
+which references 0x5555555788e0
+The allocation at 0x5555555788e0 appears to be indirectly anchored from
+at least one stack via anchor point 0x5555555776b0.
+Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
+which references 0x5555555788e0
+
+63 allocations use 0xa68 (2,664) bytes.

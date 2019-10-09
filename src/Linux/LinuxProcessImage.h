@@ -4,7 +4,7 @@
 #pragma once
 #include <string.h>
 #include <map>
-#include "../Allocations/SignatureDirectory.h"
+#include "../Allocations/TaggerRunner.h"
 #include "../ProcessImage.h"
 #include "../RangeMapper.h"
 #include "../Unmangler.h"
@@ -95,6 +95,19 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        * done.
        */
       Base::_virtualMemoryPartition.ClaimUnclaimedRangesAsUnknown();
+
+      Base::_allocationTagHolder = new Allocations::TagHolder<Offset>(
+          Base::_allocationFinder->NumAllocations());
+
+      Base::_unorderedMapOrSetAllocationsTagger =
+          new UnorderedMapOrSetAllocationsTagger<Offset>(
+              *(Base::_allocationGraph), *(Base::_allocationTagHolder));
+
+      Allocations::TaggerRunner<Offset> runner(*Base::_allocationFinder,
+                                               *Base::_allocationTagHolder,
+                                               Base::_signatureDirectory);
+      runner.RegisterTagger(Base::_unorderedMapOrSetAllocationsTagger);
+      runner.ResolveAllAllocationTags();
     }
   }
 
@@ -1107,7 +1120,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   }
 
  private:
-
   ElfImage& _elfImage;
   bool _symdefsRead;
   std::map<Offset, Offset> _staticAnchorLimits;
@@ -1240,7 +1252,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * one can use the name in scripts.  The issue is embedded blanks.
          * There are still some cases, as with "unsigned long" embedded in
          * a demangled signature that are not resolved this way, but it seems
-         * that stripping the space after a comma still leaves the name 
+         * that stripping the space after a comma still leaves the name
          * pretty readable.
          */
 

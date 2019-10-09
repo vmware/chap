@@ -27,6 +27,8 @@
 #include "ThreadMapCommands/CountStacks.h"
 #include "ThreadMapCommands/DescribeStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
+#include "UnorderedMapOrSetBucketsRecognizer.h"
+#include "UnorderedMapOrSetNodeRecognizer.h"
 #include "VectorBodyRecognizer.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
@@ -158,9 +160,13 @@ class ProcessImageCommandHandler {
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternRecognizerRegistry),
         _dequeMapRecognizer(processImage),
+        _unorderedMapOrSetBucketsRecognizer(processImage),
+        _unorderedMapOrSetNodeRecognizer(processImage),
         _vectorBodyRecognizer(processImage),
         _doublyLinkedListNodeRecognizer(processImage) {
     _patternRecognizerRegistry.Register(_dequeMapRecognizer);
+    _patternRecognizerRegistry.Register(_unorderedMapOrSetBucketsRecognizer);
+    _patternRecognizerRegistry.Register(_unorderedMapOrSetNodeRecognizer);
     _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
     _patternRecognizerRegistry.Register(_doublyLinkedListNodeRecognizer);
     // Leave it to any derived class to add any describers.
@@ -268,6 +274,9 @@ class ProcessImageCommandHandler {
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
   DequeMapRecognizer<Offset> _dequeMapRecognizer;
+  UnorderedMapOrSetBucketsRecognizer<Offset>
+      _unorderedMapOrSetBucketsRecognizer;
+  UnorderedMapOrSetNodeRecognizer<Offset> _unorderedMapOrSetNodeRecognizer;
   VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
   DoublyLinkedListNodeRecognizer<Offset> _doublyLinkedListNodeRecognizer;
 };

@@ -1,0 +1,26 @@
+# Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the LongStringTest program.
+# This test is about making sure that the LongString pattern behaves
+# reasonably.
+
+chap=$1
+
+$1 core.3522 << DONE
+redirect on
+describe used
+describe used %UnorderedMapOrSetNode
+describe used %UnorderedMapOrSetBuckets
+show used %UnorderedMapOrSetNode
+show used %UnorderedMapOrSetBuckets
+explain used
+explain used %UnorderedMapOrSetNode
+explain used %UnorderedMapOrSetBuckets
+list used /minoutgoing %UnorderedMapOrSetNode=1
+list used /minoutgoing %UnorderedMapOrSetBuckets=1
+show used /minoutgoing %UnorderedMapOrSetNode=1 \
+ /extend ->%UnorderedMapOrSetNode=>StopHere
+show used /minoutgoing %UnorderedMapOrSetBuckets=1 \
+ /extend ->%UnorderedMapOrSetBuckets=>StopHere
+DONE
