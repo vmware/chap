@@ -65,7 +65,8 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
            * all
            * been tagged.
            */
-          result = TagFromFirstNodeOnList(index, phase, allocation);
+          // TODO: restore this phase when the performance cost is lower.
+          // result = TagFromFirstNodeOnList(index, phase, allocation);
           break;
       }
     }
