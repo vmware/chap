@@ -66,6 +66,8 @@ Used allocation at 5555555767c0 of size 18
 
 Used allocation at 5555555767e0 of size 18
 
+Used allocation at 5555555768a0 of size 18
+
 Used allocation at 555555576950 of size 18
 
 Used allocation at 555555576970 of size 18
@@ -143,6 +145,8 @@ Used allocation at 5555555773c0 of size 18
 Used allocation at 5555555773e0 of size 18
 
 Used allocation at 555555577400 of size 18
+
+Used allocation at 5555555774c0 of size 18
 
 Used allocation at 555555577570 of size 18
 
@@ -224,6 +228,8 @@ Used allocation at 555555578630 of size 18
 
 Used allocation at 555555578650 of size 18
 
+Used allocation at 555555578710 of size 18
+
 Used allocation at 5555555787c0 of size 18
 
 Used allocation at 5555555787e0 of size 18
@@ -234,4 +240,4 @@ Used allocation at 5555555788c0 of size 18
 
 Used allocation at 5555555788e0 of size 18
 
-118 allocations use 0x1600 (5,632) bytes.
+121 allocations use 0x1648 (5,704) bytes.

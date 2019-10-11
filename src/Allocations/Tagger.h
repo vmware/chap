@@ -21,14 +21,13 @@ class Tagger {
  public:
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename VirtualAddressMap<Offset>::Reader Reader;
 
   /*
    * On both passes through the allocations each allocation will be visited
    * in address order, and each tagger will be run through the following phases
-   * on the given allocation.  This is terminated early for any allocation that
-   * has already been tagged or if all taggers have returned
-   * NO_TAGGING_DONE_FROM_HERE for that allocation during the current pass or
-   * if one tagger has returned TAGGING_DONE during the given pass on the given
+   * on the given allocation.  This is terminated early for any allocation for
+   * which all the taggers have returned true from TagFromAllocation on that
    * allocation.
    */
 
@@ -41,16 +40,18 @@ class Tagger {
     WEAK_CHECK            // May be expensive, weak results OK
   };
 
-  enum Result {
-    NOT_SURE_YET,         // At least one more phase is needed
-    TAGGING_DONE,         // A match was found and tagging was done
-    NO_TAGGING_FROM_HERE  // No match is possible
-  };
   Tagger() {}
 
-  virtual Result TagFromAllocation(Pass pass, AllocationIndex index,
-                                   Phase phase, const Allocation& allocation,
-                                   bool isUnsigned) = 0;
+  /*
+   * Look the allocation once to figure out if the contents of this allocation
+   * can be used to resolve information about this allocation or others.  Return
+   * true if and only if there is no need for this tagger to look any more at
+   * this allocation during the given pass.
+   */
+  virtual bool TagFromAllocation(Reader& reader, Pass pass,
+                                 AllocationIndex index, Phase phase,
+                                 const Allocation& allocation,
+                                 bool isUnsigned) = 0;
 };
 }  // namespace Allocations
 }  // namespace chap

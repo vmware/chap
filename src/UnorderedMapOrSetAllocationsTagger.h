@@ -17,7 +17,6 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Tagger::Pass Pass;
   typedef typename Tagger::Phase Phase;
-  typedef typename Tagger::Result Result;
   typedef typename Finder::AllocationIndex AllocationIndex;
   typedef typename Finder::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
@@ -33,9 +32,9 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
             _tagHolder.RegisterTag("unordered set or map buckets")),
         _nodeTagIndex(_tagHolder.RegisterTag("unordered set or map node")) {}
 
-  Result TagFromAllocation(Pass pass, AllocationIndex index, Phase phase,
-                           const Allocation& allocation, bool isUnsigned) {
-    Result result = Allocations::Tagger<Offset>::NO_TAGGING_FROM_HERE;
+  bool TagFromAllocation(Reader& reader, Pass pass, AllocationIndex index,
+                         Phase phase, const Allocation& allocation,
+                         bool isUnsigned) {
     if (isUnsigned) {
       switch (pass) {
         case Tagger::FIRST_PASS_THROUGH_ALLOCATIONS:
@@ -47,7 +46,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
            * array
            * then tag both the buckets array and nodes accordingly.
            */
-          result = TagFromExternalBucketsArray(index, phase, allocation);
+          return TagFromExternalBucketsArray(reader, index, phase, allocation);
           break;
         case Tagger::LAST_PASS_THROUGH_ALLOCATIONS:
           /*
@@ -65,12 +64,14 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
            * all
            * been tagged.
            */
-          // TODO: restore this phase when the performance cost is lower.
-          // result = TagFromFirstNodeOnList(index, phase, allocation);
+          return TagFromFirstNodeOnList(reader, index, phase, allocation);
           break;
       }
     }
-    return result;
+    /*
+     * There is no need to look any more at this allocation during this pass.
+     */
+    return true;
   }
 
   TagIndex GetBucketsTagIndex() const { return _bucketsTagIndex; }
@@ -85,38 +86,39 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   TagIndex _bucketsTagIndex;
   TagIndex _nodeTagIndex;
 
-  Result TagFromExternalBucketsArray(AllocationIndex index, Phase phase,
-                                     const Allocation& allocation) {
-    Result result = Tagger::NOT_SURE_YET;
-    Reader reader(_addressMap);
+  bool TagFromExternalBucketsArray(Reader& reader, AllocationIndex index,
+                                   Phase phase, const Allocation& allocation) {
+    if (_tagHolder.GetTagIndex(index) != 0) {
+      /*
+       * This was already tagged, generally as a result of following
+       * outgoing references from an allocation already being tagged.
+       * From this we conclude that the given allocation is not a buckets
+       * array.
+       */
+      return true;  // We are finished looking at this allocation for this pass.
+    }
 
     Offset size = allocation.Size();
     Offset address = allocation.Address();
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
-        if ((size < 2 * sizeof(Offset)) ||
-            ((reader.ReadOffset(address, 0xbad) & (sizeof(Offset) - 1)) != 0) ||
-            ((reader.ReadOffset(address + sizeof(Offset), 0xbad) &
-              (sizeof(Offset) - 1)) != 0)) {
-          result = Tagger::NO_TAGGING_FROM_HERE;
-        }
+        return (size < 2 * sizeof(Offset)) ||
+               ((reader.ReadOffset(address, 0xbad) & (sizeof(Offset) - 1)) !=
+                0) ||
+               ((reader.ReadOffset(address + sizeof(Offset), 0xbad) &
+                 (sizeof(Offset) - 1)) != 0);
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
-        if (size <= 5 * sizeof(Offset)) {
-          result = CheckByPointerToMapOrSet(reader, index, address, size);
-        }
+        return (size <= 5 * sizeof(Offset)) &&
+               CheckByPointerToMapOrSet(reader, index, address, size);
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        if (size > 5 * sizeof(Offset)) {
-          result = CheckByPointerToMapOrSet(reader, index, address, size);
-        }
-        if (result == Tagger::NOT_SURE_YET) {
-          result =
-              CheckByReferenceFromEmptyMapOrSet(reader, index, address, size);
-        }
+        return ((size > 5 * sizeof(Offset)) &&
+                CheckByPointerToMapOrSet(reader, index, address, size)) ||
+               CheckByReferenceFromEmptyMapOrSet(reader, index, address, size);
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
@@ -124,12 +126,11 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         // longer allocated.
         break;
     }
-    return result;
+    return false;
   }
 
-  Result CheckByPointerToMapOrSet(Reader& reader, AllocationIndex index,
-                                  Offset address, Offset size) {
-    Result result = Tagger::NOT_SURE_YET;
+  bool CheckByPointerToMapOrSet(Reader& reader, AllocationIndex index,
+                                Offset address, Offset size) {
     Reader otherReader(_addressMap);
     Offset checkAt = address;
     Offset checkLimit =
@@ -147,20 +148,17 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       Offset mapOrSetCandidate = o - (2 * sizeof(Offset));
       if (CheckMapOrSet(mapOrSetCandidate, otherReader, index, address, 0,
                         minBuckets, maxBuckets, false)) {
-        result = Tagger::TAGGING_DONE;
-        break;
+        return true;
       }
       // TODO: One could be more rigorous here by checking all the buckets
       // that were not yet checked.
       // TODO: In the case that the unordered map or unordered set is in flux
       // the list length might reasonably not match the count.
     }
-    return result;
+    return false;
   }
-  Result CheckByReferenceFromEmptyMapOrSet(Reader& reader,
-                                           AllocationIndex index,
-                                           Offset address, Offset size) {
-    Result result = Tagger::NOT_SURE_YET;
+  bool CheckByReferenceFromEmptyMapOrSet(Reader& reader, AllocationIndex index,
+                                         Offset address, Offset size) {
     Offset maxStartingEmptyBuckets = 0;
     Offset checkLimit = address + (size & ~(sizeof(Offset) - 1));
     for (Offset checkAt = address; checkAt < checkLimit;
@@ -189,18 +187,16 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
           if (CheckMapOrSet(checkAt, otherReader, index, address, 0, 1,
                             maxStartingEmptyBuckets, true)) {
-            return Tagger::TAGGING_DONE;
+            return true;
           }
         }
       }
     }
-    if (CheckAnchors(_graph.GetStaticAnchors(index), otherReader, index,
-                     address, 1, maxStartingEmptyBuckets) ||
-        CheckAnchors(_graph.GetStackAnchors(index), otherReader, index, address,
-                     1, maxStartingEmptyBuckets)) {
-      result = Tagger::TAGGING_DONE;
-    }
-    return result;
+    return CheckAnchors(_graph.GetStaticAnchors(index), otherReader, index,
+                        address, 1, maxStartingEmptyBuckets) ||
+           CheckAnchors(_graph.GetStackAnchors(index), otherReader, index,
+                        address, 1, maxStartingEmptyBuckets);
+    return false;
   }
 
   bool CheckAnchors(const std::vector<Offset>* anchors, Reader& reader,
@@ -217,9 +213,10 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  bool CheckMapOrSet(Offset mapOrSet, Reader& reader, AllocationIndex index,
-                     Offset bucketsAddress, Offset firstNodeAddress,
-                     Offset minBuckets, Offset maxBuckets, bool expectEmpty) {
+  bool CheckMapOrSet(Offset mapOrSet, Reader& reader,
+                     AllocationIndex bucketsIndex, Offset bucketsAddress,
+                     Offset firstNodeAddress, Offset minBuckets,
+                     Offset maxBuckets, bool expectEmpty) {
     if (reader.ReadOffset(mapOrSet, 0xbad) != bucketsAddress) {
       return false;
     }
@@ -287,7 +284,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       // all be 0 or point to valid allocations.
     }
     if (bucketsAddress != mapOrSet + 6 * sizeof(Offset)) {
-      _tagHolder.TagAllocation(index, _bucketsTagIndex);
+      _tagHolder.TagAllocation(bucketsIndex, _bucketsTagIndex);
     }
     for (Offset nodeCandidate = firstNodeCandidate; nodeCandidate != 0;
          nodeCandidate = reader.ReadOffset(nodeCandidate, 0)) {
@@ -297,26 +294,28 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     return true;
   }
 
-  Result TagFromFirstNodeOnList(AllocationIndex index, Phase phase,
-                                const Allocation& allocation) {
-    Result result = Tagger::NOT_SURE_YET;
-    Reader reader(_addressMap);
+  bool TagFromFirstNodeOnList(Reader& reader, AllocationIndex index,
+                              Phase phase, const Allocation& allocation) {
     Offset size = allocation.Size();
     Offset address = allocation.Address();
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
-        if ((size < 2 * sizeof(Offset)) ||
-            ((reader.ReadOffset(address, 0xbad) & (sizeof(Offset) - 1)) != 0)) {
-          result = Tagger::NO_TAGGING_FROM_HERE;
-        }
+        return (size < 2 * sizeof(Offset)) ||
+               ((reader.ReadOffset(address, 0xbad) & (sizeof(Offset) - 1)) !=
+                0);
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
+        return CheckFirstNodeAnchors(_graph.GetStaticAnchors(index), index,
+                                     address) ||
+               CheckFirstNodeAnchors(_graph.GetStackAnchors(index), index,
+                                     address);
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        result = CheckByReferenceFromSingleBucketMapOrSet(index, address);
+        CheckEmbeddedSingleBucketUnorderedMapsOrSets(address, size);
+        return true;
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
@@ -324,44 +323,40 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         // longer allocated.
         break;
     }
-    return result;
-  }
-  Result CheckByReferenceFromSingleBucketMapOrSet(AllocationIndex index,
-                                                  Offset address) {
-    Result result = Tagger::NOT_SURE_YET;
-    Reader otherReader(_addressMap);
-    const AllocationIndex* pFirstIncoming;
-    const AllocationIndex* pPastIncoming;
-    _graph.GetIncoming(index, &pFirstIncoming, &pPastIncoming);
-    for (const AllocationIndex* pNextIncoming = pFirstIncoming;
-         pNextIncoming != pPastIncoming; ++pNextIncoming) {
-      const Allocation* incomingAllocation =
-          _finder.AllocationAt(*pNextIncoming);
-      Offset incomingSize = incomingAllocation->Size();
-      if (incomingSize < 7 * sizeof(Offset)) {
-        continue;
-      }
-      Offset checkAt = incomingAllocation->Address();
-      Offset checkLimit =
-          checkAt + (incomingSize & ~(sizeof(Offset) - 1)) - 6 * sizeof(Offset);
-      for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
-        if (CheckMapOrSet(checkAt, otherReader, index,
-                          checkAt + 6 * sizeof(Offset), address, 1, 1, false)) {
-          return Tagger::TAGGING_DONE;
-        }
-      }
-    }
-    if (CheckFirstNodeAnchors(_graph.GetStaticAnchors(index), otherReader,
-                              index, address) ||
-        CheckFirstNodeAnchors(_graph.GetStackAnchors(index), otherReader, index,
-                              address)) {
-      result = Tagger::TAGGING_DONE;
-    }
-    return result;
+    return false;
   }
 
-  bool CheckFirstNodeAnchors(const std::vector<Offset>* anchors, Reader& reader,
+  void CheckEmbeddedSingleBucketUnorderedMapsOrSets(Offset address,
+                                                    Offset size) {
+    Reader reader(_addressMap);
+    Offset checkLimit =
+        address + (size & ~(sizeof(Offset) - 1)) - 6 * sizeof(Offset);
+    for (Offset checkAt = address; checkAt < checkLimit;
+         checkAt += sizeof(Offset)) {
+      if (reader.ReadOffset(checkAt, 0xbad) != checkAt + 6 * sizeof(Offset) ||
+          reader.ReadOffset(checkAt + sizeof(Offset), 0xbad) != 1) {
+        continue;
+      }
+      Offset firstNodeAddress =
+          reader.ReadOffset(checkAt + 2 * sizeof(Offset), 0xbad);
+      if (firstNodeAddress == 0 ||
+          ((firstNodeAddress & (sizeof(Offset) - 1)) != 0)) {
+        continue;
+      }
+      if (reader.ReadOffset(checkAt + 3 * sizeof(Offset), 0) == 0) {
+        continue;
+      }
+      if (reader.ReadOffset(checkAt + 6 * sizeof(Offset), 0xbad) !=
+          checkAt + 2 * sizeof(Offset)) {
+      }
+      CheckMapOrSet(checkAt, reader, _numAllocations,
+                    checkAt + 6 * sizeof(Offset), firstNodeAddress, 1, 1,
+                    false);
+    }
+  }
+  bool CheckFirstNodeAnchors(const std::vector<Offset>* anchors,
                              AllocationIndex index, Offset firstNodeAddress) {
+    Reader reader(_addressMap);
     if (anchors != nullptr) {
       for (Offset anchor : *anchors) {
         if (CheckMapOrSet(anchor - 2 * sizeof(Offset), reader, index,
