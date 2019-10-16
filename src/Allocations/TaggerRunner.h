@@ -90,6 +90,7 @@ class TaggerRunner {
     size_t resolvedIndex = 0;
     for (auto tagger : _taggers) {
       if (_finishedWithPass[resolvedIndex]) {
+        ++resolvedIndex;
         continue;
       }
       if (tagger->TagFromAllocation(reader, pass, index, phase, allocation,

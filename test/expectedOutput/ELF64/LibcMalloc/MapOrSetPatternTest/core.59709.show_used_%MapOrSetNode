@@ -1,0 +1,445 @@
+Used allocation at 609040 of size 38
+ 0:                1           608368                0                0
+20:           609028                1                0 
+
+Used allocation at 6090b0 of size 38
+ 0:                1           608398                0           609120
+20:           609098               51                0 
+
+Used allocation at 609120 of size 38
+ 0:                0           6090b0                0                0
+20:           609108               52                0 
+
+Used allocation at 609190 of size 28
+ 0:                1           6083c8           6091f0                0
+20:           609178 
+
+Used allocation at 6091f0 of size 28
+ 0:                0           609190                0                0
+20:           6091d8 
+
+Used allocation at 609220 of size 28
+ 0:                1           6083f8                0           609250
+20:       7100000071 
+
+Used allocation at 609250 of size 28
+ 0:                0           609220                0                0
+20:       7200000072 
+
+Used allocation at 609280 of size 28
+ 0:                1           608428                0           6092b0
+20:               81 
+
+Used allocation at 6092b0 of size 28
+ 0:                0           609280                0                0
+20:               82 
+
+Used allocation at 609310 of size 38
+ 0:                0           609380                0                0
+20:           6092f8               91                0 
+
+Used allocation at 609380 of size 38
+ 0:                1           608458           609310           6093f0
+20:           609368               92                0 
+
+Used allocation at 6093f0 of size 38
+ 0:                0           609380                0                0
+20:           6093d8               93                0 
+
+Used allocation at 609460 of size 28
+ 0:                0           6094c0                0                0
+20:           609448 
+
+Used allocation at 6094c0 of size 28
+ 0:                1           608488           609460           609520
+20:           6094a8 
+
+Used allocation at 609520 of size 28
+ 0:                0           6094c0                0                0
+20:           609508 
+
+Used allocation at 609550 of size 28
+ 0:                0           609580                0                0
+20:       b1000000b1 
+
+Used allocation at 609580 of size 28
+ 0:                1           6084b8           609550           6095b0
+20:       b2000000b2 
+
+Used allocation at 6095b0 of size 28
+ 0:                0           609580                0                0
+20:       b3000000b3 
+
+Used allocation at 6095e0 of size 28
+ 0:                0           609610                0                0
+20:               c1 
+
+Used allocation at 609610 of size 28
+ 0:                1           6084e8           6095e0           609640
+20:               c2 
+
+Used allocation at 609640 of size 28
+ 0:                0           609610                0                0
+20:               c3 
+
+Used allocation at 609670 of size 28
+ 0:                1           6096a0                0                0
+20:                0 
+
+Used allocation at 6096a0 of size 28
+ 0:                1           609700           609670           6096d0
+20:            1003d 
+
+Used allocation at 6096d0 of size 28
+ 0:                1           6096a0                0                0
+20:            2007a 
+
+Used allocation at 609700 of size 28
+ 0:                1           608518           6096a0           6097c0
+20:            300b7 
+
+Used allocation at 609730 of size 28
+ 0:                1           609760                0                0
+20:            400f4 
+
+Used allocation at 609760 of size 28
+ 0:                1           6097c0           609730           609790
+20:            50131 
+
+Used allocation at 609790 of size 28
+ 0:                1           609760                0                0
+20:            6016e 
+
+Used allocation at 6097c0 of size 28
+ 0:                0           609700           609760           609880
+20:            701ab 
+
+Used allocation at 6097f0 of size 28
+ 0:                1           609820                0                0
+20:            801e8 
+
+Used allocation at 609820 of size 28
+ 0:                0           609880           6097f0           609850
+20:            90225 
+
+Used allocation at 609850 of size 28
+ 0:                1           609820                0                0
+20:            a0262 
+
+Used allocation at 609880 of size 28
+ 0:                1           6097c0           609820           6098e0
+20:            b029f 
+
+Used allocation at 6098b0 of size 28
+ 0:                1           6098e0                0                0
+20:            c02dc 
+
+Used allocation at 6098e0 of size 28
+ 0:                0           609880           6098b0           609910
+20:            d0319 
+
+Used allocation at 609910 of size 28
+ 0:                1           6098e0                0           609940
+20:            e0356 
+
+Used allocation at 609940 of size 28
+ 0:                0           609910                0                0
+20:            f0393 
+
+Used allocation at 6099a0 of size 38
+ 0:                1     7fffffffe068                0                0
+20:           609988                1                0 
+
+Used allocation at 609a10 of size 38
+ 0:                1     7fffffffe098                0           609a80
+20:           6099f8               51                0 
+
+Used allocation at 609a80 of size 38
+ 0:                0           609a10                0                0
+20:           609a68               52                0 
+
+Used allocation at 609af0 of size 28
+ 0:                1     7fffffffe0c8           609b50                0
+20:           609ad8 
+
+Used allocation at 609b50 of size 28
+ 0:                0           609af0                0                0
+20:           609b38 
+
+Used allocation at 609b80 of size 28
+ 0:                1     7fffffffe0f8                0           609bb0
+20:       7100000071 
+
+Used allocation at 609bb0 of size 28
+ 0:                0           609b80                0                0
+20:       7200000072 
+
+Used allocation at 609be0 of size 28
+ 0:                1     7fffffffe128                0           609c10
+20:               81 
+
+Used allocation at 609c10 of size 28
+ 0:                0           609be0                0                0
+20:               82 
+
+Used allocation at 609c70 of size 38
+ 0:                0           609ce0                0                0
+20:           609c58               91                0 
+
+Used allocation at 609ce0 of size 38
+ 0:                1     7fffffffe158           609c70           609d50
+20:           609cc8               92                0 
+
+Used allocation at 609d50 of size 38
+ 0:                0           609ce0                0                0
+20:           609d38               93                0 
+
+Used allocation at 609dc0 of size 28
+ 0:                0           609e20                0                0
+20:           609da8 
+
+Used allocation at 609e20 of size 28
+ 0:                1     7fffffffe188           609dc0           609e80
+20:           609e08 
+
+Used allocation at 609e80 of size 28
+ 0:                0           609e20                0                0
+20:           609e68 
+
+Used allocation at 609eb0 of size 28
+ 0:                0           609ee0                0                0
+20:       b1000000b1 
+
+Used allocation at 609ee0 of size 28
+ 0:                1     7fffffffe1b8           609eb0           609f10
+20:       b2000000b2 
+
+Used allocation at 609f10 of size 28
+ 0:                0           609ee0                0                0
+20:       b3000000b3 
+
+Used allocation at 609f40 of size 28
+ 0:                0           609f70                0                0
+20:               c1 
+
+Used allocation at 609f70 of size 28
+ 0:                1     7fffffffe1e8           609f40           609fa0
+20:               c2 
+
+Used allocation at 609fa0 of size 28
+ 0:                0           609f70                0                0
+20:               c3 
+
+Used allocation at 609fd0 of size 28
+ 0:                1           60a000                0                0
+20:                0 
+
+Used allocation at 60a000 of size 28
+ 0:                1           60a060           609fd0           60a030
+20:            1003d 
+
+Used allocation at 60a030 of size 28
+ 0:                1           60a000                0                0
+20:            2007a 
+
+Used allocation at 60a060 of size 28
+ 0:                1     7fffffffe218           60a000           60a120
+20:            300b7 
+
+Used allocation at 60a090 of size 28
+ 0:                1           60a0c0                0                0
+20:            400f4 
+
+Used allocation at 60a0c0 of size 28
+ 0:                1           60a120           60a090           60a0f0
+20:            50131 
+
+Used allocation at 60a0f0 of size 28
+ 0:                1           60a0c0                0                0
+20:            6016e 
+
+Used allocation at 60a120 of size 28
+ 0:                0           60a060           60a0c0           60a1e0
+20:            701ab 
+
+Used allocation at 60a150 of size 28
+ 0:                1           60a180                0                0
+20:            801e8 
+
+Used allocation at 60a180 of size 28
+ 0:                0           60a1e0           60a150           60a1b0
+20:            90225 
+
+Used allocation at 60a1b0 of size 28
+ 0:                1           60a180                0                0
+20:            a0262 
+
+Used allocation at 60a1e0 of size 28
+ 0:                1           60a120           60a180           60a240
+20:            b029f 
+
+Used allocation at 60a210 of size 28
+ 0:                1           60a240                0                0
+20:            c02dc 
+
+Used allocation at 60a240 of size 28
+ 0:                0           60a1e0           60a210           60a270
+20:            d0319 
+
+Used allocation at 60a270 of size 28
+ 0:                1           60a240                0           60a2a0
+20:            e0356 
+
+Used allocation at 60a2a0 of size 28
+ 0:                0           60a270                0                0
+20:            f0393 
+
+Used allocation at 60a4f0 of size 38
+ 0:                1           60a2d8                0                0
+20:           60a4d8                1                0 
+
+Used allocation at 60a560 of size 38
+ 0:                1           60a308                0           60a5d0
+20:           60a548               51                0 
+
+Used allocation at 60a5d0 of size 38
+ 0:                0           60a560                0                0
+20:           60a5b8               52                0 
+
+Used allocation at 60a640 of size 28
+ 0:                1           60a338           60a6a0                0
+20:           60a628 
+
+Used allocation at 60a6a0 of size 28
+ 0:                0           60a640                0                0
+20:           60a688 
+
+Used allocation at 60a6d0 of size 28
+ 0:                1           60a368                0           60a700
+20:       7100000071 
+
+Used allocation at 60a700 of size 28
+ 0:                0           60a6d0                0                0
+20:       7200000072 
+
+Used allocation at 60a730 of size 28
+ 0:                1           60a398                0           60a760
+20:               81 
+
+Used allocation at 60a760 of size 28
+ 0:                0           60a730                0                0
+20:               82 
+
+Used allocation at 60a7c0 of size 38
+ 0:                0           60a830                0                0
+20:           60a7a8               91                0 
+
+Used allocation at 60a830 of size 38
+ 0:                1           60a3c8           60a7c0           60a8a0
+20:           60a818               92                0 
+
+Used allocation at 60a8a0 of size 38
+ 0:                0           60a830                0                0
+20:           60a888               93                0 
+
+Used allocation at 60a910 of size 28
+ 0:                0           60a970                0                0
+20:           60a8f8 
+
+Used allocation at 60a970 of size 28
+ 0:                1           60a3f8           60a910           60a9d0
+20:           60a958 
+
+Used allocation at 60a9d0 of size 28
+ 0:                0           60a970                0                0
+20:           60a9b8 
+
+Used allocation at 60aa00 of size 28
+ 0:                0           60aa30                0                0
+20:       b1000000b1 
+
+Used allocation at 60aa30 of size 28
+ 0:                1           60a428           60aa00           60aa60
+20:       b2000000b2 
+
+Used allocation at 60aa60 of size 28
+ 0:                0           60aa30                0                0
+20:       b3000000b3 
+
+Used allocation at 60aa90 of size 28
+ 0:                0           60aac0                0                0
+20:               c1 
+
+Used allocation at 60aac0 of size 28
+ 0:                1           60a458           60aa90           60aaf0
+20:               c2 
+
+Used allocation at 60aaf0 of size 28
+ 0:                0           60aac0                0                0
+20:               c3 
+
+Used allocation at 60ab20 of size 28
+ 0:                1           60ab50                0                0
+20:                0 
+
+Used allocation at 60ab50 of size 28
+ 0:                1           60abb0           60ab20           60ab80
+20:            1003d 
+
+Used allocation at 60ab80 of size 28
+ 0:                1           60ab50                0                0
+20:            2007a 
+
+Used allocation at 60abb0 of size 28
+ 0:                1           60a488           60ab50           60ac70
+20:            300b7 
+
+Used allocation at 60abe0 of size 28
+ 0:                1           60ac10                0                0
+20:            400f4 
+
+Used allocation at 60ac10 of size 28
+ 0:                1           60ac70           60abe0           60ac40
+20:            50131 
+
+Used allocation at 60ac40 of size 28
+ 0:                1           60ac10                0                0
+20:            6016e 
+
+Used allocation at 60ac70 of size 28
+ 0:                0           60abb0           60ac10           60ad30
+20:            701ab 
+
+Used allocation at 60aca0 of size 28
+ 0:                1           60acd0                0                0
+20:            801e8 
+
+Used allocation at 60acd0 of size 28
+ 0:                0           60ad30           60aca0           60ad00
+20:            90225 
+
+Used allocation at 60ad00 of size 28
+ 0:                1           60acd0                0                0
+20:            a0262 
+
+Used allocation at 60ad30 of size 28
+ 0:                1           60ac70           60acd0           60ad90
+20:            b029f 
+
+Used allocation at 60ad60 of size 28
+ 0:                1           60ad90                0                0
+20:            c02dc 
+
+Used allocation at 60ad90 of size 28
+ 0:                0           60ad30           60ad60           60adc0
+20:            d0319 
+
+Used allocation at 60adc0 of size 28
+ 0:                1           60ad90                0           60adf0
+20:            e0356 
+
+Used allocation at 60adf0 of size 28
+ 0:                0           60adc0                0                0
+20:            f0393 
+
+111 allocations use 0x1278 (4,728) bytes.

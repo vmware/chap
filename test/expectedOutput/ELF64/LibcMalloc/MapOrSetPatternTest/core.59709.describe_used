@@ -1,0 +1,501 @@
+Anchored allocation at 609010 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 1, reference count 1 and a string of size 1 containing
+"a".
+
+Anchored allocation at 609040 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609080 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"e1".
+
+Anchored allocation at 6090b0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6090f0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"e2".
+
+Anchored allocation at 609120 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609160 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"f2".
+
+Anchored allocation at 609190 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6091c0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"f1".
+
+Anchored allocation at 6091f0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609220 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609250 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609280 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6092b0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6092e0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i1".
+
+Anchored allocation at 609310 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609350 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i2".
+
+Anchored allocation at 609380 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6093c0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i3".
+
+Anchored allocation at 6093f0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609430 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j1".
+
+Anchored allocation at 609460 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609490 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j2".
+
+Anchored allocation at 6094c0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6094f0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j3".
+
+Anchored allocation at 609520 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609550 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609580 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6095b0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6095e0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609610 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609640 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609670 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6096a0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6096d0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609700 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609730 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609760 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609790 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6097c0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6097f0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609820 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609850 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609880 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6098b0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6098e0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609910 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609940 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609970 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 1, reference count 1 and a string of size 1 containing
+"a".
+
+Anchored allocation at 6099a0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6099e0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"e1".
+
+Anchored allocation at 609a10 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609a50 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"e2".
+
+Anchored allocation at 609a80 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609ac0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"f2".
+
+Anchored allocation at 609af0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609b20 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"f1".
+
+Anchored allocation at 609b50 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609b80 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609bb0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609be0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609c10 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609c40 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i1".
+
+Anchored allocation at 609c70 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609cb0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i2".
+
+Anchored allocation at 609ce0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609d20 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i3".
+
+Anchored allocation at 609d50 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609d90 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j1".
+
+Anchored allocation at 609dc0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609df0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j2".
+
+Anchored allocation at 609e20 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609e50 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j3".
+
+Anchored allocation at 609e80 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609eb0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609ee0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609f10 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609f40 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609f70 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609fa0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609fd0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a000 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a030 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a060 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a090 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a0c0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a0f0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a120 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a150 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a180 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a1b0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a1e0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a210 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a240 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a270 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a2a0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a2d0 of size 1e8
+
+Anchored allocation at 60a4c0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 1, reference count 1 and a string of size 1 containing
+"a".
+
+Anchored allocation at 60a4f0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a530 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"e1".
+
+Anchored allocation at 60a560 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a5a0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"e2".
+
+Anchored allocation at 60a5d0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a610 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"f2".
+
+Anchored allocation at 60a640 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a670 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"f1".
+
+Anchored allocation at 60a6a0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a6d0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a700 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a730 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a760 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a790 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i1".
+
+Anchored allocation at 60a7c0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a800 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i2".
+
+Anchored allocation at 60a830 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a870 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"i3".
+
+Anchored allocation at 60a8a0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a8e0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j1".
+
+Anchored allocation at 60a910 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a940 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j2".
+
+Anchored allocation at 60a970 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a9a0 of size 28
+This allocation matches pattern COWStringBody.
+This has capacity 2, reference count 1 and a string of size 2 containing
+"j3".
+
+Anchored allocation at 60a9d0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aa00 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aa30 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aa60 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aa90 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aac0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aaf0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ab20 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ab50 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ab80 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60abb0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60abe0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ac10 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ac40 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ac70 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aca0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60acd0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ad00 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ad30 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ad60 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60ad90 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60adc0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60adf0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+145 allocations use 0x1988 (6,536) bytes.

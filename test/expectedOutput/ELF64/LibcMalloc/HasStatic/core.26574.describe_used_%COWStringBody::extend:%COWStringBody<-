@@ -4,6 +4,7 @@ This has capacity 14, reference count 1 and a string of size 14 containing
 "some bogus key".
 
 Anchored allocation at 604040 of size 38
+This allocation matches pattern MapOrSetNode.
 
 Anchored allocation at 604080 of size 38
 This allocation matches pattern COWStringBody.
@@ -11,5 +12,6 @@ This has capacity 17, reference count 1 and a string of size 17 containing
 "another bogus key".
 
 Anchored allocation at 6040c0 of size 38
+This allocation matches pattern MapOrSetNode.
 
 4 allocations use 0xd0 (208) bytes.

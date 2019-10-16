@@ -1,6 +1,7 @@
 Anchored allocation at 604010 of size 11c08
 
 Anchored allocation at 615c20 of size 48
+This allocation matches pattern MapOrSetNode.
 
 Anchored allocation at 615c70 of size 18
 This allocation matches pattern LongString.
@@ -11,6 +12,7 @@ The capacity is considered to be 0x10.
 Anchored allocation at 615c90 of size 18
 
 Anchored allocation at 615cb0 of size 48
+This allocation matches pattern MapOrSetNode.
 
 Anchored allocation at 615d00 of size 18
 This allocation matches pattern LongString.

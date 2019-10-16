@@ -20,10 +20,13 @@ Anchored allocation at 603360 of size 18
 ... with signature 402050(HasList)
 
 Anchored allocation at 603380 of size 28
+This allocation matches pattern MapOrSetNode.
 
 Anchored allocation at 6033b0 of size 28
+This allocation matches pattern MapOrSetNode.
 
 Anchored allocation at 6033e0 of size 28
+This allocation matches pattern MapOrSetNode.
 
 Leaked allocation at 603410 of size 18
 ... with signature 402050(HasList)

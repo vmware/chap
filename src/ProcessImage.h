@@ -7,6 +7,7 @@
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
 #include "Allocations/TagHolder.h"
+#include "MapOrSetAllocationsTagger.h"
 #include "ModuleDirectory.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
@@ -32,7 +33,10 @@ class ProcessImage {
         _moduleDirectory(_virtualMemoryPartition),
         _unfilledImages(virtualAddressMap),
         _allocationFinder(nullptr),
-        _allocationGraph(nullptr) {
+        _allocationTagHolder(nullptr),
+        _allocationGraph(nullptr),
+        _unorderedMapOrSetAllocationsTagger(nullptr),
+        _mapOrSetAllocationsTagger(nullptr) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -103,6 +107,12 @@ class ProcessImage {
       *GetUnorderedMapOrSetAllocationsTagger() const {
     return _unorderedMapOrSetAllocationsTagger;
   }
+
+  const MapOrSetAllocationsTagger<Offset> *GetMapOrSetAllocationsTagger()
+      const {
+    return _mapOrSetAllocationsTagger;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -119,5 +129,6 @@ class ProcessImage {
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
   UnorderedMapOrSetAllocationsTagger<Offset>
       *_unorderedMapOrSetAllocationsTagger;
+  MapOrSetAllocationsTagger<Offset> *_mapOrSetAllocationsTagger;
 };
 }  // namespace chap

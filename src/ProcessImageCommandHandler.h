@@ -19,6 +19,7 @@
 #include "DoublyLinkedListNodeRecognizer.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
+#include "MapOrSetNodeRecognizer.h"
 #include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/ListModules.h"
 #include "ProcessImage.h"
@@ -162,11 +163,13 @@ class ProcessImageCommandHandler {
         _dequeMapRecognizer(processImage),
         _unorderedMapOrSetBucketsRecognizer(processImage),
         _unorderedMapOrSetNodeRecognizer(processImage),
+        _mapOrSetNodeRecognizer(processImage),
         _vectorBodyRecognizer(processImage),
         _doublyLinkedListNodeRecognizer(processImage) {
     _patternRecognizerRegistry.Register(_dequeMapRecognizer);
     _patternRecognizerRegistry.Register(_unorderedMapOrSetBucketsRecognizer);
     _patternRecognizerRegistry.Register(_unorderedMapOrSetNodeRecognizer);
+    _patternRecognizerRegistry.Register(_mapOrSetNodeRecognizer);
     _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
     _patternRecognizerRegistry.Register(_doublyLinkedListNodeRecognizer);
     // Leave it to any derived class to add any describers.
@@ -277,6 +280,7 @@ class ProcessImageCommandHandler {
   UnorderedMapOrSetBucketsRecognizer<Offset>
       _unorderedMapOrSetBucketsRecognizer;
   UnorderedMapOrSetNodeRecognizer<Offset> _unorderedMapOrSetNodeRecognizer;
+  MapOrSetNodeRecognizer<Offset> _mapOrSetNodeRecognizer;
   VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
   DoublyLinkedListNodeRecognizer<Offset> _doublyLinkedListNodeRecognizer;
 };

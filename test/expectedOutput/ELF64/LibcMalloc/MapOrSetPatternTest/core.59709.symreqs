@@ -1,0 +1,69 @@
+set logging file core.59709.symdefs
+set logging overwrite 1
+set logging redirect 1
+set logging on
+set height 0
+printf "ANCHOR 608370\n"
+info symbol 0x608370
+printf "ANCHOR 608378\n"
+info symbol 0x608378
+printf "ANCHOR 608380\n"
+info symbol 0x608380
+printf "ANCHOR 6083a0\n"
+info symbol 0x6083a0
+printf "ANCHOR 6083a8\n"
+info symbol 0x6083a8
+printf "ANCHOR 6083b0\n"
+info symbol 0x6083b0
+printf "ANCHOR 6083d0\n"
+info symbol 0x6083d0
+printf "ANCHOR 6083e0\n"
+info symbol 0x6083e0
+printf "ANCHOR 6083d8\n"
+info symbol 0x6083d8
+printf "ANCHOR 608400\n"
+info symbol 0x608400
+printf "ANCHOR 608408\n"
+info symbol 0x608408
+printf "ANCHOR 608410\n"
+info symbol 0x608410
+printf "ANCHOR 608430\n"
+info symbol 0x608430
+printf "ANCHOR 608438\n"
+info symbol 0x608438
+printf "ANCHOR 608440\n"
+info symbol 0x608440
+printf "ANCHOR 608468\n"
+info symbol 0x608468
+printf "ANCHOR 608460\n"
+info symbol 0x608460
+printf "ANCHOR 608470\n"
+info symbol 0x608470
+printf "ANCHOR 608498\n"
+info symbol 0x608498
+printf "ANCHOR 608490\n"
+info symbol 0x608490
+printf "ANCHOR 6084a0\n"
+info symbol 0x6084a0
+printf "ANCHOR 6084c8\n"
+info symbol 0x6084c8
+printf "ANCHOR 6084c0\n"
+info symbol 0x6084c0
+printf "ANCHOR 6084d0\n"
+info symbol 0x6084d0
+printf "ANCHOR 6084f8\n"
+info symbol 0x6084f8
+printf "ANCHOR 6084f0\n"
+info symbol 0x6084f0
+printf "ANCHOR 608500\n"
+info symbol 0x608500
+printf "ANCHOR 608528\n"
+info symbol 0x608528
+printf "ANCHOR 608520\n"
+info symbol 0x608520
+printf "ANCHOR 608530\n"
+info symbol 0x608530
+set logging off
+set logging overwrite 0
+set logging redirect 0
+printf "output written to core.59709.symdefs\n"
