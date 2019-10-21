@@ -8,20 +8,20 @@
 
 namespace chap {
 template <typename Offset>
-class DequeMapRecognizer : public Allocations::PatternRecognizer<Offset> {
+class DequeBlockRecognizer : public Allocations::PatternRecognizer<Offset> {
  public:
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
   typedef typename Allocations::TagHolder<Offset>::TagIndex TagIndex;
-  DequeMapRecognizer(const ProcessImage<Offset>& processImage)
-      : Allocations::PatternRecognizer<Offset>(processImage, "DequeMap"),
+  DequeBlockRecognizer(const ProcessImage<Offset>& processImage)
+      : Allocations::PatternRecognizer<Offset>(processImage, "DequeBlock"),
         _tagHolder(processImage.GetAllocationTagHolder()),
         _tagIndex(~((TagIndex)(0))) {
     const DequeAllocationsTagger<Offset>* tagger =
         processImage.GetDequeAllocationsTagger();
     if (tagger != 0) {
-      _tagIndex = tagger->GetMapTagIndex();
+      _tagIndex = tagger->GetBlockTagIndex();
     }
   }
 
@@ -42,7 +42,7 @@ class DequeMapRecognizer : public Allocations::PatternRecognizer<Offset> {
       return false;
     }
     Commands::Output& output = context.GetOutput();
-    output << "This allocation matches pattern DequeMap.\n";
+    output << "This allocation matches pattern DequeBlock.\n";
     if (explain) {
       /*
        * TODO: Identify the owner of the deque, by following an incoming edge

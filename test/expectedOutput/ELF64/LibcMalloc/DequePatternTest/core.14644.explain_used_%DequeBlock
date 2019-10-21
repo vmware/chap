@@ -1,0 +1,3647 @@
+Anchored allocation at 60a060 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60a060 appears to be directly statically anchored.
+Address 0x6092b0 is at offset 0x2b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2092b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6092b0 references 0x60a060.
+Address 0x6092b8 is at offset 0x2b8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2092b8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6092b8 references 0x60a060.
+Address 0x6092c0 is at offset 0x2c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2092c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6092c0 references 0x60a060.
+Address 0x6092d0 is at offset 0x2d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2092d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6092d0 references 0x60a060.
+Address 0x6092d8 is at offset 0x2d8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2092d8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6092d8 references 0x60a060.
+Address 0x6092e0 is at offset 0x2e0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2092e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6092e0 references 0x60a060.
+
+Anchored allocation at 60a2c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60a2c0 appears to be directly statically anchored.
+Address 0x609300 is at offset 0x300 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209300.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609300 references 0x60a2c0.
+Address 0x609308 is at offset 0x308 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209308.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609308 references 0x60a2c0.
+Address 0x609310 is at offset 0x310 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209310.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609310 references 0x60a2c0.
+Address 0x609320 is at offset 0x320 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209320.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609320 references 0x60a2c0.
+Address 0x609328 is at offset 0x328 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209328.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609328 references 0x60a2c0.
+Address 0x609330 is at offset 0x330 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209330.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609330 references 0x60a2c0.
+
+Anchored allocation at 60a520 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60a520 appears to be directly statically anchored.
+Address 0x609350 is at offset 0x350 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209350.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609350 references 0x60a520.
+Address 0x609358 is at offset 0x358 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209358.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609358 references 0x60a520.
+Address 0x609360 is at offset 0x360 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209360.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609360 references 0x60a520.
+Address 0x609370 is at offset 0x370 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209370.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609370 references 0x60a520.
+Address 0x609378 is at offset 0x378 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209378.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609378 references 0x60a520.
+Address 0x609380 is at offset 0x380 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209380.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609380 references 0x60a520.
+
+Anchored allocation at 60a780 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60a780 appears to be directly statically anchored.
+Address 0x6093a0 is at offset 0x3a0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093a0 references 0x60a780.
+Address 0x6093a8 is at offset 0x3a8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093a8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093a8 references 0x60a780.
+Address 0x6093b0 is at offset 0x3b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093b0 references 0x60a780.
+Address 0x6093c0 is at offset 0x3c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093c0 references 0x60a780.
+Address 0x6093c8 is at offset 0x3c8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093c8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093c8 references 0x60a780.
+Address 0x6093d0 is at offset 0x3d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093d0 references 0x60a780.
+
+Anchored allocation at 60a9e0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60a9e0 appears to be directly statically anchored.
+Address 0x6093f0 is at offset 0x3f0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093f0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093f0 references 0x60a9e0.
+Address 0x6093f8 is at offset 0x3f8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2093f8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6093f8 references 0x60a9e0.
+Address 0x609400 is at offset 0x400 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209400.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609400 references 0x60a9e0.
+Address 0x609410 is at offset 0x410 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209410.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609410 references 0x60a9e0.
+Address 0x609418 is at offset 0x418 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209418.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609418 references 0x60a9e0.
+Address 0x609420 is at offset 0x420 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209420.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609420 references 0x60a9e0.
+
+Anchored allocation at 60ac40 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60ac40 appears to be directly statically anchored.
+Address 0x609440 is at offset 0x440 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209440.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609440 references 0x60ac40.
+Address 0x609448 is at offset 0x448 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209448.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609448 references 0x60ac40.
+Address 0x609450 is at offset 0x450 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209450.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609450 references 0x60ac40.
+Address 0x609460 is at offset 0x460 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209460.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609460 references 0x60ac40.
+Address 0x609468 is at offset 0x468 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209468.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609468 references 0x60ac40.
+Address 0x609470 is at offset 0x470 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209470.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609470 references 0x60ac40.
+
+Anchored allocation at 60aea0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60aea0 appears to be directly statically anchored.
+Address 0x609490 is at offset 0x490 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209490.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609490 references 0x60aea0.
+Address 0x609498 is at offset 0x498 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209498.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609498 references 0x60aea0.
+Address 0x6094a0 is at offset 0x4a0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094a0 references 0x60aea0.
+Address 0x6094b0 is at offset 0x4b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094b0 references 0x60aea0.
+Address 0x6094b8 is at offset 0x4b8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094b8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094b8 references 0x60aea0.
+Address 0x6094c0 is at offset 0x4c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094c0 references 0x60aea0.
+
+Anchored allocation at 60b100 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60b100 appears to be directly statically anchored.
+Address 0x6094e0 is at offset 0x4e0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094e0 references 0x60b100.
+Address 0x6094e8 is at offset 0x4e8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094e8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094e8 references 0x60b100.
+Address 0x6094f0 is at offset 0x4f0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2094f0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6094f0 references 0x60b100.
+Address 0x609500 is at offset 0x500 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209500.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609500 references 0x60b100.
+Address 0x609508 is at offset 0x508 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209508.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609508 references 0x60b100.
+Address 0x609510 is at offset 0x510 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209510.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609510 references 0x60b100.
+
+Anchored allocation at 60b360 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60b360 appears to be directly statically anchored.
+Address 0x609530 is at offset 0x530 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209530.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609530 references 0x60b360.
+Address 0x609538 is at offset 0x538 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209538.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609538 references 0x60b360.
+Address 0x609540 is at offset 0x540 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209540.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609540 references 0x60b360.
+Address 0x609550 is at offset 0x550 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209550.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609550 references 0x60b360.
+Address 0x609558 is at offset 0x558 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209558.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609558 references 0x60b360.
+Address 0x609560 is at offset 0x560 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209560.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609560 references 0x60b360.
+
+Anchored allocation at 60b5c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60b5c0 appears to be directly statically anchored.
+Address 0x609580 is at offset 0x580 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209580.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609580 references 0x60b5c0.
+Address 0x609588 is at offset 0x588 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209588.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609588 references 0x60b5c0.
+Address 0x609590 is at offset 0x590 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209590.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609590 references 0x60b5c0.
+Address 0x6095a0 is at offset 0x5a0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095a0 references 0x60b5c0.
+Address 0x6095a8 is at offset 0x5a8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095a8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095a8 references 0x60b5c0.
+Address 0x6095b0 is at offset 0x5b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095b0 references 0x60b5c0.
+
+Anchored allocation at 60b820 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60b820 appears to be directly statically anchored.
+Address 0x6095d0 is at offset 0x5d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095d0 references 0x60b820.
+Address 0x6095d8 is at offset 0x5d8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095d8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095d8 references 0x60b820.
+Address 0x6095e0 is at offset 0x5e0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095e0 references 0x60b820.
+Address 0x6095f0 is at offset 0x5f0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095f0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095f0 references 0x60b820.
+Address 0x6095f8 is at offset 0x5f8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2095f8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6095f8 references 0x60b820.
+Address 0x609600 is at offset 0x600 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209600.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609600 references 0x60b820.
+
+Anchored allocation at 60ba80 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60ba80 appears to be directly statically anchored.
+Address 0x609620 is at offset 0x620 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209620.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609620 references 0x60ba80.
+Address 0x609628 is at offset 0x628 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209628.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609628 references 0x60ba80.
+Address 0x609630 is at offset 0x630 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209630.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609630 references 0x60ba80.
+Address 0x609640 is at offset 0x640 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209640.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609640 references 0x60ba80.
+Address 0x609648 is at offset 0x648 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209648.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609648 references 0x60ba80.
+Address 0x609650 is at offset 0x650 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209650.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609650 references 0x60ba80.
+
+Anchored allocation at 60bce0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60bce0 appears to be directly statically anchored.
+Address 0x609670 is at offset 0x670 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209670.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609670 references 0x60bce0.
+Address 0x609678 is at offset 0x678 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209678.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609678 references 0x60bce0.
+Address 0x609680 is at offset 0x680 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209680.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609680 references 0x60bce0.
+Address 0x609690 is at offset 0x690 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209690.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609690 references 0x60bce0.
+Address 0x609698 is at offset 0x698 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209698.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609698 references 0x60bce0.
+Address 0x6096a0 is at offset 0x6a0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096a0 references 0x60bce0.
+
+Anchored allocation at 60bf40 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60bf40 appears to be directly statically anchored.
+Address 0x6096c0 is at offset 0x6c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096c0 references 0x60bf40.
+Address 0x6096c8 is at offset 0x6c8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096c8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096c8 references 0x60bf40.
+Address 0x6096d0 is at offset 0x6d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096d0 references 0x60bf40.
+Address 0x6096e0 is at offset 0x6e0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096e0 references 0x60bf40.
+Address 0x6096e8 is at offset 0x6e8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096e8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096e8 references 0x60bf40.
+Address 0x6096f0 is at offset 0x6f0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2096f0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6096f0 references 0x60bf40.
+
+Anchored allocation at 60c1a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60c1a0 appears to be directly statically anchored.
+Address 0x609710 is at offset 0x710 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209710.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609710 references 0x60c1a0.
+Address 0x609718 is at offset 0x718 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209718.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609718 references 0x60c1a0.
+Address 0x609720 is at offset 0x720 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209720.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609720 references 0x60c1a0.
+Address 0x609730 is at offset 0x730 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209730.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609730 references 0x60c1a0.
+Address 0x609738 is at offset 0x738 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209738.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609738 references 0x60c1a0.
+Address 0x609740 is at offset 0x740 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209740.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609740 references 0x60c1a0.
+
+Anchored allocation at 60c400 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60c400 appears to be directly statically anchored.
+Address 0x6097b0 is at offset 0x7b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2097b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6097b0 references 0x60c400.
+Address 0x6097b8 is at offset 0x7b8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2097b8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6097b8 references 0x60c400.
+Address 0x6097c0 is at offset 0x7c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2097c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6097c0 references 0x60c400.
+Address 0x6097d0 is at offset 0x7d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2097d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6097d0 references 0x60c400.
+Address 0x6097d8 is at offset 0x7d8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2097d8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6097d8 references 0x60c400.
+Address 0x6097e0 is at offset 0x7e0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2097e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6097e0 references 0x60c400.
+
+Anchored allocation at 60c660 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60c660 appears to be directly statically anchored.
+Address 0x609800 is at offset 0x800 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209800.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609800 references 0x60c660.
+Address 0x609808 is at offset 0x808 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209808.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609808 references 0x60c660.
+Address 0x609810 is at offset 0x810 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209810.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609810 references 0x60c660.
+Address 0x609820 is at offset 0x820 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209820.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609820 references 0x60c660.
+Address 0x609828 is at offset 0x828 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209828.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609828 references 0x60c660.
+Address 0x609830 is at offset 0x830 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209830.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609830 references 0x60c660.
+
+Anchored allocation at 60cad0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60cad0 appears to be directly statically anchored.
+Address 0x609760 is at offset 0x760 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209760.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609760 references 0x60cad0.
+Address 0x609768 is at offset 0x768 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209768.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609768 references 0x60cad0.
+Address 0x609770 is at offset 0x770 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209770.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609770 references 0x60cad0.
+Address 0x609780 is at offset 0x780 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209780.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609780 references 0x60cad0.
+Address 0x609788 is at offset 0x788 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209788.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609788 references 0x60cad0.
+Address 0x609790 is at offset 0x790 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209790.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609790 references 0x60cad0.
+
+Anchored allocation at 60cce0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60cce0 appears to be directly statically anchored.
+Address 0x609850 is at offset 0x850 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209850.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609850 references 0x60cce0.
+Address 0x609858 is at offset 0x858 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209858.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609858 references 0x60cce0.
+Address 0x609860 is at offset 0x860 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209860.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609860 references 0x60cce0.
+Address 0x609870 is at offset 0x870 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209870.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609870 references 0x60cce0.
+Address 0x609878 is at offset 0x878 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209878.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609878 references 0x60cce0.
+Address 0x609880 is at offset 0x880 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209880.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609880 references 0x60cce0.
+
+Anchored allocation at 60cef0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60cef0 appears to be directly statically anchored.
+Address 0x6098a0 is at offset 0x8a0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098a0 references 0x60cef0.
+Address 0x6098a8 is at offset 0x8a8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098a8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098a8 references 0x60cef0.
+Address 0x6098b0 is at offset 0x8b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098b0 references 0x60cef0.
+Address 0x6098c0 is at offset 0x8c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098c0 references 0x60cef0.
+Address 0x6098c8 is at offset 0x8c8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098c8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098c8 references 0x60cef0.
+Address 0x6098d0 is at offset 0x8d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098d0 references 0x60cef0.
+
+Anchored allocation at 60d100 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60d100 appears to be directly statically anchored.
+Address 0x6098f0 is at offset 0x8f0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098f0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098f0 references 0x60d100.
+Address 0x6098f8 is at offset 0x8f8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2098f8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6098f8 references 0x60d100.
+Address 0x609900 is at offset 0x900 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209900.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609900 references 0x60d100.
+Address 0x609910 is at offset 0x910 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209910.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609910 references 0x60d100.
+Address 0x609918 is at offset 0x918 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209918.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609918 references 0x60d100.
+Address 0x609920 is at offset 0x920 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209920.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609920 references 0x60d100.
+
+Anchored allocation at 60d310 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60d310 appears to be directly statically anchored.
+Address 0x609940 is at offset 0x940 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209940.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609940 references 0x60d310.
+Address 0x609948 is at offset 0x948 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209948.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609948 references 0x60d310.
+Address 0x609950 is at offset 0x950 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209950.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609950 references 0x60d310.
+
+Anchored allocation at 60d520 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60d520 appears to be indirectly statically anchored
+via anchor point 0x60ca00.
+Address 0x609980 is at offset 0x980 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209980.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609980 references anchor point 0x60ca00
+Address 0x6099a8 is at offset 0x9a8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099a8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099a8 references anchor point 0x60ca00
+Address 0x6099c8 is at offset 0x9c8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099c8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099c8 references anchor point 0x60ca00
+which references 0x60d520
+The allocation at 0x60d520 appears to be indirectly statically anchored
+via anchor point 0x60ca50.
+Address 0x6099d0 is at offset 0x9d0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099d0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099d0 references anchor point 0x60ca50
+Address 0x6099f8 is at offset 0x9f8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099f8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099f8 references anchor point 0x60ca50
+Address 0x609a18 is at offset 0xa18 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a18.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a18 references anchor point 0x60ca50
+which references 0x60d520
+
+Anchored allocation at 60d730 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60d730 appears to be directly statically anchored.
+Address 0x6099e0 is at offset 0x9e0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099e0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099e0 references 0x60d730.
+Address 0x6099e8 is at offset 0x9e8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099e8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099e8 references 0x60d730.
+Address 0x6099f0 is at offset 0x9f0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099f0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099f0 references 0x60d730.
+
+Anchored allocation at 60d990 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60d990 appears to be directly statically anchored.
+Address 0x609bc0 is at offset 0xbc0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209bc0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609bc0 references 0x60d990.
+Address 0x609bc8 is at offset 0xbc8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209bc8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609bc8 references 0x60d990.
+Address 0x609bd0 is at offset 0xbd0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209bd0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609bd0 references 0x60d990.
+Address 0x609be0 is at offset 0xbe0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209be0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609be0 references 0x60d990.
+Address 0x609be8 is at offset 0xbe8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209be8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609be8 references 0x60d990.
+Address 0x609bf0 is at offset 0xbf0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209bf0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609bf0 references 0x60d990.
+
+Anchored allocation at 60de50 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60de50 appears to be directly statically anchored.
+Address 0x609b70 is at offset 0xb70 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b70.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b70 references 0x60de50.
+Address 0x609b78 is at offset 0xb78 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b78.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b78 references 0x60de50.
+Address 0x609b80 is at offset 0xb80 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b80.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b80 references 0x60de50.
+Address 0x609b90 is at offset 0xb90 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b90.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b90 references 0x60de50.
+Address 0x609b98 is at offset 0xb98 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b98.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b98 references 0x60de50.
+Address 0x609ba0 is at offset 0xba0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ba0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ba0 references 0x60de50.
+
+Anchored allocation at 60e060 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60e060 appears to be directly statically anchored.
+Address 0x609960 is at offset 0x960 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209960.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609960 references 0x60e060.
+Address 0x609968 is at offset 0x968 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209968.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609968 references 0x60e060.
+Address 0x609970 is at offset 0x970 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209970.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609970 references 0x60e060.
+
+Anchored allocation at 60e270 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60e270 appears to be directly statically anchored.
+Address 0x609990 is at offset 0x990 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209990.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609990 references 0x60e270.
+Address 0x609998 is at offset 0x998 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209998.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609998 references 0x60e270.
+Address 0x6099a0 is at offset 0x9a0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099a0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099a0 references 0x60e270.
+Address 0x6099b0 is at offset 0x9b0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099b0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099b0 references 0x60e270.
+Address 0x6099b8 is at offset 0x9b8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099b8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099b8 references 0x60e270.
+Address 0x6099c0 is at offset 0x9c0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x2099c0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x6099c0 references 0x60e270.
+
+Anchored allocation at 60e480 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60e480 appears to be directly statically anchored.
+Address 0x609a00 is at offset 0xa00 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a00.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a00 references 0x60e480.
+Address 0x609a08 is at offset 0xa08 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a08.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a08 references 0x60e480.
+Address 0x609a10 is at offset 0xa10 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a10.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a10 references 0x60e480.
+
+Anchored allocation at 60e690 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60e690 appears to be directly statically anchored.
+Address 0x609ad0 is at offset 0xad0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ad0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ad0 references 0x60e690.
+Address 0x609ad8 is at offset 0xad8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ad8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ad8 references 0x60e690.
+Address 0x609ae0 is at offset 0xae0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ae0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ae0 references 0x60e690.
+Address 0x609af0 is at offset 0xaf0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209af0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609af0 references 0x60e690.
+Address 0x609af8 is at offset 0xaf8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209af8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609af8 references 0x60e690.
+Address 0x609b00 is at offset 0xb00 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b00.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b00 references 0x60e690.
+
+Anchored allocation at 60e8a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60e8a0 appears to be directly statically anchored.
+Address 0x609c10 is at offset 0xc10 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c10.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c10 references 0x60e8a0.
+Address 0x609c18 is at offset 0xc18 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c18.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c18 references 0x60e8a0.
+Address 0x609c20 is at offset 0xc20 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c20.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c20 references 0x60e8a0.
+
+Anchored allocation at 60ecc0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60ecc0 appears to be directly statically anchored.
+Address 0x609a30 is at offset 0xa30 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a30.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a30 references 0x60ecc0.
+Address 0x609a38 is at offset 0xa38 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a38.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a38 references 0x60ecc0.
+Address 0x609a40 is at offset 0xa40 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a40.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a40 references 0x60ecc0.
+
+Anchored allocation at 60ef70 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60ef70 appears to be indirectly statically anchored
+via anchor point 0x60eed0.
+Address 0x609a20 is at offset 0xa20 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a20.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a20 references anchor point 0x60eed0
+Address 0x609a48 is at offset 0xa48 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a48.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a48 references anchor point 0x60eed0
+Address 0x609a68 is at offset 0xa68 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a68.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a68 references anchor point 0x60eed0
+which references 0x60ef70
+
+Anchored allocation at 60f180 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60f180 appears to be indirectly statically anchored
+via anchor point 0x60eed0.
+Address 0x609a20 is at offset 0xa20 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a20.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a20 references anchor point 0x60eed0
+Address 0x609a48 is at offset 0xa48 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a48.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a48 references anchor point 0x60eed0
+Address 0x609a68 is at offset 0xa68 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a68.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a68 references anchor point 0x60eed0
+which references 0x60f180
+
+Anchored allocation at 60f390 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60f390 appears to be directly statically anchored.
+Address 0x609a50 is at offset 0xa50 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a50.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a50 references 0x60f390.
+Address 0x609a58 is at offset 0xa58 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a58.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a58 references 0x60f390.
+Address 0x609a60 is at offset 0xa60 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a60.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a60 references 0x60f390.
+
+Anchored allocation at 60f640 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60f640 appears to be directly statically anchored.
+Address 0x609b20 is at offset 0xb20 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b20.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b20 references 0x60f640.
+Address 0x609b28 is at offset 0xb28 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b28.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b28 references 0x60f640.
+Address 0x609b30 is at offset 0xb30 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b30.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b30 references 0x60f640.
+Address 0x609b40 is at offset 0xb40 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b40.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b40 references 0x60f640.
+Address 0x609b48 is at offset 0xb48 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b48.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b48 references 0x60f640.
+Address 0x609b50 is at offset 0xb50 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209b50.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609b50 references 0x60f640.
+
+Anchored allocation at 60f850 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60f850 appears to be directly statically anchored.
+Address 0x609a80 is at offset 0xa80 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a80.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a80 references 0x60f850.
+Address 0x609a88 is at offset 0xa88 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a88.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a88 references 0x60f850.
+Address 0x609a90 is at offset 0xa90 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209a90.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609a90 references 0x60f850.
+Address 0x609aa0 is at offset 0xaa0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209aa0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609aa0 references 0x60f850.
+Address 0x609aa8 is at offset 0xaa8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209aa8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609aa8 references 0x60f850.
+Address 0x609ab0 is at offset 0xab0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ab0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ab0 references 0x60f850.
+
+Anchored allocation at 60fa60 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60fa60 appears to be indirectly statically anchored
+via anchor point 0x60dc90.
+Address 0x609ca0 is at offset 0xca0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ca0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ca0 references anchor point 0x60dc90
+Address 0x609cc8 is at offset 0xcc8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cc8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cc8 references anchor point 0x60dc90
+Address 0x609ce8 is at offset 0xce8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ce8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ce8 references anchor point 0x60dc90
+which references 0x60fa60
+The allocation at 0x60fa60 appears to be indirectly statically anchored
+via anchor point 0x60eab0.
+Address 0x609c50 is at offset 0xc50 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c50.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c50 references anchor point 0x60eab0
+Address 0x609c78 is at offset 0xc78 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c78.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c78 references anchor point 0x60eab0
+Address 0x609c98 is at offset 0xc98 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c98.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c98 references anchor point 0x60eab0
+which references 0x60fa60
+The allocation at 0x60fa60 appears to be indirectly anchored from
+at least one stack via anchor point 0x60dd30.
+Address 0x7fffffffd700 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd700 references anchor point 0x60dd30
+Address 0x7fffffffd728 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd728 references anchor point 0x60dd30
+Address 0x7fffffffd748 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd748 references anchor point 0x60dd30
+which references 0x60dc90
+which references 0x60fa60
+
+Anchored allocation at 60fc70 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60fc70 appears to be directly statically anchored.
+Address 0x609cb0 is at offset 0xcb0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cb0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cb0 references 0x60fc70.
+Address 0x609cb8 is at offset 0xcb8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cb8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cb8 references 0x60fc70.
+Address 0x609cc0 is at offset 0xcc0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cc0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cc0 references 0x60fc70.
+The allocation at 0x60fc70 appears to be indirectly anchored from
+at least one stack via anchor point 0x60fe80.
+Address 0x7fffffffd7b0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7b0 references anchor point 0x60fe80
+Address 0x7fffffffd7b8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7b8 references anchor point 0x60fe80
+Address 0x7fffffffd7c0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7c0 references anchor point 0x60fe80
+Address 0x7fffffffd7d0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7d0 references anchor point 0x60fe80
+Address 0x7fffffffd7d8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7d8 references anchor point 0x60fe80
+Address 0x7fffffffd7e0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7e0 references anchor point 0x60fe80
+which references 0x60fc70
+The allocation at 0x60fc70 appears to be indirectly anchored from
+at least one stack via anchor point 0x611950.
+Address 0x7fffffffd710 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd710 references anchor point 0x611950
+Address 0x7fffffffd718 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd718 references anchor point 0x611950
+Address 0x7fffffffd720 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd720 references anchor point 0x611950
+Address 0x7fffffffd730 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd730 references anchor point 0x611950
+Address 0x7fffffffd738 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd738 references anchor point 0x611950
+Address 0x7fffffffd740 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd740 references anchor point 0x611950
+which references 0x60fc70
+
+Anchored allocation at 60fe80 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x60fe80 appears to be indirectly statically anchored
+via anchor point 0x60dd80.
+Address 0x609d90 is at offset 0xd90 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d90.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d90 references anchor point 0x60dd80
+Address 0x609db8 is at offset 0xdb8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209db8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609db8 references anchor point 0x60dd80
+Address 0x609dd8 is at offset 0xdd8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209dd8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609dd8 references anchor point 0x60dd80
+which references 0x60fe80
+The allocation at 0x60fe80 appears to be indirectly statically anchored
+via anchor point 0x60eb00.
+Address 0x609cf0 is at offset 0xcf0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cf0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cf0 references anchor point 0x60eb00
+Address 0x609d18 is at offset 0xd18 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d18.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d18 references anchor point 0x60eb00
+Address 0x609d38 is at offset 0xd38 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d38.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d38 references anchor point 0x60eb00
+which references 0x60fe80
+The allocation at 0x60fe80 appears to be indirectly statically anchored
+via anchor point 0x60eba0.
+Address 0x609d40 is at offset 0xd40 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d40.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d40 references anchor point 0x60eba0
+Address 0x609d68 is at offset 0xd68 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d68.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d68 references anchor point 0x60eba0
+Address 0x609d88 is at offset 0xd88 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d88.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d88 references anchor point 0x60eba0
+which references 0x60fe80
+The allocation at 0x60fe80 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd7b0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7b0 references 0x60fe80.
+Address 0x7fffffffd7b8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7b8 references 0x60fe80.
+Address 0x7fffffffd7c0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7c0 references 0x60fe80.
+Address 0x7fffffffd7d0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7d0 references 0x60fe80.
+Address 0x7fffffffd7d8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7d8 references 0x60fe80.
+Address 0x7fffffffd7e0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd7e0 references 0x60fe80.
+
+Anchored allocation at 6100e0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6100e0 appears to be indirectly statically anchored
+via anchor point 0x60dd80.
+Address 0x609d90 is at offset 0xd90 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d90.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d90 references anchor point 0x60dd80
+Address 0x609db8 is at offset 0xdb8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209db8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609db8 references anchor point 0x60dd80
+Address 0x609dd8 is at offset 0xdd8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209dd8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609dd8 references anchor point 0x60dd80
+which references 0x6100e0
+The allocation at 0x6100e0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd800 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd800 references 0x6100e0.
+Address 0x7fffffffd808 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd808 references 0x6100e0.
+Address 0x7fffffffd810 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd810 references 0x6100e0.
+Address 0x7fffffffd820 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd820 references 0x6100e0.
+Address 0x7fffffffd828 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd828 references 0x6100e0.
+Address 0x7fffffffd830 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd830 references 0x6100e0.
+
+Anchored allocation at 6104b0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6104b0 appears to be directly statically anchored.
+Address 0x609c30 is at offset 0xc30 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c30.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c30 references 0x6104b0.
+Address 0x609c38 is at offset 0xc38 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c38.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c38 references 0x6104b0.
+Address 0x609c40 is at offset 0xc40 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c40.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c40 references 0x6104b0.
+
+Anchored allocation at 6106c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6106c0 appears to be directly statically anchored.
+Address 0x609c60 is at offset 0xc60 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c60.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c60 references 0x6106c0.
+Address 0x609c68 is at offset 0xc68 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c68.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c68 references 0x6106c0.
+Address 0x609c70 is at offset 0xc70 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c70.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c70 references 0x6106c0.
+Address 0x609c80 is at offset 0xc80 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c80.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c80 references 0x6106c0.
+Address 0x609c88 is at offset 0xc88 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c88.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c88 references 0x6106c0.
+Address 0x609c90 is at offset 0xc90 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209c90.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609c90 references 0x6106c0.
+
+Anchored allocation at 6108d0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6108d0 appears to be directly statically anchored.
+Address 0x609cd0 is at offset 0xcd0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cd0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cd0 references 0x6108d0.
+Address 0x609cd8 is at offset 0xcd8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cd8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cd8 references 0x6108d0.
+Address 0x609ce0 is at offset 0xce0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209ce0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609ce0 references 0x6108d0.
+The allocation at 0x6108d0 appears to be indirectly anchored from
+at least one stack via anchor point 0x60dd30.
+Address 0x7fffffffd700 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd700 references anchor point 0x60dd30
+Address 0x7fffffffd728 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd728 references anchor point 0x60dd30
+Address 0x7fffffffd748 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd748 references anchor point 0x60dd30
+which references 0x60dc90
+which references 0x6108d0
+
+Anchored allocation at 610ae0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x610ae0 appears to be directly statically anchored.
+Address 0x609da0 is at offset 0xda0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209da0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609da0 references 0x610ae0.
+Address 0x609da8 is at offset 0xda8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209da8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609da8 references 0x610ae0.
+Address 0x609db0 is at offset 0xdb0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209db0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609db0 references 0x610ae0.
+Address 0x609dc0 is at offset 0xdc0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209dc0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609dc0 references 0x610ae0.
+Address 0x609dc8 is at offset 0xdc8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209dc8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609dc8 references 0x610ae0.
+Address 0x609dd0 is at offset 0xdd0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209dd0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609dd0 references 0x610ae0.
+The allocation at 0x610ae0 appears to be indirectly anchored from
+at least one stack via anchor point 0x60dce0.
+Address 0x7fffffffd750 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd750 references anchor point 0x60dce0
+Address 0x7fffffffd778 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd778 references anchor point 0x60dce0
+Address 0x7fffffffd798 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd798 references anchor point 0x60dce0
+which references 0x610ae0
+The allocation at 0x610ae0 appears to be indirectly anchored from
+at least one stack via anchor point 0x60dd30.
+Address 0x7fffffffd700 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd700 references anchor point 0x60dd30
+Address 0x7fffffffd728 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd728 references anchor point 0x60dd30
+Address 0x7fffffffd748 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd748 references anchor point 0x60dd30
+which references 0x610ae0
+The allocation at 0x610ae0 appears to be indirectly anchored from
+at least one stack via anchor point 0x610cf0.
+Address 0x7fffffffd760 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd760 references anchor point 0x610cf0
+Address 0x7fffffffd768 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd768 references anchor point 0x610cf0
+Address 0x7fffffffd770 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd770 references anchor point 0x610cf0
+Address 0x7fffffffd780 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd780 references anchor point 0x610cf0
+Address 0x7fffffffd788 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd788 references anchor point 0x610cf0
+Address 0x7fffffffd790 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd790 references anchor point 0x610cf0
+which references 0x610ae0
+
+Anchored allocation at 610cf0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x610cf0 appears to be indirectly statically anchored
+via anchor point 0x60eb00.
+Address 0x609cf0 is at offset 0xcf0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cf0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cf0 references anchor point 0x60eb00
+Address 0x609d18 is at offset 0xd18 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d18.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d18 references anchor point 0x60eb00
+Address 0x609d38 is at offset 0xd38 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d38.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d38 references anchor point 0x60eb00
+which references 0x610cf0
+The allocation at 0x610cf0 appears to be indirectly statically anchored
+via anchor point 0x60eba0.
+Address 0x609d40 is at offset 0xd40 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d40.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d40 references anchor point 0x60eba0
+Address 0x609d68 is at offset 0xd68 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d68.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d68 references anchor point 0x60eba0
+Address 0x609d88 is at offset 0xd88 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d88.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d88 references anchor point 0x60eba0
+which references 0x610cf0
+The allocation at 0x610cf0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd760 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd760 references 0x610cf0.
+Address 0x7fffffffd768 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd768 references 0x610cf0.
+Address 0x7fffffffd770 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd770 references 0x610cf0.
+Address 0x7fffffffd780 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd780 references 0x610cf0.
+Address 0x7fffffffd788 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd788 references 0x610cf0.
+Address 0x7fffffffd790 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd790 references 0x610cf0.
+
+Anchored allocation at 611110 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611110 appears to be directly statically anchored.
+Address 0x609d00 is at offset 0xd00 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d00.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d00 references 0x611110.
+Address 0x609d08 is at offset 0xd08 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d08.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d08 references 0x611110.
+Address 0x609d10 is at offset 0xd10 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d10.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d10 references 0x611110.
+The allocation at 0x611110 appears to be indirectly anchored from
+at least one stack via anchor point 0x60dce0.
+Address 0x7fffffffd750 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd750 references anchor point 0x60dce0
+Address 0x7fffffffd778 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd778 references anchor point 0x60dce0
+Address 0x7fffffffd798 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd798 references anchor point 0x60dce0
+which references 0x611110
+
+Anchored allocation at 611320 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611320 appears to be indirectly statically anchored
+via anchor point 0x60eb00.
+Address 0x609cf0 is at offset 0xcf0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cf0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cf0 references anchor point 0x60eb00
+Address 0x609d18 is at offset 0xd18 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d18.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d18 references anchor point 0x60eb00
+Address 0x609d38 is at offset 0xd38 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d38.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d38 references anchor point 0x60eb00
+which references 0x611320
+
+Anchored allocation at 611530 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611530 appears to be indirectly statically anchored
+via anchor point 0x60eb00.
+Address 0x609cf0 is at offset 0xcf0 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209cf0.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609cf0 references anchor point 0x60eb00
+Address 0x609d18 is at offset 0xd18 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d18.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d18 references anchor point 0x60eb00
+Address 0x609d38 is at offset 0xd38 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d38.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d38 references anchor point 0x60eb00
+which references 0x611530
+
+Anchored allocation at 611740 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611740 appears to be directly statically anchored.
+Address 0x609d20 is at offset 0xd20 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d20.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d20 references 0x611740.
+Address 0x609d28 is at offset 0xd28 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d28.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d28 references 0x611740.
+Address 0x609d30 is at offset 0xd30 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d30.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d30 references 0x611740.
+
+Anchored allocation at 611950 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611950 appears to be indirectly statically anchored
+via anchor point 0x60dd80.
+Address 0x609d90 is at offset 0xd90 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d90.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d90 references anchor point 0x60dd80
+Address 0x609db8 is at offset 0xdb8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209db8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609db8 references anchor point 0x60dd80
+Address 0x609dd8 is at offset 0xdd8 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209dd8.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609dd8 references anchor point 0x60dd80
+which references 0x611950
+The allocation at 0x611950 appears to be indirectly statically anchored
+via anchor point 0x60eba0.
+Address 0x609d40 is at offset 0xd40 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d40.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d40 references anchor point 0x60eba0
+Address 0x609d68 is at offset 0xd68 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d68.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d68 references anchor point 0x60eba0
+Address 0x609d88 is at offset 0xd88 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d88.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d88 references anchor point 0x60eba0
+which references 0x611950
+The allocation at 0x611950 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd710 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd710 references 0x611950.
+Address 0x7fffffffd718 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd718 references 0x611950.
+Address 0x7fffffffd720 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd720 references 0x611950.
+Address 0x7fffffffd730 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd730 references 0x611950.
+Address 0x7fffffffd738 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd738 references 0x611950.
+Address 0x7fffffffd740 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd740 references 0x611950.
+
+Anchored allocation at 611b60 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611b60 appears to be directly statically anchored.
+Address 0x609d50 is at offset 0xd50 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d50.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d50 references 0x611b60.
+Address 0x609d58 is at offset 0xd58 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d58.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d58 references 0x611b60.
+Address 0x609d60 is at offset 0xd60 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d60.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d60 references 0x611b60.
+Address 0x609d70 is at offset 0xd70 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d70.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d70 references 0x611b60.
+Address 0x609d78 is at offset 0xd78 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d78.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d78 references 0x611b60.
+Address 0x609d80 is at offset 0xd80 in range
+[0x609000, 60a000)
+for module main executable
+and at module-relative virtual address 0x209d80.
+This is readable and writable
+and is mapped into the process image.
+Static address 0x609d80 references 0x611b60.
+
+Anchored allocation at 611d70 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611d70 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd850 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd850 references 0x611d70.
+Address 0x7fffffffd858 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd858 references 0x611d70.
+Address 0x7fffffffd860 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd860 references 0x611d70.
+Address 0x7fffffffd870 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd870 references 0x611d70.
+Address 0x7fffffffd878 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd878 references 0x611d70.
+Address 0x7fffffffd880 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd880 references 0x611d70.
+
+Anchored allocation at 611f80 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x611f80 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd8a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8a0 references 0x611f80.
+Address 0x7fffffffd8a8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8a8 references 0x611f80.
+Address 0x7fffffffd8b0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8b0 references 0x611f80.
+Address 0x7fffffffd8c0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8c0 references 0x611f80.
+Address 0x7fffffffd8c8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8c8 references 0x611f80.
+Address 0x7fffffffd8d0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8d0 references 0x611f80.
+
+Anchored allocation at 612190 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x612190 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd8f0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8f0 references 0x612190.
+Address 0x7fffffffd8f8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd8f8 references 0x612190.
+Address 0x7fffffffd900 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd900 references 0x612190.
+Address 0x7fffffffd910 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd910 references 0x612190.
+Address 0x7fffffffd918 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd918 references 0x612190.
+Address 0x7fffffffd920 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd920 references 0x612190.
+
+Anchored allocation at 6123a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6123a0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd940 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd940 references 0x6123a0.
+Address 0x7fffffffd948 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd948 references 0x6123a0.
+Address 0x7fffffffd950 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd950 references 0x6123a0.
+Address 0x7fffffffd960 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd960 references 0x6123a0.
+Address 0x7fffffffd968 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd968 references 0x6123a0.
+Address 0x7fffffffd970 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd970 references 0x6123a0.
+
+Anchored allocation at 6125b0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6125b0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd990 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd990 references 0x6125b0.
+Address 0x7fffffffd998 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd998 references 0x6125b0.
+Address 0x7fffffffd9a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9a0 references 0x6125b0.
+Address 0x7fffffffd9b0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9b0 references 0x6125b0.
+Address 0x7fffffffd9b8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9b8 references 0x6125b0.
+Address 0x7fffffffd9c0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9c0 references 0x6125b0.
+
+Anchored allocation at 6127c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6127c0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffd9e0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9e0 references 0x6127c0.
+Address 0x7fffffffd9e8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9e8 references 0x6127c0.
+Address 0x7fffffffd9f0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffd9f0 references 0x6127c0.
+Address 0x7fffffffda00 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda00 references 0x6127c0.
+Address 0x7fffffffda08 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda08 references 0x6127c0.
+Address 0x7fffffffda10 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda10 references 0x6127c0.
+
+Anchored allocation at 6129d0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6129d0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffda30 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda30 references 0x6129d0.
+Address 0x7fffffffda38 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda38 references 0x6129d0.
+Address 0x7fffffffda40 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda40 references 0x6129d0.
+Address 0x7fffffffda50 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda50 references 0x6129d0.
+Address 0x7fffffffda58 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda58 references 0x6129d0.
+Address 0x7fffffffda60 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda60 references 0x6129d0.
+
+Anchored allocation at 612be0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x612be0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffda80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda80 references 0x612be0.
+Address 0x7fffffffda88 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda88 references 0x612be0.
+Address 0x7fffffffda90 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffda90 references 0x612be0.
+Address 0x7fffffffdaa0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdaa0 references 0x612be0.
+Address 0x7fffffffdaa8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdaa8 references 0x612be0.
+Address 0x7fffffffdab0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdab0 references 0x612be0.
+
+Anchored allocation at 612df0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x612df0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdad0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdad0 references 0x612df0.
+Address 0x7fffffffdad8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdad8 references 0x612df0.
+Address 0x7fffffffdae0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdae0 references 0x612df0.
+Address 0x7fffffffdaf0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdaf0 references 0x612df0.
+Address 0x7fffffffdaf8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdaf8 references 0x612df0.
+Address 0x7fffffffdb00 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb00 references 0x612df0.
+
+Anchored allocation at 613000 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x613000 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdb20 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb20 references 0x613000.
+Address 0x7fffffffdb28 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb28 references 0x613000.
+Address 0x7fffffffdb30 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb30 references 0x613000.
+Address 0x7fffffffdb40 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb40 references 0x613000.
+Address 0x7fffffffdb48 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb48 references 0x613000.
+Address 0x7fffffffdb50 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb50 references 0x613000.
+
+Anchored allocation at 613210 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x613210 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdb70 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb70 references 0x613210.
+Address 0x7fffffffdb78 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb78 references 0x613210.
+Address 0x7fffffffdb80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb80 references 0x613210.
+Address 0x7fffffffdb90 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb90 references 0x613210.
+Address 0x7fffffffdb98 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdb98 references 0x613210.
+Address 0x7fffffffdba0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdba0 references 0x613210.
+
+Anchored allocation at 613470 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x613470 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdc10 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc10 references 0x613470.
+Address 0x7fffffffdc18 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc18 references 0x613470.
+Address 0x7fffffffdc20 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc20 references 0x613470.
+Address 0x7fffffffdc30 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc30 references 0x613470.
+Address 0x7fffffffdc38 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc38 references 0x613470.
+Address 0x7fffffffdc40 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc40 references 0x613470.
+
+Anchored allocation at 6136d0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6136d0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdc60 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc60 references 0x6136d0.
+Address 0x7fffffffdc68 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc68 references 0x6136d0.
+Address 0x7fffffffdc70 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc70 references 0x6136d0.
+Address 0x7fffffffdc80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc80 references 0x6136d0.
+Address 0x7fffffffdc88 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc88 references 0x6136d0.
+Address 0x7fffffffdc90 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdc90 references 0x6136d0.
+
+Anchored allocation at 613b40 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x613b40 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdbc0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbc0 references 0x613b40.
+Address 0x7fffffffdbc8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbc8 references 0x613b40.
+Address 0x7fffffffdbd0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbd0 references 0x613b40.
+Address 0x7fffffffdbe0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbe0 references 0x613b40.
+Address 0x7fffffffdbe8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbe8 references 0x613b40.
+Address 0x7fffffffdbf0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdbf0 references 0x613b40.
+
+Anchored allocation at 613d50 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x613d50 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdcb0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdcb0 references 0x613d50.
+Address 0x7fffffffdcb8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdcb8 references 0x613d50.
+Address 0x7fffffffdcc0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdcc0 references 0x613d50.
+Address 0x7fffffffdcd0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdcd0 references 0x613d50.
+Address 0x7fffffffdcd8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdcd8 references 0x613d50.
+Address 0x7fffffffdce0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdce0 references 0x613d50.
+
+Anchored allocation at 613f60 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x613f60 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd00 references 0x613f60.
+Address 0x7fffffffdd08 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd08 references 0x613f60.
+Address 0x7fffffffdd10 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd10 references 0x613f60.
+Address 0x7fffffffdd20 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd20 references 0x613f60.
+Address 0x7fffffffdd28 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd28 references 0x613f60.
+Address 0x7fffffffdd30 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd30 references 0x613f60.
+
+Anchored allocation at 614170 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x614170 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdd50 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd50 references 0x614170.
+Address 0x7fffffffdd58 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd58 references 0x614170.
+Address 0x7fffffffdd60 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd60 references 0x614170.
+Address 0x7fffffffdd70 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd70 references 0x614170.
+Address 0x7fffffffdd78 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd78 references 0x614170.
+Address 0x7fffffffdd80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdd80 references 0x614170.
+
+Anchored allocation at 614380 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x614380 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdda0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdda0 references 0x614380.
+Address 0x7fffffffdda8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdda8 references 0x614380.
+Address 0x7fffffffddb0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffddb0 references 0x614380.
+
+Anchored allocation at 614590 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x614590 appears to be indirectly anchored from
+at least one stack via anchor point 0x613a70.
+Address 0x7fffffffdde0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdde0 references anchor point 0x613a70
+Address 0x7fffffffde08 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde08 references anchor point 0x613a70
+Address 0x7fffffffde28 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde28 references anchor point 0x613a70
+which references 0x614590
+The allocation at 0x614590 appears to be indirectly anchored from
+at least one stack via anchor point 0x613ac0.
+Address 0x7fffffffde30 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde30 references anchor point 0x613ac0
+Address 0x7fffffffde58 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde58 references anchor point 0x613ac0
+Address 0x7fffffffde78 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde78 references anchor point 0x613ac0
+which references 0x614590
+
+Anchored allocation at 6147a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6147a0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffde40 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde40 references 0x6147a0.
+Address 0x7fffffffde48 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde48 references 0x6147a0.
+Address 0x7fffffffde50 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde50 references 0x6147a0.
+
+Anchored allocation at 614a00 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x614a00 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe020 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe020 references 0x614a00.
+Address 0x7fffffffe028 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe028 references 0x614a00.
+Address 0x7fffffffe030 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe030 references 0x614a00.
+Address 0x7fffffffe040 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe040 references 0x614a00.
+Address 0x7fffffffe048 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe048 references 0x614a00.
+Address 0x7fffffffe050 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe050 references 0x614a00.
+
+Anchored allocation at 614ec0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x614ec0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdfd0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdfd0 references 0x614ec0.
+Address 0x7fffffffdfd8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdfd8 references 0x614ec0.
+Address 0x7fffffffdfe0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdfe0 references 0x614ec0.
+Address 0x7fffffffdff0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdff0 references 0x614ec0.
+Address 0x7fffffffdff8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdff8 references 0x614ec0.
+Address 0x7fffffffe000 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe000 references 0x614ec0.
+
+Anchored allocation at 6150d0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6150d0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffddc0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffddc0 references 0x6150d0.
+Address 0x7fffffffddc8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffddc8 references 0x6150d0.
+Address 0x7fffffffddd0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffddd0 references 0x6150d0.
+
+Anchored allocation at 6152e0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6152e0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffddf0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffddf0 references 0x6152e0.
+Address 0x7fffffffddf8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffddf8 references 0x6152e0.
+Address 0x7fffffffde00 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde00 references 0x6152e0.
+Address 0x7fffffffde10 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde10 references 0x6152e0.
+Address 0x7fffffffde18 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde18 references 0x6152e0.
+Address 0x7fffffffde20 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde20 references 0x6152e0.
+
+Anchored allocation at 6154f0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6154f0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffde60 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde60 references 0x6154f0.
+Address 0x7fffffffde68 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde68 references 0x6154f0.
+Address 0x7fffffffde70 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde70 references 0x6154f0.
+
+Anchored allocation at 615700 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x615700 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdf30 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf30 references 0x615700.
+Address 0x7fffffffdf38 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf38 references 0x615700.
+Address 0x7fffffffdf40 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf40 references 0x615700.
+Address 0x7fffffffdf50 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf50 references 0x615700.
+Address 0x7fffffffdf58 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf58 references 0x615700.
+Address 0x7fffffffdf60 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf60 references 0x615700.
+
+Anchored allocation at 615910 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x615910 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe070 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe070 references 0x615910.
+Address 0x7fffffffe078 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe078 references 0x615910.
+Address 0x7fffffffe080 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe080 references 0x615910.
+
+Anchored allocation at 615d30 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x615d30 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffde90 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde90 references 0x615d30.
+Address 0x7fffffffde98 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde98 references 0x615d30.
+Address 0x7fffffffdea0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdea0 references 0x615d30.
+
+Anchored allocation at 615fe0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x615fe0 appears to be indirectly anchored from
+at least one stack via anchor point 0x615f40.
+Address 0x7fffffffde80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde80 references anchor point 0x615f40
+Address 0x7fffffffdea8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdea8 references anchor point 0x615f40
+Address 0x7fffffffdec8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdec8 references anchor point 0x615f40
+which references 0x615fe0
+
+Anchored allocation at 6161f0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6161f0 appears to be indirectly anchored from
+at least one stack via anchor point 0x615f40.
+Address 0x7fffffffde80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffde80 references anchor point 0x615f40
+Address 0x7fffffffdea8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdea8 references anchor point 0x615f40
+Address 0x7fffffffdec8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdec8 references anchor point 0x615f40
+which references 0x6161f0
+
+Anchored allocation at 616400 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x616400 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdeb0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdeb0 references 0x616400.
+Address 0x7fffffffdeb8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdeb8 references 0x616400.
+Address 0x7fffffffdec0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdec0 references 0x616400.
+
+Anchored allocation at 6166b0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6166b0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdf80 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf80 references 0x6166b0.
+Address 0x7fffffffdf88 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf88 references 0x6166b0.
+Address 0x7fffffffdf90 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf90 references 0x6166b0.
+Address 0x7fffffffdfa0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdfa0 references 0x6166b0.
+Address 0x7fffffffdfa8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdfa8 references 0x6166b0.
+Address 0x7fffffffdfb0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdfb0 references 0x6166b0.
+
+Anchored allocation at 6168c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6168c0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffdee0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdee0 references 0x6168c0.
+Address 0x7fffffffdee8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdee8 references 0x6168c0.
+Address 0x7fffffffdef0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdef0 references 0x6168c0.
+Address 0x7fffffffdf00 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf00 references 0x6168c0.
+Address 0x7fffffffdf08 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf08 references 0x6168c0.
+Address 0x7fffffffdf10 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffdf10 references 0x6168c0.
+
+Anchored allocation at 616ad0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x616ad0 appears to be indirectly anchored from
+at least one stack via anchor point 0x614d00.
+Address 0x7fffffffe100 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe100 references anchor point 0x614d00
+Address 0x7fffffffe128 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe128 references anchor point 0x614d00
+Address 0x7fffffffe148 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe148 references anchor point 0x614d00
+which references 0x616ad0
+The allocation at 0x616ad0 appears to be indirectly anchored from
+at least one stack via anchor point 0x615b20.
+Address 0x7fffffffe0b0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0b0 references anchor point 0x615b20
+Address 0x7fffffffe0d8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0d8 references anchor point 0x615b20
+Address 0x7fffffffe0f8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0f8 references anchor point 0x615b20
+which references 0x616ad0
+
+Anchored allocation at 616ce0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x616ce0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x616ef0
+which references 0x616ce0
+The allocation at 0x616ce0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe110 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe110 references 0x616ce0.
+Address 0x7fffffffe118 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe118 references 0x616ce0.
+Address 0x7fffffffe120 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe120 references 0x616ce0.
+
+Anchored allocation at 616f40 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x616f40 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x616f40
+The allocation at 0x616f40 appears to be indirectly anchored from
+at least one stack via anchor point 0x614df0.
+Address 0x7fffffffe1f0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1f0 references anchor point 0x614df0
+Address 0x7fffffffe218 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe218 references anchor point 0x614df0
+Address 0x7fffffffe238 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe238 references anchor point 0x614df0
+which references 0x616f40
+The allocation at 0x616f40 appears to be indirectly anchored from
+at least one stack via anchor point 0x615c10.
+Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1a0 references anchor point 0x615c10
+Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1c8 references anchor point 0x615c10
+Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1e8 references anchor point 0x615c10
+which references 0x616f40
+The allocation at 0x616f40 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x616f40
+
+Anchored allocation at 6171a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6171a0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x6171a0
+The allocation at 0x6171a0 appears to be indirectly anchored from
+at least one stack via anchor point 0x614df0.
+Address 0x7fffffffe1f0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1f0 references anchor point 0x614df0
+Address 0x7fffffffe218 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe218 references anchor point 0x614df0
+Address 0x7fffffffe238 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe238 references anchor point 0x614df0
+which references 0x6171a0
+The allocation at 0x6171a0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x6171a0
+
+Anchored allocation at 617520 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x617520 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe090 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe090 references 0x617520.
+Address 0x7fffffffe098 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe098 references 0x617520.
+Address 0x7fffffffe0a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0a0 references 0x617520.
+
+Anchored allocation at 617730 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x617730 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe0c0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0c0 references 0x617730.
+Address 0x7fffffffe0c8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0c8 references 0x617730.
+Address 0x7fffffffe0d0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0d0 references 0x617730.
+Address 0x7fffffffe0e0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0e0 references 0x617730.
+Address 0x7fffffffe0e8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0e8 references 0x617730.
+Address 0x7fffffffe0f0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe0f0 references 0x617730.
+
+Anchored allocation at 617940 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x617940 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe130 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe130 references 0x617940.
+Address 0x7fffffffe138 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe138 references 0x617940.
+Address 0x7fffffffe140 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe140 references 0x617940.
+
+Anchored allocation at 617b50 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x617b50 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x614d50
+which references 0x617b50
+The allocation at 0x617b50 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe200 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe200 references 0x617b50.
+Address 0x7fffffffe208 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe208 references 0x617b50.
+Address 0x7fffffffe210 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe210 references 0x617b50.
+Address 0x7fffffffe220 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe220 references 0x617b50.
+Address 0x7fffffffe228 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe228 references 0x617b50.
+Address 0x7fffffffe230 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe230 references 0x617b50.
+
+Anchored allocation at 617d60 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x617d60 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x617d60
+The allocation at 0x617d60 appears to be indirectly anchored from
+at least one stack via anchor point 0x615b70.
+Address 0x7fffffffe150 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe150 references anchor point 0x615b70
+Address 0x7fffffffe178 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe178 references anchor point 0x615b70
+Address 0x7fffffffe198 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe198 references anchor point 0x615b70
+which references 0x617d60
+The allocation at 0x617d60 appears to be indirectly anchored from
+at least one stack via anchor point 0x615c10.
+Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1a0 references anchor point 0x615c10
+Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1c8 references anchor point 0x615c10
+Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1e8 references anchor point 0x615c10
+which references 0x617d60
+The allocation at 0x617d60 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x617d60
+
+Anchored allocation at 617f70 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x617f70 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x617f70
+The allocation at 0x617f70 appears to be indirectly anchored from
+at least one stack via anchor point 0x615b70.
+Address 0x7fffffffe150 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe150 references anchor point 0x615b70
+Address 0x7fffffffe178 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe178 references anchor point 0x615b70
+Address 0x7fffffffe198 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe198 references anchor point 0x615b70
+which references 0x617f70
+The allocation at 0x617f70 appears to be indirectly anchored from
+at least one stack via anchor point 0x615c10.
+Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1a0 references anchor point 0x615c10
+Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1c8 references anchor point 0x615c10
+Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1e8 references anchor point 0x615c10
+which references 0x617f70
+The allocation at 0x617f70 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x617f70
+
+Anchored allocation at 618180 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x618180 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x614d50
+which references 0x618180
+The allocation at 0x618180 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe160 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe160 references 0x618180.
+Address 0x7fffffffe168 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe168 references 0x618180.
+Address 0x7fffffffe170 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe170 references 0x618180.
+
+Anchored allocation at 618390 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x618390 appears to be indirectly anchored from
+at least one stack via anchor point 0x615b70.
+Address 0x7fffffffe150 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe150 references anchor point 0x615b70
+Address 0x7fffffffe178 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe178 references anchor point 0x615b70
+Address 0x7fffffffe198 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe198 references anchor point 0x615b70
+which references 0x618390
+
+Anchored allocation at 6185a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6185a0 appears to be indirectly anchored from
+at least one stack via anchor point 0x615b70.
+Address 0x7fffffffe150 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe150 references anchor point 0x615b70
+Address 0x7fffffffe178 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe178 references anchor point 0x615b70
+Address 0x7fffffffe198 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe198 references anchor point 0x615b70
+which references 0x6185a0
+
+Anchored allocation at 6187b0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6187b0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x616f40
+which references 0x6187b0
+The allocation at 0x6187b0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe180 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe180 references 0x6187b0.
+Address 0x7fffffffe188 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe188 references 0x6187b0.
+Address 0x7fffffffe190 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe190 references 0x6187b0.
+
+Anchored allocation at 6189c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x6189c0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x6189c0
+The allocation at 0x6189c0 appears to be indirectly anchored from
+at least one stack via anchor point 0x614df0.
+Address 0x7fffffffe1f0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1f0 references anchor point 0x614df0
+Address 0x7fffffffe218 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe218 references anchor point 0x614df0
+Address 0x7fffffffe238 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe238 references anchor point 0x614df0
+which references 0x6189c0
+The allocation at 0x6189c0 appears to be indirectly anchored from
+at least one stack via anchor point 0x615c10.
+Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1a0 references anchor point 0x615c10
+Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1c8 references anchor point 0x615c10
+Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1e8 references anchor point 0x615c10
+which references 0x6189c0
+The allocation at 0x6189c0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x6189c0
+
+Anchored allocation at 618bd0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x618bd0 appears to be directly anchored from
+at least one stack.
+Address 0x7fffffffe1b0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1b0 references 0x618bd0.
+Address 0x7fffffffe1b8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1b8 references 0x618bd0.
+Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1c0 references 0x618bd0.
+Address 0x7fffffffe1d0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1d0 references 0x618bd0.
+Address 0x7fffffffe1d8 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1d8 references 0x618bd0.
+Address 0x7fffffffe1e0 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe1e0 references 0x618bd0.
+
+Anchored allocation at 619930 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x619930 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x619930
+The allocation at 0x619930 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x619930
+
+Anchored allocation at 619b40 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x619b40 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x619b40
+The allocation at 0x619b40 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x619b40
+
+Anchored allocation at 619d50 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x619d50 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x619d50
+The allocation at 0x619d50 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x619d50
+
+Anchored allocation at 619f60 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x619f60 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x619f60
+The allocation at 0x619f60 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x619f60
+
+Anchored allocation at 61a1c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61a1c0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61a1c0
+The allocation at 0x61a1c0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61a1c0
+
+Anchored allocation at 61a420 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61a420 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61a420
+The allocation at 0x61a420 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61a420
+
+Anchored allocation at 61a680 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61a680 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61a680
+The allocation at 0x61a680 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61a680
+
+Anchored allocation at 61a8e0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61a8e0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61a8e0
+The allocation at 0x61a8e0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61a8e0
+
+Anchored allocation at 61ab40 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61ab40 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61ab40
+The allocation at 0x61ab40 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61ab40
+
+Anchored allocation at 61ada0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61ada0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61ada0
+The allocation at 0x61ada0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61ada0
+
+Anchored allocation at 61b000 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61b000 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61b000
+The allocation at 0x61b000 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61b000
+
+Anchored allocation at 61b260 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61b260 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61b260
+The allocation at 0x61b260 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61b260
+
+Anchored allocation at 61b6d0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61b6d0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61b6d0
+The allocation at 0x61b6d0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61b6d0
+
+Anchored allocation at 61b8e0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61b8e0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61b8e0
+The allocation at 0x61b8e0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61b8e0
+
+Anchored allocation at 61baf0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61baf0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61baf0
+The allocation at 0x61baf0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61baf0
+
+Anchored allocation at 61bd00 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61bd00 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61bd00
+The allocation at 0x61bd00 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61bd00
+
+Anchored allocation at 61bf10 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61bf10 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61bf10
+The allocation at 0x61bf10 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61bf10
+
+Anchored allocation at 61c120 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61c120 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61b600
+which references 0x61c120
+The allocation at 0x61c120 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61b600
+which references 0x61c120
+
+Anchored allocation at 61c330 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61c330 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61c330
+The allocation at 0x61c330 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61c330
+
+Anchored allocation at 61c590 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61c590 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61c590
+The allocation at 0x61c590 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61c590
+
+Anchored allocation at 61ca50 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61ca50 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61ca50
+The allocation at 0x61ca50 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61ca50
+
+Anchored allocation at 61cc60 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61cc60 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61cc60
+The allocation at 0x61cc60 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61cc60
+
+Anchored allocation at 61ce70 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61ce70 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61ce70
+The allocation at 0x61ce70 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61ce70
+
+Anchored allocation at 61d080 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61d080 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61d080
+The allocation at 0x61d080 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61d080
+
+Anchored allocation at 61d290 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61d290 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61d290
+The allocation at 0x61d290 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61d290
+
+Anchored allocation at 61d4a0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61d4a0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61d4a0
+The allocation at 0x61d4a0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61d4a0
+
+Anchored allocation at 61d8c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61d8c0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61d8c0
+The allocation at 0x61d8c0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61d8c0
+
+Anchored allocation at 61db70 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61db70 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61dad0
+which references 0x61db70
+The allocation at 0x61db70 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61dad0
+which references 0x61db70
+
+Anchored allocation at 61dd80 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61dd80 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61dad0
+which references 0x61dd80
+The allocation at 0x61dd80 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61dad0
+which references 0x61dd80
+
+Anchored allocation at 61df90 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61df90 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61df90
+The allocation at 0x61df90 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61df90
+
+Anchored allocation at 61e240 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61e240 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61e240
+The allocation at 0x61e240 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61e240
+
+Anchored allocation at 61e450 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61e450 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61e450
+The allocation at 0x61e450 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61e450
+
+Anchored allocation at 61e660 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61e660 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61c890
+which references 0x61e660
+The allocation at 0x61e660 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61c890
+which references 0x61e660
+
+Anchored allocation at 61e870 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61e870 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61e870
+The allocation at 0x61e870 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61e870
+
+Anchored allocation at 61f0b0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61f0b0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61f0b0
+The allocation at 0x61f0b0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61f0b0
+
+Anchored allocation at 61f2c0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61f2c0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61f2c0
+The allocation at 0x61f2c0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61f2c0
+
+Anchored allocation at 61f4d0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61f4d0 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61f4d0
+The allocation at 0x61f4d0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61f4d0
+
+Anchored allocation at 61f6e0 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61f6e0 appears to be directly anchored from
+at least one register.
+Register rdx for thread 1 references 0x61f6e0.
+Register rsi for thread 1 references 0x61f6e0.
+The allocation at 0x61f6e0 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61f6e0
+
+Anchored allocation at 61fd10 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61fd10 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61fd10
+The allocation at 0x61fd10 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61fd10
+
+Anchored allocation at 61ff20 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x61ff20 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61d700
+which references 0x61ff20
+The allocation at 0x61ff20 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61d700
+which references 0x61ff20
+
+Anchored allocation at 620130 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x620130 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x61d700
+which references 0x620130
+The allocation at 0x620130 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x61d700
+which references 0x620130
+
+Anchored allocation at 620340 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x620340 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x620340
+The allocation at 0x620340 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x620340
+
+Anchored allocation at 620760 of size 208
+This allocation matches pattern DequeBlock.
+The allocation at 0x620760 appears to be indirectly anchored from
+at least one register via anchor point 0x618de0.
+Register rbx for thread 1 references anchor point 0x618de0
+Register rdi for thread 1 references anchor point 0x618de0
+which references 0x620760
+The allocation at 0x620760 appears to be indirectly anchored from
+at least one stack via anchor point 0x618de0.
+Address 0x7fffffffe248 is on the live part of the stack for thread 1.
+Stack address 0x7fffffffe248 references anchor point 0x618de0
+which references 0x620760
+
+144 allocations use 0x12480 (74,880) bytes.

@@ -9,9 +9,9 @@ Anchored allocation at 603070 of size 58
 
 Anchored allocation at 6030d0 of size 48
 This allocation matches pattern DequeMap.
-Only [0x6030e8, 0x6030f0) is considered live.
 
 Anchored allocation at 603120 of size 208
+This allocation matches pattern DequeBlock.
 
 Anchored allocation at 603330 of size 28
 ... with signature 402000(HasVector)

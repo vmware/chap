@@ -1,8 +1,8 @@
 # Copyright (c) 2019 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
-# This tests various commands against a core from the LongStringTest program.
-# This test is about making sure that the LongString pattern behaves
+# This tests various commands against a core from the MapOrSetPatternTest
+# program.  This test is about making sure that the MapOrSetNode pattern behaves
 # reasonably.
 
 chap=$1

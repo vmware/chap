@@ -1,0 +1,18 @@
+# Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the DequePatternTest program.
+# This test is about making sure that the DequeMap and DequeBlock patterns
+# behave reasonably.
+
+chap=$1
+
+$1 core.24263 << DONE
+redirect on
+describe used
+describe used %DequeMap
+describe used %DequeBlock
+explain used
+explain used %DequeMap
+explain used %DequeBlock
+DONE

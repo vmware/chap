@@ -85,3 +85,7 @@ exout_test(PATH ELF64/LibcMalloc/UnorderedMapOrSetPatternTest
            FILES core.3522)
 exout_test(PATH ELF64/LibcMalloc/MapOrSetPatternTest
            FILES core.59709)
+exout_test(PATH ELF64/LibcMalloc/DequePatternTest
+           FILES core.14644)
+exout_test(PATH ELF32/LibcMalloc/DequePatternTest
+           FILES core.24263)

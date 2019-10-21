@@ -15,6 +15,7 @@
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
 #include "CompoundDescriber.h"
+#include "DequeBlockRecognizer.h"
 #include "DequeMapRecognizer.h"
 #include "DoublyLinkedListNodeRecognizer.h"
 #include "InModuleDescriber.h"
@@ -161,12 +162,14 @@ class ProcessImageCommandHandler {
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternRecognizerRegistry),
         _dequeMapRecognizer(processImage),
+        _dequeBlockRecognizer(processImage),
         _unorderedMapOrSetBucketsRecognizer(processImage),
         _unorderedMapOrSetNodeRecognizer(processImage),
         _mapOrSetNodeRecognizer(processImage),
         _vectorBodyRecognizer(processImage),
         _doublyLinkedListNodeRecognizer(processImage) {
     _patternRecognizerRegistry.Register(_dequeMapRecognizer);
+    _patternRecognizerRegistry.Register(_dequeBlockRecognizer);
     _patternRecognizerRegistry.Register(_unorderedMapOrSetBucketsRecognizer);
     _patternRecognizerRegistry.Register(_unorderedMapOrSetNodeRecognizer);
     _patternRecognizerRegistry.Register(_mapOrSetNodeRecognizer);
@@ -277,6 +280,7 @@ class ProcessImageCommandHandler {
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
   DequeMapRecognizer<Offset> _dequeMapRecognizer;
+  DequeBlockRecognizer<Offset> _dequeBlockRecognizer;
   UnorderedMapOrSetBucketsRecognizer<Offset>
       _unorderedMapOrSetBucketsRecognizer;
   UnorderedMapOrSetNodeRecognizer<Offset> _unorderedMapOrSetNodeRecognizer;
