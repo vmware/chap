@@ -244,7 +244,17 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
       }
     }
     Offset maxMaxEntries = (mapAllocation->Size()) / sizeof(Offset);
-    Offset minMaxEntries = (maxMaxEntries <= 9) ? 4 : (maxMaxEntries - 5);
+
+    /*
+     * Warning: For very large allocations, where malloc is asked for an exact
+     * multiple of pages, malloc must given an extra page to compensate for the
+     * need to store the size/status value, so the size will be 0xff8 or 0xffc
+     * larger than expected, given a 64-bit process or 32-bit process,
+     * respectively.  Given that we check the block pointers anyways leave
+     * the check for a minimum maxEntries (really _M_map_size) somwhat
+     * relaxed.
+     */
+    Offset minMaxEntries = (maxMaxEntries <= 9) ? 4 : ((maxMaxEntries * 2) / 3);
 
     if (maxEntries == 0xbadbad || maxEntries > maxMaxEntries ||
         maxEntries < minMaxEntries) {
