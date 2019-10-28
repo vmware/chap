@@ -225,7 +225,7 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * LongString - dynamically allocated memory for std::string with >= 16 characters
 * COWStringBody - old style copy-on-write std::string bodies
 * VectorBody - dynamically allocated memory for std::vector
-* DoublyLinkedListNode - one node in a doubly linked list, as would be used for std::list, with the link fields at the start of the allocation
+* ListNode - one node in a doubly linked list, as would be used for std::list, with the next and prev link fields at the start of the allocation
 * UnorderedMapOrSetBuckets - the buckets array for an unordered map or unordered set
 * UnorderedMapOrSetNode - a single entry in an unordered map or unordered set
 * MapOrSetNode - a single entry in a map or set
