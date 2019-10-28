@@ -229,8 +229,8 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * UnorderedMapOrSetBuckets - the buckets array for an unordered map or unordered set
 * UnorderedMapOrSetNode - a single entry in an unordered map or unordered set
 * MapOrSetNode - a single entry in a map or set
-* DequeMap - the outer structure used for a deque, which points to the blocks
-* DequeBlock - the inner structure used for a deque, which holds one or more entries on the deque
+* DequeMap - the outer structure used for an std::deque (or for an std::queue that doesn't explicitly specify the underlying container and so uses a deque) which points to the blocks
+* DequeBlock - the inner structure used for a deque (or for an std::queue that is based on one), which holds one or more entries on the deque
 * SSL - SSL type associated with openssl
 * SSL_CTX - SSL_CTX type associated with openssl
 * PyDictKeysObject -PyDictKeysObject associated with python (works python for 3.5, not for python 2.7)
