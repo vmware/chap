@@ -1,17 +1,15 @@
-# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2019 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
-# This tests various commands against a core from the HasStatic program.
+# This tests various commands against a core from the ListTest program.
 
-# Note that in general we don't do show free because the output may be
-# quite large.
 
 chap=$1
 
 $1 core.52238 << DONE
 redirect on
 show used
-show used %DoublyLinkedListNode
-describe used %DoublyLinkedListNode
-explain used %DoublyLinkedListNode
+show used %ListNode
+describe used %ListNode
+explain used %ListNode
 DONE

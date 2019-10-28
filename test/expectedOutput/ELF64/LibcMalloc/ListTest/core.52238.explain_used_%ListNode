@@ -1,7 +1,5 @@
 Anchored allocation at 604010 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the only node on a circular list.
-The list header appears to be at 0x603ec0.
+This allocation matches pattern ListNode.
 The allocation at 0x604010 appears to be directly statically anchored.
 Address 0x603ec0 is at offset 0xec0 in range
 [0x603000, 604000)
@@ -19,9 +17,7 @@ and is mapped into the process image.
 Static address 0x603ec8 references 0x604010.
 
 Anchored allocation at 604060 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the only node on a circular list.
-The list header appears to be at 0x603ed0.
+This allocation matches pattern ListNode.
 The allocation at 0x604060 appears to be directly statically anchored.
 Address 0x603ed0 is at offset 0xed0 in range
 [0x603000, 604000)
@@ -39,9 +35,7 @@ and is mapped into the process image.
 Static address 0x603ed8 references 0x604060.
 
 Anchored allocation at 604080 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x603ee0.
+This allocation matches pattern ListNode.
 The allocation at 0x604080 appears to be directly statically anchored.
 Address 0x603ee0 is at offset 0xee0 in range
 [0x603000, 604000)
@@ -52,8 +46,7 @@ and is mapped into the process image.
 Static address 0x603ee0 references 0x604080.
 
 Anchored allocation at 6040a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ee0.
+This allocation matches pattern ListNode.
 The allocation at 0x6040a0 appears to be indirectly statically anchored
 via anchor point 0x604080.
 Address 0x603ee0 is at offset 0xee0 in range
@@ -76,9 +69,7 @@ Static address 0x603ee8 references anchor point 0x6040c0
 which references 0x6040a0
 
 Anchored allocation at 6040c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x603ee0.
+This allocation matches pattern ListNode.
 The allocation at 0x6040c0 appears to be directly statically anchored.
 Address 0x603ee8 is at offset 0xee8 in range
 [0x603000, 604000)
@@ -89,9 +80,7 @@ and is mapped into the process image.
 Static address 0x603ee8 references 0x6040c0.
 
 Anchored allocation at 6040e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x6040e0 appears to be directly statically anchored.
 Address 0x603ef0 is at offset 0xef0 in range
 [0x603000, 604000)
@@ -102,8 +91,7 @@ and is mapped into the process image.
 Static address 0x603ef0 references 0x6040e0.
 
 Anchored allocation at 604100 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604100 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -116,8 +104,7 @@ Static address 0x603ef0 references anchor point 0x6040e0
 which references 0x604100
 
 Anchored allocation at 604120 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604120 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -131,8 +118,7 @@ which references 0x604100
 which references 0x604120
 
 Anchored allocation at 604140 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604140 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -147,8 +133,7 @@ which references 0x604120
 which references 0x604140
 
 Anchored allocation at 604160 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604160 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -164,8 +149,7 @@ which references 0x604140
 which references 0x604160
 
 Anchored allocation at 604180 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604180 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -182,8 +166,7 @@ which references 0x604160
 which references 0x604180
 
 Anchored allocation at 6041a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x6041a0 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -201,8 +184,7 @@ which references 0x604180
 which references 0x6041a0
 
 Anchored allocation at 6041c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x6041c0 appears to be indirectly statically anchored
 via anchor point 0x6040e0.
 Address 0x603ef0 is at offset 0xef0 in range
@@ -221,8 +203,7 @@ which references 0x6041a0
 which references 0x6041c0
 
 Anchored allocation at 6041e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x6041e0 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -241,8 +222,7 @@ which references 0x604200
 which references 0x6041e0
 
 Anchored allocation at 604200 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604200 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -260,8 +240,7 @@ which references 0x604220
 which references 0x604200
 
 Anchored allocation at 604220 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604220 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -278,8 +257,7 @@ which references 0x604240
 which references 0x604220
 
 Anchored allocation at 604240 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604240 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -295,8 +273,7 @@ which references 0x604260
 which references 0x604240
 
 Anchored allocation at 604260 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604260 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -311,8 +288,7 @@ which references 0x604280
 which references 0x604260
 
 Anchored allocation at 604280 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x604280 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -326,8 +302,7 @@ which references 0x6042a0
 which references 0x604280
 
 Anchored allocation at 6042a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x6042a0 appears to be indirectly statically anchored
 via anchor point 0x6042c0.
 Address 0x603ef8 is at offset 0xef8 in range
@@ -340,9 +315,7 @@ Static address 0x603ef8 references anchor point 0x6042c0
 which references 0x6042a0
 
 Anchored allocation at 6042c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x603ef0.
+This allocation matches pattern ListNode.
 The allocation at 0x6042c0 appears to be directly statically anchored.
 Address 0x603ef8 is at offset 0xef8 in range
 [0x603000, 604000)
@@ -353,9 +326,7 @@ and is mapped into the process image.
 Static address 0x603ef8 references 0x6042c0.
 
 Anchored allocation at 6042e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the only node on a circular list.
-The list header appears to be at 0x7fffffffe200.
+This allocation matches pattern ListNode.
 The allocation at 0x6042e0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe200 is on the live part of the stack for thread 1.
@@ -364,35 +335,28 @@ Address 0x7fffffffe208 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe208 references 0x6042e0.
 
 Anchored allocation at 604300 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x7fffffffe1f0.
+This allocation matches pattern ListNode.
 The allocation at 0x604300 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1f0 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1f0 references 0x604300.
 
 Anchored allocation at 604320 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x7fffffffe1f0.
+This allocation matches pattern ListNode.
 The allocation at 0x604320 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1f8 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1f8 references 0x604320.
 
 Anchored allocation at 604340 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x7fffffffe1e0.
+This allocation matches pattern ListNode.
 The allocation at 0x604340 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1e0 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1e0 references 0x604340.
 
 Anchored allocation at 604360 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1e0.
+This allocation matches pattern ListNode.
 The allocation at 0x604360 appears to be indirectly anchored from
 at least one stack via anchor point 0x604340.
 Address 0x7fffffffe1e0 is on the live part of the stack for thread 1.
@@ -405,17 +369,14 @@ Stack address 0x7fffffffe1e8 references anchor point 0x604380
 which references 0x604360
 
 Anchored allocation at 604380 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x7fffffffe1e0.
+This allocation matches pattern ListNode.
 The allocation at 0x604380 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1e8 references 0x604380.
 
 Anchored allocation at 6043e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x6043a0.
+This allocation matches pattern ListNode.
 The allocation at 0x6043e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
 Address 0x7fffffffe258 is on the live part of the stack for thread 1.
@@ -423,9 +384,7 @@ Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x6043e0
 
 Anchored allocation at 604430 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the only node on a circular list.
-The list header appears to be at 0x6043b0.
+This allocation matches pattern ListNode.
 The allocation at 0x604430 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
 Address 0x7fffffffe258 is on the live part of the stack for thread 1.
@@ -433,9 +392,7 @@ Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604430
 
 Anchored allocation at 604450 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x6043c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604450 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
 Address 0x7fffffffe258 is on the live part of the stack for thread 1.
@@ -443,8 +400,7 @@ Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604450
 
 Anchored allocation at 604470 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x6043c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604470 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
 Address 0x7fffffffe258 is on the live part of the stack for thread 1.
@@ -453,9 +409,7 @@ which references 0x604450
 which references 0x604470
 
 Anchored allocation at 604490 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x6043c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604490 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
 Address 0x7fffffffe258 is on the live part of the stack for thread 1.
@@ -463,9 +417,7 @@ Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604490
 
 Anchored allocation at 6044b0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the only node on a circular list.
-The list header appears to be at 0x7fffffffe190.
+This allocation matches pattern ListNode.
 The allocation at 0x6044b0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe190 is on the live part of the stack for thread 1.
@@ -474,9 +426,7 @@ Address 0x7fffffffe198 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe198 references 0x6044b0.
 
 Anchored allocation at 604500 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the only node on a circular list.
-The list header appears to be at 0x7fffffffe1a0.
+This allocation matches pattern ListNode.
 The allocation at 0x604500 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
@@ -485,17 +435,14 @@ Address 0x7fffffffe1a8 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1a8 references 0x604500.
 
 Anchored allocation at 604520 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x7fffffffe1b0.
+This allocation matches pattern ListNode.
 The allocation at 0x604520 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1b0 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1b0 references 0x604520.
 
 Anchored allocation at 604540 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1b0.
+This allocation matches pattern ListNode.
 The allocation at 0x604540 appears to be indirectly anchored from
 at least one stack via anchor point 0x604520.
 Address 0x7fffffffe1b0 is on the live part of the stack for thread 1.
@@ -508,26 +455,21 @@ Stack address 0x7fffffffe1b8 references anchor point 0x604560
 which references 0x604540
 
 Anchored allocation at 604560 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x7fffffffe1b0.
+This allocation matches pattern ListNode.
 The allocation at 0x604560 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1b8 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1b8 references 0x604560.
 
 Anchored allocation at 604580 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the first node on a circular list.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604580 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1c0 references 0x604580.
 
 Anchored allocation at 6045a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6045a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -535,8 +477,7 @@ Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 
 Anchored allocation at 6045c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6045c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -545,8 +486,7 @@ which references 0x6045a0
 which references 0x6045c0
 
 Anchored allocation at 6045e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6045e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -556,8 +496,7 @@ which references 0x6045c0
 which references 0x6045e0
 
 Anchored allocation at 604600 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604600 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -568,8 +507,7 @@ which references 0x6045e0
 which references 0x604600
 
 Anchored allocation at 604620 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604620 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -581,8 +519,7 @@ which references 0x604600
 which references 0x604620
 
 Anchored allocation at 604640 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604640 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -595,8 +532,7 @@ which references 0x604620
 which references 0x604640
 
 Anchored allocation at 604660 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604660 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -610,8 +546,7 @@ which references 0x604640
 which references 0x604660
 
 Anchored allocation at 604680 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604680 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -626,8 +561,7 @@ which references 0x604660
 which references 0x604680
 
 Anchored allocation at 6046a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6046a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -643,8 +577,7 @@ which references 0x604680
 which references 0x6046a0
 
 Anchored allocation at 6046c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6046c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -661,8 +594,7 @@ which references 0x6046a0
 which references 0x6046c0
 
 Anchored allocation at 6046e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6046e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -680,8 +612,7 @@ which references 0x6046c0
 which references 0x6046e0
 
 Anchored allocation at 604700 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604700 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -700,8 +631,7 @@ which references 0x6046e0
 which references 0x604700
 
 Anchored allocation at 604720 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604720 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -721,8 +651,7 @@ which references 0x604700
 which references 0x604720
 
 Anchored allocation at 604740 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604740 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -743,8 +672,7 @@ which references 0x604720
 which references 0x604740
 
 Anchored allocation at 604760 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604760 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -766,8 +694,7 @@ which references 0x604740
 which references 0x604760
 
 Anchored allocation at 604780 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604780 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -789,8 +716,7 @@ which references 0x6047a0
 which references 0x604780
 
 Anchored allocation at 6047a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6047a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -811,8 +737,7 @@ which references 0x6047c0
 which references 0x6047a0
 
 Anchored allocation at 6047c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6047c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -832,8 +757,7 @@ which references 0x6047e0
 which references 0x6047c0
 
 Anchored allocation at 6047e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6047e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -852,8 +776,7 @@ which references 0x604800
 which references 0x6047e0
 
 Anchored allocation at 604800 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604800 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -871,8 +794,7 @@ which references 0x604820
 which references 0x604800
 
 Anchored allocation at 604820 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604820 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -889,8 +811,7 @@ which references 0x604840
 which references 0x604820
 
 Anchored allocation at 604840 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604840 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -906,8 +827,7 @@ which references 0x604860
 which references 0x604840
 
 Anchored allocation at 604860 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604860 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -922,8 +842,7 @@ which references 0x604880
 which references 0x604860
 
 Anchored allocation at 604880 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604880 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -937,8 +856,7 @@ which references 0x6048a0
 which references 0x604880
 
 Anchored allocation at 6048a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6048a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -951,8 +869,7 @@ which references 0x6048c0
 which references 0x6048a0
 
 Anchored allocation at 6048c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6048c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -964,8 +881,7 @@ which references 0x6048e0
 which references 0x6048c0
 
 Anchored allocation at 6048e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x6048e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -976,8 +892,7 @@ which references 0x604900
 which references 0x6048e0
 
 Anchored allocation at 604900 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604900 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -987,8 +902,7 @@ which references 0x604920
 which references 0x604900
 
 Anchored allocation at 604920 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604920 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -997,8 +911,7 @@ which references 0x604940
 which references 0x604920
 
 Anchored allocation at 604940 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604940 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -1006,17 +919,14 @@ Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 
 Anchored allocation at 604960 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-This is probably the last node on a circular list.
-The list header appears to be at 0x7fffffffe1c0.
+This allocation matches pattern ListNode.
 The allocation at 0x604960 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
 Stack address 0x7fffffffe1c8 references 0x604960.
 
 Anchored allocation at 6049a0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x6049a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1024,8 +934,7 @@ Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x6049a0
 
 Anchored allocation at 6049c0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x6049c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1034,8 +943,7 @@ which references 0x6049a0
 which references 0x6049c0
 
 Anchored allocation at 6049e0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x6049e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1045,8 +953,7 @@ which references 0x6049c0
 which references 0x6049e0
 
 Anchored allocation at 604a00 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x604a00 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1057,8 +964,7 @@ which references 0x6049e0
 which references 0x604a00
 
 Anchored allocation at 604a20 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x604a20 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1069,8 +975,7 @@ which references 0x604a40
 which references 0x604a20
 
 Anchored allocation at 604a40 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x604a40 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1080,8 +985,7 @@ which references 0x604a60
 which references 0x604a40
 
 Anchored allocation at 604a60 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x604a60 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1090,8 +994,7 @@ which references 0x604a80
 which references 0x604a60
 
 Anchored allocation at 604a80 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604980.
+This allocation matches pattern ListNode.
 The allocation at 0x604a80 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
 Address 0x7fffffffe260 is on the live part of the stack for thread 1.
@@ -1099,8 +1002,7 @@ Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x604a80
 
 Anchored allocation at 604ac0 of size 18
-This allocation matches pattern DoublyLinkedListNode.
-The list header appears to be at 0x604aa0.
+This allocation matches pattern ListNode.
 The allocation at 0x604ac0 appears to be directly anchored from
 at least one register.
 Register rcx for thread 1 references 0x604ac0.

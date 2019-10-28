@@ -28,8 +28,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         _finder(graph.GetAllocationFinder()),
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
-        _mapTagIndex(_tagHolder.RegisterTag("unordered set or map buckets")),
-        _blockTagIndex(_tagHolder.RegisterTag("unordered set or map node")) {}
+        _mapTagIndex(_tagHolder.RegisterTag("deque map")),
+        _blockTagIndex(_tagHolder.RegisterTag("deque block")) {}
 
   bool TagFromAllocation(Reader& reader, Pass pass, AllocationIndex index,
                          Phase phase, const Allocation& allocation,

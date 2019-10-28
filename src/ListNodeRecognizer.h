@@ -8,25 +8,27 @@
 
 namespace chap {
 template <typename Offset>
-class MapOrSetNodeRecognizer : public Allocations::PatternRecognizer<Offset> {
+class ListNodeRecognizer : public Allocations::PatternRecognizer<Offset> {
  public:
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
   typedef typename Allocations::TagHolder<Offset>::TagIndex TagIndex;
-  MapOrSetNodeRecognizer(const ProcessImage<Offset>& processImage)
-      : Allocations::PatternRecognizer<Offset>(processImage, "MapOrSetNode"),
+  ListNodeRecognizer(const ProcessImage<Offset>& processImage)
+      : Allocations::PatternRecognizer<Offset>(processImage, "ListNode"),
         _tagHolder(processImage.GetAllocationTagHolder()),
-        _tagIndex(~((TagIndex)(0))) {
-    const MapOrSetAllocationsTagger<Offset>* tagger =
-        processImage.GetMapOrSetAllocationsTagger();
+        _tagIndex(~((TagIndex)(0))),
+        _unknownHeadTagIndex(~((TagIndex)(0))) {
+    const ListAllocationsTagger<Offset>* tagger =
+        processImage.GetListAllocationsTagger();
     if (tagger != 0) {
       _tagIndex = tagger->GetNodeTagIndex();
+      _unknownHeadTagIndex = tagger->GetUnknownHeadNodeTagIndex();
     }
   }
 
   bool Matches(AllocationIndex index, const Allocation&, bool) const {
-    return _tagHolder != nullptr && _tagHolder->GetTagIndex(index) == _tagIndex;
+    return MatchByIndexOnly(index);
   }
 
   /*
@@ -38,16 +40,23 @@ class MapOrSetNodeRecognizer : public Allocations::PatternRecognizer<Offset> {
    */
   virtual bool Describe(Commands::Context& context, AllocationIndex index,
                         const Allocation&, bool, bool explain) const {
-    if (_tagHolder == nullptr || _tagHolder->GetTagIndex(index) != _tagIndex) {
+    if (!MatchByIndexOnly(index)) {
       return false;
     }
     Commands::Output& output = context.GetOutput();
-    output << "This allocation matches pattern MapOrSetNode.\n";
+    output << "This allocation matches pattern ListNode.\n";
+    TagIndex tagIndex = _tagHolder->GetTagIndex(index);
+    if (tagIndex == _unknownHeadTagIndex) {
+      output << "Warning: the header is not known for the list.\n";
+    }
     if (explain) {
-      /*
-       * TODO: Identify the owner of the map or set.  This can be done by
-       * traveling up to a node for which the parent of the parent is itself.
-       */
+      if (tagIndex != _unknownHeadTagIndex) {
+        /*
+         * TODO: Identify the owner of list.  This can be done by scanning
+         * backwards until we reach an address that is not the start of a list
+         * node.
+         */
+      }
     }
     return true;
   }
@@ -55,5 +64,15 @@ class MapOrSetNodeRecognizer : public Allocations::PatternRecognizer<Offset> {
  private:
   const Allocations::TagHolder<Offset>* _tagHolder;
   TagIndex _tagIndex;
+  TagIndex _unknownHeadTagIndex;
+
+  bool MatchByIndexOnly(AllocationIndex index) const {
+    bool matches = false;
+    if (_tagHolder != nullptr) {
+      TagIndex tagIndex = _tagHolder->GetTagIndex(index);
+      matches = (tagIndex == _tagIndex || tagIndex == _unknownHeadTagIndex);
+    }
+    return matches;
+  }
 };
 }  // namespace chap
