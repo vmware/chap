@@ -20,6 +20,7 @@
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
 #include "ListNodeRecognizer.h"
+#include "LongStringRecognizer.h"
 #include "MapOrSetNodeRecognizer.h"
 #include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/ListModules.h"
@@ -167,7 +168,8 @@ class ProcessImageCommandHandler {
         _unorderedMapOrSetNodeRecognizer(processImage),
         _mapOrSetNodeRecognizer(processImage),
         _vectorBodyRecognizer(processImage),
-        _listNodeRecognizer(processImage) {
+        _listNodeRecognizer(processImage),
+        _longStringRecognizer(processImage) {
     _patternRecognizerRegistry.Register(_dequeMapRecognizer);
     _patternRecognizerRegistry.Register(_dequeBlockRecognizer);
     _patternRecognizerRegistry.Register(_unorderedMapOrSetBucketsRecognizer);
@@ -175,6 +177,7 @@ class ProcessImageCommandHandler {
     _patternRecognizerRegistry.Register(_mapOrSetNodeRecognizer);
     _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
     _patternRecognizerRegistry.Register(_listNodeRecognizer);
+    _patternRecognizerRegistry.Register(_longStringRecognizer);
     // Leave it to any derived class to add any describers.
   }
 
@@ -287,6 +290,7 @@ class ProcessImageCommandHandler {
   MapOrSetNodeRecognizer<Offset> _mapOrSetNodeRecognizer;
   VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
   ListNodeRecognizer<Offset> _listNodeRecognizer;
+  LongStringRecognizer<Offset> _longStringRecognizer;
 };
 
 }  // namespace chap

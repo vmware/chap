@@ -9,6 +9,7 @@
 #include "Allocations/TagHolder.h"
 #include "DequeAllocationsTagger.h"
 #include "ListAllocationsTagger.h"
+#include "LongStringAllocationsTagger.h"
 #include "MapOrSetAllocationsTagger.h"
 #include "ModuleDirectory.h"
 #include "ThreadMap.h"
@@ -40,7 +41,8 @@ class ProcessImage {
         _unorderedMapOrSetAllocationsTagger(nullptr),
         _mapOrSetAllocationsTagger(nullptr),
         _dequeAllocationsTagger(nullptr),
-        _listAllocationsTagger(nullptr) {
+        _listAllocationsTagger(nullptr),
+        _longStringAllocationsTagger(nullptr) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -125,6 +127,11 @@ class ProcessImage {
     return _listAllocationsTagger;
   }
 
+  const LongStringAllocationsTagger<Offset> *GetLongStringAllocationsTagger()
+      const {
+    return _longStringAllocationsTagger;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -144,5 +151,6 @@ class ProcessImage {
   MapOrSetAllocationsTagger<Offset> *_mapOrSetAllocationsTagger;
   DequeAllocationsTagger<Offset> *_dequeAllocationsTagger;
   ListAllocationsTagger<Offset> *_listAllocationsTagger;
+  LongStringAllocationsTagger<Offset> *_longStringAllocationsTagger;
 };
 }  // namespace chap

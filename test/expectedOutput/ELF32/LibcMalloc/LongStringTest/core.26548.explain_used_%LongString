@@ -2,8 +2,6 @@ Anchored allocation at 8050a40 of size 14
 This allocation matches pattern LongString.
 The string has 0x10 bytes, containing
 "0123456789abcdef".
-The capacity is considered to be 0x10.
-The referencing std::string is at address 0xffffcffc on the stack.
 The allocation at 0x8050a40 appears to be directly anchored from
 at least one stack.
 Address 0xffffcffc is on the live part of the stack for thread 1.
@@ -13,8 +11,6 @@ Anchored allocation at 8050aa0 of size 14
 This allocation matches pattern LongString.
 The string has 0x11 bytes, containing
 "another bogus key".
-The capacity is considered to be 0x11.
-The referencing std::string is at offset 0x10 in the allocation at 0x8050a70.
 The allocation at 0x8050aa0 appears to be indirectly statically anchored
 via anchor point 0x8050a70.
 Address 0x804b090 is at offset 0x90 in range
@@ -30,8 +26,6 @@ Anchored allocation at 8050ab8 of size 2c
 This allocation matches pattern LongString.
 The string has 0x26 bytes, containing
 "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
-The capacity is considered to be 0x26.
-The referencing std::string is at address 0x804b06c in statically allocated memory.
 The allocation at 0x8050ab8 appears to be directly statically anchored.
 Address 0x804b06c is at offset 0x6c in range
 [0x804b000, 804c000)

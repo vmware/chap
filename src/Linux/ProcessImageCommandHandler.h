@@ -8,7 +8,6 @@
 #include "LibcMallocMainArenaRunDescriber.h"
 #include "LibcMallocMmappedAllocationDescriber.h"
 #include "LinuxProcessImage.h"
-#include "LongStringRecognizer.h"
 #include "PyDictKeysObjectRecognizer.h"
 #include "SSLRecognizer.h"
 #include "SSL_CTXRecognizer.h"
@@ -32,12 +31,10 @@ class ProcessImageCommandHandler
         _libcMallocMmappedAllocationDescriber(
             processImage.GetLibcMallocAllocationFinder()),
         _COWStringBodyRecognizer(processImage),
-        _longStringRecognizer(processImage),
         _SSL_CTXRecognizer(processImage),
         _SSLRecognizer(processImage),
         _pyDictKeysObjectRecognizer(processImage) {
     Base::_patternRecognizerRegistry.Register(_COWStringBodyRecognizer);
-    Base::_patternRecognizerRegistry.Register(_longStringRecognizer);
     Base::_patternRecognizerRegistry.Register(_SSL_CTXRecognizer);
     Base::_patternRecognizerRegistry.Register(_SSLRecognizer);
     Base::_patternRecognizerRegistry.Register(_pyDictKeysObjectRecognizer);
@@ -91,7 +88,6 @@ class ProcessImageCommandHandler
   LibcMallocMmappedAllocationDescriber<Offset>
       _libcMallocMmappedAllocationDescriber;
   COWStringBodyRecognizer<Offset> _COWStringBodyRecognizer;
-  LongStringRecognizer<Offset> _longStringRecognizer;
   SSL_CTXRecognizer<Offset> _SSL_CTXRecognizer;
   SSLRecognizer<Offset> _SSLRecognizer;
   PyDictKeysObjectRecognizer<Offset> _pyDictKeysObjectRecognizer;
