@@ -100,6 +100,7 @@ class Finder {
   // null if index is not valid.
   virtual const Allocation* AllocationAt(AllocationIndex index) const = 0;
   virtual AllocationIndex NumAllocations() const = 0;
+  virtual Offset MaxAllocationSize() const = 0;
   // Return target index or NumAllocations() if none exists or edge is
   // not suitable as an anchor.
   virtual AllocationIndex EdgeTargetIndex(Offset targetCandidate) const = 0;

@@ -235,6 +235,14 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     CheckForCorruption();
 
     SetCountsForArenas();
+
+    _maxAllocationSize = 0;
+    for (const Allocation& allocation : _allocations) {
+      Offset size = allocation.Size();
+      if (_maxAllocationSize < size) {
+        _maxAllocationSize = size;
+      }
+    }
   }
 
   virtual ~LibcMallocAllocationFinder() {}
@@ -269,6 +277,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 
   virtual AllocationIndex NumAllocations() const { return _allocations.size(); }
+
+  virtual Offset MaxAllocationSize() const { return _maxAllocationSize; }
 
   virtual AllocationIndex EdgeTargetIndex(Offset targetCandidate) const {
     // TODO - move as default implementation to base?
@@ -371,6 +381,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   const VirtualAddressMap<Offset>& _addressMap;
 
   std::vector<Allocation> _allocations;
+  Offset _maxAllocationSize;
   std::vector<bool> _isThreadCached;
 
   static const Offset OFFSET_SIZE = sizeof(Offset);

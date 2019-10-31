@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <algorithm>
 #include <deque>
 #include "../ThreadMap.h"
 #include "../VirtualAddressMap.h"
@@ -83,16 +84,16 @@ class Graph {
   }
 
   bool IsLeaked(Index index) const {
-    return index < _finder.NumAllocations() && _leaked[index];
+    return index < _numAllocations && _leaked[index];
   }
 
   bool IsAnchored(Index index) const {
-    return (index < _finder.NumAllocations()) &&
-           _finder.AllocationAt(index)->IsUsed() && !_leaked[index];
+    return (index < _numAllocations) && _finder.AllocationAt(index)->IsUsed() &&
+           !_leaked[index];
   }
 
   bool IsAnchorPoint(Index index) const {
-    return (index < _finder.NumAllocations()) &&
+    return (index < _numAllocations) &&
            ((_staticAnchorDistances.GetDistance(index) == 1) ||
             (_stackAnchorDistances.GetDistance(index) == 1) ||
             (_registerAnchorDistances.GetDistance(index) == 1) ||
@@ -100,12 +101,12 @@ class Graph {
   }
 
   bool IsStaticAnchored(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _staticAnchorDistances.GetDistance(index) > 0;
   }
 
   bool IsStaticAnchorPoint(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _staticAnchorDistances.GetDistance(index) == 1;
   }
 
@@ -119,12 +120,12 @@ class Graph {
   }
 
   bool IsStackAnchored(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _stackAnchorDistances.GetDistance(index) > 0;
   }
 
   bool IsStackAnchorPoint(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _stackAnchorDistances.GetDistance(index) == 1;
   }
 
@@ -138,12 +139,12 @@ class Graph {
   }
 
   bool IsRegisterAnchored(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _registerAnchorDistances.GetDistance(index) > 0;
   }
 
   bool IsRegisterAnchorPoint(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _registerAnchorDistances.GetDistance(index) == 1;
   }
 
@@ -167,17 +168,17 @@ class Graph {
   }
 
   bool IsExternalAnchored(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _externalAnchorDistances.GetDistance(index) > 0;
   }
 
   bool IsExternalAnchorPoint(Index index) const {
-    return index < _finder.NumAllocations() &&
+    return index < _numAllocations &&
            _externalAnchorDistances.GetDistance(index) == 1;
   }
 
   bool IsThreadOnlyAnchored(Index index) const {
-    return (index < _finder.NumAllocations()) &&
+    return (index < _numAllocations) &&
            ((_registerAnchorDistances.GetDistance(index) > 0) ||
             (_stackAnchorDistances.GetDistance(index) > 0)) &&
            (_staticAnchorDistances.GetDistance(index) == 0) &&
@@ -185,7 +186,7 @@ class Graph {
   }
 
   bool IsThreadOnlyAnchorPoint(Index index) const {
-    return (index < _finder.NumAllocations()) &&
+    return (index < _numAllocations) &&
            ((_registerAnchorDistances.GetDistance(index) == 1) ||
             (_stackAnchorDistances.GetDistance(index) == 1)) &&
            (_staticAnchorDistances.GetDistance(index) == 0) &&
@@ -291,7 +292,7 @@ class Graph {
   bool VisitAnchorChains(Index index, AnchorChainVisitor &visitor,
                          const IndexedDistances<Index> &distances,
                          LocalVisitor anchorPointVisitor) const {
-    if (index >= _finder.NumAllocations() || _leaked[index]) {
+    if (index >= _numAllocations || _leaked[index]) {
       return false;
     }
     Index distance = distances.GetDistance(index);
@@ -401,7 +402,7 @@ class Graph {
 
   bool IsUnreferenced(Index index) const {
     bool isUnreferenced = false;
-    if (index < _finder.NumAllocations() && _leaked[index]) {
+    if (index < _numAllocations && _leaked[index]) {
       const Index *pFirstIncomingIndex = &(_incoming[_firstIncoming[index]]);
       const Index *pPastIncomingIndex = &(_incoming[_firstIncoming[index + 1]]);
       isUnreferenced = true;
@@ -447,6 +448,11 @@ class Graph {
     if (_numAllocations == 0) {
       return;
     }
+
+    Offset maxAllocationSize = _finder.MaxAllocationSize();
+    std::vector<Index> targets;
+    targets.reserve(maxAllocationSize);
+
     _firstIncoming.reserve(_numAllocations + 1);
     _firstIncoming.resize(_numAllocations + 1, 0);
     _firstOutgoing.reserve(_numAllocations + 1);
@@ -461,6 +467,7 @@ class Graph {
      * into _incoming.
      */
 
+    Reader reader(_addressMap);
     for (Index i = 0; i < _numAllocations; i++) {
       _firstOutgoing[i] = _totalEdges;
       const Allocation *allocation = _finder.AllocationAt(i);
@@ -471,25 +478,31 @@ class Graph {
        * check the source and/or the target when one particular usage status
        * is required.
        */
-      Offset size = allocation->Size();
-      Offset numCandidates = size / sizeof(Offset);
-      std::set<Index> targets;
-      typename Finder<Offset>::AllocationImage allocationImage(_addressMap,
-                                                               *allocation);
-      for (size_t candidateIndex = 0; candidateIndex < numCandidates;
-           ++candidateIndex) {
-        Offset candidateTarget = allocationImage[candidateIndex];
-        Index targetIndex = _finder.EdgeTargetIndex(candidateTarget);
-        if (targetIndex != _numAllocations && targetIndex != i &&
-            targets.insert(targetIndex).second) {
-          /*
-           * On this pass through the edges, _firstIncoming[i] is
-           * set to the number of incoming edges for i.
-           */
-          _firstIncoming[targetIndex]++;
+      Offset checkAt = allocation->Address();
+      Offset checkLimit =
+          checkAt + (allocation->Size() & ~(sizeof(Offset) - 1));
+      targets.clear();
+      Index prevTarget = _numAllocations;
+      for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
+        Index target = _finder.EdgeTargetIndex(reader.ReadOffset(checkAt, 0));
+        if (target != _numAllocations && target != i && target != prevTarget) {
+          targets.push_back(target);
+          prevTarget = target;
         }
       }
-      _totalEdges += targets.size();
+      if (!targets.empty()) {
+        if (targets.size() > 1) {
+          std::sort(targets.begin(), targets.end());
+        }
+        Index prevTarget = _numAllocations;
+        for (Offset target : targets) {
+          if (target != prevTarget) {
+            _firstIncoming[target]++;
+            _totalEdges++;
+            prevTarget = target;
+          }
+        }
+      }
     }
     _firstOutgoing[_numAllocations] = _totalEdges;
 
@@ -523,24 +536,31 @@ class Graph {
        * check the source and/or the target when one particular usage status
        * is required.
        */
-      Offset size = allocation->Size();
-      Offset numCandidates = size / sizeof(Offset);
-      std::set<Index> targets;
-      typename Finder<Offset>::AllocationImage allocationImage(_addressMap,
-                                                               *allocation);
-      for (size_t candidateIndex = 0; candidateIndex < numCandidates;
-           ++candidateIndex) {
-        Offset candidateTarget = allocationImage[candidateIndex];
-        Index targetIndex = _finder.EdgeTargetIndex(candidateTarget);
-        if (targetIndex != _numAllocations && targetIndex != i &&
-            targets.insert(targetIndex).second) {
-          _incoming[--_firstIncoming[targetIndex]] = i;
+      Offset checkAt = allocation->Address();
+      Offset checkLimit =
+          checkAt + (allocation->Size() & ~(sizeof(Offset) - 1));
+      targets.clear();
+      Index prevTarget = _numAllocations;
+      for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
+        Index target = _finder.EdgeTargetIndex(reader.ReadOffset(checkAt, 0));
+        if (target != _numAllocations && target != i && target != prevTarget) {
+          targets.push_back(target);
+          prevTarget = target;
         }
       }
-      EdgeIndex nextOutgoing = _firstOutgoing[i];
-      for (typename std::set<Index>::const_iterator it = targets.begin();
-           it != targets.end(); ++it) {
-        _outgoing[nextOutgoing++] = *it;
+      if (!targets.empty()) {
+        if (targets.size() > 1) {
+          std::sort(targets.begin(), targets.end());
+        }
+        Index prevTarget = _numAllocations;
+        EdgeIndex nextOutgoing = _firstOutgoing[i];
+        for (Offset target : targets) {
+          if (target != prevTarget) {
+            _incoming[--_firstIncoming[target]] = i;
+            _outgoing[nextOutgoing++] = target;
+            prevTarget = target;
+          }
+        }
       }
     }
   }
