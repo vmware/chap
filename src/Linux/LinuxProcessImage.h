@@ -997,7 +997,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     std::vector<ModuleRange> ranges;
     FindRangesForModule(it, ranges);
     size_t numRanges = ranges.size();
-    bool gapFound;
+    bool gapFound = false;
     for (const auto& range : ranges) {
       if ((range._permissions & (RangeAttributes::HAS_KNOWN_PERMISSIONS |
                                  RangeAttributes::IS_WRITABLE)) ==

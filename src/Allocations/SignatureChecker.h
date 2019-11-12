@@ -117,6 +117,7 @@ class SignatureChecker {
                   !(_signatures.find(*((Offset*)image)) == _signatures.end()));
         }
     }
+    return false;
   }
 
  private:

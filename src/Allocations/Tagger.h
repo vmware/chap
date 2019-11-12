@@ -23,7 +23,6 @@ class Tagger {
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
-  typedef ContiguousImage<Offset> ContiguousImage;
 
   /*
    * On both passes through the allocations each allocation will be visited
@@ -48,7 +47,7 @@ class Tagger {
    * others.  Return true if and only if there is no need for this tagger to
    * look any more at this allocation during the given pass.
    */
-  virtual bool TagFromAllocation(const ContiguousImage& contiguousImage,
+  virtual bool TagFromAllocation(const ContiguousImage<Offset>& contiguousImage,
                                  Reader& reader, AllocationIndex index,
                                  Phase phase, const Allocation& allocation,
                                  bool isUnsigned) = 0;
@@ -60,7 +59,8 @@ class Tagger {
    * look any more at this allocation during the given pass.
    */
   virtual bool TagFromReferenced(
-      const ContiguousImage& /* contiguousImage */, Reader& /* reader */,
+      const ContiguousImage<Offset>& /* contiguousImage */,
+      Reader& /* reader */,
       AllocationIndex /* index */, Phase /* phase */,
       const Allocation& /* allocation */,
       const AllocationIndex* /* unresolvedOutgoing */) {
