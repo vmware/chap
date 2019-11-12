@@ -6,6 +6,7 @@
 #include <deque>
 #include "../ThreadMap.h"
 #include "../VirtualAddressMap.h"
+#include "ContiguousImage.h"
 #include "ExternalAnchorPointChecker.h"
 #include "Finder.h"
 #include "IndexedDistances.h"
@@ -72,15 +73,42 @@ class Graph {
     }
   }
 
-  void GetOutgoing(Index target, const Index **pFirstOutgoing,
+  void GetOutgoing(Index source, const Index **pFirstOutgoing,
                    const Index **pPastOutgoing) const {
-    if (target < _numAllocations) {
-      *pFirstOutgoing = &(_outgoing[_firstOutgoing[target]]);
-      *pPastOutgoing = &(_outgoing[_firstOutgoing[target + 1]]);
+    if (source < _numAllocations) {
+      *pFirstOutgoing = &(_outgoing[_firstOutgoing[source]]);
+      *pPastOutgoing = &(_outgoing[_firstOutgoing[source + 1]]);
     } else {
       *pFirstOutgoing = (const Index *)(0);
       *pPastOutgoing = (const Index *)(0);
     }
+  }
+
+  bool HasNoOutgoing(Index source) {
+    return (source >= _numAllocations) ||
+           (_firstOutgoing[source] == _firstOutgoing[source + 1]);
+  }
+
+  Index TargetAllocationIndex(Index source, Offset addr) const {
+    if (source < _numAllocations) {
+      EdgeIndex base = _firstOutgoing[source];
+      EdgeIndex limit = _firstOutgoing[source + 1];
+      while (base < limit) {
+        size_t mid = (base + limit) / 2;
+        Index target = _outgoing[mid];
+        const Allocation &allocation = *(_finder.AllocationAt(target));
+        if (addr >= allocation.Address()) {
+          if (addr < allocation.Address() + allocation.Size()) {
+            return target;
+          } else {
+            base = mid + 1;
+          }
+        } else {
+          limit = mid;
+        }
+      }
+    }
+    return _numAllocations;
   }
 
   bool IsLeaked(Index index) const {
@@ -112,9 +140,12 @@ class Graph {
 
   const std::vector<Offset> *GetStaticAnchors(Index index) const {
     const std::vector<Offset> *result = 0;
-    AnchorPointMapConstIterator it = _staticAnchorPoints.find(index);
-    if (it != _staticAnchorPoints.end()) {
-      result = &(it->second);
+    if (index < _numAllocations &&
+        _staticAnchorDistances.GetDistance(index) == 1) {
+      AnchorPointMapConstIterator it = _staticAnchorPoints.find(index);
+      if (it != _staticAnchorPoints.end()) {
+        result = &(it->second);
+      }
     }
     return result;
   }
@@ -131,9 +162,12 @@ class Graph {
 
   const std::vector<Offset> *GetStackAnchors(Index index) const {
     const std::vector<Offset> *result = 0;
-    AnchorPointMapConstIterator it = _stackAnchorPoints.find(index);
-    if (it != _stackAnchorPoints.end()) {
-      result = &(it->second);
+    if (index < _numAllocations &&
+        _stackAnchorDistances.GetDistance(index) == 1) {
+      AnchorPointMapConstIterator it = _stackAnchorPoints.find(index);
+      if (it != _stackAnchorPoints.end()) {
+        result = &(it->second);
+      }
     }
     return result;
   }
@@ -152,17 +186,21 @@ class Graph {
       Index index,
       std::vector<std::pair<size_t, const char *> > anchors) const {
     anchors.clear();
-    AnchorPointMapConstIterator it = _registerAnchorPoints.find(index);
-    if (it != _registerAnchorPoints.end()) {
-      size_t numRegisters = _threadMap.GetNumRegisters();
-      const std::vector<Offset> &encodedAnchors = it->second;
-      for (typename std::vector<Offset>::const_iterator it =
-               encodedAnchors.begin();
-           it != encodedAnchors.end(); ++it) {
-        Offset anchor = *it;
-        size_t threadNum = anchor / numRegisters;
-        const char *regName = _threadMap.GetRegisterName(anchor % numRegisters);
-        anchors.push_back(std::make_pair(threadNum, regName));
+    if (index < _numAllocations &&
+        _registerAnchorDistances.GetDistance(index) == 1) {
+      AnchorPointMapConstIterator it = _registerAnchorPoints.find(index);
+      if (it != _registerAnchorPoints.end()) {
+        size_t numRegisters = _threadMap.GetNumRegisters();
+        const std::vector<Offset> &encodedAnchors = it->second;
+        for (typename std::vector<Offset>::const_iterator it =
+                 encodedAnchors.begin();
+             it != encodedAnchors.end(); ++it) {
+          Offset anchor = *it;
+          size_t threadNum = anchor / numRegisters;
+          const char *regName =
+              _threadMap.GetRegisterName(anchor % numRegisters);
+          anchors.push_back(std::make_pair(threadNum, regName));
+        }
       }
     }
   }
@@ -198,10 +236,13 @@ class Graph {
   bool VisitStaticAnchorPoint(AnchorChainVisitor &visitor, Index index,
                               Offset address, Offset size,
                               const char *image) const {
-    AnchorPointMapConstIterator it = _staticAnchorPoints.find(index);
-    if (it != _staticAnchorPoints.end()) {
-      return visitor.VisitStaticAnchorChainHeader(it->second, address, size,
-                                                  image);
+    if (index < _numAllocations &&
+        _staticAnchorDistances.GetDistance(index) == 1) {
+      AnchorPointMapConstIterator it = _staticAnchorPoints.find(index);
+      if (it != _staticAnchorPoints.end()) {
+        return visitor.VisitStaticAnchorChainHeader(it->second, address, size,
+                                                    image);
+      }
     }
     return false;
   }
@@ -214,10 +255,13 @@ class Graph {
   bool VisitStackAnchorPoint(AnchorChainVisitor &visitor, Index index,
                              Offset address, Offset size,
                              const char *image) const {
-    AnchorPointMapConstIterator it = _stackAnchorPoints.find(index);
-    if (it != _stackAnchorPoints.end()) {
-      return visitor.VisitStackAnchorChainHeader(it->second, address, size,
-                                                 image);
+    if (index < _numAllocations &&
+        _stackAnchorDistances.GetDistance(index) == 1) {
+      AnchorPointMapConstIterator it = _stackAnchorPoints.find(index);
+      if (it != _stackAnchorPoints.end()) {
+        return visitor.VisitStackAnchorChainHeader(it->second, address, size,
+                                                   image);
+      }
     }
     return false;
   }
@@ -230,21 +274,25 @@ class Graph {
   bool VisitRegisterAnchorPoint(AnchorChainVisitor &visitor, Index index,
                                 Offset address, Offset size,
                                 const char *image) const {
-    AnchorPointMapConstIterator it = _registerAnchorPoints.find(index);
-    if (it != _registerAnchorPoints.end()) {
-      std::vector<std::pair<size_t, const char *> > anchors;
-      size_t numRegisters = _threadMap.GetNumRegisters();
-      const std::vector<Offset> &encodedAnchors = it->second;
-      for (typename std::vector<Offset>::const_iterator it =
-               encodedAnchors.begin();
-           it != encodedAnchors.end(); ++it) {
-        Offset anchor = *it;
-        size_t threadNum = anchor / numRegisters;
-        const char *regName = _threadMap.GetRegisterName(anchor % numRegisters);
-        anchors.push_back(std::make_pair(threadNum, regName));
+    if (index < _numAllocations &&
+        _registerAnchorDistances.GetDistance(index) == 1) {
+      AnchorPointMapConstIterator it = _registerAnchorPoints.find(index);
+      if (it != _registerAnchorPoints.end()) {
+        std::vector<std::pair<size_t, const char *> > anchors;
+        size_t numRegisters = _threadMap.GetNumRegisters();
+        const std::vector<Offset> &encodedAnchors = it->second;
+        for (typename std::vector<Offset>::const_iterator it =
+                 encodedAnchors.begin();
+             it != encodedAnchors.end(); ++it) {
+          Offset anchor = *it;
+          size_t threadNum = anchor / numRegisters;
+          const char *regName =
+              _threadMap.GetRegisterName(anchor % numRegisters);
+          anchors.push_back(std::make_pair(threadNum, regName));
+        }
+        return visitor.VisitRegisterAnchorChainHeader(anchors, address, size,
+                                                      image);
       }
-      return visitor.VisitRegisterAnchorChainHeader(anchors, address, size,
-                                                    image);
     }
     return false;
   }
@@ -258,11 +306,14 @@ class Graph {
   bool VisitExternalAnchorPoint(AnchorChainVisitor &visitor, Index index,
                                 Offset address, Offset size,
                                 const char *image) const {
-    typename std::map<Index, const char *>::const_iterator it =
-        _externalAnchorPoints.find(index);
-    if (it != _externalAnchorPoints.end()) {
-      return visitor.VisitExternalAnchorChainHeader(it->second, address, size,
-                                                    image);
+    if (index < _numAllocations &&
+        _externalAnchorDistances.GetDistance(index) == 1) {
+      typename std::map<Index, const char *>::const_iterator it =
+          _externalAnchorPoints.find(index);
+      if (it != _externalAnchorPoints.end()) {
+        return visitor.VisitExternalAnchorChainHeader(it->second, address, size,
+                                                      image);
+      }
     }
     return false;
   }
@@ -466,11 +517,12 @@ class Graph {
      * of incoming edges for allocation i, rather than the correct index
      * into _incoming.
      */
-
+    ContiguousImage<Offset> contiguousImage(_finder);
     Reader reader(_addressMap);
     for (Index i = 0; i < _numAllocations; i++) {
+      contiguousImage.SetIndex(i);
       _firstOutgoing[i] = _totalEdges;
-      const Allocation *allocation = _finder.AllocationAt(i);
+      // const Allocation *allocation = _finder.AllocationAt(i);
 
       /*
        * Note that we find all the edges, regardless of whether the source
@@ -478,13 +530,12 @@ class Graph {
        * check the source and/or the target when one particular usage status
        * is required.
        */
-      Offset checkAt = allocation->Address();
-      Offset checkLimit =
-          checkAt + (allocation->Size() & ~(sizeof(Offset) - 1));
       targets.clear();
       Index prevTarget = _numAllocations;
-      for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
-        Index target = _finder.EdgeTargetIndex(reader.ReadOffset(checkAt, 0));
+      const Offset *offsetLimit = contiguousImage.OffsetLimit();
+      for (const Offset *check = contiguousImage.FirstOffset();
+           check < offsetLimit; check++) {
+        Index target = _finder.EdgeTargetIndex(*check);
         if (target != _numAllocations && target != i && target != prevTarget) {
           targets.push_back(target);
           prevTarget = target;
@@ -529,20 +580,19 @@ class Graph {
      */
 
     for (Index i = _numAllocations; i > 0;) {
-      const Allocation *allocation = _finder.AllocationAt(--i);
+      contiguousImage.SetIndex(--i);
       /*
        * Note that we find all the edges, regardless of whether the source
        * or target is used or free.  Code that uses the graph is expected to
        * check the source and/or the target when one particular usage status
        * is required.
        */
-      Offset checkAt = allocation->Address();
-      Offset checkLimit =
-          checkAt + (allocation->Size() & ~(sizeof(Offset) - 1));
       targets.clear();
       Index prevTarget = _numAllocations;
-      for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
-        Index target = _finder.EdgeTargetIndex(reader.ReadOffset(checkAt, 0));
+      const Offset *offsetLimit = contiguousImage.OffsetLimit();
+      for (const Offset *check = contiguousImage.FirstOffset();
+           check < offsetLimit; check++) {
+        Index target = _finder.EdgeTargetIndex(*check);
         if (target != _numAllocations && target != i && target != prevTarget) {
           targets.push_back(target);
           prevTarget = target;

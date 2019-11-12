@@ -116,7 +116,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
           new LongStringAllocationsTagger<Offset>(
               *(Base::_allocationGraph), *(Base::_allocationTagHolder));
 
-      Allocations::TaggerRunner<Offset> runner(*Base::_allocationFinder,
+      Allocations::TaggerRunner<Offset> runner(*Base::_allocationGraph,
                                                *Base::_allocationTagHolder,
                                                Base::_signatureDirectory);
       runner.RegisterTagger(Base::_unorderedMapOrSetAllocationsTagger);

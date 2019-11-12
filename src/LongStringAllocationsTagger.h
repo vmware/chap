@@ -15,7 +15,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::Graph<Offset> Graph;
   typedef typename Allocations::Finder<Offset> Finder;
   typedef typename Allocations::Tagger<Offset> Tagger;
-  typedef typename Tagger::Pass Pass;
+  typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
   typedef typename Finder::AllocationIndex AllocationIndex;
   typedef typename Finder::Allocation Allocation;
@@ -28,23 +28,34 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _finder(graph.GetAllocationFinder()),
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
+        _charsImage(_finder),
+        _staticAnchorReader(_addressMap),
+        _stackAnchorReader(_addressMap),
         _charsTagIndex(_tagHolder.RegisterTag("long string chars")) {}
 
-  bool TagFromAllocation(Reader& reader, Pass pass, AllocationIndex index,
+  bool TagFromAllocation(const ContiguousImage& contiguousImage,
+                         Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
                          bool /* isUnsigned */) {
-    switch (pass) {
-      case Tagger::FIRST_PASS_THROUGH_ALLOCATIONS:
-        return TagAnchorPointLongStringChars(index, phase, allocation);
-        break;
-      case Tagger::LAST_PASS_THROUGH_ALLOCATIONS:
-        return TagFromContainedStrings(reader, index, phase, allocation);
-        break;
+    if (_tagHolder.GetTagIndex(index) != 0) {
+      /*
+       * This was already tagged, generally as a result of following
+       * outgoing references from an allocation already being tagged.
+       * From this we conclude that the given allocation does not hold the
+       * characters for a long string.
+       */
+      return true;  // We are finished looking at this allocation for this pass.
     }
-    /*
-     * There is no need to look any more at this allocation during this pass.
-     */
-    return true;
+    return TagAnchorPointLongStringChars(contiguousImage, index, phase,
+                                         allocation);
+  }
+
+  bool TagFromReferenced(const ContiguousImage& contiguousImage,
+                         Reader& /* reader */, AllocationIndex /* index */,
+                         Phase phase, const Allocation& allocation,
+                         const AllocationIndex* unresolvedOutgoing) {
+    return TagFromContainedStrings(contiguousImage, phase, allocation,
+                                   unresolvedOutgoing);
   }
 
   TagIndex GetCharsTagIndex() const { return _charsTagIndex; }
@@ -55,6 +66,9 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   const Finder& _finder;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
+  ContiguousImage _charsImage;
+  typename VirtualAddressMap<Offset>::Reader _staticAnchorReader;
+  typename VirtualAddressMap<Offset>::Reader _stackAnchorReader;
   TagIndex _charsTagIndex;
 
   /*
@@ -63,17 +77,9 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
    * on the stack or statically allocated, tagging it if so.
    * Return true if no further work is needed to check.
    */
-  bool TagAnchorPointLongStringChars(AllocationIndex index, Phase phase,
+  bool TagAnchorPointLongStringChars(const ContiguousImage& contiguousImage,
+                                     AllocationIndex index, Phase phase,
                                      const Allocation& allocation) {
-    if (_tagHolder.GetTagIndex(index) != 0) {
-      /*
-       * This was already tagged, generally as a result of following
-       * outgoing references from an allocation already being tagged.
-       * From this we conclude that the given allocation does not hold the
-       * characters for a long string.
-       */
-      return true;  // We are finished looking at this allocation for this pass.
-    }
     Offset size = allocation.Size();
 
     switch (phase) {
@@ -86,13 +92,13 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
         if (size < 10 * sizeof(Offset)) {
-          TagIfLongStringCharsAnchorPoint(index, allocation);
+          TagIfLongStringCharsAnchorPoint(contiguousImage, index, allocation);
           return true;
         }
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        TagIfLongStringCharsAnchorPoint(index, allocation);
+        TagIfLongStringCharsAnchorPoint(contiguousImage, index, allocation);
         return true;
         break;
       case Tagger::WEAK_CHECK:
@@ -104,50 +110,43 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void TagIfLongStringCharsAnchorPoint(AllocationIndex index,
+  void TagIfLongStringCharsAnchorPoint(const ContiguousImage& contiguousImage,
+                                       AllocationIndex index,
                                        const Allocation& allocation) {
-    Offset stringLength = 0;
-    const char* allocationImage;
-    Offset address = allocation.Address();
     Offset size = allocation.Size();
-    Offset numBytesFound =
-        _addressMap.FindMappedMemoryImage(address, &allocationImage);
-
-    if (numBytesFound < size) {
+    Offset stringLength = strnlen(contiguousImage.FirstChar(), size);
+    if (stringLength == size) {
       return;
-    }
-    while (allocationImage[stringLength] != '\000') {
-      if (++stringLength == size) {
-        return;
-      }
     }
     if (stringLength < 2 * sizeof(Offset)) {
       return;
     }
     if (!CheckLongStringAnchorIn(index, allocation, stringLength,
-                                 _graph.GetStaticAnchors(index))) {
+                                 _graph.GetStaticAnchors(index),
+                                 _staticAnchorReader)) {
       CheckLongStringAnchorIn(index, allocation, stringLength,
-                              _graph.GetStackAnchors(index));
+                              _graph.GetStackAnchors(index),
+                              _stackAnchorReader);
     }
   }
   bool CheckLongStringAnchorIn(AllocationIndex charsIndex,
                                const Allocation& charsAllocation,
                                Offset stringLength,
-                               const std::vector<Offset>* anchors) {
+                               const std::vector<Offset>* anchors,
+                               Reader& anchorReader) {
     Offset charsAddress = charsAllocation.Address();
     Offset charsSize = charsAllocation.Size();
     if (anchors != nullptr) {
-      typename VirtualAddressMap<Offset>::Reader stringReader(_addressMap);
       for (Offset anchor : *anchors) {
-        if (stringReader.ReadOffset(anchor, 0xbad) != charsAddress) {
+        if (anchorReader.ReadOffset(anchor, 0xbad) != charsAddress) {
           continue;
         }
-        if (stringReader.ReadOffset(anchor + sizeof(Offset), 0) !=
+        if (anchorReader.ReadOffset(anchor + sizeof(Offset), 0) !=
             stringLength) {
           continue;
         }
         Offset capacity =
-            stringReader.ReadOffset(anchor + 2 * sizeof(Offset), 0);
+            anchorReader.ReadOffset(anchor + 2 * sizeof(Offset), 0);
         if ((capacity < stringLength) || (capacity > charsSize) ||
             (3 * capacity < 2 * charsSize)) {
           continue;
@@ -166,13 +165,9 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
    * that are sufficiently long to use external buffers, tag the external
    * buffers.
    */
-  bool TagFromContainedStrings(Reader& reader, AllocationIndex /*index*/,
-                               Phase phase, const Allocation& allocation) {
-    /*
-     * We don't care about the index, because we aren't tagging the allocation
-     * that contains the strings but only any external buffers used for long
-     * strings.
-     */
+  bool TagFromContainedStrings(const ContiguousImage& contiguousImage,
+                               Phase phase, const Allocation& allocation,
+                               const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         return allocation.Size() < 4 * sizeof(Offset);
@@ -182,7 +177,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        CheckEmbeddedStrings(reader, allocation.Address(), allocation.Size());
+        CheckEmbeddedStrings(contiguousImage, unresolvedOutgoing);
         return true;
         break;
       case Tagger::WEAK_CHECK:
@@ -194,37 +189,36 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void CheckEmbeddedStrings(Reader& stringReader, Offset address, Offset size) {
+  void CheckEmbeddedStrings(const ContiguousImage& contiguousImage,
+                            const AllocationIndex* unresolvedOutgoing) {
     Reader charsReader(_addressMap);
-    Offset checkLimit =
-        address + (size & ~(sizeof(Offset) - 1)) - 3 * sizeof(Offset);
-    for (Offset checkAt = address; checkAt < checkLimit;
-         checkAt += sizeof(Offset)) {
-      Offset charsAddress = stringReader.ReadOffset(checkAt, 0);
-      if (charsAddress == 0) {
-        continue;
-      }
-
-      Offset stringLength =
-          stringReader.ReadOffset(checkAt + sizeof(Offset), 0);
-      if (stringLength < 2 * sizeof(Offset)) {
-        continue;
-      }
-
-      Offset capacity =
-          stringReader.ReadOffset(checkAt + 2 * sizeof(Offset), 0);
-      if (stringLength > capacity) {
-        continue;
-      }
-
-      AllocationIndex charsIndex = _finder.AllocationIndexOf(charsAddress);
+    const Offset* checkLimit = contiguousImage.OffsetLimit() - 3;
+    const Offset* firstCheck = contiguousImage.FirstOffset();
+    ;
+    for (const Offset* check = firstCheck; check < checkLimit; check++) {
+      AllocationIndex charsIndex = unresolvedOutgoing[check - firstCheck];
       if (charsIndex == _numAllocations) {
         continue;
       }
+      if (_tagHolder.GetTagIndex(charsIndex) != 0) {
+        continue;
+      }
+      Offset charsAddress = check[0];
       const Allocation* charsAllocation = _finder.AllocationAt(charsIndex);
       if (charsAllocation->Address() != charsAddress) {
         continue;
       }
+
+      Offset stringLength = check[1];
+      if (stringLength < 2 * sizeof(Offset)) {
+        continue;
+      }
+
+      Offset capacity = check[2];
+      if (stringLength > capacity) {
+        continue;
+      }
+
       Offset charsSize = charsAllocation->Size();
 
       if (capacity >= charsSize) {
@@ -235,20 +229,15 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         continue;
       }
 
-      const char* allocationImage;
-      Offset numBytesFound =
-          _addressMap.FindMappedMemoryImage(charsAddress, &allocationImage);
+      _charsImage.SetIndex(charsIndex);
+      const char* pFirstChar = _charsImage.FirstChar();
 
-      if (numBytesFound < charsSize) {
+      if (*(pFirstChar + stringLength) != '\000') {
         continue;
       }
-
-      if (allocationImage[stringLength] != '\000') {
-        continue;
-      }
-      if (stringLength == (Offset)(strlen(allocationImage))) {
+      if (stringLength == (Offset)(strlen(pFirstChar))) {
         _tagHolder.TagAllocation(charsIndex, _charsTagIndex);
-        checkAt += 3 * sizeof(Offset);
+        check += 3;
       }
     }
   }

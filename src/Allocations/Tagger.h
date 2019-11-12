@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include "ContiguousImage.h"
 #include "Finder.h"
 
 namespace chap {
@@ -22,6 +23,7 @@ class Tagger {
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
+  typedef ContiguousImage<Offset> ContiguousImage;
 
   /*
    * On both passes through the allocations each allocation will be visited
@@ -30,8 +32,6 @@ class Tagger {
    * which all the taggers have returned true from TagFromAllocation on that
    * allocation.
    */
-
-  enum Pass { FIRST_PASS_THROUGH_ALLOCATIONS, LAST_PASS_THROUGH_ALLOCATIONS };
 
   enum Phase {
     QUICK_INITIAL_CHECK,  // Fast initial check, match must be solid
@@ -43,15 +43,29 @@ class Tagger {
   Tagger() {}
 
   /*
-   * Look the allocation once to figure out if the contents of this allocation
-   * can be used to resolve information about this allocation or others.  Return
-   * true if and only if there is no need for this tagger to look any more at
-   * this allocation during the given pass.
+   * Look at the allocation to figure out if the contents of this allocation
+   * can be used to resolve information about this allocation and possibly
+   * others.  Return true if and only if there is no need for this tagger to
+   * look any more at this allocation during the given pass.
    */
-  virtual bool TagFromAllocation(Reader& reader, Pass pass,
-                                 AllocationIndex index, Phase phase,
-                                 const Allocation& allocation,
+  virtual bool TagFromAllocation(const ContiguousImage& contiguousImage,
+                                 Reader& reader, AllocationIndex index,
+                                 Phase phase, const Allocation& allocation,
                                  bool isUnsigned) = 0;
+
+  /*
+   * Look the allocation to figure out if the contents of this allocation
+   * can be used to resolve information about referenced allocations.
+   * Return true if and only if there is no need for this tagger to
+   * look any more at this allocation during the given pass.
+   */
+  virtual bool TagFromReferenced(
+      const ContiguousImage& /* contiguousImage */, Reader& /* reader */,
+      AllocationIndex /* index */, Phase /* phase */,
+      const Allocation& /* allocation */,
+      const AllocationIndex* /* unresolvedOutgoing */) {
+    return true;
+  }
 };
 }  // namespace Allocations
 }  // namespace chap

@@ -15,7 +15,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::Graph<Offset> Graph;
   typedef typename Allocations::Finder<Offset> Finder;
   typedef typename Allocations::Tagger<Offset> Tagger;
-  typedef typename Tagger::Pass Pass;
+  typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
   typedef typename Finder::AllocationIndex AllocationIndex;
   typedef typename Finder::Allocation Allocation;
@@ -31,30 +31,27 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         _mapTagIndex(_tagHolder.RegisterTag("deque map")),
         _blockTagIndex(_tagHolder.RegisterTag("deque block")) {}
 
-  bool TagFromAllocation(Reader& reader, Pass pass, AllocationIndex index,
+  bool TagFromAllocation(const ContiguousImage& /* contiguousImage */,
+                         Reader& reader, AllocationIndex index, Phase phase,
+                         const Allocation& allocation, bool /* isUnsigned */) {
+    /*
+       * Note that we cannot assume anything based on the start of a map
+       * allocation because the start of the allocation is not initialized
+       * eagerly, even if the middle has useful contents.  For this reason,
+       * even though at some level we don't expect a signature, at some
+       * point if we didn't happen to have a free() implemention that clobbers
+       * the first Offset on free, we might have a residual signature there.
+       * For this reason, it is better not to check isUnsigned at all.
+       */
+    return TagAnchorPointDequeMap(reader, index, phase, allocation);
+  }
+
+  bool TagFromReferenced(const ContiguousImage& contiguousImage,
+                         Reader& /* reader */, AllocationIndex /* index */,
                          Phase phase, const Allocation& allocation,
-                         bool /* isUnsigned */) {
-    /*
-     * Note that we cannot assume anything based on the start of a map
-     * allocation because the start of the allocation is not initialized
-     * eagerly, even if the middle has useful contents.  For this reason,
-     * even though at some level we don't expect a signature, at some
-     * point if we didn't happen to have a free() implemention that clobbers
-     * the first Offset on free, we might have a residual signature there.
-     * For this reason, it is better not to check isUnsigned at all.
-     */
-    switch (pass) {
-      case Tagger::FIRST_PASS_THROUGH_ALLOCATIONS:
-        return TagAnchorPointDequeMap(reader, index, phase, allocation);
-        break;
-      case Tagger::LAST_PASS_THROUGH_ALLOCATIONS:
-        return TagFromContainedDeques(reader, index, phase, allocation);
-        break;
-    }
-    /*
-     * There is no need to look any more at this allocation during this pass.
-     */
-    return true;
+                         const AllocationIndex* unresolvedOutgoing) {
+    return TagFromContainedDeques(contiguousImage, phase, allocation,
+                                  unresolvedOutgoing);
   }
 
   TagIndex GetMapTagIndex() const { return _mapTagIndex; }
@@ -84,17 +81,11 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
        */
       return true;  // We are finished looking at this allocation for this pass.
     }
-    Offset address = allocation.Address();
-    Offset size = allocation.Size();
 
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
-        return (size < 2 * sizeof(Offset)) ||
-               ((reader.ReadOffset(address, 0xbad) & (sizeof(Offset) - 1)) !=
-                0) ||
-               ((reader.ReadOffset(address + sizeof(Offset), 0xbad) &
-                 (sizeof(Offset) - 1)) != 0);
+        return (allocation.Size() < 2 * sizeof(Offset));
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
@@ -103,10 +94,10 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
           CheckDequeMapAnchorIn(reader, index, allocation,
                                 _graph.GetStackAnchors(index));
         }
+        return true;
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        return true;
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
@@ -124,11 +115,19 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     if (anchors != nullptr) {
       typename VirtualAddressMap<Offset>::Reader dequeReader(_addressMap);
       for (Offset anchor : *anchors) {
-        if (dequeReader.ReadOffset(anchor, 0xbad) != mapAddress) {
+        const char* allocationImage;
+        Offset numBytesFound =
+            _addressMap.FindMappedMemoryImage(anchor, &allocationImage);
+
+        if (numBytesFound < 10 * sizeof(Offset)) {
           continue;
         }
-        if (TagAllocationsIfDeque(dequeReader, mapReader, mapIndex,
-                                  &mapAllocation, anchor)) {
+        const Offset* dequeImage = (Offset*)(allocationImage);
+        if (dequeImage[0] != mapAddress) {
+          continue;
+        }
+        if (TagAllocationsIfDeque(dequeImage, mapReader, mapIndex,
+                                  mapAllocation)) {
           return true;
         }
       }
@@ -136,72 +135,50 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  bool TagAllocationsIfDeque(Reader& dequeReader, Reader& mapReader,
+  bool TagAllocationsIfDeque(const Offset* dequeImage, Reader& mapReader,
                              AllocationIndex mapIndex,
-                             const Allocation* mapAllocation,
-                             Offset dequeAddress) {
-    Offset mapAddress = dequeReader.ReadOffset(dequeAddress, 0xbadbad);
-    if (mapAllocation != nullptr) {
-      /*
-       * If we have a specific address in mind for the map, it must match
-       * the address at the start of the deque.
-       */
-      if (mapAddress != mapAllocation->Address()) {
-        return false;
-      }
-    } else {
-      /*
-       * If we don't have a specific address in mind for the map, do some
-       * superficial check now but don't actually figure out the allocation
-       * index yet because that is relatively expensive compared to other
-       * checks that may exclude it.
-       */
-      if (mapAddress == 0 || (mapAddress & (sizeof(Offset) - 1)) != 0) {
-        return false;
-      }
+                             const Allocation& mapAllocation) {
+    Offset mapAddress = dequeImage[0];
+    /*
+     * If we have a specific address in mind for the map, it must match
+     * the address at the start of the deque.
+     */
+    if (mapAddress != mapAllocation.Address()) {
+      return false;
     }
-    Offset maxEntries =
-        dequeReader.ReadOffset(dequeAddress + sizeof(Offset), 0);
+    Offset maxEntries = dequeImage[1];
     if (maxEntries == 0) {
       return false;
     }
 
     Offset liveAreaLimit = mapAddress + maxEntries * sizeof(Offset);
-    Offset startMNode =
-        dequeReader.ReadOffset(dequeAddress + 5 * sizeof(Offset), 0xbad);
+    Offset startMNode = dequeImage[5];
     if ((startMNode & (sizeof(Offset) - 1)) != 0 || startMNode < mapAddress ||
         startMNode >= liveAreaLimit) {
       return false;
     }
-    Offset finishMNode =
-        dequeReader.ReadOffset(dequeAddress + 9 * sizeof(Offset), 0xbad);
+    Offset finishMNode = dequeImage[9];
     if (finishMNode != startMNode &&
         ((finishMNode & (sizeof(Offset) - 1)) != 0 ||
          finishMNode < mapAddress || finishMNode >= liveAreaLimit)) {
       return false;
     }
 
-    Offset startCur =
-        dequeReader.ReadOffset(dequeAddress + 2 * sizeof(Offset), 0xbad);
+    Offset startCur = dequeImage[2];
     if (startCur == 0xbad) {
       return false;
     }
-    Offset startFirst =
-        dequeReader.ReadOffset(dequeAddress + 3 * sizeof(Offset), 0xbad);
+    Offset startFirst = dequeImage[3];
     if (startFirst == 0xbad || startCur < startFirst) {
       return false;
     }
-    Offset startLast =
-        dequeReader.ReadOffset(dequeAddress + 4 * sizeof(Offset), 0xbad);
+    Offset startLast = dequeImage[4];
     if (startLast == 0xbad || startCur >= startLast) {
       return false;
     }
-    Offset finishCur =
-        dequeReader.ReadOffset(dequeAddress + 6 * sizeof(Offset), 0xbad);
-    Offset finishFirst =
-        dequeReader.ReadOffset(dequeAddress + 7 * sizeof(Offset), 0xbad);
-    Offset finishLast =
-        dequeReader.ReadOffset(dequeAddress + 8 * sizeof(Offset), 0xbad);
+    Offset finishCur = dequeImage[6];
+    Offset finishFirst = dequeImage[7];
+    Offset finishLast = dequeImage[8];
     if (finishMNode == startMNode) {
       if (startFirst != finishFirst || startLast != finishLast ||
           startCur > finishCur) {
@@ -225,25 +202,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
       // TODO: check that finishFirst starts an allocation of 0x200+ bytes
     }
 
-    if (mapAllocation == nullptr) {
-      /*
-       * No particular allocation was given for the map.  Now that the cheaper
-       * checks are done, it is reasonable to make sure that the mapAddress
-       * found above actually corresponds to the start of a used allocation.
-       */
-      mapIndex = _finder.AllocationIndexOf(mapAddress);
-      if (mapIndex == _numAllocations) {
-        return false;
-      }
-      mapAllocation = _finder.AllocationAt(mapIndex);
-      if (mapAllocation == nullptr) {
-        return false;
-      }
-      if (mapAllocation->Address() != mapAddress) {
-        return false;
-      }
-    }
-    Offset maxMaxEntries = (mapAllocation->Size()) / sizeof(Offset);
+    Offset maxMaxEntries = (mapAllocation.Size()) / sizeof(Offset);
 
     /*
      * Warning: For very large allocations, where malloc is asked for an exact
@@ -267,7 +226,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
       if ((blockAddress & (sizeof(Offset) - 1)) != 0) {
         return false;
       }
-      AllocationIndex blockIndex = _finder.AllocationIndexOf(blockAddress);
+      AllocationIndex blockIndex =
+          _graph.TargetAllocationIndex(mapIndex, blockAddress);
       if (blockIndex == _numAllocations) {
         return false;
       }
@@ -282,9 +242,9 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     _tagHolder.TagAllocation(mapIndex, _mapTagIndex);
     for (Offset mNode = startMNode; mNode <= finishMNode;
          mNode += sizeof(Offset)) {
-      _tagHolder.TagAllocation(
-          _finder.AllocationIndexOf(mapReader.ReadOffset(mNode, 0)),
-          _blockTagIndex);
+      _tagHolder.TagAllocation(_graph.TargetAllocationIndex(
+                                   mapIndex, mapReader.ReadOffset(mNode, 0)),
+                               _blockTagIndex);
     }
     return true;
   }
@@ -293,23 +253,19 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
    * Check whether the specified allocation contains any deques.  If so,
    * tag the associated deque maps and any associated deque blocks.
    */
-  bool TagFromContainedDeques(Reader& reader, AllocationIndex /*index*/,
-                              Phase phase, const Allocation& allocation) {
-    /*
-     * We don't care about the index, because we aren't tagging the allocation
-     * that contains the deques.
-     */
+  bool TagFromContainedDeques(const ContiguousImage& contiguousImage,
+                              Phase phase, const Allocation& allocation,
+                              const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         return allocation.Size() < 10 * sizeof(Offset);
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
-        // ??? check all the deques in the allocation, if small
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        CheckEmbeddedDeques(reader, allocation.Address(), allocation.Size());
+        CheckEmbeddedDeques(contiguousImage, unresolvedOutgoing);
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
@@ -320,15 +276,25 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void CheckEmbeddedDeques(Reader& dequeReader, Offset address, Offset size) {
+  void CheckEmbeddedDeques(const ContiguousImage& contiguousImage,
+                           const AllocationIndex* unresolvedOutgoing) {
     Reader mapReader(_addressMap);
-    Offset checkLimit =
-        address + (size & ~(sizeof(Offset) - 1)) - 9 * sizeof(Offset);
-    for (Offset checkAt = address; checkAt < checkLimit;
-         checkAt += sizeof(Offset)) {
-      if (TagAllocationsIfDeque(dequeReader, mapReader, _numAllocations,
-                                nullptr, checkAt)) {
-        checkAt += 9 * sizeof(Offset);
+
+    const Offset* offsetLimit = contiguousImage.OffsetLimit() - 9;
+    const Offset* firstOffset = contiguousImage.FirstOffset();
+
+    for (const Offset* check = firstOffset; check < offsetLimit; check++) {
+      AllocationIndex mapIndex = unresolvedOutgoing[check - firstOffset];
+      if (mapIndex == _numAllocations) {
+        continue;
+      }
+      if (_tagHolder.GetTagIndex(mapIndex) != 0) {
+        continue;
+      }
+
+      if (TagAllocationsIfDeque(check, mapReader, mapIndex,
+                                *(_finder.AllocationAt(mapIndex)))) {
+        check += 9;
       }
     }
   }

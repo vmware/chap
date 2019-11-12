@@ -15,7 +15,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::Graph<Offset> Graph;
   typedef typename Allocations::Finder<Offset> Finder;
   typedef typename Allocations::Tagger<Offset> Tagger;
-  typedef typename Tagger::Pass Pass;
+  typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
   typedef typename Finder::AllocationIndex AllocationIndex;
   typedef typename Finder::Allocation Allocation;
@@ -28,32 +28,19 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         _finder(graph.GetAllocationFinder()),
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
+        _nodeReader(_addressMap),
         _nodeTagIndex(_tagHolder.RegisterTag("list node")),
         _unknownHeadNodeTagIndex(
             _tagHolder.RegisterTag("list node-unknown-head")) {}
 
-  bool TagFromAllocation(Reader& reader, Pass pass, AllocationIndex index,
+  bool TagFromAllocation(const ContiguousImage& contiguousImage,
+                         Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
                          bool isUnsigned) {
     if (!isUnsigned) {
       return true;
     }
-    switch (pass) {
-      case Tagger::FIRST_PASS_THROUGH_ALLOCATIONS:
-        /*
-         * We can safely tag during the first pass because a list node is
-         * somewhat exactly recognized, particularly in the context of the
-         * entire list.
-         */
-        return TagFromListNode(reader, index, phase, allocation);
-        break;
-      case Tagger::LAST_PASS_THROUGH_ALLOCATIONS:
-        /*
-         * No tagging occurs in the second pass through the allocations.
-         */
-        break;
-    }
-    return true;
+    return TagFromListNode(contiguousImage, index, phase, allocation);
   }
 
   TagIndex GetNodeTagIndex() const { return _nodeTagIndex; }
@@ -67,6 +54,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
   const Finder& _finder;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
+  Reader _nodeReader;
   TagIndex _nodeTagIndex;
   TagIndex _unknownHeadNodeTagIndex;
   Offset _address;
@@ -74,10 +62,11 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
   Offset _next;
   Offset _prev;
 
-  bool TagFromListNode(Reader& reader, AllocationIndex index, Phase phase,
+  bool TagFromListNode(const ContiguousImage& contiguousImage,
+                       AllocationIndex index, Phase phase,
                        const Allocation& allocation) {
-    Reader nodeReader(_addressMap);
-
+    const Offset* firstOffset = contiguousImage.FirstOffset();
+    const Offset* offsetLimit = contiguousImage.OffsetLimit();
     _address = allocation.Address();
     _size = allocation.Size();
     switch (phase) {
@@ -91,25 +80,26 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
            */
           return true;  // No more need to look at this allocation for this pass
         }
-        if (_size < 3 * sizeof(Offset)) {
+        if (offsetLimit - firstOffset < 3) {
           return true;
         }
-        _next = reader.ReadOffset(_address, 0);
+        _next = firstOffset[0];
         if (_next == 0 || (_next & (sizeof(Offset) - 1)) != 0) {
           return true;
         }
-        _prev = reader.ReadOffset(_address + sizeof(Offset), 0);
+        _prev = firstOffset[1];
         if (_prev == 0 || (_prev & (sizeof(Offset) - 1)) != 0) {
           return true;
         }
-        if (nodeReader.ReadOffset(_next + sizeof(Offset), 0) != _address) {
+        if (_nodeReader.ReadOffset(_next + sizeof(Offset), 0) != _address) {
           return true;
         }
-        if (nodeReader.ReadOffset(_prev, 0) != _address) {
+        if (_nodeReader.ReadOffset(_prev, 0) != _address) {
           return true;
         }
         {
-          AllocationIndex nextIndex = _finder.AllocationIndexOf(_next);
+          AllocationIndex nextIndex =
+              _graph.TargetAllocationIndex(index, _next);
           if (nextIndex != _numAllocations) {
             const Allocation* nextAllocation = _finder.AllocationAt(nextIndex);
             if (nextAllocation->Address() == _next &&
@@ -119,6 +109,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
                * list was already found when one of the entries on the list was
                * visited.
                */
+              return true;
             }
           }
         }
@@ -128,7 +119,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        CheckList(index, nodeReader);
+        CheckList(index);
         return true;
         break;
       case Tagger::WEAK_CHECK:
@@ -139,16 +130,18 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     }
     return false;
   }
-  void CheckList(AllocationIndex index, Reader& nodeReader) {
+  void CheckList(AllocationIndex index) {
     Offset expectPrev = _address;
     Offset node = _next;
     Offset listHead = 0;
     AllocationIndex listSize = 0;
+    AllocationIndex sourceIndex = index;
     for (; node != _address && listSize < _numAllocations; listSize++) {
-      if (nodeReader.ReadOffset(node + sizeof(Offset), 0xbad) != expectPrev) {
+      if (_nodeReader.ReadOffset(node + sizeof(Offset), 0xbad) != expectPrev) {
         return;
       }
-      AllocationIndex nodeIndex = _finder.AllocationIndexOf(node);
+      AllocationIndex nodeIndex =
+          _graph.TargetAllocationIndex(sourceIndex, node);
       if (nodeIndex == _numAllocations) {
         if (listHead != 0) {
           return;
@@ -164,7 +157,8 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         }
       }
       expectPrev = node;
-      node = nodeReader.ReadOffset(node, 0xbad);
+      sourceIndex = nodeIndex;
+      node = _nodeReader.ReadOffset(node, 0xbad);
       if (node == 0 || (node & (sizeof(Offset) - 1)) != 0) {
         return;
       }
@@ -178,9 +172,9 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
        * to figure out the header by finding a node that is different from
        * the others, either in content or in how it is referenced.
        */
-      listHead = FindListHeadByPointersToStart(nodeReader);
+      listHead = FindListHeadByPointersToStart(index);
       if (listHead == 0) {
-        listHead = FindListHeadBySizeOutlier(nodeReader);
+        listHead = FindListHeadBySizeOutlier(index);
         if (listHead == 0) {
           /*
            * It would be better to add more ways to find the list head here,
@@ -189,41 +183,69 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
            * will result in our doing the same failed calculation on all items
            * of the list.
            */
-          TagAllAsHavingUnknownHead(index, nodeReader);
+          TagAllAsHavingUnknownHead(index);
           return;
         }
       }
     }
-    TagNodesWithKnownHead(listHead, nodeReader);
+    TagNodesWithKnownHead(index, listHead);
   }
 
-  void TagAllAsHavingUnknownHead(AllocationIndex index, Reader& nodeReader) {
-    _tagHolder.TagAllocation(index, _unknownHeadNodeTagIndex);
+  void TagAllExceptStartNode(AllocationIndex index, TagIndex tagIndex) {
+    AllocationIndex sourceIndex = index;
     for (Offset node = _next; node != _address;
-         node = nodeReader.ReadOffset(node, 0xbad)) {
-      _tagHolder.TagAllocation(_finder.AllocationIndexOf(node),
-                               _unknownHeadNodeTagIndex);
+         node = _nodeReader.ReadOffset(node, 0xbad)) {
+      AllocationIndex nodeIndex =
+          _graph.TargetAllocationIndex(sourceIndex, node);
+      _tagHolder.TagAllocation(nodeIndex, tagIndex);
+      sourceIndex = nodeIndex;
     }
   }
 
-  void TagNodesWithKnownHead(Offset listHead, Reader& nodeReader) {
-    for (Offset node = nodeReader.ReadOffset(listHead, 0xbad); node != listHead;
-         node = nodeReader.ReadOffset(node, 0xbad)) {
-      _tagHolder.TagAllocation(_finder.AllocationIndexOf(node), _nodeTagIndex);
+  void TagAllAsHavingUnknownHead(AllocationIndex index) {
+    _tagHolder.TagAllocation(index, _unknownHeadNodeTagIndex);
+    TagAllExceptStartNode(index, _unknownHeadNodeTagIndex);
+  }
+
+  void TagNodesWithKnownHead(AllocationIndex index, Offset listHead) {
+    if (listHead == _address) {
+      TagAllExceptStartNode(index, _nodeTagIndex);
+    } else {
+      _tagHolder.TagAllocation(index, _nodeTagIndex);
+      Offset node = _next;
+      Offset sourceIndex = index;
+      while (node != listHead) {
+        AllocationIndex nodeIndex =
+            _graph.TargetAllocationIndex(sourceIndex, node);
+        _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
+        sourceIndex = nodeIndex;
+        node = _nodeReader.ReadOffset(node, 0xbad);
+      }
+      node = _prev;
+      sourceIndex = index;
+      while (node != listHead) {
+        AllocationIndex nodeIndex =
+            _graph.TargetAllocationIndex(sourceIndex, node);
+        _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
+        sourceIndex = nodeIndex;
+        node = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
+      }
     }
   }
 
-  Offset FindListHeadByPointersToStart(Reader& nodeReader) {
+  Offset FindListHeadByPointersToStart(AllocationIndex index) {
     Reader refReader(_addressMap);
     Offset listHead = 0;
     Offset node = _address;
+    AllocationIndex nodeIndex = index;
     Offset prev = _prev;
     do {
-      AllocationIndex index = _finder.AllocationIndexOf(node);
-      Offset next = nodeReader.ReadOffset(node, 0xbad);
-      if (HasAnchorToStart(_graph.GetStaticAnchors(index), node, refReader) ||
-          HasAnchorToStart(_graph.GetStackAnchors(index), node, refReader) ||
-          HasExtraPointerToStartFromAllocation(index, node, next, prev,
+      Offset next = _nodeReader.ReadOffset(node, 0xbad);
+      if (HasAnchorToStart(_graph.GetStaticAnchors(nodeIndex), node,
+                           refReader) ||
+          HasAnchorToStart(_graph.GetStackAnchors(nodeIndex), node,
+                           refReader) ||
+          HasExtraPointerToStartFromAllocation(nodeIndex, node, next, prev,
                                                refReader)) {
         if (listHead != 0) {
           // We can't disambiguate this way because there are at least 2
@@ -233,12 +255,13 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         listHead = node;
       }
       prev = node;
+      nodeIndex = _graph.TargetAllocationIndex(nodeIndex, next);
       node = next;
     } while (node != _address);
     return listHead;
   }
 
-  Offset FindListHeadBySizeOutlier(Reader& nodeReader) {
+  Offset FindListHeadBySizeOutlier(AllocationIndex index) {
     if (_next == _prev) {
       /*
        * We can't vote by size if there is just one element on the list.
@@ -250,12 +273,13 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     Offset listHead = 0;
 
     Offset node = _address;
+    AllocationIndex nodeIndex = index;
     do {
-      AllocationIndex index = _finder.AllocationIndexOf(node);
-      const Allocation* allocation = _finder.AllocationAt(index);
+      const Allocation* allocation = _finder.AllocationAt(nodeIndex);
       totalSize += allocation->Size();
       totalCount++;
-      node = nodeReader.ReadOffset(node, 0xbad);
+      node = _nodeReader.ReadOffset(node, 0xbad);
+      nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
     } while (node != _address);
 
     Offset averageSize = totalSize / totalCount;
@@ -263,9 +287,9 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     Offset maxSize = averageSize + 2 * sizeof(Offset);
 
     node = _address;
+    nodeIndex = index;
     do {
-      AllocationIndex index = _finder.AllocationIndexOf(node);
-      const Allocation* allocation = _finder.AllocationAt(index);
+      const Allocation* allocation = _finder.AllocationAt(nodeIndex);
       Offset nodeSize = allocation->Size();
       if (minSize > nodeSize || nodeSize > maxSize) {
         if (listHead != 0) {
@@ -275,7 +299,8 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         }
         listHead = node;
       }
-      node = nodeReader.ReadOffset(node, 0xbad);
+      node = _nodeReader.ReadOffset(node, 0xbad);
+      nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
     } while (node != _address);
     return listHead;
   }
