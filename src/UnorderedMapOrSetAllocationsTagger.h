@@ -30,14 +30,15 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         _addressMap(_finder.GetAddressMap()),
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
+        _nodeReader(_addressMap),
+        _bucketsReader(_addressMap),
         _bucketsTagIndex(
             _tagHolder.RegisterTag("unordered set or map buckets")),
         _nodeTagIndex(_tagHolder.RegisterTag("unordered set or map node")) {}
 
-  bool TagFromAllocation(const ContiguousImage& contiguousImage,
-                         Reader& /* reader */, AllocationIndex index,
-                         Phase phase, const Allocation& allocation,
-                         bool isUnsigned) {
+  bool TagFromAllocation(const ContiguousImage& contiguousImage, Reader& reader,
+                         AllocationIndex index, Phase phase,
+                         const Allocation& allocation, bool isUnsigned) {
     if (!isUnsigned) {
       return true;
     }
@@ -60,8 +61,6 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       return true;  // We are finished looking at this allocation for this pass.
     }
 
-    Offset size = allocation.Size();
-    Offset address = allocation.Address();
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
@@ -71,29 +70,31 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
          * other is the first item on the list for an unordered set or map that
          * has no buckets array.
          */
-        return (size < 2 * sizeof(Offset));
+        {
+          const Offset* firstOffset = contiguousImage.FirstOffset();
+          const Offset* offsetLimit = contiguousImage.OffsetLimit();
+          if (offsetLimit - firstOffset < 2) {
+            return true;
+          }
+          return (*firstOffset & (sizeof(Offset) - 1)) != 0;
+        }
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
-        if ((size <= 5 * sizeof(Offset)) &&
-            CheckByPointerToMapOrSet(contiguousImage, index, address)) {
-          return true;
+        {
+          Offset size = allocation.Size();
+          Offset address = allocation.Address();
+          if (!CheckAnchors(reader, _staticAnchorReader,
+                            _graph.GetStaticAnchors(index), index, address,
+                            size)) {
+            CheckAnchors(reader, _stackAnchorReader,
+                         _graph.GetStackAnchors(index), index, address, size);
+          }
         }
-        if (CheckFirstNodeAnchors(_staticAnchorReader,
-                                  _graph.GetStaticAnchors(index), index,
-                                  address) ||
-            CheckFirstNodeAnchors(_stackAnchorReader,
-                                  _graph.GetStackAnchors(index), index,
-                                  address)) {
-          return true;
-        }
+        return true;
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        return ((size > 5 * sizeof(Offset)) &&
-                CheckByPointerToMapOrSet(contiguousImage, index, address)) ||
-               CheckByReferenceFromEmptyMapOrSet(contiguousImage, index,
-                                                 address, size);
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
@@ -159,116 +160,29 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   const VirtualAddressMap<Offset>& _addressMap;
   Reader _staticAnchorReader;
   Reader _stackAnchorReader;
+  Reader _nodeReader;
+  Reader _bucketsReader;
   TagIndex _bucketsTagIndex;
   TagIndex _nodeTagIndex;
 
-  bool CheckByPointerToMapOrSet(const ContiguousImage& contiguousImage,
-                                AllocationIndex index, Offset address) {
-    Reader otherReader(_addressMap);
-
-    const Offset* checkLimit = contiguousImage.OffsetLimit();
-    const Offset* firstCheck = contiguousImage.FirstOffset();
-    Offset maxBuckets = checkLimit - firstCheck;
-    Offset minBuckets = (maxBuckets < 5) ? 1 : (maxBuckets - 4);
-
-    for (const Offset* check = firstCheck; check < checkLimit; check++) {
-      Offset o = *check;
-      if (o == 0) {
-        continue;
-      }
-      if ((o & (sizeof(Offset) - 1)) != 0) {
-        break;
-      }
-      Offset mapOrSetCandidate = o - (2 * sizeof(Offset));
-      if (CheckUnorderedMapOrSet(mapOrSetCandidate, _numAllocations,
-                                 otherReader, index, address, 0, minBuckets,
-                                 maxBuckets, false)) {
-        return true;
-      }
-      // TODO: One could be more rigorous here by checking all the buckets
-      // that were not yet checked.
-      // TODO: In the case that the unordered map or unordered set is in flux
-      // the list length might reasonably not match the count.
-    }
-    return false;
-  }
-  bool CheckByReferenceFromEmptyMapOrSet(const ContiguousImage& contiguousImage,
-                                         AllocationIndex index, Offset address,
-                                         Offset size) {
-    Offset maxStartingEmptyBuckets = 0;
-
-    const Offset* checkLimit = contiguousImage.OffsetLimit();
-    const Offset* firstCheck = contiguousImage.FirstOffset();
-    for (const Offset* check = firstCheck; check < checkLimit; check++) {
-      if (*check != 0) {
-        break;
-      }
-      maxStartingEmptyBuckets++;
-    }
-    Reader otherReader(_addressMap);
-    if (maxStartingEmptyBuckets * sizeof(Offset) >= size / 2) {
-      const AllocationIndex* pFirstIncoming;
-      const AllocationIndex* pPastIncoming;
-      _graph.GetIncoming(index, &pFirstIncoming, &pPastIncoming);
-      for (const AllocationIndex* pNextIncoming = pFirstIncoming;
-           pNextIncoming != pPastIncoming; ++pNextIncoming) {
-        const Allocation* incomingAllocation =
-            _finder.AllocationAt(*pNextIncoming);
-        Offset incomingSize = incomingAllocation->Size();
-        if (incomingSize < 7 * sizeof(Offset)) {
-          continue;
-        }
-        Offset checkAt = incomingAllocation->Address();
-        Offset checkLimit = checkAt + (incomingSize & ~(sizeof(Offset) - 1)) -
-                            6 * sizeof(Offset);
-        for (; checkAt < checkLimit; checkAt += sizeof(Offset)) {
-          if (CheckUnorderedMapOrSet(checkAt, _numAllocations, otherReader,
-                                     index, address, 0, 1,
-                                     maxStartingEmptyBuckets, true)) {
-            return true;
-          }
-        }
-      }
-    }
-    return CheckAnchors(_graph.GetStaticAnchors(index), otherReader, index,
-                        address, 1, maxStartingEmptyBuckets) ||
-           CheckAnchors(_graph.GetStackAnchors(index), otherReader, index,
-                        address, 1, maxStartingEmptyBuckets);
-    return false;
-  }
-
-  bool CheckAnchors(const std::vector<Offset>* anchors,
-                    Reader& unorderedMapOrSetReader,
-                    AllocationIndex bucketsIndex, Offset bucketsAddress,
-                    Offset minBuckets, Offset maxBuckets) {
-    if (anchors != nullptr) {
-      for (Offset anchor : *anchors) {
-        if (CheckUnorderedMapOrSet(
-                anchor, _numAllocations, unorderedMapOrSetReader, bucketsIndex,
-                bucketsAddress, 0, minBuckets, maxBuckets, true)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  bool CheckUnorderedMapOrSet(Offset mapOrSet, AllocationIndex mapOrSetIndex,
+  bool CheckUnorderedMapOrSet(Offset unorderedMapOrSet,
+                              AllocationIndex unorderedMapOrSetIndex,
                               Reader& unorderedMapOrSetReader,
                               AllocationIndex bucketsIndex,
-                              Offset bucketsAddress, Offset firstNodeAddress,
-                              Offset minBuckets, Offset maxBuckets,
-                              bool expectEmpty) {
-    if (unorderedMapOrSetReader.ReadOffset(mapOrSet, 0xbad) != bucketsAddress) {
+                              Reader& bucketsReader, Offset bucketsAddress,
+                              Offset firstNodeAddress, Offset minBuckets,
+                              Offset maxBuckets, bool expectEmpty) {
+    if (unorderedMapOrSetReader.ReadOffset(unorderedMapOrSet, 0xbad) !=
+        bucketsAddress) {
       return false;
     }
-    Offset numBuckets =
-        unorderedMapOrSetReader.ReadOffset(mapOrSet + sizeof(Offset), 0xbad);
+    Offset numBuckets = unorderedMapOrSetReader.ReadOffset(
+        unorderedMapOrSet + sizeof(Offset), 0xbad);
     if (minBuckets > numBuckets || numBuckets > maxBuckets) {
       return false;
     }
     Offset firstNode = unorderedMapOrSetReader.ReadOffset(
-        mapOrSet + 2 * sizeof(Offset), 0xbad);
+        unorderedMapOrSet + 2 * sizeof(Offset), 0xbad);
 
     if (expectEmpty != (firstNode == 0) ||
         (firstNodeAddress != 0 && firstNodeAddress != firstNode)) {
@@ -276,15 +190,15 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     }
 
     Offset numEntries = unorderedMapOrSetReader.ReadOffset(
-        mapOrSet + 3 * sizeof(Offset), 0xbad);
+        unorderedMapOrSet + 3 * sizeof(Offset), 0xbad);
     if (expectEmpty != (numEntries == 0)) {
       return false;
     }
 
-    uint32_t floatAsUint =
-        unorderedMapOrSetReader.ReadU32(mapOrSet + 4 * sizeof(Offset), 0xbad);
-    Offset threshold =
-        unorderedMapOrSetReader.ReadOffset(mapOrSet + 5 * sizeof(Offset), 0);
+    uint32_t floatAsUint = unorderedMapOrSetReader.ReadU32(
+        unorderedMapOrSet + 4 * sizeof(Offset), 0xbad);
+    Offset threshold = unorderedMapOrSetReader.ReadOffset(
+        unorderedMapOrSet + 5 * sizeof(Offset), 0);
     if (floatAsUint == 0x3f800000) {
       // The default load factor (1.0) applies.  We expect the threshold to
       // match the number of buckets.
@@ -303,7 +217,6 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       return false;
     }
 
-    Reader nodeReader(_addressMap);
     AllocationIndex firstNodeIndex = _numAllocations;
     if (!expectEmpty) {
       if ((firstNode & (sizeof(Offset) - 1)) != 0) {
@@ -315,31 +228,55 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       Offset node = firstNode;
       Offset numVisited = 0;
       for (; node != 0 && numVisited < numEntries; ++numVisited) {
-        node = nodeReader.ReadOffset(node, 0);
+        node = _nodeReader.ReadOffset(node, 0);
       }
       if (numVisited < numEntries || node != 0) {
         return false;
       }
 
       firstNodeIndex =
-          (mapOrSetIndex == _numAllocations)
+          (unorderedMapOrSetIndex == _numAllocations)
               ? _finder.AllocationIndexOf(firstNode)
-              : _graph.TargetAllocationIndex(mapOrSetIndex, firstNode);
+              : _graph.TargetAllocationIndex(unorderedMapOrSetIndex, firstNode);
       node = firstNode;
       AllocationIndex nodeIndex = firstNodeIndex;
       while (node != 0) {
         if (nodeIndex == _numAllocations) {
           return false;
         }
-        node = nodeReader.ReadOffset(node, 0);
+        node = _nodeReader.ReadOffset(node, 0);
         nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
       }
-
-      // TODO: We could check the entries in the buckets.  With the exception
-      // of the one that points back to the list header in the map or set,
-      // should all be 0 or point to valid allocations.
     }
-    if (bucketsAddress != mapOrSet + 6 * sizeof(Offset)) {
+    if (bucketsAddress != unorderedMapOrSet + 6 * sizeof(Offset)) {
+      /*
+       * We have to check that an external buckets array at least appears
+       * sane because the destructor for an unordered_set or unordered_map
+       * leaves it well formed, and so a dynamically allocated object that
+       * contained one of those could be destroyed and freed but still leave
+       * residue of the unordered_map or unordered_set that wouldn't be
+       * clobbered by the next malloc and depending on the new use of the
+       * allocation might never be overwritten.
+       */
+      Offset bucketsLimit = bucketsAddress + (numBuckets * sizeof(Offset));
+      Offset listHeader = unorderedMapOrSet + (2 * sizeof(Offset));
+      for (Offset bucket = bucketsAddress; bucket < bucketsLimit;
+           bucket += sizeof(Offset)) {
+        Offset ppNodes = bucketsReader.ReadOffset(bucket, 0xbad);
+        if (ppNodes != 0) {
+          if (firstNode == 0) {
+            return false;
+          }
+          if ((ppNodes & (sizeof(Offset) - 1)) != 0) {
+            return false;
+          }
+          if ((ppNodes != listHeader) &&
+              (_graph.TargetAllocationIndex(bucketsIndex, ppNodes) ==
+               _numAllocations)) {
+            return false;
+          }
+        }
+      }
       _tagHolder.TagAllocation(bucketsIndex, _bucketsTagIndex);
     }
 
@@ -347,7 +284,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     AllocationIndex nodeIndex = firstNodeIndex;
     while (node != 0) {
       _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
-      node = nodeReader.ReadOffset(node, 0);
+      node = _nodeReader.ReadOffset(node, 0);
       nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
     }
     return true;
@@ -355,18 +292,34 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
 
   void CheckEmbeddedUnorderedMapsOrSets(
       const ContiguousImage& contiguousImage, Reader& reader,
-      AllocationIndex mapOrSetIndex, Offset address,
+      AllocationIndex unorderedMapOrSetIndex, Offset address,
       const AllocationIndex* unresolvedOutgoing) {
     const Offset* checkLimit = contiguousImage.OffsetLimit() - 6;
     const Offset* firstCheck = contiguousImage.FirstOffset();
 
     for (const Offset* check = firstCheck; check < checkLimit; check++) {
+      uint32_t floatAsUint = *((uint32_t*)(check + 4));
+      if (floatAsUint < 0x3d800000 || floatAsUint > 0x41800000) {
+        /*
+         * Perhaps this is hackish, this is cheap to bound max load factor
+         * between 1/16 and 4 as a way of verifying that this looks like an
+         * unordered set or map.  It works because IEEE 754 32 bit format
+         * has the most significant bit as a sign, followed by 8 bits of
+         * exponent and there is an implicit 1 in the mantissa where the
+         * left-most bit actually present in the mantissa represents 1/2.
+         */
+        continue;
+      }
       Offset dequeAddress = address + ((check - firstCheck) * sizeof(Offset));
       Offset bucketsAddress = check[0];
       Offset numBuckets = check[1];
+      Offset firstNodeAddress = check[2];
+      Offset numMembers = check[3];
       bool internalBuckets =
           (bucketsAddress == dequeAddress + 6 * sizeof(Offset));
       AllocationIndex bucketsIndex = _numAllocations;
+      Offset minBuckets = 1;
+      Offset maxBuckets = 1;
       if (internalBuckets) {
         if (numBuckets != 1) {
           continue;
@@ -375,11 +328,6 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
       } else {
-        if (bucketsIndex > 0) {
-          // ??? TB debug hack to avoid the case of the external map
-          // ??? with an empty set.
-          continue;
-        }
         bucketsIndex = unresolvedOutgoing[check - firstCheck];
         if (bucketsIndex == _numAllocations) {
           continue;
@@ -387,11 +335,29 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         if (_tagHolder.GetTagIndex(bucketsIndex) != 0) {
           continue;
         }
+        const Allocation* bucketsAllocation =
+            _finder.AllocationAt(bucketsIndex);
+        if (bucketsAllocation->Address() != bucketsAddress) {
+          continue;
+        }
+        maxBuckets = bucketsAllocation->Size() / sizeof(Offset);
+        if (numBuckets > maxBuckets) {
+          continue;
+        }
+        if (maxBuckets >= 5) {
+          minBuckets = (maxBuckets * 3) / 4;
+        }
+        if (numBuckets < minBuckets) {
+          continue;
+        }
       }
-      Offset firstNodeAddress = check[2];
-      Offset numMembers = check[3];
       if (firstNodeAddress == 0) {
         if (internalBuckets) {
+          /*
+           * There is nothing to tag if the buckets array is internal and
+           * there are no elements, because we have only the header in
+           * this case and that header is embedded in a larger allocation.
+           */
           continue;
         }
         if (numMembers != 0) {
@@ -414,26 +380,48 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
       }
-      if (CheckUnorderedMapOrSet(dequeAddress, mapOrSetIndex, reader,
-                                 bucketsIndex, bucketsAddress, firstNodeAddress,
-                                 numBuckets, numBuckets,
+      if (CheckUnorderedMapOrSet(dequeAddress, unorderedMapOrSetIndex, reader,
+                                 bucketsIndex, _bucketsReader, bucketsAddress,
+                                 firstNodeAddress, minBuckets, maxBuckets,
                                  firstNodeAddress == 0)) {
         check += 6;
       }
     }
   }
 
-  bool CheckFirstNodeAnchors(Reader& anchorReader,
-                             const std::vector<Offset>* anchors,
-                             AllocationIndex index, Offset firstNodeAddress) {
+  bool CheckAnchors(Reader& bucketsReader, Reader& anchorReader,
+                    const std::vector<Offset>* anchors, AllocationIndex index,
+                    Offset address, Offset size) {
     if (anchors != nullptr) {
       for (Offset anchor : *anchors) {
+        if (anchorReader.ReadOffset(anchor, 0xbad) != address) {
+          continue;
+        }
+        /*
+         * Check first to see whether the given allocation is a buckets array
+         * anchor-point.
+         */
+        Offset firstNode =
+            anchorReader.ReadOffset(anchor + 2 * sizeof(Offset), 0xbad);
+        if ((firstNode & (sizeof(Offset) - 1)) == 0) {
+          Offset maxBuckets = size / sizeof(Offset);
+          Offset minBuckets = (maxBuckets < 5) ? 1 : ((maxBuckets * 3) / 4);
+          if (CheckUnorderedMapOrSet(anchor, _numAllocations, anchorReader,
+                                     index, bucketsReader, address, firstNode,
+                                     minBuckets, maxBuckets, firstNode == 0)) {
+            return true;
+          }
+        }
+        /*
+         * Now check whether the allocation is an anchor point first node for
+         * an unordered map or set that has an internal buckets array.
+         */
         Offset unorderedMapOrSet = anchor - 2 * sizeof(Offset);
         Offset buckets = anchor + 4 * sizeof(Offset);
         if ((anchorReader.ReadOffset(unorderedMapOrSet, 0xbad) == buckets) &&
             CheckUnorderedMapOrSet(unorderedMapOrSet, _numAllocations,
-                                   anchorReader, index, buckets,
-                                   firstNodeAddress, 1, 1, false)) {
+                                   anchorReader, _numAllocations, anchorReader,
+                                   buckets, address, 1, 1, false)) {
           return true;
         }
       }
