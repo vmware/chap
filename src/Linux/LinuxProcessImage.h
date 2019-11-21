@@ -113,8 +113,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
           *(Base::_allocationGraph), *(Base::_allocationTagHolder));
 
       Base::_longStringAllocationsTagger =
-          new LongStringAllocationsTagger<Offset>(
-              *(Base::_allocationGraph), *(Base::_allocationTagHolder));
+          new LongStringAllocationsTagger<Offset>(*(Base::_allocationGraph),
+                                                  *(Base::_allocationTagHolder),
+                                                  Base::_moduleDirectory);
 
       Allocations::TaggerRunner<Offset> runner(*Base::_allocationGraph,
                                                *Base::_allocationTagHolder,
@@ -633,10 +634,10 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   }
 
   /*
-  * Try to find a loader chain with the guess that at least one member has
-  * the expected alignment, which is assumed but not checked to be a power
-  * of 2.
-  */
+   * Try to find a loader chain with the guess that at least one member has
+   * the expected alignment, which is assumed but not checked to be a power
+   * of 2.
+   */
   bool FindModulesByAlignedLink(Offset expectedAlignment) {
     Reader reader(Base::_virtualAddressMap);
     for (const auto& range :

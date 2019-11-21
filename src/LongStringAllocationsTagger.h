@@ -6,6 +6,7 @@
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
+#include "ModuleDirectory.h"
 #include "VirtualAddressMap.h"
 
 namespace chap {
@@ -22,7 +23,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
-  LongStringAllocationsTagger(Graph& graph, TagHolder& tagHolder)
+  LongStringAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                              const ModuleDirectory<Offset> moduleDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
         _finder(graph.GetAllocationFinder()),
@@ -31,12 +33,62 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _charsImage(_finder),
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
-        _charsTagIndex(_tagHolder.RegisterTag("long string chars")) {}
+        _enabled(true),
+        _charsTagIndex(_tagHolder.RegisterTag("long string chars")) {
+    bool foundCheckableLibrary = false;
+    for (typename ModuleDirectory<Offset>::const_iterator it =
+             moduleDirectory.begin();
+         it != moduleDirectory.end(); ++it) {
+      if (it->first.find("libstdc++.so.6") != std::string::npos) {
+        typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
+            _addressMap.end();
+        foundCheckableLibrary = true;
+      }
+    }
+
+    if (!foundCheckableLibrary) {
+      return;
+    }
+
+    for (typename ModuleDirectory<Offset>::const_iterator it =
+             moduleDirectory.begin();
+         it != moduleDirectory.end(); ++it) {
+      typename ModuleDirectory<Offset>::RangeToFlags::const_iterator itRange =
+          it->second.begin();
+      const auto& itRangeEnd = it->second.end();
+
+      for (; itRange != itRangeEnd; ++itRange) {
+        if ((itRange->_value &
+             ~VirtualAddressMap<Offset>::RangeAttributes::IS_EXECUTABLE) ==
+            (VirtualAddressMap<Offset>::RangeAttributes::IS_READABLE |
+             VirtualAddressMap<Offset>::RangeAttributes::HAS_KNOWN_PERMISSIONS |
+             VirtualAddressMap<Offset>::RangeAttributes::IS_MAPPED)) {
+          Offset base = itRange->_base;
+          Offset limit = itRange->_limit;
+          typename VirtualAddressMap<Offset>::const_iterator itVirt =
+              _addressMap.find(base);
+          const char* check = itVirt.GetImage() + (base - itVirt.Base());
+          const char* checkLimit = check + (limit - base) - 26;
+          for (; check < checkLimit; check++) {
+            if (!strncmp(check, "_ZNSt7__cxx1112basic_string", 27)) {
+              _enabled = true;
+              return;
+            }
+          }
+        }
+      }
+    }
+    _enabled = false;
+  }
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
                          bool /* isUnsigned */) {
+    if (!_enabled) {
+      // The C++11 ABI doesn't appear to have been used in the process.
+      return true;
+    }
     if (_tagHolder.GetTagIndex(index) != 0) {
       /*
        * This was already tagged, generally as a result of following
@@ -54,6 +106,10 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
                          Reader& /* reader */, AllocationIndex /* index */,
                          Phase phase, const Allocation& allocation,
                          const AllocationIndex* unresolvedOutgoing) {
+    if (!_enabled) {
+      // The C++11 ABI doesn't appear to have been used in the process.
+      return true;
+    }
     return TagFromContainedStrings(contiguousImage, phase, allocation,
                                    unresolvedOutgoing);
   }
@@ -69,6 +125,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   ContiguousImage _charsImage;
   typename VirtualAddressMap<Offset>::Reader _staticAnchorReader;
   typename VirtualAddressMap<Offset>::Reader _stackAnchorReader;
+  bool _enabled;
   TagIndex _charsTagIndex;
 
   /*
