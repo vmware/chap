@@ -40,8 +40,6 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
              moduleDirectory.begin();
          it != moduleDirectory.end(); ++it) {
       if (it->first.find("libstdc++.so.6") != std::string::npos) {
-        typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
-            _addressMap.end();
         foundCheckableLibrary = true;
       }
     }
