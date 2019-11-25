@@ -15,6 +15,7 @@
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
 #include "UnorderedMapOrSetAllocationsTagger.h"
+#include "VectorAllocationsTagger.h"
 #include "VirtualAddressMap.h"
 #include "VirtualMemoryPartition.h"
 namespace chap {
@@ -42,7 +43,8 @@ class ProcessImage {
         _mapOrSetAllocationsTagger(nullptr),
         _dequeAllocationsTagger(nullptr),
         _listAllocationsTagger(nullptr),
-        _longStringAllocationsTagger(nullptr) {
+        _longStringAllocationsTagger(nullptr),
+        _vectorAllocationsTagger(nullptr) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -132,6 +134,10 @@ class ProcessImage {
     return _longStringAllocationsTagger;
   }
 
+  const VectorAllocationsTagger<Offset> *GetVectorAllocationsTagger() const {
+    return _vectorAllocationsTagger;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -152,5 +158,6 @@ class ProcessImage {
   DequeAllocationsTagger<Offset> *_dequeAllocationsTagger;
   ListAllocationsTagger<Offset> *_listAllocationsTagger;
   LongStringAllocationsTagger<Offset> *_longStringAllocationsTagger;
+  VectorAllocationsTagger<Offset> *_vectorAllocationsTagger;
 };
 }  // namespace chap

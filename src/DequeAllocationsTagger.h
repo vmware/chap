@@ -28,6 +28,9 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         _finder(graph.GetAllocationFinder()),
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
+        _mapReader(_addressMap),
+        _endIterator(_addressMap.end()),
+        _anchorIterator(_addressMap.end()),
         _mapTagIndex(_tagHolder.RegisterTag("deque map")),
         _blockTagIndex(_tagHolder.RegisterTag("deque block")) {}
 
@@ -63,6 +66,9 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
   const Finder& _finder;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
+  Reader _mapReader;
+  const typename VirtualAddressMap<Offset>::const_iterator _endIterator;
+  typename VirtualAddressMap<Offset>::const_iterator _anchorIterator;
   TagIndex _mapTagIndex;
   TagIndex _blockTagIndex;
 
@@ -108,27 +114,105 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  bool CheckDequeMapAnchorIn(Reader& mapReader, AllocationIndex mapIndex,
-                             const Allocation& mapAllocation,
+  bool CheckDequeMapAnchorIn(Reader& reader, AllocationIndex index,
+                             const Allocation& allocation,
                              const std::vector<Offset>* anchors) {
-    Offset mapAddress = mapAllocation.Address();
+    Offset address = allocation.Address();
     if (anchors != nullptr) {
       typename VirtualAddressMap<Offset>::Reader dequeReader(_addressMap);
       for (Offset anchor : *anchors) {
-        const char* allocationImage;
-        Offset numBytesFound =
-            _addressMap.FindMappedMemoryImage(anchor, &allocationImage);
+        if (_anchorIterator == _endIterator ||
+            anchor < _anchorIterator.Base() ||
+            anchor + sizeof(Offset) > _anchorIterator.Limit()) {
+          /*
+           * We know the following call will find something because
+           * the address was read to determine that it was a anchor.
+           */
+          _anchorIterator = _addressMap.find(anchor);
+        }
+        const char* image = _anchorIterator.GetImage();
+        Offset base = _anchorIterator.Base();
+        Offset limit = _anchorIterator.Limit();
 
-        if (numBytesFound < 10 * sizeof(Offset)) {
+        if (anchor + sizeof(Offset) > limit) {
           continue;
         }
-        const Offset* dequeImage = (Offset*)(allocationImage);
-        if (dequeImage[0] != mapAddress) {
+        Offset* asOffsets = (Offset*)(image + (anchor - base));
+        if (asOffsets[0] != address) {
+          /*
+           * For any of the anchor points we might match (buckets, first block
+           * or last block) we require a pointer to the start of the
+           * allocation.
+           */
           continue;
         }
-        if (TagAllocationsIfDeque(dequeImage, mapReader, mapIndex,
-                                  mapAllocation)) {
-          return true;
+
+        if (anchor + 10 * sizeof(Offset) <= limit) {
+          /*
+           * We have enough contiguous space from the start of the anchor
+           * that it could be the start of a deque, in which case the
+           * anchor point allocation would be a map.
+           */
+          if (TagAllocationsIfDeque(asOffsets, reader, index, allocation)) {
+            return true;
+          }
+        }
+
+        /*
+         * A deque that is on the stack or static also has at least
+         * one anchor for the block associated with the start and possibly
+         * another for the finish.  Note that unlike in the case of embedded
+         * references, which we check in increasing address order, we have to
+         * check for a possibility of a start or finish block as an anchor
+         * point because otherwise a weaker allocation checker, even though
+         * it runs at a later phase on each allocation, can have an
+         * opportunity to tag the start or finish block wrongly as long as
+         * the address of the start or finish block is less than the address
+         * of the buckets.  One pattern that could otherwise mis-tag
+         * deque blocks is %VectorBody.
+         */
+        if ((anchor + 3 * sizeof(Offset) > limit) ||
+            (anchor - 3 * sizeof(Offset) < base)) {
+          /*
+           * If we don't have at least this much range for part of the deque
+           * we don't have any chance that this anchor would be for the
+           * start or end block.
+           */
+          continue;
+        }
+        if (asOffsets[-1] < address || asOffsets[-1] > asOffsets[1] ||
+            address >= asOffsets[1]) {
+          continue;
+        }
+        Offset mNode = asOffsets[2];
+        if (_mapReader.ReadOffset(mNode, 0xbad) != address) {
+          continue;
+        }
+        AllocationIndex mapIndex = _finder.AllocationIndexOf(mNode);
+        if (mapIndex == _numAllocations) {
+          continue;
+        }
+        const Allocation* mapAllocation = _finder.AllocationAt(mapIndex);
+
+        Offset bucketsAddress = mapAllocation->Address();
+        if (asOffsets[-3] == bucketsAddress) {
+          /*
+           * It could only be the first block at this point.
+           */
+          if (anchor + 7 * sizeof(Offset) > limit) {
+            continue;
+          }
+          if (TagAllocationsIfDeque(asOffsets - 3, _mapReader, mapIndex,
+                                    *mapAllocation)) {
+            return true;
+          }
+        } else if (anchor - 7 * sizeof(Offset) >= base) {
+          if (asOffsets[-7] == bucketsAddress) {
+            if (TagAllocationsIfDeque(asOffsets - 7, _mapReader, mapIndex,
+                                      *mapAllocation)) {
+              return true;
+            }
+          }
         }
       }
     }
