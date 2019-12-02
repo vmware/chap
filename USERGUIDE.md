@@ -222,8 +222,8 @@ chap> summarize signatures
 ## Allocation Patterns
 
 A **pattern** is a way of narrowing the type of an allocation based on the contents of that allocation or based on incoming or outgoing edges from that allocation.  A pattern can be used anywhere a signature can be used, but with a "%" preceding the pattern.  At present the following patterns are supported:
-* LongString - dynamically allocated memory for std::string with >= 16 characters
-* COWStringBody - old style copy-on-write std::string bodies
+* LongString - dynamically allocated memory for SSO std::string (for C++11 ABI or later) with >= 16 characters
+* COWStringBody - COW std::string bodies (for ABI prior to C++11)
 * VectorBody - dynamically allocated memory for std::vector
 * ListNode - one node in a doubly linked list, as would be used for std::list, with the next and prev link fields at the start of the allocation
 * UnorderedMapOrSetBuckets - the buckets array for an unordered map or unordered set
