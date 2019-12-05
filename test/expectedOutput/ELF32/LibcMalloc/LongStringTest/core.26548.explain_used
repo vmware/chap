@@ -43,6 +43,9 @@ Address 0xffffcffc is on the live part of the stack for thread 1.
 Stack address 0xffffcffc references 0x8050a40.
 
 Anchored allocation at 8050a58 of size 14
+This allocation matches pattern LongString.
+The string has 0x4 bytes, containing
+"0123".
 The allocation at 0x8050a58 appears to be directly anchored from
 at least one register.
 Register edx for thread 1 references 0x8050a58.

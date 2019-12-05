@@ -344,8 +344,9 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         if (numBuckets > maxBuckets) {
           continue;
         }
-        if (maxBuckets >= 5) {
-          minBuckets = (maxBuckets * 3) / 4;
+        minBuckets = _finder.MinRequestSize(bucketsIndex) / sizeof(Offset);
+        if (minBuckets < 1) {
+          minBuckets = 1;
         }
         if (numBuckets < minBuckets) {
           continue;
@@ -405,7 +406,10 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
             anchorReader.ReadOffset(anchor + 2 * sizeof(Offset), 0xbad);
         if ((firstNode & (sizeof(Offset) - 1)) == 0) {
           Offset maxBuckets = size / sizeof(Offset);
-          Offset minBuckets = (maxBuckets < 5) ? 1 : ((maxBuckets * 3) / 4);
+          Offset minBuckets = _finder.MinRequestSize(index) / sizeof(Offset);
+          if (minBuckets < 1) {
+            minBuckets = 1;
+          }
           if (CheckUnorderedMapOrSet(anchor, _numAllocations, anchorReader,
                                      index, bucketsReader, address, firstNode,
                                      minBuckets, maxBuckets, firstNode == 0)) {

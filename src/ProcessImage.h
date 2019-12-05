@@ -7,6 +7,7 @@
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
 #include "Allocations/TagHolder.h"
+#include "COWStringAllocationsTagger.h"
 #include "DequeAllocationsTagger.h"
 #include "ListAllocationsTagger.h"
 #include "LongStringAllocationsTagger.h"
@@ -44,7 +45,8 @@ class ProcessImage {
         _dequeAllocationsTagger(nullptr),
         _listAllocationsTagger(nullptr),
         _longStringAllocationsTagger(nullptr),
-        _vectorAllocationsTagger(nullptr) {
+        _vectorAllocationsTagger(nullptr),
+        _cowStringAllocationsTagger(nullptr) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -138,6 +140,11 @@ class ProcessImage {
     return _vectorAllocationsTagger;
   }
 
+  const COWStringAllocationsTagger<Offset> *GetCOWStringAllocationsTagger()
+      const {
+    return _cowStringAllocationsTagger;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -159,5 +166,6 @@ class ProcessImage {
   ListAllocationsTagger<Offset> *_listAllocationsTagger;
   LongStringAllocationsTagger<Offset> *_longStringAllocationsTagger;
   VectorAllocationsTagger<Offset> *_vectorAllocationsTagger;
+  COWStringAllocationsTagger<Offset> *_cowStringAllocationsTagger;
 };
 }  // namespace chap

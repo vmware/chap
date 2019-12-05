@@ -122,6 +122,10 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
                                const std::vector<Offset>* anchors) {
     Offset bodyAddress = bodyAllocation.Address();
     Offset bodyLimit = bodyAddress + bodyAllocation.Size();
+    Offset minCapacity = _finder.MinRequestSize(bodyIndex);
+    if (minCapacity < 1) {
+      minCapacity = 1;
+    }
     if (anchors != nullptr) {
       typename VirtualAddressMap<Offset>::Reader dequeReader(_addressMap);
       for (Offset anchor : *anchors) {
@@ -143,22 +147,9 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
 
         Offset capacityLimit = check[2];
         if (capacityLimit < useLimit || capacityLimit > bodyLimit ||
-            capacityLimit == bodyAddress) {
+            (capacityLimit - bodyAddress) < minCapacity) {
           continue;
         }
-
-        // ??? fix here and below: don't allow capacity to be too small.
-        // ??? More particularly, we need new logic for weak recognizers
-        // ??? because otherwise if a DequeBlock has a lower address
-        // ??? than the corresponding DequeMap and both are anchorpoints
-        // ??? when we reach the DequeBlock it can get interpreted as
-        // ??? being a vector body, based on either the start or end
-        // ??? field of the vector.  This could be fixed if we scanned all
-        // ??? anchors in order of anchor address rather than in order
-        // ??? of target or by doing a sort of double check as done with
-        // ??? buckets/first-node for unordered map/set.  A third possibility
-        // ??? would be to keep the handling for BBL that is currently in
-        // ??? the VectorBodyRecognizer.
 
         _tagHolder.TagAllocation(bodyIndex, _tagIndex);
 
@@ -198,7 +189,8 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
 
       Offset capacityLimit = check[2];
       if (capacityLimit < useLimit || capacityLimit > bodyLimit ||
-          capacityLimit == address) {
+          capacityLimit == address ||
+          (capacityLimit - address) < _finder.MinRequestSize(bodyIndex)) {
         continue;
       }
 

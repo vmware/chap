@@ -3,6 +3,11 @@ This allocation matches pattern LongString.
 The string has 0x10 bytes, containing
 "0123456789abcdef".
 
+Anchored allocation at 615c90 of size 18
+This allocation matches pattern LongString.
+The string has 0x4 bytes, containing
+"0123".
+
 Anchored allocation at 615d00 of size 18
 This allocation matches pattern LongString.
 The string has 0x11 bytes, containing
@@ -13,4 +18,4 @@ This allocation matches pattern LongString.
 The string has 0x26 bytes, containing
 "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".
 
-3 allocations use 0x58 (88) bytes.
+4 allocations use 0x70 (112) bytes.

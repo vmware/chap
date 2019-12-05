@@ -21,7 +21,7 @@ class LongStringRecognizer : public Allocations::PatternRecognizer<Offset> {
     const LongStringAllocationsTagger<Offset>* tagger =
         processImage.GetLongStringAllocationsTagger();
     if (tagger != 0) {
-      _tagIndex = tagger->GetCharsTagIndex();
+      _tagIndex = tagger->GetTagIndex();
     }
   }
 

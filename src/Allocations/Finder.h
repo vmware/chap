@@ -99,6 +99,8 @@ class Finder {
   virtual AllocationIndex AllocationIndexOf(Offset addr) const = 0;
   // null if index is not valid.
   virtual const Allocation* AllocationAt(AllocationIndex index) const = 0;
+  // 0 If index is not valid
+  virtual Offset MinRequestSize(AllocationIndex index) const = 0;
   virtual AllocationIndex NumAllocations() const = 0;
   virtual Offset MaxAllocationSize() const = 0;
   // Return target index or NumAllocations() if none exists or edge is

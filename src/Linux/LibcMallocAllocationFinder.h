@@ -276,6 +276,25 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return (const Allocation*)0;
   }
 
+  // O if index is not valid
+  virtual Offset MinRequestSize(AllocationIndex index) const {
+    Offset minRequestSize = 0;
+    if (index < _allocations.size()) {
+      Offset size = _allocations[index].Size();
+      if (size <= 5 * sizeof(Offset)) {
+        /*
+         * libc malloc always attempts to return something and may easily
+         * return 0x10 bytes more than needed.
+         */
+        minRequestSize = 0;
+      } else if (((size & 0xfff) != 0xff0) || (size == 0xff0)) {
+        minRequestSize = size - 0x1f;
+      } else {
+        minRequestSize = size + 1 - 0x1000;
+      }
+    }
+    return minRequestSize;
+  }
   virtual AllocationIndex NumAllocations() const { return _allocations.size(); }
 
   virtual Offset MaxAllocationSize() const { return _maxAllocationSize; }

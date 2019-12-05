@@ -9,6 +9,9 @@ The string has 0x10 bytes, containing
 "0123456789abcdef".
 
 Anchored allocation at 8050a58 of size 14
+This allocation matches pattern LongString.
+The string has 0x4 bytes, containing
+"0123".
 
 Anchored allocation at 8050a70 of size 2c
 This allocation matches pattern MapOrSetNode.

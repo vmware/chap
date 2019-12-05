@@ -297,7 +297,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
      * the check for a minimum maxEntries (really _M_map_size) somwhat
      * relaxed.
      */
-    Offset minMaxEntries = (maxMaxEntries <= 9) ? 4 : ((maxMaxEntries * 2) / 3);
+    Offset minMaxEntries = _finder.MinRequestSize(mapIndex) / sizeof(Offset);
 
     if (maxEntries == 0xbadbad || maxEntries > maxMaxEntries ||
         maxEntries < minMaxEntries) {
