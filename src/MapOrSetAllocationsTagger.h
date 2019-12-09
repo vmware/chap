@@ -151,6 +151,7 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
         CheckAllMapOrSetNodes();
+        return true;
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
