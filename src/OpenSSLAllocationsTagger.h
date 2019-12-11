@@ -27,7 +27,6 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
                            const ModuleDirectory<Offset>& moduleDirectory,
                            const VirtualAddressMap<Offset>& addressMap)
       : _tagHolder(tagHolder),
-        // _addressMap(_finder.GetAddressMap()),
         _SSLTagIndex(_tagHolder.RegisterTag("OpenSSL SSL structure")),
         _SSL_CTXTagIndex(_tagHolder.RegisterTag("OpenSSL SSL_CTX structure")),
         _rangeToFlags(nullptr),
@@ -170,42 +169,6 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
       }
     }
 
-#if 0
-    numBytesFound = Base::_addressMap.FindMappedMemoryImage(sslMethodCandidate,
-                                                            &sslMethodImage);
-
-    if (numBytesFound < 10 * sizeof(Offset)) {
-      return false;
-    }
-
-    Offset* methodPointers = (Offset*)(sslMethodImage + sizeof(Offset));
-    std::string methodModuleName;
-    if ((!Base::_moduleDirectory.Find(methodPointers[0], methodModuleName,
-                                      rangeBase, rangeSize,
-                                      relativeVirtualAddress)) ||
-        (methodModuleName != moduleName)) {
-      return false;
-    }
-
-    typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
-    typename VirtualAddressMap<Offset>::const_iterator it =
-        Base::_addressMap.find(methodPointers[0]);
-    if ((it == Base::_addressMap.end()) ||
-        ((it.Flags() &
-          (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE |
-           RangeAttributes::IS_EXECUTABLE)) !=
-         (RangeAttributes::IS_READABLE | RangeAttributes::IS_EXECUTABLE))) {
-      return false;
-    }
-
-    Offset rangeLimit = rangeBase + rangeSize;
-    for (size_t i = 1; i < 5; i++) {
-      Offset methodPointer = methodPointers[i];
-      if (methodPointer < rangeBase || methodPointer >= rangeLimit) {
-        return false;
-      }
-    }
-#endif
     return true;
   }
 };

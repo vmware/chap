@@ -125,6 +125,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
           *(Base::_allocationTagHolder), Base::_moduleDirectory,
           Base::_virtualAddressMap);
 
+      Base::_pythonAllocationsTagger = new PythonAllocationsTagger<Offset>(
+          *(Base::_allocationTagHolder), Base::_moduleDirectory);
+
       Base::_vectorAllocationsTagger = new VectorAllocationsTagger<Offset>(
           *(Base::_allocationGraph), *(Base::_allocationTagHolder));
 
@@ -140,6 +143,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       runner.RegisterTagger(Base::_vectorAllocationsTagger);
       runner.RegisterTagger(Base::_cowStringAllocationsTagger);
       runner.RegisterTagger(Base::_openSSLAllocationsTagger);
+      runner.RegisterTagger(Base::_pythonAllocationsTagger);
       runner.ResolveAllAllocationTags();
     }
   }

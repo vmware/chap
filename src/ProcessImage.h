@@ -14,6 +14,7 @@
 #include "MapOrSetAllocationsTagger.h"
 #include "ModuleDirectory.h"
 #include "OpenSSLAllocationsTagger.h"
+#include "PythonAllocationsTagger.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
 #include "UnorderedMapOrSetAllocationsTagger.h"
@@ -48,7 +49,8 @@ class ProcessImage {
         _longStringAllocationsTagger(nullptr),
         _vectorAllocationsTagger(nullptr),
         _cowStringAllocationsTagger(nullptr),
-        _openSSLAllocationsTagger(nullptr) {
+        _openSSLAllocationsTagger(nullptr),
+        _pythonAllocationsTagger(nullptr) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -151,6 +153,10 @@ class ProcessImage {
     return _openSSLAllocationsTagger;
   }
 
+  const PythonAllocationsTagger<Offset> *GetPythonAllocationsTagger() const {
+    return _pythonAllocationsTagger;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -174,5 +180,6 @@ class ProcessImage {
   VectorAllocationsTagger<Offset> *_vectorAllocationsTagger;
   COWStringAllocationsTagger<Offset> *_cowStringAllocationsTagger;
   OpenSSLAllocationsTagger<Offset> *_openSSLAllocationsTagger;
+  PythonAllocationsTagger<Offset> *_pythonAllocationsTagger;
 };
 }  // namespace chap

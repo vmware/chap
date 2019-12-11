@@ -15,14 +15,24 @@ class PyDictKeysObjectRecognizer
   typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternRecognizer<Offset> Base;
   typedef typename Allocations::Finder<Offset>::Allocation Allocation;
+  typedef typename Allocations::TagHolder<Offset>::TagIndex TagIndex;
   PyDictKeysObjectRecognizer(const ProcessImage<Offset>& processImage)
       : Allocations::PatternRecognizer<Offset>(processImage,
                                                "PyDictKeysObject"),
-        _stringTypeObj(0) {}
+        _stringTypeObj(0),
+        _tagHolder(processImage.GetAllocationTagHolder()),
+        _contiguousImage(*(processImage.GetAllocationFinder())),
+        _tagIndex(~((TagIndex)(0))) {
+    const PythonAllocationsTagger<Offset>* tagger =
+        processImage.GetPythonAllocationsTagger();
+    if (tagger != 0) {
+      _tagIndex = tagger->GetTagIndex();
+    }
+  }
 
-  bool Matches(AllocationIndex index, const Allocation& allocation,
-               bool isUnsigned) const {
-    return Visit(nullptr, index, allocation, isUnsigned, false);
+  bool Matches(AllocationIndex index, const Allocation& /* allocation */,
+               bool /* isUnsigned */) const {
+    return (_tagHolder->GetTagIndex(index) == _tagIndex);
   }
 
   /*
@@ -33,103 +43,17 @@ class PyDictKeysObjectRecognizer
   *pattern.
   */
   virtual bool Describe(Commands::Context& context, AllocationIndex index,
-                        const Allocation& allocation, bool isUnsigned,
-                        bool explain) const {
-    return Visit(&context, index, allocation, isUnsigned, explain);
-  }
-
- private:
-  /* The following two fields are mutable because they are calculated lazily.
-   */
-  mutable std::set<Offset> _methods;
-  mutable Offset _stringTypeObj;
-  virtual bool Visit(Commands::Context* context, AllocationIndex,
-                     const Allocation& allocation, bool isUnsigned,
-                     bool explain) const {
-    /*
-     * A PyDictKeysObject is necessarily unsigned because the first quadword
-     * is always 0.
-     */
-
-    if (!isUnsigned) {
-      return false;
-    }
-
-    /*
-     * A PyDictKeysObject is fairly large has a minimum size.
-     */
-
-    Offset allocationSize = allocation.Size();
-    if (allocationSize < 8 * sizeof(Offset)) {
-      return false;
-    }
-
-    const char* allocationImage;
-    Offset allocationAddress = allocation.Address();
-    Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
-        allocationAddress, &allocationImage);
-
-    if (numBytesFound < allocationSize) {
-      return false;
-    }
-
-    /*
-     * A PyDictKeysObject is uniquely referenced by a PyDictObject.
-     */
-
-    if (((Offset*)(allocationImage))[0] != 1) {
-      return false;
-    }
-
-    /*
-     * The number of slots in a PyDictKeysObject is always a power of 2.
-     */
-
-    Offset numSlots = ((Offset*)(allocationImage))[1];
-    if ((numSlots ^ (numSlots - 1)) != 2 * numSlots - 1) {
-      return false;
-    }
-
-    /*
-     * Slots are triples and there is an additional fixed overhead.
-     */
-
-    if (allocationSize < sizeof(Offset) * (5 + numSlots * 3)) {
-      return false;
-    }
-
-    Offset methodCandidate = ((Offset*)(allocationImage))[2];
-    if (_methods.find(methodCandidate) == _methods.end()) {
-      std::string moduleName;
-      Offset rangeBase;
-      Offset rangeSize;
-      Offset relativeVirtualAddress;
-      if ((!Base::_moduleDirectory.Find(methodCandidate, moduleName, rangeBase,
-                                        rangeSize, relativeVirtualAddress)) ||
-          (moduleName.find("python") == std::string::npos)) {
-        return false;
-      }
-
-      typedef
-          typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
-      typename VirtualAddressMap<Offset>::const_iterator it =
-          Base::_addressMap.find(methodCandidate);
-      if ((it == Base::_addressMap.end()) ||
-          ((it.Flags() &
-            (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE |
-             RangeAttributes::IS_EXECUTABLE)) !=
-           (RangeAttributes::IS_READABLE | RangeAttributes::IS_EXECUTABLE))) {
-        return false;
-      }
-      _methods.insert(methodCandidate);
-    }
-
-    if (context != 0) {
-      Commands::Output& output = context->GetOutput();
+                        const Allocation& /* allocation */,
+                        bool /* isUnsigned */, bool explain) const {
+    if (_tagHolder->GetTagIndex(index) == _tagIndex) {
+      Commands::Output& output = context.GetOutput();
       output << "This allocation matches pattern PyDictKeysObject.\n";
+      _contiguousImage.SetIndex(index);
+      const Offset* asOffsets = _contiguousImage.FirstOffset();
+      Offset numSlots = asOffsets[1];
       for (Offset slot = 0; slot < numSlots; slot++) {
-        Offset key = ((Offset*)(allocationImage))[5 + slot * 3];
-        Offset value = ((Offset*)(allocationImage))[6 + slot * 3];
+        Offset key = ((Offset*)(asOffsets))[5 + slot * 3];
+        Offset value = ((Offset*)(asOffsets))[6 + slot * 3];
         if (key == 0 || value == 0) {
           continue;
         }
@@ -178,10 +102,16 @@ class PyDictKeysObjectRecognizer
       }
       if (explain) {
       }
+      return true;
     }
-
-    return true;
+    return false;
   }
+
+ private:
+  mutable Offset _stringTypeObj;
+  const Allocations::TagHolder<Offset>* _tagHolder;
+  mutable Allocations::ContiguousImage<Offset> _contiguousImage;
+  TagIndex _tagIndex;
 };
 }  // namespace Linux
 }  // namespace chap
