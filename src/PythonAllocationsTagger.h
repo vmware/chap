@@ -26,7 +26,7 @@ class PythonAllocationsTagger : public Allocations::Tagger<Offset> {
   PythonAllocationsTagger(TagHolder& tagHolder,
                           const ModuleDirectory<Offset>& moduleDirectory)
       : _tagHolder(tagHolder),
-        _tagIndex(_tagHolder.RegisterTag("Python 3.5 DictKeysObject")),
+        _tagIndex(_tagHolder.RegisterTag("%PyDictKeysObject")),
         _rangeToFlags(nullptr),
         _candidateBase(0),
         _candidateLimit(0),

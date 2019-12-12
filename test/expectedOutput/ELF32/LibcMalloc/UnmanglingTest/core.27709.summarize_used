@@ -1,5 +1,5 @@
-Unsigned allocations have 1 instances taking 0x24(36) bytes.
-   Unsigned allocations of size 0x24 have 1 instances taking 0x24(36) bytes.
+Pattern %VectorBody has 1 instances taking 0x24(36) bytes.
+   Matches of size 0x24 have 1 instances taking 0x24(36) bytes.
 Signature 8049050 (NSA::NSC::Dozen<bool,long long,unsigned long long,long double,__float128,void***,void**,void*,wchar_t,std::map<int,long,std::less<int>,std::allocator<std::pair<int const,long>>>,std::set<int,std::less<int>,std::allocator<int>>,std::string>) has 1 instances taking 0x94(148) bytes.
 Signature 8048f90 (NSA::NSC::Dozen<signed char,char,unsigned char,int,unsigned int,short,unsigned short,long,unsigned long,double,long double,float>) has 1 instances taking 0x34(52) bytes.
 Signature 8049008 (NSA::NSC::Dozen<signed char,char,unsigned char,int,unsigned int,short,unsigned short,long,unsigned long,double,long double,float>::FirstTwo) has 1 instances taking 0xc(12) bytes.

@@ -27,8 +27,8 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
                            const ModuleDirectory<Offset>& moduleDirectory,
                            const VirtualAddressMap<Offset>& addressMap)
       : _tagHolder(tagHolder),
-        _SSLTagIndex(_tagHolder.RegisterTag("OpenSSL SSL structure")),
-        _SSL_CTXTagIndex(_tagHolder.RegisterTag("OpenSSL SSL_CTX structure")),
+        _SSLTagIndex(_tagHolder.RegisterTag("%SSL")),
+        _SSL_CTXTagIndex(_tagHolder.RegisterTag("%SSL_CTX")),
         _rangeToFlags(nullptr),
         _candidateBase(0),
         _candidateLimit(0),

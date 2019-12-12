@@ -7,6 +7,7 @@
 #include "../../SizedTally.h"
 #include "../Finder.h"
 #include "../SignatureSummary.h"
+#include "../TagHolder.h"
 namespace chap {
 namespace Allocations {
 namespace Visitors {
@@ -40,6 +41,7 @@ class Summarizer {
         }
       }
       return new Summarizer(context, processImage.GetSignatureDirectory(),
+                            *(processImage.GetAllocationTagHolder()),
                             processImage.GetVirtualAddressMap(), sortByCount);
     }
     const std::string& GetCommandName() const { return _commandName; }
@@ -49,8 +51,8 @@ class Summarizer {
       Commands::Output& output = context.GetOutput();
       output << "In this case \"summarize\" means show the tally and byte"
                 " count associated with\neach type (as determined by the"
-                " signature, if any) and with a separate tally\n"
-                "and byte count for unsigned allocations.\n";
+                " signature, if any) or pattern and with a\n"
+                "separate tally and byte count for unsigned allocations.\n";
       output << "Use \"/sortby bytes\" to sort summary by total bytes "
                 "rather than allocation count\n";
     }
@@ -62,9 +64,10 @@ class Summarizer {
 
   Summarizer(Commands::Context& context,
              const SignatureDirectory<Offset>& signatureDirectory,
+             const TagHolder<Offset>& tagHolder,
              const VirtualAddressMap<Offset>& addressMap, bool sortByCount)
       : _context(context),
-        _signatureSummary(signatureDirectory),
+        _signatureSummary(signatureDirectory, tagHolder),
         _addressMap(addressMap),
         _sizedTally(context, "allocations"),
         _sortByCount(sortByCount) {}
@@ -77,7 +80,7 @@ class Summarizer {
     }
     DumpSummaryItems(items);
   }
-  void Visit(AllocationIndex /* index */, const Allocation& allocation) {
+  void Visit(AllocationIndex index, const Allocation& allocation) {
     size_t size = allocation.Size();
     const char* image;
     Offset numBytesFound =
@@ -87,7 +90,7 @@ class Summarizer {
       size = numBytesFound;
     }
     _sizedTally.AdjustTally(size);
-    _signatureSummary.AdjustTally(size, image);
+    _signatureSummary.AdjustTally(index, size, image);
   }
 
  private:
@@ -128,9 +131,8 @@ class Summarizer {
                << InDecimalWithCommas(it->_totals._bytes) << ")"
                << " bytes.\n";
       } else {
-        if (it->_name == "-") {
-          // Unsigned allocations.
-          output << "Unsigned allocations have " << std::dec
+        if (it->_name[0] == '%') {
+          output << "Pattern " << it->_name << " has " << std::dec
                  << it->_totals._count << " instances taking 0x" << std::hex
                  << it->_totals._bytes << "("
                  << InDecimalWithCommas(it->_totals._bytes) << ")"
@@ -139,7 +141,24 @@ class Summarizer {
                    Offset, typename SignatureSummary<Offset>::Tally> >::
                    const_iterator itSub = it->_subtotals.begin();
                itSub != it->_subtotals.end(); ++itSub) {
-            output << "   Unsigned allocations of size 0x" << std::hex
+            output << "   Matches of size 0x" << std::hex << itSub->first
+                   << " have " << std::dec << itSub->second._count
+                   << " instances taking 0x" << std::hex << itSub->second._bytes
+                   << "(" << InDecimalWithCommas(itSub->second._bytes) << ")"
+                   << " bytes.\n";
+          }
+        } else if (it->_name == "?") {
+          // Unrecognized allocations.
+          output << "Unrecognized allocations have " << std::dec
+                 << it->_totals._count << " instances taking 0x" << std::hex
+                 << it->_totals._bytes << "("
+                 << InDecimalWithCommas(it->_totals._bytes) << ")"
+                 << " bytes.\n";
+          for (typename std::vector<std::pair<
+                   Offset, typename SignatureSummary<Offset>::Tally> >::
+                   const_iterator itSub = it->_subtotals.begin();
+               itSub != it->_subtotals.end(); ++itSub) {
+            output << "   Unrecognized allocations of size 0x" << std::hex
                    << itSub->first << " have " << std::dec
                    << itSub->second._count << " instances taking 0x" << std::hex
                    << itSub->second._bytes << "("

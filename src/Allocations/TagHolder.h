@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <set>
+#include <unordered_map>
 #include "Finder.h"
 
 namespace chap {
@@ -18,7 +20,7 @@ class TagHolder {
     _indexToName.push_back("");
   }
 
-  TagIndex RegisterTag(const char *name) {
+  TagIndex RegisterTag(const char* name) {
     TagIndex newIndex = _indexToName.size();
     if (_indexToName.size() == 0x255) {
       std::cerr
@@ -26,6 +28,7 @@ class TagHolder {
       abort();
     }
     _indexToName.push_back(name);
+    _nameToTagIndices[name].insert(newIndex);
     return newIndex;
   }
 
@@ -53,11 +56,20 @@ class TagHolder {
     return _tags[allocationIndex];
   }
 
+  const std::string& GetTagName(AllocationIndex allocationIndex) const {
+    if (allocationIndex >= _numAllocations) {
+      std::cerr << "Invalid allocation index " << allocationIndex << "\n";
+      abort();
+    }
+    return _indexToName[_tags[allocationIndex]];
+  }
+
  private:
   const AllocationIndex _numAllocations;
   const int notTagged;
-  std::vector<unsigned char> _tags;
-  std::vector<const char *> _indexToName;
+  std::vector<TagIndex> _tags;
+  std::vector<std::string> _indexToName;
+  std::unordered_map<std::string, std::set<TagIndex> > _nameToTagIndices;
 };
 }  // namespace Allocations
 }  // namespace chap

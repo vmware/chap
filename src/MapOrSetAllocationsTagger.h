@@ -29,7 +29,7 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
         _nodeReader(_addressMap),
-        _nodeTagIndex(_tagHolder.RegisterTag("set or map node")) {}
+        _nodeTagIndex(_tagHolder.RegisterTag("%MapOrSetNode")) {}
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,

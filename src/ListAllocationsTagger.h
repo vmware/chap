@@ -29,9 +29,8 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
         _nodeReader(_addressMap),
-        _nodeTagIndex(_tagHolder.RegisterTag("list node")),
-        _unknownHeadNodeTagIndex(
-            _tagHolder.RegisterTag("list node-unknown-head")) {}
+        _nodeTagIndex(_tagHolder.RegisterTag("%ListNode")),
+        _unknownHeadNodeTagIndex(_tagHolder.RegisterTag("%ListNode")) {}
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,

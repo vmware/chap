@@ -1,8 +1,10 @@
-Unsigned allocations have 5 instances taking 0x2c8(712) bytes.
-   Unsigned allocations of size 0x208 have 1 instances taking 0x208(520) bytes.
-   Unsigned allocations of size 0x28 have 3 instances taking 0x78(120) bytes.
-   Unsigned allocations of size 0x48 have 1 instances taking 0x48(72) bytes.
+Pattern %DequeBlock has 1 instances taking 0x208(520) bytes.
+   Matches of size 0x208 have 1 instances taking 0x208(520) bytes.
+Pattern %MapOrSetNode has 3 instances taking 0x78(120) bytes.
+   Matches of size 0x28 have 3 instances taking 0x78(120) bytes.
 Signature 401fb0 (HasDeque) has 1 instances taking 0x58(88) bytes.
+Pattern %DequeMap has 1 instances taking 0x48(72) bytes.
+   Matches of size 0x48 have 1 instances taking 0x48(72) bytes.
 Signature 402050 (HasList) has 3 instances taking 0x48(72) bytes.
 Signature 401f30 (HasSet) has 1 instances taking 0x38(56) bytes.
 Signature 402000 (HasVector) has 1 instances taking 0x28(40) bytes.

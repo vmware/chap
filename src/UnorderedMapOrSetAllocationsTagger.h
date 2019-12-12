@@ -32,9 +32,8 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         _stackAnchorReader(_addressMap),
         _nodeReader(_addressMap),
         _bucketsReader(_addressMap),
-        _bucketsTagIndex(
-            _tagHolder.RegisterTag("unordered set or map buckets")),
-        _nodeTagIndex(_tagHolder.RegisterTag("unordered set or map node")) {}
+        _bucketsTagIndex(_tagHolder.RegisterTag("%UnorderedMapOrSetBuckets")),
+        _nodeTagIndex(_tagHolder.RegisterTag("%UnorderedMapOrSetNode")) {}
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage, Reader& reader,
                          AllocationIndex index, Phase phase,

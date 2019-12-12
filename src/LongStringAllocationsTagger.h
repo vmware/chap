@@ -34,7 +34,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _enabled(true),
-        _tagIndex(_tagHolder.RegisterTag("long string chars")) {
+        _tagIndex(_tagHolder.RegisterTag("%LongString")) {
     bool foundCheckableLibrary = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
              moduleDirectory.begin();

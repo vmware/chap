@@ -5,7 +5,9 @@
 #include <algorithm>
 #include <map>
 #include <set>
+#include "Finder.h"
 #include "SignatureDirectory.h"
+#include "TagHolder.h"
 namespace chap {
 namespace Allocations {
 template <class Offset>
@@ -15,8 +17,26 @@ class SignatureSummary {
     Tally() : _count(0), _bytes(0) {}
     Tally(Offset count, Offset bytes) : _count(count), _bytes(bytes) {}
     Tally(const Tally& other) : _count(other._count), _bytes(other._bytes) {}
+    void Bump(Offset size) {
+      _count++;
+      _bytes += size;
+    }
     Offset _count;
     Offset _bytes;
+  };
+  typedef std::map<Offset, Offset> SizeToCount;
+  struct TallyWithSizeSubtotals {
+    Tally _tally;
+    SizeToCount _sizeToCount;
+    void Bump(Offset size) {
+      _tally.Bump(size);
+      typename SizeToCount::iterator it = _sizeToCount.find(size);
+      if (it == _sizeToCount.end()) {
+        _sizeToCount[size] = 1;
+      } else {
+        it->second = it->second + 1;
+      }
+    }
   };
   typedef std::map<Offset, Tally> OffsetToTally;
   typedef typename OffsetToTally::iterator OffsetToTallyIterator;
@@ -24,6 +44,7 @@ class SignatureSummary {
   typedef std::map<std::string, Tally> NameToTally;
   typedef typename NameToTally::iterator NameToTallyIterator;
   typedef typename NameToTally::const_iterator NameToTallyConstIterator;
+  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   struct Item {
     std::string _name;
     Tally _totals;
@@ -33,29 +54,30 @@ class SignatureSummary {
     }
   };
 
-  SignatureSummary(const SignatureDirectory<Offset>& directory)
-      : _directory(directory), _unsignedTally(0, 0) {}
+  SignatureSummary(const SignatureDirectory<Offset>& directory,
+                   const TagHolder<Offset>& tagHolder)
+      : _directory(directory), _tagHolder(tagHolder) {}
 
-  bool AdjustTally(Offset size, const char* image) {
-    Offset signature = 0;
-    if (size >= sizeof(Offset)) {
-      signature = *((Offset*)image);
-    }
-    if (_directory.IsMapped(signature)) {
-      TallyBySignature(signature, size);
-      std::string name = _directory.Name(signature);
-      if (!name.empty()) {
-        TallyByName(name, size);
-      }
+  bool AdjustTally(AllocationIndex index, Offset size, const char* image) {
+    const std::string& tagName = _tagHolder.GetTagName(index);
+    if (!tagName.empty()) {
+      /*
+       * Tags take precedent over any signature.
+       */
+      _talliesWithSizeSubtotals[tagName].Bump(size);
     } else {
-      _unsignedTally._count++;
-      _unsignedTally._bytes += size;
-      typename std::map<Offset, Offset>::iterator it =
-          _unsignedSizeToCount.find(size);
-      if (it == _unsignedSizeToCount.end()) {
-        _unsignedSizeToCount[size] = 1;
+      Offset signature = 0;
+      if (size >= sizeof(Offset)) {
+        signature = *((Offset*)image);
+      }
+      if (_directory.IsMapped(signature)) {
+        TallyBySignature(signature, size);
+        std::string name = _directory.Name(signature);
+        if (!name.empty()) {
+          TallyByName(name, size);
+        }
       } else {
-        it->second = it->second + 1;
+        _unsignedTallyWithSizeSubtotals.Bump(size);
       }
     }
     return false;
@@ -85,10 +107,12 @@ class SignatureSummary {
 
  private:
   const SignatureDirectory<Offset>& _directory;
+  const TagHolder<Offset>& _tagHolder;
   OffsetToTally _signatureToTally;
   NameToTally _nameToTally;
-  Tally _unsignedTally;
-  std::map<Offset, Offset> _unsignedSizeToCount;
+  TallyWithSizeSubtotals _unsignedTallyWithSizeSubtotals;
+  std::unordered_map<std::string, TallyWithSizeSubtotals>
+      _talliesWithSizeSubtotals;
 
   void TallyBySignature(Offset signature, Offset size) {
     OffsetToTallyIterator it = _signatureToTally.find(signature);
@@ -111,14 +135,26 @@ class SignatureSummary {
 
   void FillItems(std::vector<Item>& items) const {
     items.clear();
-    if (_unsignedTally._count > 0) {
+    if (_unsignedTallyWithSizeSubtotals._tally._count > 0) {
       items.push_back(Item());
       Item& item = items.back();
-      item._name = "-";
-      item._totals = _unsignedTally;
+      item._name = "?";
+      item._totals = _unsignedTallyWithSizeSubtotals._tally;
       for (typename std::map<Offset, Offset>::const_iterator it =
-               _unsignedSizeToCount.begin();
-           it != _unsignedSizeToCount.end(); ++it) {
+               _unsignedTallyWithSizeSubtotals._sizeToCount.begin();
+           it != _unsignedTallyWithSizeSubtotals._sizeToCount.end(); ++it) {
+        item.AddSubtotal(it->first, Tally(it->second, it->first * it->second));
+      }
+    }
+    for (const auto nameAndTally : _talliesWithSizeSubtotals) {
+      items.push_back(Item());
+      Item& item = items.back();
+      item._name = nameAndTally.first;
+      TallyWithSizeSubtotals tallyWithSizeSubtotals = nameAndTally.second;
+      item._totals = tallyWithSizeSubtotals._tally;
+      for (typename std::map<Offset, Offset>::const_iterator it =
+               tallyWithSizeSubtotals._sizeToCount.begin();
+           it != tallyWithSizeSubtotals._sizeToCount.end(); ++it) {
         item.AddSubtotal(it->first, Tally(it->second, it->first * it->second));
       }
     }

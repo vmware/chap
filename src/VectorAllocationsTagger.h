@@ -28,7 +28,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
         _finder(graph.GetAllocationFinder()),
         _numAllocations(_finder.NumAllocations()),
         _addressMap(_finder.GetAddressMap()),
-        _tagIndex(_tagHolder.RegisterTag("vector body")) {}
+        _tagIndex(_tagHolder.RegisterTag("%VectorBody")) {}
 
   bool TagFromAllocation(const ContiguousImage& /* contiguousImage */,
                          Reader& /* reader */, AllocationIndex index,

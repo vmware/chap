@@ -34,7 +34,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _enabled(true),
-        _tagIndex(_tagHolder.RegisterTag("COW string body")) {
+        _tagIndex(_tagHolder.RegisterTag("%COWStringBody")) {
     _votesNeeded.resize(_numAllocations, 0xff);
     bool foundCheckableLibrary = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =

@@ -31,8 +31,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         _mapReader(_addressMap),
         _endIterator(_addressMap.end()),
         _anchorIterator(_addressMap.end()),
-        _mapTagIndex(_tagHolder.RegisterTag("deque map")),
-        _blockTagIndex(_tagHolder.RegisterTag("deque block")) {}
+        _mapTagIndex(_tagHolder.RegisterTag("%DequeMap")),
+        _blockTagIndex(_tagHolder.RegisterTag("%DequeBlock")) {}
 
   bool TagFromAllocation(const ContiguousImage& /* contiguousImage */,
                          Reader& reader, AllocationIndex index, Phase phase,
