@@ -3,14 +3,10 @@
 
 #pragma once
 #include "../ProcessImageCommandHandler.h"
-#include "COWStringBodyRecognizer.h"
 #include "LibcMallocHeapDescriber.h"
 #include "LibcMallocMainArenaRunDescriber.h"
 #include "LibcMallocMmappedAllocationDescriber.h"
 #include "LinuxProcessImage.h"
-#include "PyDictKeysObjectRecognizer.h"
-#include "SSLRecognizer.h"
-#include "SSL_CTXRecognizer.h"
 #include "Subcommands/DescribeArenas.h"
 
 namespace chap {
@@ -29,15 +25,7 @@ class ProcessImageCommandHandler
         _libcMallocMainArenaRunDescriber(
             processImage.GetLibcMallocAllocationFinder()),
         _libcMallocMmappedAllocationDescriber(
-            processImage.GetLibcMallocAllocationFinder()),
-        _COWStringBodyRecognizer(processImage),
-        _SSL_CTXRecognizer(processImage),
-        _SSLRecognizer(processImage),
-        _pyDictKeysObjectRecognizer(processImage) {
-    Base::_patternRecognizerRegistry.Register(_COWStringBodyRecognizer);
-    Base::_patternRecognizerRegistry.Register(_SSL_CTXRecognizer);
-    Base::_patternRecognizerRegistry.Register(_SSLRecognizer);
-    Base::_patternRecognizerRegistry.Register(_pyDictKeysObjectRecognizer);
+            processImage.GetLibcMallocAllocationFinder()) {
     Base::_compoundDescriber.AddDescriber(Base::_allocationDescriber);
     Base::_compoundDescriber.AddDescriber(Base::_stackDescriber);
 
@@ -87,10 +75,6 @@ class ProcessImageCommandHandler
   LibcMallocMainArenaRunDescriber<Offset> _libcMallocMainArenaRunDescriber;
   LibcMallocMmappedAllocationDescriber<Offset>
       _libcMallocMmappedAllocationDescriber;
-  COWStringBodyRecognizer<Offset> _COWStringBodyRecognizer;
-  SSL_CTXRecognizer<Offset> _SSL_CTXRecognizer;
-  SSLRecognizer<Offset> _SSLRecognizer;
-  PyDictKeysObjectRecognizer<Offset> _pyDictKeysObjectRecognizer;
 };
 
 }  // namespace Linux

@@ -8,7 +8,7 @@
 #include "../VirtualAddressMap.h"
 #include "Finder.h"
 #include "Graph.h"
-#include "PatternRecognizerRegistry.h"
+#include "PatternDescriberRegistry.h"
 #include "SignatureChecker.h"
 
 namespace chap {
@@ -22,13 +22,13 @@ class ReferenceConstraint {
   enum ReferenceType { INCOMING, OUTGOING };
   ReferenceConstraint(
       const SignatureDirectory<Offset>& directory,
-      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
+      const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
       const VirtualAddressMap<Offset>& addressMap, const std::string& signature,
       size_t count, bool wantUsed, BoundaryType boundaryType,
       ReferenceType referenceType, const Finder<Offset>& finder,
       const Graph<Offset>& graph)
 
-      : _signatureChecker(directory, patternRecognizerRegistry, addressMap,
+      : _signatureChecker(directory, patternDescriberRegistry, addressMap,
                           signature),
         _count(count),
         _wantUsed(wantUsed),

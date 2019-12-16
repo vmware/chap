@@ -9,7 +9,7 @@
 #include "../ProcessImage.h"
 #include "Finder.h"
 #include "Graph.h"
-#include "PatternRecognizerRegistry.h"
+#include "PatternDescriberRegistry.h"
 #include "SignatureChecker.h"
 #include "SignatureDirectory.h"
 
@@ -28,11 +28,11 @@ class ExtendedVisitor {
   typedef typename Finder<Offset>::Allocation Allocation;
   ExtendedVisitor(
       Commands::Context& context, const ProcessImage<Offset>& processImage,
-      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
+      const PatternDescriberRegistry<Offset>& patternDescriberRegistry)
       : _context(context),
         _isEnabled(false),
         _hasErrors(false),
-        _patternRecognizerRegistry(patternRecognizerRegistry),
+        _patternDescriberRegistry(patternDescriberRegistry),
         _graph(0),
         _finder(processImage.GetAllocationFinder()),
         _addressMap(processImage.GetVirtualAddressMap()),
@@ -195,7 +195,7 @@ class ExtendedVisitor {
 
     _rules.reserve(numSpecs);
     for (size_t i = 0; i < numSpecs; i++) {
-      _rules.emplace_back(signatureDirectory, _patternRecognizerRegistry,
+      _rules.emplace_back(signatureDirectory, _patternDescriberRegistry,
                           _addressMap,
                           specifications[ruleIndexToArgumentIndex[i]]);
       Rule& rule = _rules.back();
@@ -538,7 +538,7 @@ class ExtendedVisitor {
   };
   struct Rule {
     Rule(const SignatureDirectory<Offset>& directory,
-         const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
+         const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
          const VirtualAddressMap<Offset>& addressMap, const Specification& spec)
         : _offsetInMember(spec._offsetInMember),
           _offsetInExtension(spec._offsetInExtension),
@@ -546,9 +546,9 @@ class ExtendedVisitor {
           _useOffsetInExtension(spec._useOffsetInExtension),
           _referenceIsOutgoing(spec._referenceIsOutgoing),
           _extensionMustBeLeaked(spec._extensionMustBeLeaked),
-          _memberSignatureChecker(directory, patternRecognizerRegistry,
+          _memberSignatureChecker(directory, patternDescriberRegistry,
                                   addressMap, spec._memberSignature),
-          _extensionSignatureChecker(directory, patternRecognizerRegistry,
+          _extensionSignatureChecker(directory, patternDescriberRegistry,
                                      addressMap, spec._extensionSignature),
           _baseState(spec._baseState),
           _newState(spec._newState) {}
@@ -588,7 +588,7 @@ class ExtendedVisitor {
   bool _isEnabled;
   bool _hasErrors;
   bool _canRun;
-  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
+  const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
   const Graph<Offset>* _graph;
   const Finder<Offset>* _finder;
   const VirtualAddressMap<Offset>& _addressMap;

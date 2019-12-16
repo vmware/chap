@@ -3,9 +3,10 @@
 
 #pragma once
 #include "Allocations/Describer.h"
-#include "Allocations/PatternRecognizerRegistry.h"
+#include "Allocations/PatternDescriberRegistry.h"
 #include "Allocations/Subcommands/DefaultSubcommands.h"
 #include "Allocations/Subcommands/SummarizeSignatures.h"
+#include "COWStringBodyDescriber.h"
 #include "Commands/CountCommand.h"
 #include "Commands/DescribeCommand.h"
 #include "Commands/EnumerateCommand.h"
@@ -15,24 +16,27 @@
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
 #include "CompoundDescriber.h"
-#include "DequeBlockRecognizer.h"
-#include "DequeMapRecognizer.h"
+#include "DequeBlockDescriber.h"
+#include "DequeMapDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
-#include "ListNodeRecognizer.h"
-#include "LongStringRecognizer.h"
-#include "MapOrSetNodeRecognizer.h"
+#include "ListNodeDescriber.h"
+#include "LongStringDescriber.h"
+#include "MapOrSetNodeDescriber.h"
 #include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/ListModules.h"
 #include "ProcessImage.h"
+#include "PyDictKeysObjectDescriber.h"
+#include "SSLDescriber.h"
+#include "SSL_CTXDescriber.h"
 #include "StackDescriber.h"
 #include "StackOverflowGuardDescriber.h"
 #include "ThreadMapCommands/CountStacks.h"
 #include "ThreadMapCommands/DescribeStacks.h"
 #include "ThreadMapCommands/ListStacks.h"
-#include "UnorderedMapOrSetBucketsRecognizer.h"
-#include "UnorderedMapOrSetNodeRecognizer.h"
-#include "VectorBodyRecognizer.h"
+#include "UnorderedMapOrSetBucketsDescriber.h"
+#include "UnorderedMapOrSetNodeDescriber.h"
+#include "VectorBodyDescriber.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
@@ -46,12 +50,13 @@ class ProcessImageCommandHandler {
   ProcessImageCommandHandler(const ProcessImage<Offset>& processImage)
       : _virtualMemoryPartition(processImage.GetVirtualMemoryPartition()),
         _stackDescriber(processImage),
+        _patternDescriberRegistry(processImage),
         _knownAddressDescriber(processImage),
         _inModuleDescriber(processImage, _knownAddressDescriber),
         _moduleAlignmentGapDescriber(processImage),
         _stackOverflowGuardDescriber(processImage),
         _allocationDescriber(_inModuleDescriber, _stackDescriber,
-                             _patternRecognizerRegistry, processImage),
+                             _patternDescriberRegistry, processImage),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
         _countStacksSubcommand(processImage),
@@ -161,23 +166,31 @@ class ProcessImageCommandHandler {
             _compoundDescriber, _virtualMemoryPartition.UNKNOWN),
         _summarizeSignaturesSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
-                                       _patternRecognizerRegistry),
-        _dequeMapRecognizer(processImage),
-        _dequeBlockRecognizer(processImage),
-        _unorderedMapOrSetBucketsRecognizer(processImage),
-        _unorderedMapOrSetNodeRecognizer(processImage),
-        _mapOrSetNodeRecognizer(processImage),
-        _vectorBodyRecognizer(processImage),
-        _listNodeRecognizer(processImage),
-        _longStringRecognizer(processImage) {
-    _patternRecognizerRegistry.Register(_dequeMapRecognizer);
-    _patternRecognizerRegistry.Register(_dequeBlockRecognizer);
-    _patternRecognizerRegistry.Register(_unorderedMapOrSetBucketsRecognizer);
-    _patternRecognizerRegistry.Register(_unorderedMapOrSetNodeRecognizer);
-    _patternRecognizerRegistry.Register(_mapOrSetNodeRecognizer);
-    _patternRecognizerRegistry.Register(_vectorBodyRecognizer);
-    _patternRecognizerRegistry.Register(_listNodeRecognizer);
-    _patternRecognizerRegistry.Register(_longStringRecognizer);
+                                       _patternDescriberRegistry),
+        _dequeMapDescriber(processImage),
+        _dequeBlockDescriber(processImage),
+        _unorderedMapOrSetBucketsDescriber(processImage),
+        _unorderedMapOrSetNodeDescriber(processImage),
+        _mapOrSetNodeDescriber(processImage),
+        _vectorBodyDescriber(processImage),
+        _listNodeDescriber(processImage),
+        _longStringDescriber(processImage),
+        _COWStringBodyDescriber(processImage),
+        _SSL_CTXDescriber(processImage),
+        _SSLDescriber(processImage),
+        _pyDictKeysObjectDescriber(processImage) {
+    _patternDescriberRegistry.Register(_dequeMapDescriber);
+    _patternDescriberRegistry.Register(_dequeBlockDescriber);
+    _patternDescriberRegistry.Register(_unorderedMapOrSetBucketsDescriber);
+    _patternDescriberRegistry.Register(_unorderedMapOrSetNodeDescriber);
+    _patternDescriberRegistry.Register(_mapOrSetNodeDescriber);
+    _patternDescriberRegistry.Register(_vectorBodyDescriber);
+    _patternDescriberRegistry.Register(_listNodeDescriber);
+    _patternDescriberRegistry.Register(_longStringDescriber);
+    _patternDescriberRegistry.Register(_COWStringBodyDescriber);
+    _patternDescriberRegistry.Register(_SSL_CTXDescriber);
+    _patternDescriberRegistry.Register(_SSLDescriber);
+    _patternDescriberRegistry.Register(_pyDictKeysObjectDescriber);
     // Leave it to any derived class to add any describers.
   }
 
@@ -218,7 +231,7 @@ class ProcessImageCommandHandler {
  protected:
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
   StackDescriber<Offset> _stackDescriber;
-  Allocations::PatternRecognizerRegistry<Offset> _patternRecognizerRegistry;
+  Allocations::PatternDescriberRegistry<Offset> _patternDescriberRegistry;
   KnownAddressDescriber<Offset> _knownAddressDescriber;
   InModuleDescriber<Offset> _inModuleDescriber;
   ModuleAlignmentGapDescriber<Offset> _moduleAlignmentGapDescriber;
@@ -282,15 +295,18 @@ class ProcessImageCommandHandler {
  private:
   Allocations::Subcommands::DefaultSubcommands<Offset>
       _defaultAllocationsSubcommands;
-  DequeMapRecognizer<Offset> _dequeMapRecognizer;
-  DequeBlockRecognizer<Offset> _dequeBlockRecognizer;
-  UnorderedMapOrSetBucketsRecognizer<Offset>
-      _unorderedMapOrSetBucketsRecognizer;
-  UnorderedMapOrSetNodeRecognizer<Offset> _unorderedMapOrSetNodeRecognizer;
-  MapOrSetNodeRecognizer<Offset> _mapOrSetNodeRecognizer;
-  VectorBodyRecognizer<Offset> _vectorBodyRecognizer;
-  ListNodeRecognizer<Offset> _listNodeRecognizer;
-  LongStringRecognizer<Offset> _longStringRecognizer;
+  DequeMapDescriber<Offset> _dequeMapDescriber;
+  DequeBlockDescriber<Offset> _dequeBlockDescriber;
+  UnorderedMapOrSetBucketsDescriber<Offset> _unorderedMapOrSetBucketsDescriber;
+  UnorderedMapOrSetNodeDescriber<Offset> _unorderedMapOrSetNodeDescriber;
+  MapOrSetNodeDescriber<Offset> _mapOrSetNodeDescriber;
+  VectorBodyDescriber<Offset> _vectorBodyDescriber;
+  ListNodeDescriber<Offset> _listNodeDescriber;
+  LongStringDescriber<Offset> _longStringDescriber;
+  COWStringBodyDescriber<Offset> _COWStringBodyDescriber;
+  SSL_CTXDescriber<Offset> _SSL_CTXDescriber;
+  SSLDescriber<Offset> _SSLDescriber;
+  PyDictKeysObjectDescriber<Offset> _pyDictKeysObjectDescriber;
 };
 
 }  // namespace chap

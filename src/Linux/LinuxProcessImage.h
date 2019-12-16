@@ -96,55 +96,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        */
       Base::_virtualMemoryPartition.ClaimUnclaimedRangesAsUnknown();
 
-      Base::_allocationTagHolder = new Allocations::TagHolder<Offset>(
-          Base::_allocationFinder->NumAllocations());
-
-      Base::_unorderedMapOrSetAllocationsTagger =
-          new UnorderedMapOrSetAllocationsTagger<Offset>(
-              *(Base::_allocationGraph), *(Base::_allocationTagHolder));
-
-      Base::_mapOrSetAllocationsTagger = new MapOrSetAllocationsTagger<Offset>(
-          *(Base::_allocationGraph), *(Base::_allocationTagHolder));
-
-      Base::_dequeAllocationsTagger = new DequeAllocationsTagger<Offset>(
-          *(Base::_allocationGraph), *(Base::_allocationTagHolder));
-
-      Base::_listAllocationsTagger = new ListAllocationsTagger<Offset>(
-          *(Base::_allocationGraph), *(Base::_allocationTagHolder));
-
-      Base::_longStringAllocationsTagger =
-          new LongStringAllocationsTagger<Offset>(*(Base::_allocationGraph),
-                                                  *(Base::_allocationTagHolder),
-                                                  Base::_moduleDirectory);
-      Base::_cowStringAllocationsTagger =
-          new COWStringAllocationsTagger<Offset>(*(Base::_allocationGraph),
-                                                 *(Base::_allocationTagHolder),
-                                                 Base::_moduleDirectory);
-
-      Base::_openSSLAllocationsTagger = new OpenSSLAllocationsTagger<Offset>(
-          *(Base::_allocationTagHolder), Base::_moduleDirectory,
-          Base::_virtualAddressMap);
-
-      Base::_pythonAllocationsTagger = new PythonAllocationsTagger<Offset>(
-          *(Base::_allocationTagHolder), Base::_moduleDirectory);
-
-      Base::_vectorAllocationsTagger = new VectorAllocationsTagger<Offset>(
-          *(Base::_allocationGraph), *(Base::_allocationTagHolder));
-
-      Allocations::TaggerRunner<Offset> runner(*Base::_allocationGraph,
-                                               *Base::_allocationTagHolder,
-                                               Base::_signatureDirectory);
-
-      runner.RegisterTagger(Base::_unorderedMapOrSetAllocationsTagger);
-      runner.RegisterTagger(Base::_mapOrSetAllocationsTagger);
-      runner.RegisterTagger(Base::_dequeAllocationsTagger);
-      runner.RegisterTagger(Base::_listAllocationsTagger);
-      runner.RegisterTagger(Base::_longStringAllocationsTagger);
-      runner.RegisterTagger(Base::_vectorAllocationsTagger);
-      runner.RegisterTagger(Base::_cowStringAllocationsTagger);
-      runner.RegisterTagger(Base::_openSSLAllocationsTagger);
-      runner.RegisterTagger(Base::_pythonAllocationsTagger);
-      runner.ResolveAllAllocationTags();
+      Base::TagAllocations();
     }
   }
 

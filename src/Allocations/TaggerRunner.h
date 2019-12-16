@@ -37,6 +37,12 @@ class TaggerRunner {
         _tagHolder(tagHolder),
         _signatureDirectory(signatureDirectory) {}
 
+  ~TaggerRunner() {
+    for (auto tagger : _taggers) {
+      delete tagger;
+    }
+  }
+
   void RegisterTagger(Tagger<Offset>* t) { _taggers.push_back(t); }
   void ResolveAllAllocationTags() {
     _numTaggers = _taggers.size();

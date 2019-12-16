@@ -7,7 +7,7 @@
 #include <sstream>
 #include "../VirtualAddressMap.h"
 #include "Finder.h"
-#include "PatternRecognizerRegistry.h"
+#include "PatternDescriberRegistry.h"
 #include "SignatureDirectory.h"
 
 namespace chap {
@@ -26,15 +26,15 @@ class SignatureChecker {
   };
   SignatureChecker(
       const SignatureDirectory<Offset>& directory,
-      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
+      const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
       const VirtualAddressMap<Offset>& addressMap, const std::string& signature)
       : _checkType(NO_CHECK_NEEDED),
         _directory(directory),
-        _patternRecognizerRegistry(patternRecognizerRegistry),
+        _patternDescriberRegistry(patternDescriberRegistry),
         _addressMap(addressMap),
         _signature((signature[0] != '%') ? signature : ""),
         _patternName((signature[0] == '%') ? signature.substr(1) : ""),
-        _patternRecognizer(0) {
+        _tagIndices(nullptr) {
     if (signature.empty()) {
       return;
     }
@@ -44,8 +44,8 @@ class SignatureChecker {
     }
 
     if (signature[0] == '%') {
-      _patternRecognizer = _patternRecognizerRegistry.Find(_patternName);
-      if (_patternRecognizer == 0) {
+      _tagIndices = _patternDescriberRegistry.GetTagIndices(signature);
+      if (_tagIndices == nullptr) {
         _checkType = UNRECOGNIZED_PATTERN;
       } else {
         _checkType = PATTERN_CHECK;
@@ -106,9 +106,8 @@ class SignatureChecker {
         }
 
         if (_checkType == PATTERN_CHECK) {
-          return _patternRecognizer->Matches(
-              index, allocation, ((size < sizeof(Offset)) ||
-                                  !_directory.IsMapped(*((Offset*)image))));
+          return _tagIndices->find(_patternDescriberRegistry.GetTagIndex(
+                     index)) != _tagIndices->end();
         } else if (_checkType == UNSIGNED_ONLY) {
           return ((size < sizeof(Offset)) ||
                   !_directory.IsMapped(*((Offset*)image)));
@@ -123,12 +122,12 @@ class SignatureChecker {
  private:
   enum CheckType _checkType;
   const SignatureDirectory<Offset>& _directory;
-  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
+  const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
   const VirtualAddressMap<Offset>& _addressMap;
   const std::string _signature;
   const std::string _patternName;
   std::set<Offset> _signatures;
-  const PatternRecognizer<Offset>* _patternRecognizer;
+  const typename PatternDescriberRegistry<Offset>::TagIndices* _tagIndices;
 };
 }  // namespace Allocations
 }  // namespace chap

@@ -13,8 +13,16 @@ class TagHolder {
  public:
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef size_t TagIndex;
+
+  /*
+   * Note that the sets of tag indices tend to be tiny, usually with just
+   * one element, because they are all the indices corresponding to a
+   * single name.
+   */
+  typedef std::set<TagIndex> TagIndices;
+
   TagHolder(const AllocationIndex numAllocations)
-      : _numAllocations(numAllocations), notTagged(0) {
+      : _numAllocations(numAllocations) {
     _tags.reserve(numAllocations);
     _tags.resize(numAllocations, 0);
     _indexToName.push_back("");
@@ -64,12 +72,19 @@ class TagHolder {
     return _indexToName[_tags[allocationIndex]];
   }
 
+  const TagIndices* GetTagIndices(std::string tagName) const {
+    std::unordered_map<std::string, TagIndices>::const_iterator it =
+        _nameToTagIndices.find(tagName);
+    return (it == _nameToTagIndices.end()) ? nullptr : &(it->second);
+  }
+
+  size_t GetNumTags() const { return _indexToName.size(); }
+
  private:
   const AllocationIndex _numAllocations;
-  const int notTagged;
   std::vector<TagIndex> _tags;
   std::vector<std::string> _indexToName;
-  std::unordered_map<std::string, std::set<TagIndex> > _nameToTagIndices;
+  std::unordered_map<std::string, TagIndices> _nameToTagIndices;
 };
 }  // namespace Allocations
 }  // namespace chap

@@ -41,16 +41,7 @@ class ProcessImage {
         _unfilledImages(virtualAddressMap),
         _allocationFinder(nullptr),
         _allocationTagHolder(nullptr),
-        _allocationGraph(nullptr),
-        _unorderedMapOrSetAllocationsTagger(nullptr),
-        _mapOrSetAllocationsTagger(nullptr),
-        _dequeAllocationsTagger(nullptr),
-        _listAllocationsTagger(nullptr),
-        _longStringAllocationsTagger(nullptr),
-        _vectorAllocationsTagger(nullptr),
-        _cowStringAllocationsTagger(nullptr),
-        _openSSLAllocationsTagger(nullptr),
-        _pythonAllocationsTagger(nullptr) {
+        _allocationGraph(nullptr) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -117,46 +108,6 @@ class ProcessImage {
     return _allocationGraph;
   }
 
-  const UnorderedMapOrSetAllocationsTagger<Offset>
-      *GetUnorderedMapOrSetAllocationsTagger() const {
-    return _unorderedMapOrSetAllocationsTagger;
-  }
-
-  const MapOrSetAllocationsTagger<Offset> *GetMapOrSetAllocationsTagger()
-      const {
-    return _mapOrSetAllocationsTagger;
-  }
-
-  const DequeAllocationsTagger<Offset> *GetDequeAllocationsTagger() const {
-    return _dequeAllocationsTagger;
-  }
-
-  const ListAllocationsTagger<Offset> *GetListAllocationsTagger() const {
-    return _listAllocationsTagger;
-  }
-
-  const LongStringAllocationsTagger<Offset> *GetLongStringAllocationsTagger()
-      const {
-    return _longStringAllocationsTagger;
-  }
-
-  const VectorAllocationsTagger<Offset> *GetVectorAllocationsTagger() const {
-    return _vectorAllocationsTagger;
-  }
-
-  const COWStringAllocationsTagger<Offset> *GetCOWStringAllocationsTagger()
-      const {
-    return _cowStringAllocationsTagger;
-  }
-
-  const OpenSSLAllocationsTagger<Offset> *GetOpenSSLAllocationsTagger() const {
-    return _openSSLAllocationsTagger;
-  }
-
-  const PythonAllocationsTagger<Offset> *GetPythonAllocationsTagger() const {
-    return _pythonAllocationsTagger;
-  }
-
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -171,15 +122,46 @@ class ProcessImage {
   Allocations::Graph<Offset> *_allocationGraph;
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
-  UnorderedMapOrSetAllocationsTagger<Offset>
-      *_unorderedMapOrSetAllocationsTagger;
-  MapOrSetAllocationsTagger<Offset> *_mapOrSetAllocationsTagger;
-  DequeAllocationsTagger<Offset> *_dequeAllocationsTagger;
-  ListAllocationsTagger<Offset> *_listAllocationsTagger;
-  LongStringAllocationsTagger<Offset> *_longStringAllocationsTagger;
-  VectorAllocationsTagger<Offset> *_vectorAllocationsTagger;
-  COWStringAllocationsTagger<Offset> *_cowStringAllocationsTagger;
-  OpenSSLAllocationsTagger<Offset> *_openSSLAllocationsTagger;
-  PythonAllocationsTagger<Offset> *_pythonAllocationsTagger;
+
+  /*
+   * Pre-tag all allocations.  This should be done just once, at the end
+   * of the constructor for the derived class.
+   */
+  void TagAllocations() {
+    _allocationTagHolder =
+        new Allocations::TagHolder<Offset>(_allocationFinder->NumAllocations());
+
+    Allocations::TaggerRunner<Offset> runner(
+        *_allocationGraph, *_allocationTagHolder, _signatureDirectory);
+
+    runner.RegisterTagger(new UnorderedMapOrSetAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder)));
+
+    runner.RegisterTagger(new MapOrSetAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder)));
+
+    runner.RegisterTagger(new DequeAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder)));
+
+    runner.RegisterTagger(new ListAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder)));
+
+    runner.RegisterTagger(new LongStringAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory));
+
+    runner.RegisterTagger(new VectorAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder)));
+
+    runner.RegisterTagger(new COWStringAllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory));
+
+    runner.RegisterTagger(new OpenSSLAllocationsTagger<Offset>(
+        *(_allocationTagHolder), _moduleDirectory, _virtualAddressMap));
+
+    runner.RegisterTagger(new PythonAllocationsTagger<Offset>(
+        *(_allocationTagHolder), _moduleDirectory));
+
+    runner.ResolveAllAllocationTags();
+  }
 };
 }  // namespace chap

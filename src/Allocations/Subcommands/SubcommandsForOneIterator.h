@@ -5,7 +5,7 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/SetBasedCommand.h"
 #include "../../ProcessImage.h"
-#include "../PatternRecognizerRegistry.h"
+#include "../PatternDescriberRegistry.h"
 #include "../Visitors/DefaultVisitorFactories.h"
 #include "Subcommand.h"
 namespace chap {
@@ -18,22 +18,22 @@ class SubcommandsForOneIterator {
       const ProcessImage<Offset>& processImage,
       typename Iterator::Factory& iteratorFactory,
       typename Visitors::DefaultVisitorFactories<Offset>& visitorFactories,
-      const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
+      const PatternDescriberRegistry<Offset>& patternDescriberRegistry)
       : _iteratorFactory(iteratorFactory),
         _countSubcommand(processImage, visitorFactories._counterFactory,
-                         iteratorFactory, patternRecognizerRegistry),
+                         iteratorFactory, patternDescriberRegistry),
         _summarizeSubcommand(processImage, visitorFactories._summarizerFactory,
-                             iteratorFactory, patternRecognizerRegistry),
+                             iteratorFactory, patternDescriberRegistry),
         _enumerateSubcommand(processImage, visitorFactories._enumeratorFactory,
-                             iteratorFactory, patternRecognizerRegistry),
+                             iteratorFactory, patternDescriberRegistry),
         _listSubcommand(processImage, visitorFactories._listerFactory,
-                        iteratorFactory, patternRecognizerRegistry),
+                        iteratorFactory, patternDescriberRegistry),
         _showSubcommand(processImage, visitorFactories._showerFactory,
-                        iteratorFactory, patternRecognizerRegistry),
+                        iteratorFactory, patternDescriberRegistry),
         _describeSubcommand(processImage, visitorFactories._describerFactory,
-                            iteratorFactory, patternRecognizerRegistry),
+                            iteratorFactory, patternDescriberRegistry),
         _explainSubcommand(processImage, visitorFactories._explainerFactory,
-                           iteratorFactory, patternRecognizerRegistry) {}
+                           iteratorFactory, patternDescriberRegistry) {}
 
   void RegisterSubcommands(Commands::Runner& runner) {
     RegisterSubcommand(runner, _countSubcommand);

@@ -31,7 +31,7 @@
 #include "../Iterators/ThreadOnlyAnchored.h"
 #include "../Iterators/Unreferenced.h"
 #include "../Iterators/Used.h"
-#include "../PatternRecognizerRegistry.h"
+#include "../PatternDescriberRegistry.h"
 #include "../Visitors/DefaultVisitorFactories.h"
 #include "SubcommandsForOneIterator.h"
 namespace chap {
@@ -43,79 +43,79 @@ class DefaultSubcommands {
   DefaultSubcommands(
       const ProcessImage<Offset> &processImage,
       const Describer<Offset> &describer,
-      const PatternRecognizerRegistry<Offset> &patternRecognizerRegistry)
+      const PatternDescriberRegistry<Offset> &patternDescriberRegistry)
       : _defaultVisitorFactories(describer),
         _singleAllocationSubcommands(
             processImage, _singleAllocationIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _allocationsSubcommands(processImage, _allocationsIteratorFactory,
                                 _defaultVisitorFactories,
-                                patternRecognizerRegistry),
+                                patternDescriberRegistry),
         _usedSubcommands(processImage, _usedIteratorFactory,
-                         _defaultVisitorFactories, patternRecognizerRegistry),
+                         _defaultVisitorFactories, patternDescriberRegistry),
         _freeSubcommands(processImage, _freeIteratorFactory,
-                         _defaultVisitorFactories, patternRecognizerRegistry),
+                         _defaultVisitorFactories, patternDescriberRegistry),
         _threadCachedSubcommands(processImage, _threadCachedIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternRecognizerRegistry),
+                                 patternDescriberRegistry),
         _leakedSubcommands(processImage, _leakedIteratorFactory,
-                           _defaultVisitorFactories, patternRecognizerRegistry),
+                           _defaultVisitorFactories, patternDescriberRegistry),
         _unreferencedSubcommands(processImage, _unreferencedIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternRecognizerRegistry),
+                                 patternDescriberRegistry),
         _anchoredSubcommands(processImage, _anchoredIteratorFactory,
                              _defaultVisitorFactories,
-                             patternRecognizerRegistry),
+                             patternDescriberRegistry),
         _anchorPointsSubcommands(processImage, _anchorPointsIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternRecognizerRegistry),
+                                 patternDescriberRegistry),
         _staticAnchoredSubcommands(processImage, _staticAnchoredIteratorFactory,
                                    _defaultVisitorFactories,
-                                   patternRecognizerRegistry),
+                                   patternDescriberRegistry),
         _staticAnchorPointsSubcommands(
             processImage, _staticAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _stackAnchoredSubcommands(processImage, _stackAnchoredIteratorFactory,
                                   _defaultVisitorFactories,
-                                  patternRecognizerRegistry),
+                                  patternDescriberRegistry),
         _stackAnchorPointsSubcommands(
             processImage, _stackAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _registerAnchoredSubcommands(
             processImage, _registerAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _registerAnchorPointsSubcommands(
             processImage, _registerAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _externalAnchoredSubcommands(
             processImage, _externalAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _externalAnchorPointsSubcommands(
             processImage, _externalAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _threadOnlyAnchoredSubcommands(
             processImage, _threadOnlyAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _threadOnlyAnchorPointsSubcommands(
             processImage, _threadOnlyAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternRecognizerRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry),
         _incomingSubcommands(processImage, _incomingIteratorFactory,
                              _defaultVisitorFactories,
-                             patternRecognizerRegistry),
+                             patternDescriberRegistry),
         _exactIncomingSubcommands(processImage, _exactIncomingIteratorFactory,
                                   _defaultVisitorFactories,
-                                  patternRecognizerRegistry),
+                                  patternDescriberRegistry),
         _outgoingSubcommands(processImage, _outgoingIteratorFactory,
                              _defaultVisitorFactories,
-                             patternRecognizerRegistry),
+                             patternDescriberRegistry),
         _freeOutgoingSubcommands(processImage, _freeOutgoingIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternRecognizerRegistry),
+                                 patternDescriberRegistry),
         _chainSubcommands(processImage, _chainIteratorFactory,
-                          _defaultVisitorFactories, patternRecognizerRegistry),
+                          _defaultVisitorFactories, patternDescriberRegistry),
         _reverseChainSubcommands(processImage, _reverseChainIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternRecognizerRegistry) {}
+                                 patternDescriberRegistry) {}
 
   void RegisterSubcommands(Commands::Runner &runner) {
     _singleAllocationSubcommands.RegisterSubcommands(runner);

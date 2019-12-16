@@ -40,6 +40,7 @@ class Tagger {
   };
 
   Tagger() {}
+  virtual ~Tagger() {}
 
   /*
    * Look at the allocation to figure out if the contents of this allocation
@@ -60,8 +61,7 @@ class Tagger {
    */
   virtual bool TagFromReferenced(
       const ContiguousImage<Offset>& /* contiguousImage */,
-      Reader& /* reader */,
-      AllocationIndex /* index */, Phase /* phase */,
+      Reader& /* reader */, AllocationIndex /* index */, Phase /* phase */,
       const Allocation& /* allocation */,
       const AllocationIndex* /* unresolvedOutgoing */) {
     return true;

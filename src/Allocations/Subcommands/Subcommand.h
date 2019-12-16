@@ -9,7 +9,7 @@
 #include "../../Commands/Subcommand.h"
 #include "../ExtendedVisitor.h"
 #include "../Finder.h"
-#include "../PatternRecognizerRegistry.h"
+#include "../PatternDescriberRegistry.h"
 #include "../ReferenceConstraint.h"
 #include "../SignatureChecker.h"
 namespace chap {
@@ -24,12 +24,12 @@ class Subcommand : public Commands::Subcommand {
 
              typename Visitor::Factory& visitorFactory,
              typename Iterator::Factory& iteratorFactory,
-             const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry)
+             const PatternDescriberRegistry<Offset>& patternDescriberRegistry)
       : Commands::Subcommand(visitorFactory.GetCommandName(),
                              iteratorFactory.GetSetName()),
         _visitorFactory(visitorFactory),
         _iteratorFactory(iteratorFactory),
-        _patternRecognizerRegistry(patternRecognizerRegistry),
+        _patternDescriberRegistry(patternDescriberRegistry),
         _processImage(processImage) {}
 
   void Run(Commands::Context& context) {
@@ -79,7 +79,7 @@ class Subcommand : public Commands::Subcommand {
 
     bool signatureOrPatternError = false;
     SignatureChecker<Offset> signatureChecker(signatureDirectory,
-                                              _patternRecognizerRegistry,
+                                              _patternDescriberRegistry,
                                               addressMap, signatureString);
     if (signatureChecker.UnrecognizedSignature()) {
       error << "Signature \"" << signatureString << "\" is not recognized.\n";
@@ -197,8 +197,8 @@ class Subcommand : public Commands::Subcommand {
               *graph, signatureDirectory, addressMap, referenceConstraints);
     }
 
-    ExtendedVisitor<Offset, Visitor> extendedVisitor(
-        context, _processImage, _patternRecognizerRegistry);
+    ExtendedVisitor<Offset, Visitor> extendedVisitor(context, _processImage,
+                                                     _patternDescriberRegistry);
     if (extendedVisitor.HasErrors() || switchError || signatureOrPatternError) {
       return;
     }
@@ -299,7 +299,7 @@ class Subcommand : public Commands::Subcommand {
  private:
   typename Visitor::Factory& _visitorFactory;
   typename Iterator::Factory& _iteratorFactory;
-  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
+  const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
   const ProcessImage<Offset>& _processImage;
 
   bool AddReferenceConstraints(
@@ -333,7 +333,7 @@ class Subcommand : public Commands::Subcommand {
           switchError = true;
         }
       }
-      constraints.emplace_back(signatureDirectory, _patternRecognizerRegistry,
+      constraints.emplace_back(signatureDirectory, _patternDescriberRegistry,
                                addressMap, signature, count, wantUsed,
                                boundaryType, referenceType, finder, graph);
       if (constraints.back().UnrecognizedSignature()) {

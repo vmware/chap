@@ -9,7 +9,7 @@
 #include "AnchorChainLister.h"
 #include "AnchorDirectory.h"
 #include "Finder.h"
-#include "PatternRecognizerRegistry.h"
+#include "PatternDescriberRegistry.h"
 #include "SignatureDirectory.h"
 
 namespace chap {
@@ -21,11 +21,11 @@ class Describer : public chap::Describer<Offset> {
   typedef typename Finder<Offset>::Allocation Allocation;
   Describer(const InModuleDescriber<Offset>& inModuleDescriber,
             const StackDescriber<Offset>& stackDescriber,
-            const PatternRecognizerRegistry<Offset>& patternRecognizerRegistry,
+            const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
             const ProcessImage<Offset>& processImage)
       : _inModuleDescriber(inModuleDescriber),
         _stackDescriber(stackDescriber),
-        _patternRecognizerRegistry(patternRecognizerRegistry),
+        _patternDescriberRegistry(patternDescriberRegistry),
         _signatureDirectory(processImage.GetSignatureDirectory()),
         _anchorDirectory(processImage.GetAnchorDirectory()),
         _addressMap(processImage.GetVirtualAddressMap()),
@@ -107,8 +107,8 @@ class Describer : public chap::Describer<Offset> {
         output << "\n";
       }
     }
-    _patternRecognizerRegistry.Describe(context, index, allocation, isUnsigned,
-                                        explain);
+    _patternDescriberRegistry.Describe(context, index, allocation, isUnsigned,
+                                       explain);
     if (explain) {
       /*
        * We might at some point want to explain free allocations.  That
@@ -134,7 +134,7 @@ class Describer : public chap::Describer<Offset> {
  private:
   const InModuleDescriber<Offset>& _inModuleDescriber;
   const StackDescriber<Offset>& _stackDescriber;
-  const PatternRecognizerRegistry<Offset>& _patternRecognizerRegistry;
+  const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
   const SignatureDirectory<Offset>& _signatureDirectory;
   const AnchorDirectory<Offset>& _anchorDirectory;
   const VirtualAddressMap<Offset>& _addressMap;
