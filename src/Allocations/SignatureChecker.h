@@ -17,12 +17,13 @@ class SignatureChecker {
  public:
   typedef typename Finder<Offset>::Allocation Allocation;
   enum CheckType {
-    NO_CHECK_NEEDED,
-    UNRECOGNIZED_SIGNATURE,
-    UNRECOGNIZED_PATTERN,
-    UNSIGNED_ONLY,
-    SIGNATURE_CHECK,
-    PATTERN_CHECK
+    NO_CHECK_NEEDED,         // This signature checker does nothing
+    UNRECOGNIZED_SIGNATURE,  // Error code - indicates unknown signature
+    UNRECOGNIZED_PATTERN,    // Error code - indicates unknown pattern
+    UNSIGNED_ONLY,           // Must be unsigned
+    SIGNATURE_CHECK,         // Must match the specified signature
+    PATTERN_CHECK,           // Must match the specified pattern
+    UNRECOGNIZED_ONLY        // Must be unsigned and not patch a pattern
   };
   SignatureChecker(
       const SignatureDirectory<Offset>& directory,
@@ -40,6 +41,11 @@ class SignatureChecker {
     }
     if (signature == "-") {
       _checkType = UNSIGNED_ONLY;
+      return;
+    }
+
+    if (signature == "?") {
+      _checkType = UNRECOGNIZED_ONLY;
       return;
     }
 
@@ -92,6 +98,7 @@ class SignatureChecker {
         return false;
       case PATTERN_CHECK:
       case UNSIGNED_ONLY:
+      case UNRECOGNIZED_ONLY:
       case SIGNATURE_CHECK:
         const char* image;
         Offset numBytesFound =
@@ -111,6 +118,10 @@ class SignatureChecker {
         } else if (_checkType == UNSIGNED_ONLY) {
           return ((size < sizeof(Offset)) ||
                   !_directory.IsMapped(*((Offset*)image)));
+        } else if (_checkType == UNRECOGNIZED_ONLY) {
+          return (((size < sizeof(Offset)) ||
+                   !_directory.IsMapped(*((Offset*)image)))) &&
+                 (_patternDescriberRegistry.GetTagIndex(index) == 0);
         } else {
           return ((size >= sizeof(Offset)) &&
                   !(_signatures.find(*((Offset*)image)) == _signatures.end()));
