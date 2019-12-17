@@ -144,7 +144,7 @@ A missing reference would be a case where a reference exists but `chap` can't de
 
 ## Allocation Signatures
 
-A **signature** is a pointer at the very start of an allocation to memory that is not writable.   In the case of 'C++' a **signature** might point to a vtable, which can be used to identify the name of a class or struct associated with the given allocation.  A **signature** might also point to a function or a constant string literal.  Many commands in chap allow one to use a signature, either by name or numeric value to limit the scope of the command.
+A **signature** is a pointer at the very start of an allocation to memory that is not writable.   In the case of 'C++' a **signature** might point to a vtable, which can be used to identify the name of a class or struct associated with the given allocation.  A **signature** might also point to a function or a constant string literal.  Many commands in chap allow one to use a signature, either by name or numeric value to limit the scope of the command.  Anywhere one can use a signature, one can alternatively use **-** to limit the scope to **unsigned** allocations, which are allocations that have no signature. 
 
 `chap` has several ways to attempt to map signatures to names.  One is that `chap` will always attempt, using just the core, to follow the signature to a vtable to the typeinfo to the mangled type name and unmangle the name.  Another, if the mangled name is not available in the core, is to use a combination of the core and the associated binaries to obtain the mangled type name.  Another is to create requests for gdb, in a file called _core-path_.symreqs, depend on the user to run that as a script from gdb, and read the results from a file called _core-path_.symdefs.  
 
@@ -235,6 +235,8 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * SSL_CTX - SSL_CTX type associated with openssl
 * PyDictKeysObject -PyDictKeysObject associated with python (works python for 3.5, not for python 2.7)
 
+Anywhere one can provide a pattern name preceded by '%', one can use **?** to narrow the scope to unsigned allocations that do not match any pattern.
+
 ## Allocation Sets
 
 `chap` commands operate on sets of allocations.  The simplest of the sets are based on whether the allocations are used or free and for the used ones whether they are anchored or leaked, and for the anchored allocations, whether or not they are allocated in a certain way.  For all of these sets, the allocations are visited in increasing order of address.  Here is a rough hierarchy:
@@ -286,6 +288,9 @@ show used -
 # Show all the leaked allocations that appear to be instances of SSL_CTX from openssl.
 show leaked %SSL_CTX
 
+# Show all used allocations that have no signature and don't match a pattern:
+show used ?
+
 ```
 
 
@@ -329,15 +334,15 @@ The *new-extension-state* gives a name to the extension state used for evaluatin
 
 The *member-constraints*, if present, have the following parts:
 
-[ *extension-state* | *signature* | *pattern* ][ ``@`` *offset-in-hex*]
+[ *extension-state* | *signature* | *pattern* | **-** | **?** ][ ``@`` *offset-in-hex*]
 
-If an *extension-state* is supplied, the given *extension-rule* is applicable only in that *extension-state*.  If a *signature* or *pattern* is supplied, extensions can only be applied to members of the set that have that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.  If the *direction* is **->** or **~>** the reference from the member allocation must appear at that offset in the member allocation.  If the *direction* is **<-** the reference from the extension candidate to the member allocation must refer to that offset in the member allocation.
+If an *extension-state* is supplied, the given *extension-rule* is applicable only in that *extension-state*.  If a *signature* or *pattern* is supplied in the member-constraints, extensions can only be applied to members of the set that have that *signature* or *pattern*.  If **-** or **?** is supplied in the member-constraints, extensions can only be applied to members of the set that are **unsigned** or **unrecognized**, respectively.  The meaning of the offset depends on the specified *direction*.  If the *direction* is **->** or **~>** the reference from the member allocation must appear at that offset in the member allocation.  If the *direction* is **<-** the reference from the extension candidate to the member allocation must refer to that offset in the member allocation.
 
 The *extension-constraints*, if present, have the following parts:
 
-[ *signature* | *pattern* ][``@`` *offset-in-hex*]
+[ *signature* | *pattern* | **-** | **?**][``@`` *offset-in-hex*]
 
-If a *signature* or *pattern* is supplied, allocations reachable from the given member by traversing in the specified *direction* can be added only if they match that *signature* or *pattern*.  The meaning of the offset depends on the specified *direction*.   If the *direction* is **->** or **~>** the reference from the member allocation must refer to the specified offset in the extension candidate.  If the *direction* is **<-** the reference to the member allocation must appear at the specified offset in the extension candidate.
+If a *signature* or *pattern* is supplied in the extension-constraints, allocations reachable from the given member by traversing in the specified *direction* can be added only if they match that *signature* or *pattern*.  If **-** or **?** is supplied in the extension-constraints, extensions can only be applied to members of the set that are **unsigned** or **unrecognized**, respectively.  The meaning of the offset depends on the specified *direction*.   If the *direction* is **->** or **~>** the reference from the member allocation must refer to the specified offset in the extension candidate.  If the *direction* is **<-** the reference to the member allocation must appear at the specified offset in the extension candidate.
 
 If you want to understand a bit more how the extensions are being applied, or perhaps to have information about references even when they would extend to an allocation that has already been reached, add **/commentExtensions true** to the end of your chap command.
 
@@ -536,6 +541,7 @@ Here are some strategies for figuring out the type of an unsigned, unreferenced 
 * Look at the size of the allocation, keeping in mind that typically the caller of malloc() or calloc() or realloc() receives a result that is at least large enough to satisfy the request.  If the allocation is sufficiently large, and the size happens to be fixed in the code (as opposed to the result of some runtime calculation) you can run **objdump -Cd** on each of the modules reported by **list modules** and look for uses of that constant size.  For example, for an allocation of size 0x708 you might look for "$0x708" or for "$0x700" in the output of **objdump -Cd**.
 * Look for similar anchored allocations of the same size.  If you find such an anchored allocation you can always follow the path from the anchor point to the given allocation to understand the type of that allocation.
 * Look for anchored allocations referenced by the given leaked allocation, again with the idea that the type of an anchored allocation is more easily derived.
+* Use the **describe** command to check whether the allocation matches a **pattern**.  Although many patterns are identified by incoming references and so will not be found for unreferenced objects, some patterns don't require incoming references. 
 
 Sometimes a leak can still be rooted even if no unreferenced objects are involved, because sometimes there are back pointers.  For example, consider a class Foo that contains an std::map.  All the allocations for the std::map point to the parent, with the root of the red black tree pointing to a header node embedded in the allocation that has the std::map.
 
@@ -557,7 +563,7 @@ Generally, the first thing one will want to do in analyzing memory growth is to 
 TODO: add some examples here.
 
 #### Analyzing Memory Growth Due to Used Allocations
-If the results of **count writable** and **count used** suggest that used allocations occupy most of the writable memory, probably the next thing you will want to do is to make sure that chap is set up properly to handle named signatures, as described [here](#allocation-signatures) then use **redirect on** to redirect output to a file then **summarize used** to get an overall summary of the used allocations, sorted by the count for each type, with the unsigned allocations further broken down to have counts by size.  Alternatively, **summarize used /sortby bytes** will sort by total bytes used directly for allocations of a given type, with the unsigned allocations broken down by size and again sorted by total bytes used directly for allocations of a given size.  It is quite common that unsigned allocations will dominate but it can be useful to scan down to the tallies for particular signatures because often one particular count can stand out as being too high and often allocations with the given suspect signature can hold many unsigned allocations in memory, particularly if the class or struct in question has a field that is some sort of collection.  In the special case that the results of **count leaked** are similar to the results of **count used**, one can fall back on techniques for analyzing memory leaks but otherwise one is typically looking for container growth (for example,  a large set or map or queue).
+If the results of **count writable** and **count used** suggest that used allocations occupy most of the writable memory, probably the next thing you will want to do is to make sure that chap is set up properly to handle named signatures, as described [here](#allocation-signatures) then use **redirect on** to redirect output to a file then **summarize used** to get an overall summary of the used allocations, sorted by the count for each type that has a signature and for each matched pattern, with both the allocations that match patterns and the unrecognized allocations (no signature or matched pattern) further broken down to have counts by size.  Alternatively, **summarize used /sortby bytes** will sort by total bytes used directly for allocations of a given signed type or pattern, with the allocations that match patterns and unrecognized allocations broken down by size and again sorted by total bytes used directly for allocations of a given size.  It can be useful to scan down to the tallies for particular signatures because often one particular count can stand out as being too high and often allocations with the given suspect signature can hold many unsigned allocations in memory, particularly if the class or struct in question has a field that is some sort of collection.  In the special case that the results of **count leaked** are similar to the results of **count used**, one can fall back on techniques for analyzing memory leaks but otherwise one is typically looking for container growth (for example,  a large set or map or queue).
 
 Once one has a theory about the cause of the growth (for example, which container is too large) it is desirable to assess the actual cost of the growth associated with that theory.  For example in the case of a large std::map one might want to understand the cost of the allocations used to represent the std::map, as well as any other objects held in memory by this map.  The best way to do this is often to use the **/extend** switch to attempt to walk a graph of the relevant objects, generally as part of the **summarize** command or the **describe** command.
 
