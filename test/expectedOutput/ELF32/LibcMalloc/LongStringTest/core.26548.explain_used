@@ -17,6 +17,8 @@ Static address 0xf7fb8ebc references 0x804c008.
 
 Anchored allocation at 8050a10 of size 2c
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x804b084
+that has 2 entries.
 The allocation at 0x8050a10 appears to be directly statically anchored.
 Address 0x804b08c is at offset 0x8c in range
 [0x804b000, 804c000)
@@ -56,6 +58,8 @@ Stack address 0xffffd014 references 0x8050a58.
 
 Anchored allocation at 8050a70 of size 2c
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x804b084
+that has 2 entries.
 The allocation at 0x8050a70 appears to be directly statically anchored.
 Address 0x804b090 is at offset 0x90 in range
 [0x804b000, 804c000)

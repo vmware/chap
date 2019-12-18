@@ -19,7 +19,7 @@ class PatternDescriber {
         _finder(processImage.GetAllocationFinder()),
         _graph(processImage.GetAllocationGraph()),
         _moduleDirectory(processImage.GetModuleDirectory()),
-        _tagHolder(processImage.GetAllocationTagHolder()) {}
+        _tagHolder(*(processImage.GetAllocationTagHolder())) {}
 
   const std::string& GetName() const { return _name; }
 
@@ -37,7 +37,7 @@ class PatternDescriber {
   const Finder<Offset>* _finder;
   const Graph<Offset>* _graph;
   const ModuleDirectory<Offset>& _moduleDirectory;
-  const Allocations::TagHolder<Offset>* _tagHolder;
+  const Allocations::TagHolder<Offset>& _tagHolder;
 };
 }  // namespace Allocations
 }  // namespace chap

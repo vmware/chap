@@ -17,6 +17,8 @@ Static address 0x7ffff7dd2d30 references 0x604010.
 
 Anchored allocation at 615c20 of size 48
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x603120
+that has 2 entries.
 The allocation at 0x615c20 appears to be directly statically anchored.
 Address 0x603130 is at offset 0x130 in range
 [0x603000, 604000)
@@ -56,6 +58,8 @@ Stack address 0x7fffffffde40 references 0x615c90.
 
 Anchored allocation at 615cb0 of size 48
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x603120
+that has 2 entries.
 The allocation at 0x615cb0 appears to be directly statically anchored.
 Address 0x603138 is at offset 0x138 in range
 [0x603000, 604000)

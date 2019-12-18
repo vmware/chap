@@ -29,6 +29,8 @@ which references 0x609010
 
 Anchored allocation at 609040 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608360
+that has 1 entries.
 The allocation at 0x609040 appears to be directly statically anchored.
 Address 0x608370 is at offset 0x370 in range
 [0x608000, 609000)
@@ -76,6 +78,8 @@ which references 0x609080
 
 Anchored allocation at 6090b0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608390
+that has 2 entries.
 The allocation at 0x6090b0 appears to be directly statically anchored.
 Address 0x6083a0 is at offset 0x3a0 in range
 [0x608000, 609000)
@@ -109,6 +113,8 @@ which references 0x6090f0
 
 Anchored allocation at 609120 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608390
+that has 2 entries.
 The allocation at 0x609120 appears to be directly statically anchored.
 Address 0x6083b0 is at offset 0x3b0 in range
 [0x608000, 609000)
@@ -142,6 +148,8 @@ which references 0x609160
 
 Anchored allocation at 609190 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6083c0
+that has 2 entries.
 The allocation at 0x609190 appears to be directly statically anchored.
 Address 0x6083d0 is at offset 0x3d0 in range
 [0x608000, 609000)
@@ -175,6 +183,8 @@ which references 0x6091c0
 
 Anchored allocation at 6091f0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6083c0
+that has 2 entries.
 The allocation at 0x6091f0 appears to be directly statically anchored.
 Address 0x6083d8 is at offset 0x3d8 in range
 [0x608000, 609000)
@@ -186,6 +196,8 @@ Static address 0x6083d8 references 0x6091f0.
 
 Anchored allocation at 609220 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6083f0
+that has 2 entries.
 The allocation at 0x609220 appears to be directly statically anchored.
 Address 0x608400 is at offset 0x400 in range
 [0x608000, 609000)
@@ -204,6 +216,8 @@ Static address 0x608408 references 0x609220.
 
 Anchored allocation at 609250 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6083f0
+that has 2 entries.
 The allocation at 0x609250 appears to be directly statically anchored.
 Address 0x608410 is at offset 0x410 in range
 [0x608000, 609000)
@@ -215,6 +229,8 @@ Static address 0x608410 references 0x609250.
 
 Anchored allocation at 609280 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608420
+that has 2 entries.
 The allocation at 0x609280 appears to be directly statically anchored.
 Address 0x608430 is at offset 0x430 in range
 [0x608000, 609000)
@@ -233,6 +249,8 @@ Static address 0x608438 references 0x609280.
 
 Anchored allocation at 6092b0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608420
+that has 2 entries.
 The allocation at 0x6092b0 appears to be directly statically anchored.
 Address 0x608440 is at offset 0x440 in range
 [0x608000, 609000)
@@ -259,6 +277,8 @@ which references 0x6092e0
 
 Anchored allocation at 609310 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608450
+that has 3 entries.
 The allocation at 0x609310 appears to be directly statically anchored.
 Address 0x608468 is at offset 0x468 in range
 [0x608000, 609000)
@@ -285,6 +305,8 @@ which references 0x609350
 
 Anchored allocation at 609380 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608450
+that has 3 entries.
 The allocation at 0x609380 appears to be directly statically anchored.
 Address 0x608460 is at offset 0x460 in range
 [0x608000, 609000)
@@ -315,6 +337,8 @@ Stack address 0x7fffffffe0c0 references 0x6093c0.
 
 Anchored allocation at 6093f0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608450
+that has 3 entries.
 The allocation at 0x6093f0 appears to be directly statically anchored.
 Address 0x608470 is at offset 0x470 in range
 [0x608000, 609000)
@@ -347,6 +371,8 @@ which references 0x609430
 
 Anchored allocation at 609460 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608480
+that has 3 entries.
 The allocation at 0x609460 appears to be directly statically anchored.
 Address 0x608498 is at offset 0x498 in range
 [0x608000, 609000)
@@ -383,6 +409,8 @@ which references 0x609490
 
 Anchored allocation at 6094c0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608480
+that has 3 entries.
 The allocation at 0x6094c0 appears to be directly statically anchored.
 Address 0x608490 is at offset 0x490 in range
 [0x608000, 609000)
@@ -419,6 +447,8 @@ which references 0x6094f0
 
 Anchored allocation at 609520 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608480
+that has 3 entries.
 The allocation at 0x609520 appears to be directly statically anchored.
 Address 0x6084a0 is at offset 0x4a0 in range
 [0x608000, 609000)
@@ -435,6 +465,8 @@ which references 0x609520
 
 Anchored allocation at 609550 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6084b0
+that has 3 entries.
 The allocation at 0x609550 appears to be directly statically anchored.
 Address 0x6084c8 is at offset 0x4c8 in range
 [0x608000, 609000)
@@ -446,6 +478,8 @@ Static address 0x6084c8 references 0x609550.
 
 Anchored allocation at 609580 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6084b0
+that has 3 entries.
 The allocation at 0x609580 appears to be directly statically anchored.
 Address 0x6084c0 is at offset 0x4c0 in range
 [0x608000, 609000)
@@ -457,6 +491,8 @@ Static address 0x6084c0 references 0x609580.
 
 Anchored allocation at 6095b0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6084b0
+that has 3 entries.
 The allocation at 0x6095b0 appears to be directly statically anchored.
 Address 0x6084d0 is at offset 0x4d0 in range
 [0x608000, 609000)
@@ -468,6 +504,8 @@ Static address 0x6084d0 references 0x6095b0.
 
 Anchored allocation at 6095e0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6084e0
+that has 3 entries.
 The allocation at 0x6095e0 appears to be directly statically anchored.
 Address 0x6084f8 is at offset 0x4f8 in range
 [0x608000, 609000)
@@ -479,6 +517,8 @@ Static address 0x6084f8 references 0x6095e0.
 
 Anchored allocation at 609610 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6084e0
+that has 3 entries.
 The allocation at 0x609610 appears to be directly statically anchored.
 Address 0x6084f0 is at offset 0x4f0 in range
 [0x608000, 609000)
@@ -490,6 +530,8 @@ Static address 0x6084f0 references 0x609610.
 
 Anchored allocation at 609640 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x6084e0
+that has 3 entries.
 The allocation at 0x609640 appears to be directly statically anchored.
 Address 0x608500 is at offset 0x500 in range
 [0x608000, 609000)
@@ -501,6 +543,8 @@ Static address 0x608500 references 0x609640.
 
 Anchored allocation at 609670 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609670 appears to be directly statically anchored.
 Address 0x608528 is at offset 0x528 in range
 [0x608000, 609000)
@@ -512,6 +556,8 @@ Static address 0x608528 references 0x609670.
 
 Anchored allocation at 6096a0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x6096a0 appears to be indirectly statically anchored
 via anchor point 0x609670.
 Address 0x608528 is at offset 0x528 in range
@@ -535,6 +581,8 @@ which references 0x6096a0
 
 Anchored allocation at 6096d0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x6096d0 appears to be indirectly statically anchored
 via anchor point 0x609670.
 Address 0x608528 is at offset 0x528 in range
@@ -560,6 +608,8 @@ which references 0x6096d0
 
 Anchored allocation at 609700 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609700 appears to be directly statically anchored.
 Address 0x608520 is at offset 0x520 in range
 [0x608000, 609000)
@@ -571,6 +621,8 @@ Static address 0x608520 references 0x609700.
 
 Anchored allocation at 609730 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609730 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -586,6 +638,8 @@ which references 0x609730
 
 Anchored allocation at 609760 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609760 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -600,6 +654,8 @@ which references 0x609760
 
 Anchored allocation at 609790 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609790 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -615,6 +671,8 @@ which references 0x609790
 
 Anchored allocation at 6097c0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x6097c0 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -628,6 +686,8 @@ which references 0x6097c0
 
 Anchored allocation at 6097f0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x6097f0 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -644,6 +704,8 @@ which references 0x6097f0
 
 Anchored allocation at 609820 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609820 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -659,6 +721,8 @@ which references 0x609820
 
 Anchored allocation at 609850 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609850 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -675,6 +739,8 @@ which references 0x609850
 
 Anchored allocation at 609880 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609880 appears to be indirectly statically anchored
 via anchor point 0x609700.
 Address 0x608520 is at offset 0x520 in range
@@ -689,6 +755,8 @@ which references 0x609880
 
 Anchored allocation at 6098b0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x6098b0 appears to be indirectly statically anchored
 via anchor point 0x609940.
 Address 0x608530 is at offset 0x530 in range
@@ -704,6 +772,8 @@ which references 0x6098b0
 
 Anchored allocation at 6098e0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x6098e0 appears to be indirectly statically anchored
 via anchor point 0x609940.
 Address 0x608530 is at offset 0x530 in range
@@ -718,6 +788,8 @@ which references 0x6098e0
 
 Anchored allocation at 609910 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609910 appears to be indirectly statically anchored
 via anchor point 0x609940.
 Address 0x608530 is at offset 0x530 in range
@@ -731,6 +803,8 @@ which references 0x609910
 
 Anchored allocation at 609940 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x608510
+that has 16 entries.
 The allocation at 0x609940 appears to be directly statically anchored.
 Address 0x608530 is at offset 0x530 in range
 [0x608000, 609000)
@@ -756,6 +830,8 @@ which references 0x609970
 
 Anchored allocation at 6099a0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe060
+that has 1 entries.
 The allocation at 0x6099a0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe070 is on the live part of the stack for thread 1.
@@ -779,6 +855,8 @@ which references 0x6099e0
 
 Anchored allocation at 609a10 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe090
+that has 2 entries.
 The allocation at 0x609a10 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe0a0 is on the live part of the stack for thread 1.
@@ -798,6 +876,8 @@ which references 0x609a50
 
 Anchored allocation at 609a80 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe090
+that has 2 entries.
 The allocation at 0x609a80 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe0b0 is on the live part of the stack for thread 1.
@@ -817,6 +897,8 @@ which references 0x609ac0
 
 Anchored allocation at 609af0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe0c0
+that has 2 entries.
 The allocation at 0x609af0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe0d0 is on the live part of the stack for thread 1.
@@ -836,6 +918,8 @@ which references 0x609b20
 
 Anchored allocation at 609b50 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe0c0
+that has 2 entries.
 The allocation at 0x609b50 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe0d8 is on the live part of the stack for thread 1.
@@ -843,6 +927,8 @@ Stack address 0x7fffffffe0d8 references 0x609b50.
 
 Anchored allocation at 609b80 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe0f0
+that has 2 entries.
 The allocation at 0x609b80 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe100 is on the live part of the stack for thread 1.
@@ -852,6 +938,8 @@ Stack address 0x7fffffffe108 references 0x609b80.
 
 Anchored allocation at 609bb0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe0f0
+that has 2 entries.
 The allocation at 0x609bb0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe110 is on the live part of the stack for thread 1.
@@ -859,6 +947,8 @@ Stack address 0x7fffffffe110 references 0x609bb0.
 
 Anchored allocation at 609be0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe120
+that has 2 entries.
 The allocation at 0x609be0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe130 is on the live part of the stack for thread 1.
@@ -868,6 +958,8 @@ Stack address 0x7fffffffe138 references 0x609be0.
 
 Anchored allocation at 609c10 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe120
+that has 2 entries.
 The allocation at 0x609c10 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe140 is on the live part of the stack for thread 1.
@@ -885,6 +977,8 @@ which references 0x609c40
 
 Anchored allocation at 609c70 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe150
+that has 3 entries.
 The allocation at 0x609c70 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe168 is on the live part of the stack for thread 1.
@@ -902,6 +996,8 @@ which references 0x609cb0
 
 Anchored allocation at 609ce0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe150
+that has 3 entries.
 The allocation at 0x609ce0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe160 is on the live part of the stack for thread 1.
@@ -919,6 +1015,8 @@ which references 0x609d20
 
 Anchored allocation at 609d50 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe150
+that has 3 entries.
 The allocation at 0x609d50 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe170 is on the live part of the stack for thread 1.
@@ -936,6 +1034,8 @@ which references 0x609d90
 
 Anchored allocation at 609dc0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe180
+that has 3 entries.
 The allocation at 0x609dc0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe198 is on the live part of the stack for thread 1.
@@ -953,6 +1053,8 @@ which references 0x609df0
 
 Anchored allocation at 609e20 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe180
+that has 3 entries.
 The allocation at 0x609e20 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe190 is on the live part of the stack for thread 1.
@@ -970,6 +1072,8 @@ which references 0x609e50
 
 Anchored allocation at 609e80 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe180
+that has 3 entries.
 The allocation at 0x609e80 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
@@ -977,6 +1081,8 @@ Stack address 0x7fffffffe1a0 references 0x609e80.
 
 Anchored allocation at 609eb0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe1b0
+that has 3 entries.
 The allocation at 0x609eb0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
@@ -984,6 +1090,8 @@ Stack address 0x7fffffffe1c8 references 0x609eb0.
 
 Anchored allocation at 609ee0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe1b0
+that has 3 entries.
 The allocation at 0x609ee0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
@@ -991,6 +1099,8 @@ Stack address 0x7fffffffe1c0 references 0x609ee0.
 
 Anchored allocation at 609f10 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe1b0
+that has 3 entries.
 The allocation at 0x609f10 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1d0 is on the live part of the stack for thread 1.
@@ -998,6 +1108,8 @@ Stack address 0x7fffffffe1d0 references 0x609f10.
 
 Anchored allocation at 609f40 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe1e0
+that has 3 entries.
 The allocation at 0x609f40 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1f8 is on the live part of the stack for thread 1.
@@ -1005,6 +1117,8 @@ Stack address 0x7fffffffe1f8 references 0x609f40.
 
 Anchored allocation at 609f70 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe1e0
+that has 3 entries.
 The allocation at 0x609f70 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1f0 is on the live part of the stack for thread 1.
@@ -1012,6 +1126,8 @@ Stack address 0x7fffffffe1f0 references 0x609f70.
 
 Anchored allocation at 609fa0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe1e0
+that has 3 entries.
 The allocation at 0x609fa0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe200 is on the live part of the stack for thread 1.
@@ -1019,6 +1135,8 @@ Stack address 0x7fffffffe200 references 0x609fa0.
 
 Anchored allocation at 609fd0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x609fd0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe228 is on the live part of the stack for thread 1.
@@ -1026,6 +1144,8 @@ Stack address 0x7fffffffe228 references 0x609fd0.
 
 Anchored allocation at 60a000 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a000 appears to be indirectly anchored from
 at least one stack via anchor point 0x609fd0.
 Address 0x7fffffffe228 is on the live part of the stack for thread 1.
@@ -1039,6 +1159,8 @@ which references 0x60a000
 
 Anchored allocation at 60a030 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a030 appears to be indirectly anchored from
 at least one stack via anchor point 0x609fd0.
 Address 0x7fffffffe228 is on the live part of the stack for thread 1.
@@ -1054,6 +1176,8 @@ which references 0x60a030
 
 Anchored allocation at 60a060 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a060 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1061,6 +1185,8 @@ Stack address 0x7fffffffe220 references 0x60a060.
 
 Anchored allocation at 60a090 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a090 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1071,6 +1197,8 @@ which references 0x60a090
 
 Anchored allocation at 60a0c0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a0c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1080,6 +1208,8 @@ which references 0x60a0c0
 
 Anchored allocation at 60a0f0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a0f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1090,6 +1220,8 @@ which references 0x60a0f0
 
 Anchored allocation at 60a120 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a120 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1098,6 +1230,8 @@ which references 0x60a120
 
 Anchored allocation at 60a150 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a150 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1109,6 +1243,8 @@ which references 0x60a150
 
 Anchored allocation at 60a180 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a180 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1119,6 +1255,8 @@ which references 0x60a180
 
 Anchored allocation at 60a1b0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a1b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1130,6 +1268,8 @@ which references 0x60a1b0
 
 Anchored allocation at 60a1e0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a1e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a060.
 Address 0x7fffffffe220 is on the live part of the stack for thread 1.
@@ -1139,6 +1279,8 @@ which references 0x60a1e0
 
 Anchored allocation at 60a210 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a210 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a2a0.
 Address 0x7fffffffe230 is on the live part of the stack for thread 1.
@@ -1149,6 +1291,8 @@ which references 0x60a210
 
 Anchored allocation at 60a240 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a240 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a2a0.
 Address 0x7fffffffe230 is on the live part of the stack for thread 1.
@@ -1158,6 +1302,8 @@ which references 0x60a240
 
 Anchored allocation at 60a270 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a270 appears to be indirectly anchored from
 at least one stack via anchor point 0x60a2a0.
 Address 0x7fffffffe230 is on the live part of the stack for thread 1.
@@ -1166,6 +1312,8 @@ which references 0x60a270
 
 Anchored allocation at 60a2a0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x7fffffffe210
+that has 16 entries.
 The allocation at 0x60a2a0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe230 is on the live part of the stack for thread 1.
@@ -1198,6 +1346,8 @@ which references 0x60a4c0
 
 Anchored allocation at 60a4f0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a2d0
+that has 1 entries.
 The allocation at 0x60a4f0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1226,6 +1376,8 @@ which references 0x60a530
 
 Anchored allocation at 60a560 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a300
+that has 2 entries.
 The allocation at 0x60a560 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1254,6 +1406,8 @@ which references 0x60a5a0
 
 Anchored allocation at 60a5d0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a300
+that has 2 entries.
 The allocation at 0x60a5d0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1282,6 +1436,8 @@ which references 0x60a610
 
 Anchored allocation at 60a640 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a330
+that has 2 entries.
 The allocation at 0x60a640 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1310,6 +1466,8 @@ which references 0x60a670
 
 Anchored allocation at 60a6a0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a330
+that has 2 entries.
 The allocation at 0x60a6a0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1322,6 +1480,8 @@ which references 0x60a6a0
 
 Anchored allocation at 60a6d0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a360
+that has 2 entries.
 The allocation at 0x60a6d0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1334,6 +1494,8 @@ which references 0x60a6d0
 
 Anchored allocation at 60a700 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a360
+that has 2 entries.
 The allocation at 0x60a700 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1346,6 +1508,8 @@ which references 0x60a700
 
 Anchored allocation at 60a730 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a390
+that has 2 entries.
 The allocation at 0x60a730 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1358,6 +1522,8 @@ which references 0x60a730
 
 Anchored allocation at 60a760 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a390
+that has 2 entries.
 The allocation at 0x60a760 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1386,6 +1552,8 @@ which references 0x60a790
 
 Anchored allocation at 60a7c0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a3c0
+that has 3 entries.
 The allocation at 0x60a7c0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1414,6 +1582,8 @@ which references 0x60a800
 
 Anchored allocation at 60a830 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a3c0
+that has 3 entries.
 The allocation at 0x60a830 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1442,6 +1612,8 @@ which references 0x60a870
 
 Anchored allocation at 60a8a0 of size 38
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a3c0
+that has 3 entries.
 The allocation at 0x60a8a0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1470,6 +1642,8 @@ which references 0x60a8e0
 
 Anchored allocation at 60a910 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a3f0
+that has 3 entries.
 The allocation at 0x60a910 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1498,6 +1672,8 @@ which references 0x60a940
 
 Anchored allocation at 60a970 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a3f0
+that has 3 entries.
 The allocation at 0x60a970 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1526,6 +1702,8 @@ which references 0x60a9a0
 
 Anchored allocation at 60a9d0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a3f0
+that has 3 entries.
 The allocation at 0x60a9d0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1538,6 +1716,8 @@ which references 0x60a9d0
 
 Anchored allocation at 60aa00 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a420
+that has 3 entries.
 The allocation at 0x60aa00 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1550,6 +1730,8 @@ which references 0x60aa00
 
 Anchored allocation at 60aa30 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a420
+that has 3 entries.
 The allocation at 0x60aa30 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1562,6 +1744,8 @@ which references 0x60aa30
 
 Anchored allocation at 60aa60 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a420
+that has 3 entries.
 The allocation at 0x60aa60 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1574,6 +1758,8 @@ which references 0x60aa60
 
 Anchored allocation at 60aa90 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a450
+that has 3 entries.
 The allocation at 0x60aa90 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1586,6 +1772,8 @@ which references 0x60aa90
 
 Anchored allocation at 60aac0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a450
+that has 3 entries.
 The allocation at 0x60aac0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1598,6 +1786,8 @@ which references 0x60aac0
 
 Anchored allocation at 60aaf0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a450
+that has 3 entries.
 The allocation at 0x60aaf0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1610,6 +1800,8 @@ which references 0x60aaf0
 
 Anchored allocation at 60ab20 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ab20 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1622,6 +1814,8 @@ which references 0x60ab20
 
 Anchored allocation at 60ab50 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ab50 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1636,6 +1830,8 @@ which references 0x60ab50
 
 Anchored allocation at 60ab80 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ab80 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1652,6 +1848,8 @@ which references 0x60ab80
 
 Anchored allocation at 60abb0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60abb0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1664,6 +1862,8 @@ which references 0x60abb0
 
 Anchored allocation at 60abe0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60abe0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1682,6 +1882,8 @@ which references 0x60abe0
 
 Anchored allocation at 60ac10 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ac10 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1698,6 +1900,8 @@ which references 0x60ac10
 
 Anchored allocation at 60ac40 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ac40 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1716,6 +1920,8 @@ which references 0x60ac40
 
 Anchored allocation at 60ac70 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ac70 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1730,6 +1936,8 @@ which references 0x60ac70
 
 Anchored allocation at 60aca0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60aca0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1758,6 +1966,8 @@ which references 0x60aca0
 
 Anchored allocation at 60acd0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60acd0 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1783,6 +1993,8 @@ which references 0x60acd0
 
 Anchored allocation at 60ad00 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ad00 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1811,6 +2023,8 @@ which references 0x60ad00
 
 Anchored allocation at 60ad30 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ad30 appears to be indirectly anchored from
 at least one register via anchor point 0x60a2d0.
 Register rbx for thread 1 references anchor point 0x60a2d0
@@ -1833,6 +2047,8 @@ which references 0x60ad30
 
 Anchored allocation at 60ad60 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ad60 appears to be indirectly anchored from
 at least one register via anchor point 0x60adf0.
 Register rcx for thread 1 references anchor point 0x60adf0
@@ -1850,6 +2066,8 @@ which references 0x60ad60
 
 Anchored allocation at 60ad90 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60ad90 appears to be indirectly anchored from
 at least one register via anchor point 0x60adf0.
 Register rcx for thread 1 references anchor point 0x60adf0
@@ -1865,6 +2083,8 @@ which references 0x60ad90
 
 Anchored allocation at 60adc0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60adc0 appears to be indirectly anchored from
 at least one register via anchor point 0x60adf0.
 Register rcx for thread 1 references anchor point 0x60adf0
@@ -1878,6 +2098,8 @@ which references 0x60adc0
 
 Anchored allocation at 60adf0 of size 28
 This allocation matches pattern MapOrSetNode.
+This allocation belongs to an std::map or std::set at 0x60a480
+that has 16 entries.
 The allocation at 0x60adf0 appears to be directly anchored from
 at least one register.
 Register rcx for thread 1 references 0x60adf0.
