@@ -40,8 +40,10 @@
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribePointers.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
+#include "VirtualAddressMapCommands/DescribeRelRefs.h"
 #include "VirtualAddressMapCommands/DumpCommand.h"
 #include "VirtualAddressMapCommands/EnumeratePointers.h"
+#include "VirtualAddressMapCommands/EnumerateRelRefs.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
 #include "VirtualAddressMapCommands/SummarizeRanges.h"
 
@@ -171,6 +173,9 @@ class ProcessImageCommandHandler {
         _describePointersSubcommand(processImage.GetVirtualAddressMap(),
                                     _compoundDescriber),
         _enumeratePointersSubcommand(processImage.GetVirtualAddressMap()),
+        _describeRelRefsSubcommand(processImage.GetVirtualAddressMap(),
+                                   _compoundDescriber),
+        _enumerateRelRefsSubcommand(processImage.GetVirtualAddressMap()),
         _summarizeSignaturesSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternDescriberRegistry),
@@ -234,6 +239,8 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _describeWritableSubcommand);
     RegisterSubcommand(r, _describePointersSubcommand);
     RegisterSubcommand(r, _enumeratePointersSubcommand);
+    RegisterSubcommand(r, _describeRelRefsSubcommand);
+    RegisterSubcommand(r, _enumerateRelRefsSubcommand);
     RegisterSubcommand(r, _summarizeSignaturesSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
   }
@@ -284,6 +291,9 @@ class ProcessImageCommandHandler {
       _describePointersSubcommand;
   VirtualAddressMapCommands::EnumeratePointers<Offset>
       _enumeratePointersSubcommand;
+  VirtualAddressMapCommands::DescribeRelRefs<Offset> _describeRelRefsSubcommand;
+  VirtualAddressMapCommands::EnumerateRelRefs<Offset>
+      _enumerateRelRefsSubcommand;
 
   Allocations::Subcommands::SummarizeSignatures<Offset>
       _summarizeSignaturesSubcommand;

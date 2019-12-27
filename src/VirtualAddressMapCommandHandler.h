@@ -86,48 +86,6 @@ class VirtualAddressMapCommandHandler {
     return numTokensAccepted;
   }
 
-  size_t FindRelRef(Commands::Context& context, bool checkOnly) {
-    Commands::Output& output = context.GetOutput();
-    output << std::hex;
-    Offset valueToMatch;
-    size_t numTokensAccepted = 0;
-    if (context.TokenAt(0) == "findrelref") {
-      numTokensAccepted++;
-      if (context.ParseTokenAt(1, valueToMatch)) {
-        numTokensAccepted++;
-      }
-    }
-    if (!checkOnly) {
-      Commands::Error& error = context.GetError();
-      Commands::Output& output = context.GetOutput();
-      if (context.GetNumTokens() != numTokensAccepted ||
-          numTokensAccepted != 2) {
-        error << "Usage: findptr <addr-in-hex>\n";
-      } else {
-        typename AddressMap::const_iterator itEnd = _addressMap.end();
-        for (typename AddressMap::const_iterator it = _addressMap.begin();
-             it != itEnd; ++it) {
-          const char* rangeImage = it.GetImage();
-          if (rangeImage != (const char*)0) {
-            const unsigned char* nextCandidate =
-                (const unsigned char*)(rangeImage);
-
-            Offset addr = it.Base();
-            for (const unsigned char* limit =
-                     nextCandidate + it.Size() - sizeof(int) + 1;
-                 nextCandidate < limit; nextCandidate++) {
-              if (addr + sizeof(int) + *(int*)(nextCandidate) == valueToMatch) {
-                output << std::hex << addr << "\n";
-              }
-              addr++;
-            }
-          }
-        }
-      }
-    }
-    return numTokensAccepted;
-  }
-
   size_t FindUint32(Commands::Context& context, bool checkOnly) {
     Commands::Output& output = context.GetOutput();
     output << std::hex;
@@ -219,9 +177,6 @@ class VirtualAddressMapCommandHandler {
   }
 
   virtual void AddCommandCallbacks(Commands::Runner& r) {
-    r.AddCommand("findrelref",
-                 std::bind(&VirtualAddressMapCommandHandler::FindRelRef, this,
-                           std::placeholders::_1, std::placeholders::_2));
     r.AddCommand("findbytes",
                  std::bind(&VirtualAddressMapCommandHandler::FindBytes, this,
                            std::placeholders::_1, std::placeholders::_2));
