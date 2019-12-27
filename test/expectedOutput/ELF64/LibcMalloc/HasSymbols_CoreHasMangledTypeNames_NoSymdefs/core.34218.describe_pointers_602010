@@ -1,0 +1,14 @@
+Address 0x7ffff7dd2d28 is at offset 0x1d28 in range
+[0x7ffff7dd1000, 7ffff7dd3000)
+for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+and at module-relative virtual address 0xbd28.
+This is readable and writable
+and is mapped into the process image.
+
+Address 0x7ffff7dd2d30 is at offset 0x1d30 in range
+[0x7ffff7dd1000, 7ffff7dd3000)
+for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+and at module-relative virtual address 0xbd30.
+This is readable and writable
+and is mapped into the process image.
+

@@ -80,7 +80,7 @@ summarize outgoing 601010
 enumerate outgoing 601010
 list outgoing 601010
 show outgoing 601010
-findptr 601010
+enumerate pointers 601010
 count incoming 601030
 summarize incoming 601030
 enumerate incoming 601030
@@ -97,5 +97,5 @@ summarize outgoing 601030
 enumerate outgoing 601030
 list outgoing 601030
 show outgoing 601030
-findptr 601030
+enumerate pointers 601030
 DONE

@@ -82,5 +82,5 @@ summarize outgoing 601010
 enumerate outgoing 601010
 list outgoing 601010
 show outgoing 601010
-findptr 601010
+enumerate pointers 601010
 DONE

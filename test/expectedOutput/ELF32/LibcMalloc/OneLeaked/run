@@ -80,7 +80,7 @@ summarize outgoing 804a008
 enumerate outgoing 804a008
 list outgoing 804a008
 show outgoing 804a008
-findptr 804a008
+enumerate pointers 804a008
 count incoming 804a018
 summarize incoming 804a018
 enumerate incoming 804a018
@@ -97,5 +97,5 @@ summarize outgoing 804a018
 enumerate outgoing 804a018
 list outgoing 804a018
 show outgoing 804a018
-findptr 804a018
+enumerate pointers 804a018
 DONE

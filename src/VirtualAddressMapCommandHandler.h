@@ -13,40 +13,6 @@ class VirtualAddressMapCommandHandler {
   VirtualAddressMapCommandHandler(const AddressMap& addressMap)
       : _addressMap(addressMap) {}
 
-  size_t DumpAddressRange(Commands::Context& context, bool checkOnly) {
-    Commands::Output& output = context.GetOutput();
-    Offset startAddr;
-    Offset numBytes;
-    size_t numTokensAccepted = 0;
-    if (context.TokenAt(0) == "dump") {
-      numTokensAccepted++;
-      if (context.ParseTokenAt(1, startAddr)) {
-        numTokensAccepted++;
-        if (context.ParseTokenAt(2, numBytes)) {
-          numTokensAccepted++;
-        }
-      }
-    }
-    if (!checkOnly) {
-      Commands::Error& error = context.GetError();
-      if (context.GetNumTokens() != numTokensAccepted ||
-          numTokensAccepted != 3) {
-        error << "Usage: dump <addr-in-hex> <size-in-hex>\n";
-      } else {
-        const char* image;
-        Offset numBytesFound =
-            _addressMap.FindMappedMemoryImage(startAddr, &image);
-        if (numBytesFound < numBytes) {
-          error << "Only 0x" << std::hex << numBytesFound
-                << " bytes were mapped starting from that address\n";
-          numBytes = numBytesFound;
-        }
-        output.HexDump((const Offset*)image, numBytes);
-      }
-    }
-    return numTokensAccepted;
-  }
-
   size_t StringAt(Commands::Context& context, bool checkOnly) {
     Commands::Output& output = context.GetOutput();
     Offset startAddr;
@@ -67,15 +33,15 @@ class VirtualAddressMapCommandHandler {
         Offset numBytesFound =
             _addressMap.FindMappedMemoryImage(startAddr, &image);
         size_t length = 0;
-        for ( ; length < numBytesFound; ++length) {
+        for (; length < numBytesFound; ++length) {
           char c = image[length];
-          if (c < ' ' || c > 0x7e) {
+          if (c != '\n' && c != '\r' && (c < ' ' || c > 0x7e)) {
             break;
           }
         }
         // TODO - make more robust (for other characters ...)
         // TODO - consider making part of Commands::output
-        output << "\"" << std::string(image, length)  << "\"\n";
+        output << "\"" << std::string(image, length) << "\"\n";
       }
     }
     return numTokensAccepted;
@@ -95,15 +61,15 @@ class VirtualAddressMapCommandHandler {
       Commands::Error& error = context.GetError();
       if (context.GetNumTokens() != numTokensAccepted ||
           numTokensAccepted != 2) {
-        error << "Usage: string <addr-in-hex>\n";
+        error << "Usage: wstring <addr-in-hex>\n";
       } else {
         const char* image;
-        Offset numBytesFound =
-            _addressMap.FindMappedMemoryImage(startAddr, &image);
+        Offset num16BitCharactersFound =
+            _addressMap.FindMappedMemoryImage(startAddr, &image) / 2;
         // TODO - make more robust (for other characters ...)
         // TODO - consider making part of Commands::output
         output << "\"";
-        for (Offset i = 0; i < numBytesFound; ++i) {
+        for (Offset i = 0; i < num16BitCharactersFound; ++i) {
           if (image[i << 1] == 0) {
             break;
           }
@@ -115,47 +81,6 @@ class VirtualAddressMapCommandHandler {
           }
         }
         output << "\"\n";
-      }
-    }
-    return numTokensAccepted;
-  }
-
-  size_t FindPointer(Commands::Context& context, bool checkOnly) {
-    Commands::Output& output = context.GetOutput();
-    output << std::hex;
-    Offset valueToMatch;
-    size_t numTokensAccepted = 0;
-    if (context.TokenAt(0) == "findptr") {
-      numTokensAccepted++;
-      if (context.ParseTokenAt(1, valueToMatch)) {
-        numTokensAccepted++;
-      }
-    }
-    if (!checkOnly) {
-      Commands::Error& error = context.GetError();
-      Commands::Output& output = context.GetOutput();
-      if (context.GetNumTokens() != numTokensAccepted ||
-          numTokensAccepted != 2) {
-        error << "Usage: findptr <addr-in-hex>\n";
-      } else {
-        typename AddressMap::const_iterator itEnd = _addressMap.end();
-        for (typename AddressMap::const_iterator it = _addressMap.begin();
-             it != itEnd; ++it) {
-          Offset numCandidates = it.Size() / sizeof(Offset);
-          const char* rangeImage = it.GetImage();
-          if (rangeImage != (const char*)0) {
-            const Offset* nextCandidate = (const Offset*)(rangeImage);
-
-            for (const Offset* limit = nextCandidate + numCandidates;
-                 nextCandidate < limit; nextCandidate++) {
-              if (*nextCandidate == valueToMatch) {
-                output << ((it.Base()) +
-                           ((const char*)nextCandidate - rangeImage))
-                       << "\n";
-              }
-            }
-          }
-        }
       }
     }
     return numTokensAccepted;
@@ -294,12 +219,6 @@ class VirtualAddressMapCommandHandler {
   }
 
   virtual void AddCommandCallbacks(Commands::Runner& r) {
-    r.AddCommand("dump",
-                 std::bind(&VirtualAddressMapCommandHandler::DumpAddressRange,
-                           this, std::placeholders::_1, std::placeholders::_2));
-    r.AddCommand("findptr",
-                 std::bind(&VirtualAddressMapCommandHandler::FindPointer, this,
-                           std::placeholders::_1, std::placeholders::_2));
     r.AddCommand("findrelref",
                  std::bind(&VirtualAddressMapCommandHandler::FindRelRef, this,
                            std::placeholders::_1, std::placeholders::_2));

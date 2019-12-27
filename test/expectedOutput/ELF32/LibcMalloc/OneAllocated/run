@@ -82,5 +82,5 @@ summarize outgoing 804a008
 enumerate outgoing 804a008
 list outgoing 804a008
 show outgoing 804a008
-findptr 804a008
+enumerate pointers 804a008
 DONE

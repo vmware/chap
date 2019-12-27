@@ -83,7 +83,8 @@ summarize outgoing 602010
 enumerate outgoing 602010
 list outgoing 602010
 show outgoing 602010
-findptr 602010
+enumerate pointers 602010
+describe pointers 602010
 count incoming 613c20
 summarize incoming 613c20
 enumerate incoming 613c20
@@ -100,7 +101,8 @@ summarize outgoing 613c20
 enumerate outgoing 613c20
 list outgoing 613c20
 show outgoing 613c20
-findptr 613c20
+enumerate pointers 613c20
+describe pointers 613c20
 count incoming 613c40
 summarize incoming 613c40
 enumerate incoming 613c40
@@ -117,7 +119,8 @@ summarize outgoing 613c40
 enumerate outgoing 613c40
 list outgoing 613c40
 show outgoing 613c40
-findptr 613c40
+enumerate pointers 613c40
+describe pointers 613c40
 count used B
 count used D
 count used b

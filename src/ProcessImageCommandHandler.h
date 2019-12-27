@@ -38,7 +38,10 @@
 #include "UnorderedMapOrSetNodeDescriber.h"
 #include "VectorBodyDescriber.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
+#include "VirtualAddressMapCommands/DescribePointers.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
+#include "VirtualAddressMapCommands/DumpCommand.h"
+#include "VirtualAddressMapCommands/EnumeratePointers.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
 #include "VirtualAddressMapCommands/SummarizeRanges.h"
 
@@ -59,6 +62,7 @@ class ProcessImageCommandHandler {
                              _patternDescriberRegistry, processImage),
         _describeCommand(_compoundDescriber),
         _explainCommand(_compoundDescriber),
+        _dumpCommand(processImage.GetVirtualAddressMap()),
         _countStacksSubcommand(processImage),
         _listStacksSubcommand(processImage),
         _describeStacksSubcommand(processImage),
@@ -164,6 +168,9 @@ class ProcessImageCommandHandler {
             "writable ranges",
             _virtualMemoryPartition.GetClaimedWritableRanges(),
             _compoundDescriber, _virtualMemoryPartition.UNKNOWN),
+        _describePointersSubcommand(processImage.GetVirtualAddressMap(),
+                                    _compoundDescriber),
+        _enumeratePointersSubcommand(processImage.GetVirtualAddressMap()),
         _summarizeSignaturesSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternDescriberRegistry),
@@ -204,6 +211,7 @@ class ProcessImageCommandHandler {
     r.AddCommand(_showCommand);
     r.AddCommand(_describeCommand);
     r.AddCommand(_explainCommand);
+    r.AddCommand(_dumpCommand);
     RegisterSubcommand(r, _countStacksSubcommand);
     RegisterSubcommand(r, _listStacksSubcommand);
     RegisterSubcommand(r, _describeStacksSubcommand);
@@ -224,6 +232,8 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _summarizeWritableSubcommand);
     RegisterSubcommand(r, _listWritableSubcommand);
     RegisterSubcommand(r, _describeWritableSubcommand);
+    RegisterSubcommand(r, _describePointersSubcommand);
+    RegisterSubcommand(r, _enumeratePointersSubcommand);
     RegisterSubcommand(r, _summarizeSignaturesSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
   }
@@ -245,6 +255,7 @@ class ProcessImageCommandHandler {
   Commands::ShowCommand _showCommand;
   Commands::DescribeCommand<Offset> _describeCommand;
   Commands::ExplainCommand<Offset> _explainCommand;
+  VirtualAddressMapCommands::DumpCommand<Offset> _dumpCommand;
   ThreadMapCommands::CountStacks<Offset> _countStacksSubcommand;
   ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
   ThreadMapCommands::DescribeStacks<Offset> _describeStacksSubcommand;
@@ -269,6 +280,11 @@ class ProcessImageCommandHandler {
       _summarizeWritableSubcommand;
   VirtualAddressMapCommands::ListRanges<Offset> _listWritableSubcommand;
   VirtualAddressMapCommands::DescribeRanges<Offset> _describeWritableSubcommand;
+  VirtualAddressMapCommands::DescribePointers<Offset>
+      _describePointersSubcommand;
+  VirtualAddressMapCommands::EnumeratePointers<Offset>
+      _enumeratePointersSubcommand;
+
   Allocations::Subcommands::SummarizeSignatures<Offset>
       _summarizeSignaturesSubcommand;
 
