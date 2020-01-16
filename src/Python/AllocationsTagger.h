@@ -8,6 +8,7 @@
 #include "../Allocations/Tagger.h"
 #include "../ModuleDirectory.h"
 #include "../VirtualAddressMap.h"
+#include "InfrastructureFinder.h"
 
 namespace chap {
 namespace Python {
