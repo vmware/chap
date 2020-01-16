@@ -1,17 +1,18 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Allocations/Graph.h"
-#include "Allocations/TagHolder.h"
-#include "Allocations/Tagger.h"
-#include "ModuleDirectory.h"
-#include "VirtualAddressMap.h"
+#include "../Allocations/Graph.h"
+#include "../Allocations/TagHolder.h"
+#include "../Allocations/Tagger.h"
+#include "../ModuleDirectory.h"
+#include "../VirtualAddressMap.h"
 
 namespace chap {
+namespace Python {
 template <typename Offset>
-class PythonAllocationsTagger : public Allocations::Tagger<Offset> {
+class AllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Finder<Offset> Finder;
   typedef typename Allocations::Tagger<Offset> Tagger;
@@ -23,30 +24,38 @@ class PythonAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename TagHolder::TagIndex TagIndex;
-  PythonAllocationsTagger(TagHolder& tagHolder,
-                          const ModuleDirectory<Offset>& moduleDirectory)
-      : _tagHolder(tagHolder),
-        _tagIndex(_tagHolder.RegisterTag("%PyDictKeysObject")),
+  AllocationsTagger(const Allocations::Graph<Offset>& graph,
+                    TagHolder& tagHolder,
+                    const ModuleDirectory<Offset>& moduleDirectory,
+                    const InfrastructureFinder<Offset>& infrastructureFinder)
+      : _graph(graph),
+        _finder(graph.GetAllocationFinder()),
+        _tagHolder(tagHolder),
+        _infrastructureFinder(infrastructureFinder),
+        _arenaStructArray(infrastructureFinder.ArenaStructArray()),
+        _dictKeysObjectTagIndex(_tagHolder.RegisterTag("%PyDictKeysObject")),
+        _arenaStructArrayTagIndex(
+            _tagHolder.RegisterTag("%PythonArenaStructArray")),
+        _mallocedArenaTagIndex(_tagHolder.RegisterTag("%PythonMallocedArena")),
         _rangeToFlags(nullptr),
         _candidateBase(0),
         _candidateLimit(0),
-        _enabled(false) {
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             moduleDirectory.begin();
-         it != moduleDirectory.end(); ++it) {
-      if (it->first.find("libpython3") != std::string::npos) {
-        _rangeToFlags = &(it->second);
-        _candidateBase = _rangeToFlags->begin()->_base;
-        _candidateLimit = _rangeToFlags->rbegin()->_limit;
-        _enabled = true;
-        break;
-      }
+        _enabled(_arenaStructArray != 0) {
+    const std::string& libraryPath = _infrastructureFinder.LibraryPath();
+    _rangeToFlags = moduleDirectory.Find(libraryPath);
+    if (libraryPath.find("python3") != std::string::npos) {
+      /*
+       * This, and most of the logic to tag PyDictKeysObject will change
+       * when more general recognition of python types has been provided.
+       */
+      _candidateBase = _infrastructureFinder.LibraryBase();
+      _candidateLimit = _infrastructureFinder.LibraryLimit();
     }
   }
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,
-                         Phase phase, const Allocation& /* allocation */,
+                         Phase phase, const Allocation& allocation,
                          bool /* isUnsigned */) {
     if (!_enabled) {
       return true;  // There is nothing more to check.
@@ -65,6 +74,31 @@ class PythonAllocationsTagger : public Allocations::Tagger<Offset> {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
         {
+          if (allocation.Address() == _arenaStructArray) {
+            _tagHolder.TagAllocation(index, _arenaStructArrayTagIndex);
+            const AllocationIndex* pFirstOutgoing;
+            const AllocationIndex* pPastOutgoing;
+            _graph.GetOutgoing(index, &pFirstOutgoing, &pPastOutgoing);
+            /*
+             * The most common case is that the python arenas are all
+             * allocated by mmap() but it is possible, based on an #ifdef
+             * that the arenas can be allocated via malloc().  This checks
+             * for the latter case in a way that favors the former; if no
+             * arenas are malloced, there will not be any outgoing references
+             * from the array of arena structures.
+             */
+            for (const AllocationIndex* pNextOutgoing = pFirstOutgoing;
+                 pNextOutgoing != pPastOutgoing; pNextOutgoing++) {
+              AllocationIndex arenaCandidateIndex = *pNextOutgoing;
+              Offset arenaCandidate =
+                  _finder.AllocationAt(arenaCandidateIndex)->Address();
+              if (_infrastructureFinder.ArenaStructFor(arenaCandidate) != 0) {
+                _tagHolder.TagAllocation(arenaCandidateIndex,
+                                         _mallocedArenaTagIndex);
+              }
+            }
+            return true;
+          }
           const Offset* offsetLimit = contiguousImage.OffsetLimit();
           const Offset* offsets = contiguousImage.FirstOffset();
           if (offsetLimit - offsets < 5) {
@@ -110,7 +144,7 @@ class PythonAllocationsTagger : public Allocations::Tagger<Offset> {
             }
             _methods.insert(method);
           }
-          _tagHolder.TagAllocation(index, _tagIndex);
+          _tagHolder.TagAllocation(index, _dictKeysObjectTagIndex);
           return true;  // No more checking is needed
         }
         break;
@@ -130,15 +164,21 @@ class PythonAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  TagIndex GetTagIndex() const { return _tagIndex; }
-
  private:
+  const Allocations::Graph<Offset>& _graph;
+  const Allocations::Finder<Offset>& _finder;
   TagHolder& _tagHolder;
-  TagIndex _tagIndex;
+  const InfrastructureFinder<Offset> _infrastructureFinder;
+  const Offset _arenaStructArray;
+  TagIndex _dictKeysObjectTagIndex;
+  TagIndex _arenaStructArrayTagIndex;
+  TagIndex _mallocedArenaTagIndex;
   const typename ModuleDirectory<Offset>::RangeToFlags* _rangeToFlags;
   Offset _candidateBase;
   Offset _candidateLimit;
   bool _enabled;
+
   std::set<Offset> _methods;
 };
+}  // namespace Python
 }  // namespace chap

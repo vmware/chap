@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -55,6 +55,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
        * runs.
        */
       FindModules();
+      Base::_pythonInfrastructureFinder.Resolve();
 
       /*
        * Static anchor ranges should be found after the allocations and modules,
@@ -1106,6 +1107,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          it != Base::_moduleDirectory.end(); ++it) {
       ClaimRangesForModule(it);
     }
+    Base::_moduleDirectory.Resolve();
   }
 
  private:

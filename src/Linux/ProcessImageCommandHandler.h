@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -57,6 +57,7 @@ class ProcessImageCommandHandler
         _libcMallocMmappedAllocationDescriber);
 
     Base::_compoundDescriber.AddDescriber(Base::_stackOverflowGuardDescriber);
+    Base::_compoundDescriber.AddDescriber(Base::_pythonArenaDescriber);
     /*
      * The following should alway be added last because describers are
      * checked in the order given and the first applicable describer applies.

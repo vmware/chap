@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,7 +14,8 @@
 #include "MapOrSetAllocationsTagger.h"
 #include "ModuleDirectory.h"
 #include "OpenSSLAllocationsTagger.h"
-#include "PythonAllocationsTagger.h"
+#include "Python/AllocationsTagger.h"
+#include "Python/InfrastructureFinder.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
 #include "UnorderedMapOrSetAllocationsTagger.h"
@@ -41,7 +42,8 @@ class ProcessImage {
         _unfilledImages(virtualAddressMap),
         _allocationFinder(nullptr),
         _allocationTagHolder(nullptr),
-        _allocationGraph(nullptr) {
+        _allocationGraph(nullptr),
+        _pythonInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -108,6 +110,11 @@ class ProcessImage {
     return _allocationGraph;
   }
 
+  const Python::InfrastructureFinder<Offset> &GetPythonInfrastructureFinder()
+      const {
+    return _pythonInfrastructureFinder;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 
@@ -122,6 +129,7 @@ class ProcessImage {
   Allocations::Graph<Offset> *_allocationGraph;
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
+  Python::InfrastructureFinder<Offset> _pythonInfrastructureFinder;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end
@@ -158,8 +166,9 @@ class ProcessImage {
     runner.RegisterTagger(new OpenSSLAllocationsTagger<Offset>(
         *(_allocationTagHolder), _moduleDirectory, _virtualAddressMap));
 
-    runner.RegisterTagger(new PythonAllocationsTagger<Offset>(
-        *(_allocationTagHolder), _moduleDirectory));
+    runner.RegisterTagger(new Python::AllocationsTagger<Offset>(
+        *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory,
+        _pythonInfrastructureFinder));
 
     runner.ResolveAllAllocationTags();
   }

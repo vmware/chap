@@ -3,10 +3,11 @@
 
 #pragma once
 #include <string.h>
-#include "Allocations/PatternDescriber.h"
-#include "ProcessImage.h"
+#include "../Allocations/PatternDescriber.h"
+#include "../ProcessImage.h"
 
 namespace chap {
+namespace Python {
 template <typename Offset>
 class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
  public:
@@ -86,4 +87,5 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
   mutable Offset _stringTypeObj;
   mutable Allocations::ContiguousImage<Offset> _contiguousImage;
 };
+}  // namespace Python
 }  // namespace chap

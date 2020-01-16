@@ -19,9 +19,14 @@ class ModuleDirectory {
   ModuleDirectory(VirtualMemoryPartition<Offset>& partition)
       : MODULE_ALIGNMENT_GAP("module alignment gap"),
         USED_BY_MODULE("used by module"),
+        _isResolved(false),
         _virtualMemoryPartition(partition),
         _virtualAddressMap(partition.GetAddressMap()) {}
   void AddRange(Offset base, Offset size, std::string name) {
+    if (_isResolved) {
+      // The module directory cannot be changed after it has been resolved.
+      abort();
+    }
     if (!_rangeMapper.MapRange(base, size, name)) {
       std::cerr << "Warning, range [0x" << std::hex << base << ", 0x"
                 << (base + size) << ")\nfor module " << name
@@ -65,6 +70,10 @@ class ModuleDirectory {
   bool ExtendLastRange(Offset moduleBase, Offset newLimit) {
     Offset base;
     Offset size;
+    if (_isResolved) {
+      // The module directory cannot be changed after it has been resolved.
+      abort();
+    }
     std::string name;
     if (!_rangeMapper.FindRange(moduleBase, base, size, name)) {
       return false;
@@ -124,6 +133,8 @@ class ModuleDirectory {
     }
     return false;
   }
+  void Resolve() { _isResolved = true; }
+  bool IsResolved() const { return _isResolved; }
   const_iterator begin() const { return _rangesByName.begin(); }
   const_iterator end() const { return _rangesByName.end(); }
   size_t NumModules() const { return _rangesByName.size(); }
@@ -131,6 +142,7 @@ class ModuleDirectory {
   const char* USED_BY_MODULE;
 
  private:
+  bool _isResolved;
   // The following allows determining which module, if any, is associated
   // with a given address.
   RangeMapper<Offset, std::string> _rangeMapper;
