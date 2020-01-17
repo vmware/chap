@@ -50,7 +50,7 @@ class InfrastructureFinder {
 
     for (typename ModuleDirectory<Offset>::const_iterator it =
              _moduleDirectory.begin();
-         it != _moduleDirectory.end(); ++it) {  // TB debug
+         it != _moduleDirectory.end(); ++it) {
       if (it->first.find("libpython") != std::string::npos) {
         _libraryPath = it->first;
         const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags =

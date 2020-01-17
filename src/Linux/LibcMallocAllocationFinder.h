@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -27,6 +27,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   LibcMallocAllocationFinder(
       VirtualMemoryPartition<Offset>& virtualMemoryPartition,
+      const ModuleDirectory<Offset>& moduleDirectory,
       UnfilledImages<Offset>& unfilledImages)
       : Allocations::Finder<Offset>(virtualMemoryPartition.GetAddressMap()),
         LIBC_MALLOC_HEAP("libc malloc heap"),
@@ -35,6 +36,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
         LIBC_MALLOC_MAIN_ARENA_PAGES("libc malloc main arena pages"),
         LIBC_MALLOC_MMAPPED_ALLOCATION("libc malloc mmapped allocation"),
         _virtualMemoryPartition(virtualMemoryPartition),
+        _moduleDirectory(moduleDirectory),
         _unfilledImages(unfilledImages),
         _addressMap(virtualMemoryPartition.GetAddressMap()),
         _mainArenaAddress(0),
@@ -396,6 +398,7 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
  private:
   VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
+  const ModuleDirectory<Offset>& _moduleDirectory;
   UnfilledImages<Offset>& _unfilledImages;
   const VirtualAddressMap<Offset>& _addressMap;
 
@@ -1508,7 +1511,30 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     return false;
   }
 
-  bool ScanForMainArena() {
+  bool ScanForMainArenaInModules(bool libcOnly) {
+    for (typename ModuleDirectory<Offset>::const_iterator it =
+             _moduleDirectory.begin();
+         it != _moduleDirectory.end(); ++it) {
+      if (!libcOnly || it->first.find("libc") != std::string::npos) {
+        const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags =
+            it->second;
+        for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
+                 itRange = rangeToFlags.begin();
+             itRange != rangeToFlags.end(); ++itRange) {
+          int flags = itRange->_value;
+          if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
+            if (ScanForMainArenaByEmptyFreeLists(itRange->_base,
+                                                 itRange->_limit)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool ScanForMainArenaInUnclaimedRanges() {
     for (const auto& range :
          _virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
       if (ScanForMainArenaByEmptyFreeLists(range._base, range._limit)) {
@@ -1516,6 +1542,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
       }
     }
     return false;
+  }
+
+  bool ScanForMainArena() {
+    return (_moduleDirectory.IsResolved())
+               ? (ScanForMainArenaInModules(true) ||
+                  ScanForMainArenaInModules(false))
+               : ScanForMainArenaInUnclaimedRanges();
   }
 
   struct RunCandidate {
