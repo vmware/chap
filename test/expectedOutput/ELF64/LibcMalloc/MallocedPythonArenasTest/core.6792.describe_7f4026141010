@@ -1,0 +1,5 @@
+Address 7f4026141010 is at offset 0 of
+an anchored allocation at 7f4026141010 of size 40ff0
+This allocation matches pattern PythonMallocedArena.
+Only the first 0x40000 bytes contain the arena.
+

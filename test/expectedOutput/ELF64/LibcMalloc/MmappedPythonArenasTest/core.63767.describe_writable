@@ -1,0 +1,99 @@
+Range [0x601000, 0x602000) uses 0x1000 bytes.
+Region use: used by module
+This is for module main executable.
+
+Range [0x16f7000, 0x184b000) uses 0x154000 bytes.
+Region use: libc malloc main arena pages
+This is a run of pages used for allocations for the main arena.
+
+Range [0x30ed020000, 0x30ed022000) uses 0x2000 bytes.
+Region use: used by module
+This is for module /lib64/ld-linux-x86-64.so.2.
+
+Range [0x30ed403000, 0x30ed404000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libdl.so.2.
+
+Range [0x30ed98e000, 0x30ed994000) uses 0x6000 bytes.
+Region use: used by module
+This is for module /lib64/libc.so.6.
+
+Range [0x30edc18000, 0x30edc1d000) uses 0x5000 bytes.
+Region use: used by module
+This is for module /lib64/libpthread.so.0.
+
+Range [0x30ee015000, 0x30ee016000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libz.so.1.
+
+Range [0x30ee407000, 0x30ee408000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/librt.so.1.
+
+Range [0x30ee883000, 0x30ee884000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libm.so.6.
+
+Range [0x30f1c02000, 0x30f1c03000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libutil.so.1.
+
+Range [0x7f5e7bef5000, 0x7f5e7bf26000) uses 0x31000 bytes.
+Region use: libc malloc mmapped allocation
+This is an individually mmapped libc chunk for a single allocation.
+
+Range [0x7f5e7bf26000, 0x7f5e7bf66000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7bf66000, 0x7f5e7bfa6000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7bfa6000, 0x7f5e7bfe6000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7bfe6000, 0x7f5e7c026000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7c026000, 0x7f5e7c066000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7c066000, 0x7f5e7c0a6000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7c0a6000, 0x7f5e7c0e6000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7c0e6000, 0x7f5e7c126000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7c126000, 0x7f5e7c166000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e7c166000, 0x7f5e7c1a6000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f5e82036000, 0x7f5e8203c000) uses 0x6000 bytes.
+Region use: unknown
+
+Range [0x7f5e824aa000, 0x7f5e8253e000) uses 0x94000 bytes.
+Region use: used by module
+This is for module /build/mts/toolchain/lin64/python-3.5.2-openssl1.0.2r/bin/../lib64/libpython3.5m.so.1.0.
+
+Range [0x7f5e8253e000, 0x7f5e8253f000) uses 0x1000 bytes.
+Region use: unknown
+
+Range [0x7ffe311c9000, 0x7ffe311e4000) uses 0x1b000 bytes.
+Region use: stack
+This stack is used for thread 1.
+
+25 writable ranges use 0x4ce000 (5,038,080) bytes.

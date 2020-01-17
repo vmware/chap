@@ -43,7 +43,7 @@ class ArenaDescriber : public Describer<Offset> {
                << (address - arena) << " of a python arena at 0x" << arena
                << ".\n";
       } else {
-        output << "This is in a python arena.\n";
+        output << "This is a python arena.\n";
       }
       if (explain) {
         if (address < firstPool) {

@@ -1,0 +1,67 @@
+Range [0x600000, 0x602000) uses 0x2000 bytes.
+Region use: used by module
+This is for module main executable.
+
+Range [0x227d000, 0x2339000) uses 0xbc000 bytes.
+Region use: libc malloc main arena pages
+This is a run of pages used for allocations for the main arena.
+
+Range [0x30ed020000, 0x30ed022000) uses 0x2000 bytes.
+Region use: used by module
+This is for module /lib64/ld-linux-x86-64.so.2.
+
+Range [0x30ed403000, 0x30ed404000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libdl.so.2.
+
+Range [0x30ed98e000, 0x30ed994000) uses 0x6000 bytes.
+Region use: used by module
+This is for module /lib64/libc.so.6.
+
+Range [0x30edc18000, 0x30edc1d000) uses 0x5000 bytes.
+Region use: used by module
+This is for module /lib64/libpthread.so.0.
+
+Range [0x30ee883000, 0x30ee884000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libm.so.6.
+
+Range [0x30f1c02000, 0x30f1c03000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /lib64/libutil.so.1.
+
+Range [0x30f515c000, 0x30f51a6000) uses 0x4a000 bytes.
+Region use: used by module
+This is for module /usr/lib64/libpython2.6.so.1.0.
+
+Range [0x7f402023c000, 0x7f402023e000) uses 0x2000 bytes.
+Region use: used by module
+This is for module /usr/lib64/python2.6/lib-dynload/timemodule.so.
+
+Range [0x7f40260ce000, 0x7f402610f000) uses 0x41000 bytes.
+Region use: libc malloc mmapped allocation
+This is an individually mmapped libc chunk for a single allocation.
+
+Range [0x7f402610f000, 0x7f4026140000) uses 0x31000 bytes.
+Region use: libc malloc mmapped allocation
+This is an individually mmapped libc chunk for a single allocation.
+
+Range [0x7f4026141000, 0x7f4026182000) uses 0x41000 bytes.
+Region use: libc malloc mmapped allocation
+This is an individually mmapped libc chunk for a single allocation.
+
+Range [0x7f4026182000, 0x7f40261c3000) uses 0x41000 bytes.
+Region use: libc malloc mmapped allocation
+This is an individually mmapped libc chunk for a single allocation.
+
+Range [0x7f40261c3000, 0x7f40261c8000) uses 0x5000 bytes.
+Region use: unknown
+
+Range [0x7f40261d9000, 0x7f40261da000) uses 0x1000 bytes.
+Region use: unknown
+
+Range [0x7ffe082ea000, 0x7ffe08303000) uses 0x19000 bytes.
+Region use: stack
+This stack is used for thread 1.
+
+17 writable ranges use 0x22d000 (2,281,472) bytes.

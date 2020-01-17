@@ -1,0 +1,30 @@
+# Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests that mmapped python arenas are found properly (in this case
+# using a copy of python 3.5).
+
+chap=$1
+
+bunzip2 -q core.63767.bz2
+$1 core.63767 << DONE
+redirect on
+
+# The following should describe just the one array.
+describe used %PythonArenaStructArray
+
+# The following shouldn't find anything matching %PythonMallocedArena
+# because the arenas are mmapped.
+describe used %PythonArenaStructArray \
+ /extend %PythonArenaStructArray->%PythonMallocedArena
+
+# The mmapped arenas should be reflected in output of the following:
+describe writable
+
+# These should be described as in a python arena.
+describe 7f5e7c166000
+describe 7f5e7c1a5fff
+DONE
+
+bzip2 -q core.63767
+

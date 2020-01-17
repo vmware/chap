@@ -1,4 +1,4 @@
-# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
 # Configure expectedOutput tests.
@@ -89,3 +89,7 @@ exout_test(PATH ELF64/LibcMalloc/DequePatternTest
            FILES core.14644)
 exout_test(PATH ELF32/LibcMalloc/DequePatternTest
            FILES core.24263)
+exout_test(PATH ELF64/LibcMalloc/MmappedPythonArenasTest
+           FILES core.63767.bz2)
+exout_test(PATH ELF64/LibcMalloc/MallocedPythonArenasTest
+           FILES core.6792.bz2)

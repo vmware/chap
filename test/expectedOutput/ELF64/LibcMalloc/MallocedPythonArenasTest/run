@@ -1,0 +1,30 @@
+# Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests that malloced python arenas are found properly (in this case
+# using a copy of python 2.6).
+
+chap=$1
+
+bunzip2 -q core.6792.bz2
+$1 core.6792 << DONE
+redirect on
+
+# The following should describe just the one array.
+describe used %PythonArenaStructArray
+
+# The following should find 3 allocations matching %PythonMallocedArena
+# because the arenas are mmapped.
+describe used %PythonArenaStructArray \
+ /extend %PythonArenaStructArray->%PythonMallocedArena
+
+# The malloced arenas should not be reflected in output of the following
+# (other than that the regions used by libc malloc are larger than they would
+# otherwise be.:
+describe writable
+
+# These should be described as in a malloced python arena.
+describe 7f4026141010
+describe 7f402618100f
+DONE
+bzip2 -q core.6792
