@@ -759,15 +759,21 @@ class Graph {
 
   void FindExternalAnchorPoints() {
     if (_externalAnchorPointChecker != 0) {
+      ContiguousImage<Offset> contiguousImage(_finder);
       for (Index i = 0; i < _numAllocations; i++) {
-        const char *externalAnchorReason =
-            _externalAnchorPointChecker->GetExternalAnchorReason(i);
-        if (externalAnchorReason != (const char *)0) {
-          _externalAnchorPoints[i] = externalAnchorReason;
+        if (_finder.AllocationAt(i)->IsUsed()) {
+          contiguousImage.SetIndex(i);
+          const char *externalAnchorReason =
+              _externalAnchorPointChecker->GetExternalAnchorReason(
+                  i, contiguousImage);
+          if (externalAnchorReason != (const char *)0) {
+            _externalAnchorPoints[i] = externalAnchorReason;
+          }
         }
       }
     }
   }
+
   void MarkLeakedChunks() {
     _leaked.reserve(_numAllocations);
     _leaked.resize(_numAllocations, true);

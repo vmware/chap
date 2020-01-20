@@ -52,45 +52,6 @@ class Finder {
     }
   };
 
-  class AllocationImage {
-   public:
-    AllocationImage(const VirtualAddressMap<Offset>& addressMap,
-                    const Allocation& allocation)
-        : _addressMap(addressMap),
-          _allocation(allocation),
-          _baseAddr(allocation.Address()),
-          _iterator(_addressMap.find(_baseAddr)) {}
-    Offset operator[](size_t index) {
-      Offset addr = _allocation.Address() + index * sizeof(Offset);
-      // TODO: may need changes at some point if allocations are not
-      // on offset boundaries or are not of size divisible by
-      // sizeof(Offset).
-      if (_iterator == _addressMap.end() || _iterator.Base() > addr ||
-          addr >= _iterator.Limit()) {
-        _iterator = _addressMap.find(addr);
-        if (_iterator == _addressMap.end()) {
-          return 0;
-        }
-      }
-      // TODO: optimize for much more common case of contiguous allocation.
-      const char* image = _iterator.GetImage();
-      if (image == 0) {
-        /*
-         * Part of the allocation is not mapped in memory.  On windows this
-         * may happen in cases where a page is all 0 bytes.
-         */
-        return 0;
-      }
-      return *((Offset*)(image + (addr - _iterator.Base())));
-    }
-
-   private:
-    const VirtualAddressMap<Offset>& _addressMap;
-    const Allocation& _allocation;
-    Offset _baseAddr;
-    typename VirtualAddressMap<Offset>::const_iterator _iterator;
-  };
-
   Finder(const VirtualAddressMap<Offset>& addressMap)
       : _addressMap(addressMap) {}
 

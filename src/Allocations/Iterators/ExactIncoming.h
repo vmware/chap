@@ -4,6 +4,7 @@
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
+#include "../ContiguousImage.h"
 #include "../Finder.h"
 #include "../Graph.h"
 namespace chap {
@@ -65,12 +66,12 @@ class ExactIncoming {
   };
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
   typedef typename Finder<Offset>::Allocation Allocation;
-  typedef typename Finder<Offset>::AllocationImage AllocationImage;
 
   ExactIncoming(const Finder<Offset>& finder, const Graph<Offset>& graph,
                 const VirtualAddressMap<Offset>& addressMap,
                 AllocationIndex index, AllocationIndex numAllocations)
       : _finder(finder),
+        _contiguousImage(_finder),
         _graph(graph),
         _addressMap(addressMap),
         _index(index),
@@ -86,10 +87,12 @@ class ExactIncoming {
         abort();
       }
       if (allocation->IsUsed()) {
-        AllocationImage allocationImage(_addressMap, *allocation);
-        size_t numCandidates = allocation->Size() / sizeof(Offset);
-        for (size_t i = 0; i < numCandidates; i++) {
-          if (_target == allocationImage[i]) {
+        _contiguousImage.SetIndex(index);
+        const Offset* firstOffset = _contiguousImage.FirstOffset();
+        const Offset* offsetLimit = _contiguousImage.OffsetLimit();
+        for (const Offset* nextOffset = firstOffset; nextOffset != offsetLimit;
+             nextOffset++) {
+          if (_target == *nextOffset) {
             return index;
           }
         }
@@ -100,6 +103,7 @@ class ExactIncoming {
 
  private:
   const Finder<Offset>& _finder;
+  ContiguousImage<Offset> _contiguousImage;
   const Graph<Offset>& _graph;
   const VirtualAddressMap<Offset>& _addressMap;
   AllocationIndex _index;

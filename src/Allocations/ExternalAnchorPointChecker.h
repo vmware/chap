@@ -9,7 +9,6 @@ template <class Offset>
 class ExternalAnchorPointChecker {
  public:
   typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::AllocationImage AllocationImage;
   typedef typename Finder<Offset>::Allocation Allocation;
 
   ExternalAnchorPointChecker(const Finder<Offset>& allocationFinder)
@@ -17,17 +16,9 @@ class ExternalAnchorPointChecker {
         _addressMap(allocationFinder.GetAddressMap()) {}
 
   virtual ~ExternalAnchorPointChecker() {}
-  const char* GetExternalAnchorReason(AllocationIndex index) const {
-    const Allocation* allocation = _allocationFinder.AllocationAt(index);
-    if (allocation != (const Allocation*)0 && allocation->IsUsed()) {
-      AllocationImage allocationImage(_addressMap, *allocation);
-      return ExternalAnchorReason(allocationImage, allocation->Size());
-    }
-    return (const char*)0;
-  }
-
-  virtual const char* ExternalAnchorReason(AllocationImage& image,
-                                           Offset size) const = 0;
+  virtual const char* GetExternalAnchorReason(
+      AllocationIndex index,
+      const ContiguousImage<Offset>& contiguousImage) const = 0;
 
   const Finder<Offset>& GetAllocationFinder() const {
     return _allocationFinder;
