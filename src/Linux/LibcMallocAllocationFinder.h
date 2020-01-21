@@ -301,18 +301,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
   virtual Offset MaxAllocationSize() const { return _maxAllocationSize; }
 
-  virtual AllocationIndex EdgeTargetIndex(Offset targetCandidate) const {
-    // TODO - move as default implementation to base?
-    AllocationIndex targetIndex = AllocationIndexOf(targetCandidate);
-    if (targetIndex != _allocations.size()) {
-      const Allocation* target = AllocationAt(targetIndex);
-      if (target != 0) {
-        return targetIndex;
-      }
-    }
-    return _allocations.size();
-  }
-
   virtual bool HasThreadCached() const { return !_isThreadCached.empty(); }
   virtual bool IsThreadCached(AllocationIndex index) const {
     return !_isThreadCached.empty() && _isThreadCached[index];

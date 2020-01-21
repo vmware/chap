@@ -95,7 +95,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
       Base::_allocationGraph = new Allocations::Graph<Offset>(
           *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
-          nullptr);
+          nullptr, nullptr);
 
       /*
        * In Linux processes the current approach is to wait until the

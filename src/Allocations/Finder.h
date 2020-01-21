@@ -64,9 +64,6 @@ class Finder {
   virtual Offset MinRequestSize(AllocationIndex index) const = 0;
   virtual AllocationIndex NumAllocations() const = 0;
   virtual Offset MaxAllocationSize() const = 0;
-  // Return target index or NumAllocations() if none exists or edge is
-  // not suitable as an anchor.
-  virtual AllocationIndex EdgeTargetIndex(Offset targetCandidate) const = 0;
   const VirtualAddressMap<Offset>& GetAddressMap() const { return _addressMap; }
   virtual bool HasThreadCached() const { return false; }
   virtual bool IsThreadCached(AllocationIndex) const { return false; }

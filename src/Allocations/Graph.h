@@ -10,6 +10,7 @@
 #include "ExternalAnchorPointChecker.h"
 #include "Finder.h"
 #include "IndexedDistances.h"
+#include "ObscuredReferenceChecker.h"
 
 namespace chap {
 namespace Allocations {
@@ -40,11 +41,13 @@ class Graph {
 
   Graph(const Finder<Offset> &finder, const ThreadMap<Offset> &threadMap,
         const std::map<Offset, Offset> &staticAnchorLimits,
-        const ExternalAnchorPointChecker<Offset> *externalAnchorPointChecker)
+        const ExternalAnchorPointChecker<Offset> *externalAnchorPointChecker,
+        const ObscuredReferenceChecker<Offset> *obscuredReferenceChecker)
       : _finder(finder),
         _addressMap(finder.GetAddressMap()),
         _threadMap(threadMap),
         _externalAnchorPointChecker(externalAnchorPointChecker),
+        _obscuredReferenceChecker(obscuredReferenceChecker),
         _numAllocations(finder.NumAllocations()),
         _totalEdges(0),
         _staticAnchorDistances(_numAllocations),
@@ -479,6 +482,7 @@ class Graph {
   const AddressMap &_addressMap;
   const ThreadMap<Offset> &_threadMap;
   const ExternalAnchorPointChecker<Offset> *_externalAnchorPointChecker;
+  const ObscuredReferenceChecker<Offset> *_obscuredReferenceChecker;
   Index _numAllocations;
   EdgeIndex _totalEdges;
   std::vector<Index> _outgoing;
@@ -494,6 +498,20 @@ class Graph {
   AnchorPointMap _stackAnchorPoints;
   AnchorPointMap _registerAnchorPoints;
   std::map<Index, const char *> _externalAnchorPoints;
+
+  /*
+   * Attempt to interpret the given target candidate as a reference to
+   * an allocation, returning an index for that allocation if so.
+   */
+  Index EdgeTargetIndex(Offset targetCandidate) {
+    Index targetIndex = _finder.AllocationIndexOf(targetCandidate);
+    if (targetIndex == _numAllocations &&
+        _obscuredReferenceChecker != nullptr) {
+      targetIndex =
+          _obscuredReferenceChecker->AllocationIndexOf(targetCandidate);
+    }
+    return targetIndex;
+  }
 
   void FindEdges() {
     if (_numAllocations == 0) {
@@ -535,7 +553,7 @@ class Graph {
       const Offset *offsetLimit = contiguousImage.OffsetLimit();
       for (const Offset *check = contiguousImage.FirstOffset();
            check < offsetLimit; check++) {
-        Index target = _finder.EdgeTargetIndex(*check);
+        Index target = EdgeTargetIndex(*check);
         if (target != _numAllocations && target != i && target != prevTarget) {
           targets.push_back(target);
           prevTarget = target;
@@ -592,7 +610,7 @@ class Graph {
       const Offset *offsetLimit = contiguousImage.OffsetLimit();
       for (const Offset *check = contiguousImage.FirstOffset();
            check < offsetLimit; check++) {
-        Index target = _finder.EdgeTargetIndex(*check);
+        Index target = EdgeTargetIndex(*check);
         if (target != _numAllocations && target != i && target != prevTarget) {
           targets.push_back(target);
           prevTarget = target;
@@ -700,7 +718,7 @@ class Graph {
          anchor += sizeof(Offset)) {
       try {
         Offset candidateTarget = reader.ReadOffset(anchor);
-        Index targetIndex = _finder.EdgeTargetIndex(candidateTarget);
+        Index targetIndex = EdgeTargetIndex(candidateTarget);
         const Allocation *target = _finder.AllocationAt(targetIndex);
         if ((target != 0) && target->IsUsed()) {
           AnchorPointMapIterator it = anchorPoints.find(targetIndex);
