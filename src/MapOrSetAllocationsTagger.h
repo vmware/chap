@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -164,6 +164,8 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   void CheckAllMapOrSetNodes() {
     Offset numVisited = 0;
     Offset node = _firstNode;
+    Offset numLeftEdgesTraversed = 0;
+    Offset numParentEdgesTraversed = 0;
     while (numVisited < _mapOrSetSize && node != _parent) {
       if ((_nodeReader.ReadOffset(node, 0xbad) & 0xfe) != 0) {
         return;
@@ -194,17 +196,25 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         node = rightChild;
         Offset leftChild =
             _nodeReader.ReadOffset(node + 2 * sizeof(Offset), 0xbad);
+        ++numLeftEdgesTraversed;
         while (leftChild != 0) {
           node = leftChild;
           leftChild = _nodeReader.ReadOffset(node + 2 * sizeof(Offset), 0xbad);
+          if (++numLeftEdgesTraversed > _mapOrSetSize) {
+            return;
+          }
         }
       } else {
         Offset parent = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
+        ++numParentEdgesTraversed;
         while (parent != _parent &&
                _nodeReader.ReadOffset(parent + 3 * sizeof(Offset), 0xbad) ==
                    node) {
           node = parent;
           parent = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
+          if (++numParentEdgesTraversed > _mapOrSetSize) {
+            return;
+          }
         }
         if (parent != _parent &&
             _nodeReader.ReadOffset(parent + 2 * sizeof(Offset), 0xbad) !=
