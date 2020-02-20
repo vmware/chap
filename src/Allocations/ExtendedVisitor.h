@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -28,7 +28,8 @@ class ExtendedVisitor {
   typedef typename Finder<Offset>::Allocation Allocation;
   ExtendedVisitor(
       Commands::Context& context, const ProcessImage<Offset>& processImage,
-      const PatternDescriberRegistry<Offset>& patternDescriberRegistry)
+      const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
+      bool allowMissingSignatures)
       : _context(context),
         _isEnabled(false),
         _hasErrors(false),
@@ -43,34 +44,8 @@ class ExtendedVisitor {
     if (numExtensionArguments == 0) {
       return;
     }
-    size_t numCommentExtensionsArguments =
-        context.GetNumArguments("commentExtensions");
-    if (numCommentExtensionsArguments > 0) {
-      for (size_t i = 0; i < numCommentExtensionsArguments; ++i) {
-        const std::string arg = context.Argument("commentExtensions", i);
-        if (arg == "true") {
-          if (i > 0) {
-            if (!_commentExtensions) {
-              error << "Conflicting arguments to multiple /commentExtensions "
-                       " switches.\n";
-              _hasErrors = true;
-            }
-          } else {
-            _commentExtensions = true;
-          }
-        } else if (arg == "false") {
-          if (i > 0 && _commentExtensions) {
-            error << "Conflicting arguments to multiple /commentExtensions "
-                     " switches.\n";
-            _hasErrors = true;
-          }
-        } else {
-          error << "Unexpected argument \"" << arg
-                << "\" to "
-                   "/commentExtensions switch.\n";
-          _hasErrors = true;
-        }
-      }
+    if (!context.ParseBooleanSwitch("commentExtensions", _commentExtensions)) {
+      _hasErrors = true;
     }
 
     //  [signature-or-label][@offset-in-member]<direction
@@ -200,10 +175,12 @@ class ExtendedVisitor {
                           specifications[ruleIndexToArgumentIndex[i]]);
       Rule& rule = _rules.back();
       if (rule._memberSignatureChecker.UnrecognizedSignature()) {
-        error << "Member signature \""
-              << rule._memberSignatureChecker.GetSignature()
-              << "\" is not recognized.\n";
-        _hasErrors = true;
+        if (!allowMissingSignatures) {
+          error << "Member signature \""
+                << rule._memberSignatureChecker.GetSignature()
+                << "\" is not recognized.\n";
+          _hasErrors = true;
+        }
       }
       if (rule._memberSignatureChecker.UnrecognizedPattern()) {
         error << "Member pattern \""
@@ -212,10 +189,12 @@ class ExtendedVisitor {
         _hasErrors = true;
       }
       if (rule._extensionSignatureChecker.UnrecognizedSignature()) {
-        error << "Extension signature \""
-              << rule._extensionSignatureChecker.GetSignature()
-              << "\" is not recognized.\n";
-        _hasErrors = true;
+        if (!allowMissingSignatures) {
+          error << "Extension signature \""
+                << rule._extensionSignatureChecker.GetSignature()
+                << "\" is not recognized.\n";
+          _hasErrors = true;
+        }
       }
       if (rule._extensionSignatureChecker.UnrecognizedPattern()) {
         error << "Extension pattern \""

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -115,9 +115,9 @@ class Input {
         do {
           std::string::size_type tokenPos = pos;
           pos = cmdLine.find_first_of(" \t", pos);
-          std::string token(
-              cmdLine, tokenPos,
-              (pos == std::string::npos) ? pos : (pos - tokenPos));
+          std::string token(cmdLine, tokenPos, (pos == std::string::npos)
+                                                   ? pos
+                                                   : (pos - tokenPos));
           tokens.push_back(token);
           pos = cmdLine.find_first_not_of(" \t", pos);
         } while (pos != std::string::npos);
@@ -506,6 +506,8 @@ class Context {
         value = v;
         return true;
       }
+      _error << "Invalid argument to /" << switchName << ": \""
+             << it->second[index] << "\"\n";
     }
     return false;
   }
@@ -522,8 +524,61 @@ class Context {
         value = v;
         return true;
       }
+      _error << "Invalid argument to /" << switchName << ": \""
+             << it->second[index] << "\"\n";
     }
     return false;
+  }
+
+  /*
+   * If the specified switch is not present, do nothing, leaving the
+   * value as is and return true.  Otherwise, if all occurrences of
+   * the switch have the value "true" or "false", set the value
+   * accordingly and return true.  In all other cases put a warning
+   * to standard error, return false and leave the value untouched.
+   */
+
+  bool ParseBooleanSwitch(const std::string& switchName, bool& value) {
+    std::map<std::string, std::vector<std::string> >::const_iterator it =
+        _switchedArguments.find(switchName);
+    if (it == _switchedArguments.end()) {
+      return true;
+    }
+    bool returnValue = value;
+    bool returnValueSet = false;
+    for (const auto& argument : it->second) {
+      if (argument == "true") {
+        if (returnValueSet) {
+          if (!returnValue) {
+            _error << "Conflicting arguments to multiple /" << switchName
+                   << " switches.\n";
+            return false;
+          }
+        } else {
+          returnValueSet = true;
+          returnValue = true;
+        }
+      } else {
+        if (argument == "false") {
+          if (returnValueSet) {
+            if (returnValue) {
+              _error << "Conflicting arguments to multiple /" << switchName
+                     << " switches.\n";
+              return false;
+            }
+          } else {
+            returnValueSet = true;
+            returnValue = false;
+          }
+        } else {
+          _error << "Unexpected argument \"" << argument << "\" to /"
+                 << switchName << " switch.\n";
+          return false;
+        }
+      }
+    }
+    value = returnValue;
+    return true;
   }
 
   bool IsRedirected() { return !_redirectPath.empty(); }
@@ -575,8 +630,7 @@ class Runner {
         _redirect(false),
         _input(_scriptContext),
         _error(_scriptContext),
-        _preCommandCallback(nullptr)
-  {}
+        _preCommandCallback(nullptr) {}
 
   void CompletionHook(char const* pref,
                       int /* ctx - commented out to avoid compiler warnings */,
@@ -700,7 +754,7 @@ class Runner {
   void SetPreCommandCallback(std::function<void()> callback) {
     _preCommandCallback = callback;
   }
-   
+
   void RunCommands() {
     replxx_install_window_change_handler();
     replxx_set_completion_callback(
@@ -764,7 +818,8 @@ class Runner {
                  * that we don't bother supporting /redirectSuffix for the
                  * old style command callbacks because they are deprecated
                  * and typically were written before switched arguments were
-                 * handled separately, so they generally not work as currently
+                 * handled separately, so they generally not work as
+                 * currently
                  * written if the switch were supplied.
                  */
                 redirectStarted = true;

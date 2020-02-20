@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -81,9 +81,18 @@ class Subcommand : public Commands::Subcommand {
     SignatureChecker<Offset> signatureChecker(signatureDirectory,
                                               _patternDescriberRegistry,
                                               addressMap, signatureString);
+    bool switchError = false;
+    bool allowMissingSignatures = false;
+    if (!context.ParseBooleanSwitch("allowMissingSignatures",
+                                    allowMissingSignatures)) {
+      switchError = true;
+    }
+
     if (signatureChecker.UnrecognizedSignature()) {
-      error << "Signature \"" << signatureString << "\" is not recognized.\n";
-      signatureOrPatternError = true;
+      if (!allowMissingSignatures) {
+        error << "Signature \"" << signatureString << "\" is not recognized.\n";
+        signatureOrPatternError = true;
+      }
     }
     if (signatureChecker.UnrecognizedPattern()) {
       error << "Pattern \"" << signatureChecker.GetPatternName()
@@ -93,7 +102,6 @@ class Subcommand : public Commands::Subcommand {
 
     Offset minSize = 0;
     Offset maxSize = ~((Offset)0);
-    bool switchError = false;
 
     /*
      * It generally does not make sense to specify more than one
@@ -106,7 +114,6 @@ class Subcommand : public Commands::Subcommand {
     for (size_t i = 0; i < numSizeArguments; i++) {
       Offset size;
       if (!context.ParseArgument("size", i, size)) {
-        error << "Invalid size \"" << context.Argument("size", i) << "\"\n";
         switchError = true;
       } else {
         if (minSize < size) {
@@ -121,8 +128,6 @@ class Subcommand : public Commands::Subcommand {
     for (size_t i = 0; i < numMinSizeArguments; i++) {
       Offset size;
       if (!context.ParseArgument("minsize", i, size)) {
-        error << "Invalid minsize \"" << context.Argument("minsize", i)
-              << "\"\n";
         switchError = true;
       } else {
         if (minSize < size) {
@@ -134,8 +139,6 @@ class Subcommand : public Commands::Subcommand {
     for (size_t i = 0; i < numMaxSizeArguments; i++) {
       Offset size;
       if (!context.ParseArgument("maxsize", i, size)) {
-        error << "Invalid maxsize \"" << context.Argument("maxsize", i)
-              << "\"\n";
         switchError = true;
       } else {
         if (maxSize > size) {
@@ -170,35 +173,41 @@ class Subcommand : public Commands::Subcommand {
           AddReferenceConstraints(
               context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints);
+              *graph, signatureDirectory, addressMap, referenceConstraints,
+              allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints);
+              *graph, signatureDirectory, addressMap, referenceConstraints,
+              allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints);
+              *graph, signatureDirectory, addressMap, referenceConstraints,
+              allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints);
+              *graph, signatureDirectory, addressMap, referenceConstraints,
+              allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minfreeoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, false, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints);
+              *graph, signatureDirectory, addressMap, referenceConstraints,
+              allowMissingSignatures);
     }
 
     ExtendedVisitor<Offset, Visitor> extendedVisitor(context, _processImage,
-                                                     _patternDescriberRegistry);
+                                                     _patternDescriberRegistry,
+                                                     allowMissingSignatures);
     if (extendedVisitor.HasErrors() || switchError || signatureOrPatternError) {
       return;
     }
@@ -309,7 +318,8 @@ class Subcommand : public Commands::Subcommand {
       bool wantUsed, const Finder<Offset>& finder, const Graph<Offset>& graph,
       const SignatureDirectory<Offset>& signatureDirectory,
       const VirtualAddressMap<Offset>& addressMap,
-      std::vector<ReferenceConstraint<Offset> >& constraints) {
+      std::vector<ReferenceConstraint<Offset> >& constraints,
+      bool allowMissingSignatures) {
     bool switchError = false;
     size_t numSwitches = context.GetNumArguments(switchName);
     Commands::Error& error = context.GetError();
@@ -337,8 +347,10 @@ class Subcommand : public Commands::Subcommand {
                                addressMap, signature, count, wantUsed,
                                boundaryType, referenceType, finder, graph);
       if (constraints.back().UnrecognizedSignature()) {
-        error << "Signature \"" << signature << "\" is not recognized.\n";
-        switchError = true;
+        if (!allowMissingSignatures) {
+          error << "Signature \"" << signature << "\" is not recognized.\n";
+          switchError = true;
+        }
       }
       if (constraints.back().UnrecognizedPattern()) {
         error << "Pattern \"" << signature.substr(1)
