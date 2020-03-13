@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,8 +16,8 @@ class Used {
     Factory() : _setName("used") {}
     Used* MakeIterator(Commands::Context& /* context */,
                        const ProcessImage<Offset>& /* processImage */,
-                       const Finder<Offset>& allocationFinder) {
-      return new Used(allocationFinder, allocationFinder.NumAllocations());
+                       const Directory<Offset>& directory) {
+      return new Used(directory, directory.NumAllocations());
     }
     // TODO: allow adding taints
     const std::string& GetSetName() const { return _setName; }
@@ -33,15 +33,13 @@ class Used {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
-  Used(const Finder<Offset>& allocationFinder, AllocationIndex numAllocations)
-      : _index(0),
-        _allocationFinder(allocationFinder),
-        _numAllocations(numAllocations) {}
+  Used(const Directory<Offset>& directory, AllocationIndex numAllocations)
+      : _index(0), _directory(directory), _numAllocations(numAllocations) {}
   AllocationIndex Next() {
     while (_index != _numAllocations &&
-           !_allocationFinder.AllocationAt(_index)->IsUsed()) {
+           !_directory.AllocationAt(_index)->IsUsed()) {
       ++_index;
     }
     AllocationIndex next = _index;
@@ -53,7 +51,7 @@ class Used {
 
  private:
   AllocationIndex _index;
-  const Finder<Offset>& _allocationFinder;
+  const Directory<Offset>& _directory;
   AllocationIndex _numAllocations;
 };
 }  // namespace Iterators

@@ -1,17 +1,17 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <set>
 #include <unordered_map>
-#include "Finder.h"
+#include "Directory.h"
 
 namespace chap {
 namespace Allocations {
 template <typename Offset>
 class TagHolder {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   typedef size_t TagIndex;
 
   /*

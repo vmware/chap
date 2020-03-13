@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -8,7 +8,7 @@
 #include "../StackDescriber.h"
 #include "AnchorChainLister.h"
 #include "AnchorDirectory.h"
-#include "Finder.h"
+#include "Directory.h"
 #include "PatternDescriberRegistry.h"
 #include "SignatureDirectory.h"
 
@@ -17,8 +17,8 @@ namespace Allocations {
 template <typename Offset>
 class Describer : public chap::Describer<Offset> {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   Describer(const InModuleDescriber<Offset>& inModuleDescriber,
             const StackDescriber<Offset>& stackDescriber,
             const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
@@ -29,7 +29,7 @@ class Describer : public chap::Describer<Offset> {
         _signatureDirectory(processImage.GetSignatureDirectory()),
         _anchorDirectory(processImage.GetAnchorDirectory()),
         _addressMap(processImage.GetVirtualAddressMap()),
-        _finder(processImage.GetAllocationFinder()),
+        _directory(processImage.GetAllocationDirectory()),
         _graph(processImage.GetAllocationGraph()) {}
 
   /*
@@ -40,14 +40,14 @@ class Describer : public chap::Describer<Offset> {
    */
   bool Describe(Commands::Context& context, Offset address, bool explain,
                 bool showAddresses) const {
-    if (_finder == 0 || _graph == 0) {
+    if (_graph == 0) {
       return false;
     }
-    AllocationIndex index = _finder->AllocationIndexOf(address);
-    if (index == _finder->NumAllocations()) {
+    AllocationIndex index = _directory.AllocationIndexOf(address);
+    if (index == _directory.NumAllocations()) {
       return false;
     }
-    const Allocation* allocation = _finder->AllocationAt(index);
+    const Allocation* allocation = _directory.AllocationAt(index);
     if (allocation == 0) {
       abort();
     }
@@ -74,7 +74,7 @@ class Describer : public chap::Describer<Offset> {
         }
       }
     } else {
-      isThreadCached = _finder->IsThreadCached(index);
+      isThreadCached = _directory.IsThreadCached(index);
     }
     Offset address = allocation.Address();
     if (showAddresses) {
@@ -138,7 +138,7 @@ class Describer : public chap::Describer<Offset> {
   const SignatureDirectory<Offset>& _signatureDirectory;
   const AnchorDirectory<Offset>& _anchorDirectory;
   const VirtualAddressMap<Offset>& _addressMap;
-  const Finder<Offset>* _finder;
+  const Directory<Offset>& _directory;
   const Graph<Offset>* _graph;
 };
 }  // namespace Allocations

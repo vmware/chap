@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include "../Allocations/Finder.h"
+#include "../Allocations/Directory.h"
 #include "../ModuleDirectory.h"
 #include "../UnfilledImages.h"
 #include "../VirtualAddressMap.h"
@@ -14,27 +14,22 @@
 #include <utility>
 
 namespace chap {
-namespace Linux {
+namespace LibcMalloc {
 template <class Offset>
-class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
+class InfrastructureFinder {
  public:
-  typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Allocations::Finder<Offset>::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::NotMapped NotMapped;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
   typedef typename std::set<Offset> OffsetSet;
 
-  LibcMallocAllocationFinder(
-      VirtualMemoryPartition<Offset>& virtualMemoryPartition,
-      const ModuleDirectory<Offset>& moduleDirectory,
-      UnfilledImages<Offset>& unfilledImages)
-      : Allocations::Finder<Offset>(virtualMemoryPartition.GetAddressMap()),
-        LIBC_MALLOC_HEAP("libc malloc heap"),
+  InfrastructureFinder(VirtualMemoryPartition<Offset>& virtualMemoryPartition,
+                       const ModuleDirectory<Offset>& moduleDirectory,
+                       UnfilledImages<Offset>& unfilledImages)
+      : LIBC_MALLOC_HEAP("libc malloc heap"),
         LIBC_MALLOC_HEAP_TAIL_RESERVATION("libc malloc heap tail reservation"),
         LIBC_MALLOC_MAIN_ARENA("libc malloc main arena"),
         LIBC_MALLOC_MAIN_ARENA_PAGES("libc malloc main arena pages"),
-        LIBC_MALLOC_MMAPPED_ALLOCATION("libc malloc mmapped allocation"),
         _virtualMemoryPartition(virtualMemoryPartition),
         _moduleDirectory(moduleDirectory),
         _unfilledImages(unfilledImages),
@@ -157,8 +152,8 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
 
       CheckArenaNexts();
       if (_arenas.size() == 0) {
-        std::cerr << "Failed to find any arenas, main or not." << std::endl;
         if (_heaps.size() > 0) {
+          std::cerr << "Failed to find any arenas, main or not." << std::endl;
           std::cerr << "However, " << std::dec << _heaps.size()
                     << " heaps were found.\n";
           std::cerr << "An attempt will be made to used this partial "
@@ -225,92 +220,12 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
      */
 
     FindMainArenaRuns();
-
-    ScanForMmappedChunks();
-
-    FindAllAllocations();
-
-    MarkFastBinAllocationsAsFree();
-
-    MarkThreadCachedAllocationsAsFree();
-
-    CheckForCorruption();
-
-    SetCountsForArenas();
-
-    _maxAllocationSize = 0;
-    for (const Allocation& allocation : _allocations) {
-      Offset size = allocation.Size();
-      if (_maxAllocationSize < size) {
-        _maxAllocationSize = size;
-      }
-    }
-  }
-
-  virtual ~LibcMallocAllocationFinder() {}
-
-  // returns NumAllocations() if offset is not in any range.
-
-  virtual AllocationIndex AllocationIndexOf(Offset addr) const {
-    size_t limit = _allocations.size();
-    size_t base = 0;
-    while (base < limit) {
-      size_t mid = (base + limit) / 2;
-      const Allocation& allocation = _allocations[mid];
-      if (addr >= allocation.Address()) {
-        if (addr < allocation.Address() + allocation.Size()) {
-          return (AllocationIndex)(mid);
-        } else {
-          base = mid + 1;
-        }
-      } else {
-        limit = mid;
-      }
-    }
-    return _allocations.size();
-  }
-
-  // null if index is not valid.
-  virtual const Allocation* AllocationAt(AllocationIndex index) const {
-    if (index < _allocations.size()) {
-      return &_allocations[index];
-    }
-    return (const Allocation*)0;
-  }
-
-  // O if index is not valid
-  virtual Offset MinRequestSize(AllocationIndex index) const {
-    Offset minRequestSize = 0;
-    if (index < _allocations.size()) {
-      Offset size = _allocations[index].Size();
-      if (size <= 5 * sizeof(Offset)) {
-        /*
-         * libc malloc always attempts to return something and may easily
-         * return 0x10 bytes more than needed.
-         */
-        minRequestSize = 0;
-      } else if (((size & 0xfff) != 0xff0) || (size == 0xff0)) {
-        minRequestSize = size - 0x1f;
-      } else {
-        minRequestSize = size + 1 - 0x1000;
-      }
-    }
-    return minRequestSize;
-  }
-  virtual AllocationIndex NumAllocations() const { return _allocations.size(); }
-
-  virtual Offset MaxAllocationSize() const { return _maxAllocationSize; }
-
-  virtual bool HasThreadCached() const { return !_isThreadCached.empty(); }
-  virtual bool IsThreadCached(AllocationIndex index) const {
-    return !_isThreadCached.empty() && _isThreadCached[index];
   }
 
   const char* LIBC_MALLOC_HEAP;
   const char* LIBC_MALLOC_HEAP_TAIL_RESERVATION;
   const char* LIBC_MALLOC_MAIN_ARENA;
   const char* LIBC_MALLOC_MAIN_ARENA_PAGES;
-  const char* LIBC_MALLOC_MMAPPED_ALLOCATION;
 
   struct Arena {
     Arena(Offset address)
@@ -367,21 +282,43 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   typedef typename MainArenaRuns::iterator MainArenaRunsIterator;
   typedef typename MainArenaRuns::const_iterator MainArenaRunsConstIterator;
 
-  // Keep the start and size for every memory range containing a mmapped
-  // allocation, in order of start address, and including any overhead
-  // before or after the allocation.
-  typedef std::map<Offset, Offset> MmappedAllocations;
-  typedef typename MmappedAllocations::iterator MmappedAllocationsIterator;
-  typedef typename MmappedAllocations::const_iterator
-      MmappedAllocationsConstIterator;
-
   const ArenaMap& GetArenas() const { return _arenas; }
+  Offset GetMainArenaAddress() const { return _mainArenaAddress; }
   Offset GetArenaStructSize() const { return _arenaStructSize; }
+  Offset GetFastBinStartOffset() const { return _fastBinStartOffset; }
+  Offset GetFastBinLimitOffset() const { return _fastBinLimitOffset; }
+  Offset GetArenaDoublyLinkedFreeListOffset() const {
+    return _arenaDoublyLinkedFreeListOffset;
+  }
+  Offset GetArenaLastDoublyLinkedFreeListOffset() const {
+    return _arenaLastDoublyLinkedFreeListOffset;
+  }
   const HeapMap& GetHeaps() const { return _heaps; }
   Offset GetMaxHeapSize() const { return _maxHeapSize; }
   const MainArenaRuns& GetMainArenaRuns() const { return _mainArenaRuns; }
-  const MmappedAllocations& GetMmappedAllocations() const {
-    return _mmappedAllocations;
+  Offset ArenaAddressFor(Offset address) const {
+    HeapMapConstIterator itHeaps = _heaps.find(address & ~(_maxHeapSize - 1));
+    if (itHeaps != _heaps.end()) {
+      return itHeaps->second._arenaAddress;
+    }
+
+    MainArenaRunsConstIterator itRuns = _mainArenaRuns.upper_bound(address);
+
+    if (itRuns == _mainArenaRuns.begin()) {
+      return 0;
+    }
+
+    --itRuns;
+    Offset runStart = itRuns->first;
+    if (address < runStart) {
+      return 0;
+    }
+    Offset runLimit = runStart + itRuns->second;
+    if (address >= runLimit) {
+      return 0;
+    }
+
+    return _mainArenaAddress;
   }
 
  private:
@@ -390,18 +327,13 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   UnfilledImages<Offset>& _unfilledImages;
   const VirtualAddressMap<Offset>& _addressMap;
 
-  std::vector<Allocation> _allocations;
-  Offset _maxAllocationSize;
-  std::vector<bool> _isThreadCached;
-
-  static const Offset OFFSET_SIZE = sizeof(Offset);
-  static const Offset DEFAULT_MAX_HEAP_SIZE =
+  static constexpr Offset OFFSET_SIZE = sizeof(Offset);
+  static constexpr Offset DEFAULT_MAX_HEAP_SIZE =
       (OFFSET_SIZE == 4) ? 0x100000 : 0x4000000;
 
   HeapMap _heaps;
   ArenaMap _arenas;
   MainArenaRuns _mainArenaRuns;
-  MmappedAllocations _mmappedAllocations;
   Offset _mainArenaAddress;
   bool _mainArenaIsContiguous;
   bool _completeArenaRingFound;
@@ -416,34 +348,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   Offset _arenaLastDoublyLinkedFreeListOffset;
   Offset _arenaStructSize;
   Offset _maxHeapSize;
-
-  void RecordAllocated(Offset address, Offset size) {
-    if (size >= 3 * sizeof(Offset)) {
-      // Avoid small false allocations at the end of an allocation run.
-      _allocations.emplace_back(address, size, true);
-    }
-  }
-
-  void RecordFree(Offset address, Offset size) {
-    if (size >= 3 * sizeof(Offset)) {
-      // Avoid small false allocations at the end of an allocation run.
-      _allocations.emplace_back(address, size, false);
-    }
-  }
-
-  bool IsTextAddress(Offset address) {
-    // TODO: move to base as default or to VAM?
-    typename VirtualAddressMap<Offset>::const_iterator it =
-        _addressMap.find(address);
-    if (it != _addressMap.end() &&
-        (it.Flags() &
-         (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE |
-          RangeAttributes::IS_EXECUTABLE)) ==
-            (RangeAttributes::IS_READABLE | RangeAttributes::IS_EXECUTABLE)) {
-      return true;
-    }
-    return false;
-  }
 
   void FindHeapAndArenaCandidates() {
     typename VirtualAddressMap<Offset>::const_iterator itEnd =
@@ -1874,764 +1778,6 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
     ScanForMainArenaRuns(mainArenaSize);
   }
 
-  void ScanForMmappedChunksInRange(Offset base, Offset limit) {
-    Reader reader(_addressMap);
-    Offset candidate = (base + 0xFFF) & ~0xFFF;
-    while (candidate <= limit - 0x1000) {
-      Offset expect0 = reader.ReadOffset(candidate, 0xbadbad);
-      Offset chunkSizeAndFlags =
-          reader.ReadOffset(candidate + OFFSET_SIZE, 0xbadbad);
-      bool foundMmappedAlloc =
-          (expect0 == 0) &&
-          ((chunkSizeAndFlags & ((Offset)0xFFF)) == ((Offset)2)) &&
-          (chunkSizeAndFlags >= ((Offset)0x1000)) &&
-          (candidate + chunkSizeAndFlags - 2) > candidate &&
-          (candidate + chunkSizeAndFlags - 2) <= limit;
-      if (!foundMmappedAlloc) {
-        candidate += 0x1000;
-      } else {
-        Offset chunkSize = chunkSizeAndFlags - 2;
-        _mmappedAllocations[candidate] = chunkSize;
-        candidate += chunkSize;
-      }
-    }
-  }
-
-  void ScanForMmappedChunks() {
-    for (const auto& range :
-         _virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
-      ScanForMmappedChunksInRange(range._base, range._limit);
-    }
-    for (MmappedAllocationsConstIterator itMmapped =
-             _mmappedAllocations.begin();
-         itMmapped != _mmappedAllocations.end(); ++itMmapped) {
-      if (!_virtualMemoryPartition.ClaimRange(
-              itMmapped->first, itMmapped->second,
-              LIBC_MALLOC_MMAPPED_ALLOCATION, false)) {
-        std::cerr << "Warning: unexpected overlap for mmapped allocation at 0x"
-                  << std::hex << itMmapped->first << "\n";
-      }
-    }
-  }
-
-  void AddMmappedAllocation(Offset start, Offset size) {
-    RecordAllocated(start + 2 * OFFSET_SIZE, size - 2 * OFFSET_SIZE);
-  }
-
-  Offset FindBackChain(Offset libcChunkStart, Offset corruptionPoint) {
-    Offset lowestChainStart = libcChunkStart;
-    Reader reader(_addressMap);
-    Offset sizeCheckMask = (sizeof(Offset) == 8) ? 0xa : 2;
-    for (Offset check = libcChunkStart - 4 * sizeof(Offset);
-         check > corruptionPoint; check -= (2 * sizeof(Offset))) {
-      Offset sizeAndStatus = reader.ReadOffset(check + sizeof(Offset), 2);
-      if ((sizeAndStatus & sizeCheckMask) != 0) {
-        continue;
-      }
-      Offset length = sizeAndStatus & ~7;
-      if (length == 0 || length > (libcChunkStart = check)) {
-        continue;
-      }
-      if ((sizeAndStatus & 1) == 0) {
-        Offset prevSizeAndStatus = reader.ReadOffset(check, 2);
-        if ((prevSizeAndStatus & sizeCheckMask) != 0) {
-          continue;
-        }
-        Offset prevLength = prevSizeAndStatus & ~7;
-        if (check - corruptionPoint <= prevLength) {
-          continue;
-        }
-        if ((reader.ReadOffset(check - prevLength, 0) & ~7) != prevLength) {
-          continue;
-        }
-      }
-
-      if (check + length == lowestChainStart) {
-        lowestChainStart = check;
-      } else {
-        Offset checkForward = check + length;
-        Offset prevLength = length;
-        while (checkForward != libcChunkStart) {
-          Offset forwardSizeAndStatus =
-              reader.ReadOffset(checkForward + sizeof(Offset), 2);
-          if ((forwardSizeAndStatus & sizeCheckMask) != 0) {
-            break;
-          }
-          if ((forwardSizeAndStatus & 1) == 0 &&
-              (reader.ReadOffset(checkForward, 0) & ~7) != prevLength) {
-            break;
-          }
-          Offset forwardLength = forwardSizeAndStatus & ~7;
-          if (forwardLength == 0 ||
-              forwardLength > (libcChunkStart - checkForward)) {
-            break;
-          }
-          prevLength = forwardLength;
-          checkForward += forwardLength;
-        }
-        if (checkForward == libcChunkStart) {
-          lowestChainStart = check;
-        }
-      }
-    }
-    return lowestChainStart;
-  }
-
-  Offset SkipArenaCorruption(Offset arenaAddress, Offset corruptionPoint,
-                             Offset repairLimit) {
-    ArenaMapIterator it = _arenas.find(arenaAddress);
-    if (it == _arenas.end() || it->second._missingOrUnfilledHeader) {
-      return 0;
-    }
-    Offset pastArenaCorruption = 0;
-    Offset top = it->second._top;
-    if (corruptionPoint == top) {
-      return 0;
-    }
-    if (corruptionPoint < top && top <= repairLimit) {
-      repairLimit = top;
-    } else {
-      repairLimit -= 6 * OFFSET_SIZE;
-    }
-
-    Offset expectClearMask = 2;
-    if (arenaAddress == _mainArenaAddress) {
-      expectClearMask = expectClearMask | 4;
-    }
-    if (OFFSET_SIZE == 8) {
-      expectClearMask = expectClearMask | 8;
-    }
-    Reader reader(_addressMap);
-    Offset fastBinLimit = arenaAddress + _fastBinLimitOffset;
-    for (Offset fastBinCheck = arenaAddress + _fastBinStartOffset;
-         fastBinCheck < fastBinLimit; fastBinCheck += OFFSET_SIZE) {
-      int loopGuard = 0;
-      for (Offset listNode = reader.ReadOffset(fastBinCheck); listNode != 0;
-           listNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE, 0)) {
-        if (++loopGuard == 10000000) {
-          break;
-        }
-        if (listNode > corruptionPoint && listNode <= repairLimit) {
-          Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE, 0);
-          if (sizeAndFlags != 0 && ((sizeAndFlags & expectClearMask) == 0) &&
-              ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
-            if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
-              pastArenaCorruption = listNode;
-            }
-          }
-        }
-      }
-    }
-    for (Offset listHeader =
-             arenaAddress + _arenaDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
-         ; listHeader += (2 * OFFSET_SIZE)) {
-      Offset listNode = reader.ReadOffset(listHeader + 2 * OFFSET_SIZE, 0);
-      if (listNode == listHeader) {
-        // The list was empty.
-        continue;
-      }
-      if (reader.ReadOffset(listNode + 3 * OFFSET_SIZE, 0) != listHeader) {
-        break;
-      }
-      do {
-        if (listNode > corruptionPoint && listNode <= repairLimit) {
-          Offset sizeAndFlags = reader.ReadOffset(listNode + OFFSET_SIZE, 0);
-          if (sizeAndFlags != 0 && ((sizeAndFlags & expectClearMask) == 0) &&
-              ((listNode + (sizeAndFlags & ~7)) <= repairLimit)) {
-            if (pastArenaCorruption == 0 || listNode < pastArenaCorruption) {
-              pastArenaCorruption = listNode;
-            }
-          }
-        }
-        Offset nextNode = reader.ReadOffset(listNode + 2 * OFFSET_SIZE, 0);
-        if (nextNode != 0 ||
-            reader.ReadOffset(nextNode + 3 * OFFSET_SIZE, 0) != listNode) {
-          /*
-           * We reached a break in the list, most likely due to corruption
-           * but possibly due to a zero-filled part of a heap given that we
-           * attempt to extract what we can from such incomplete cores.
-           */
-          break;
-        }
-        listNode = nextNode;
-      } while (listNode != listHeader);
-    }
-    if (pastArenaCorruption == 0) {
-      if (repairLimit == top && top > corruptionPoint) {
-        pastArenaCorruption = FindBackChain(top, corruptionPoint);
-      }
-    } else {
-      pastArenaCorruption = FindBackChain(pastArenaCorruption, corruptionPoint);
-    }
-    return pastArenaCorruption;
-  }
-
-  Offset HandleMainArenaCorruption(Offset corruptionPoint, Offset limit) {
-    std::cerr << "Corruption was found in main arena run near 0x" << std::hex
-              << corruptionPoint << "\n";
-    std::cerr << "The main arena is at 0x" << std::hex << _mainArenaAddress
-              << "\n";
-    return SkipArenaCorruption(_mainArenaAddress, corruptionPoint, limit);
-  }
-  /*
-   * Note that the checks can be more strict here because the allocations
-   * are known to be in the main arena.
-   */
-
-  void AddAllocationsForMainArenaRun(Offset base, Offset size) {
-    Offset limit = base + size;
-    Reader reader(_addressMap);
-    Offset sizeAndFlags = reader.ReadOffset(base + OFFSET_SIZE);
-    Offset chunkSize = 0;
-    Offset prevCheck = base;
-    for (Offset check = base; check != limit;
-         prevCheck = check, check += chunkSize) {
-      if ((sizeAndFlags & (OFFSET_SIZE | 6)) != 0) {
-        check = HandleMainArenaCorruption(prevCheck, limit);
-        if (check != 0) {
-          chunkSize = 0;
-          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
-          continue;
-        }
-        return;
-      }
-      chunkSize = sizeAndFlags & ~7;
-
-      if ((chunkSize == 0) || (chunkSize > (limit - check))) {
-        check = HandleMainArenaCorruption(prevCheck, limit);
-        if (check != 0) {
-          chunkSize = 0;
-          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE);
-          continue;
-        }
-        return;
-      }
-      Offset allocationSize = chunkSize - OFFSET_SIZE;
-      bool isFree = true;
-      if (check + chunkSize == limit) {
-        allocationSize -= OFFSET_SIZE;
-      } else {
-        sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE + chunkSize);
-        isFree = ((sizeAndFlags & 1) == 0);
-      }
-      if (isFree) {
-        RecordFree(check + 2 * OFFSET_SIZE, allocationSize);
-      } else {
-        RecordAllocated(check + 2 * OFFSET_SIZE, allocationSize);
-      }
-    }
-  }
-
-  Offset HandleNonMainArenaCorruption(const Heap& heap,
-                                      Offset corruptionPoint) {
-    std::cerr << "Corruption was found in non-main arena run near 0x"
-              << std::hex << corruptionPoint << "\n";
-    Offset arenaAddress = heap._arenaAddress;
-    Offset heapAddress = heap._address;
-    std::cerr << "Corrupt heap is at 0x" << std::hex << heapAddress << "\n";
-    std::cerr << "Corrupt arena is at 0x" << std::hex << arenaAddress << "\n";
-    Offset heapLimit = heapAddress + heap._size;
-    return SkipArenaCorruption(arenaAddress, corruptionPoint, heapLimit);
-  }
-
-  void AddAllocationsForHeap(const Heap& heap) {
-    Offset base = heap._address;
-    Offset size = heap._size;
-    const char* heapImage;
-    Offset numBytesFound = _addressMap.FindMappedMemoryImage(base, &heapImage);
-    if (numBytesFound < size) {
-      std::cerr << "Heap at 0x" << std::hex << base
-                << " is not fully mapped in the core.\n";
-      size = numBytesFound;
-    }
-    Offset limit = base + size;
-
-    if ((heap._arenaAddress & ~(_maxHeapSize - 1)) == base) {
-      base += 4 * OFFSET_SIZE + _arenaStructSize;
-    } else {
-      base += 4 * OFFSET_SIZE;
-    }
-
-    Offset top = 0;
-    ArenaMapConstIterator itArena = _arenas.find(heap._arenaAddress);
-    if (itArena != _arenas.end()) {
-      top = itArena->second._top;
-    }
-
-    Reader reader(_addressMap);
-    Offset sizeAndFlags = reader.ReadOffset(base + OFFSET_SIZE);
-    Offset chunkSize = 0;
-    Offset prevCheck = base;
-    Offset checkLimit = limit - 4 * OFFSET_SIZE;
-    for (Offset check = base; check < checkLimit;
-         prevCheck = check, check += chunkSize) {
-      if (((sizeAndFlags & 2) != 0) ||
-          ((OFFSET_SIZE == 8) && ((sizeAndFlags & OFFSET_SIZE) != 0))) {
-        check = HandleNonMainArenaCorruption(heap, prevCheck);
-        if (check != 0) {
-          chunkSize = 0;
-          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE, 0xbadbad);
-          if (sizeAndFlags != 0xbadbad) {
-            continue;
-          }
-        }
-        return;
-      }
-      chunkSize = sizeAndFlags & ~7;
-      if ((chunkSize == 0) || (chunkSize >= 0x10000000) ||
-          (chunkSize > (limit - check))) {
-        check = HandleNonMainArenaCorruption(heap, prevCheck);
-        if (check != 0) {
-          chunkSize = 0;
-          sizeAndFlags = reader.ReadOffset(check + OFFSET_SIZE, 0xbadbad);
-          if (sizeAndFlags != 0xbadbad) {
-            continue;
-          }
-        }
-        return;
-      }
-      Offset allocationSize = chunkSize - OFFSET_SIZE;
-      bool isFree = true;
-      if (check + chunkSize == limit) {
-        allocationSize -= OFFSET_SIZE;
-      } else {
-        sizeAndFlags =
-            reader.ReadOffset(check + OFFSET_SIZE + chunkSize, 0xbadbad);
-        if (sizeAndFlags == 0xbadbad) {
-          return;
-        }
-        isFree =
-            ((sizeAndFlags & 1) == 0) || (allocationSize < 3 * OFFSET_SIZE);
-      }
-      if ((check + allocationSize + 3 * OFFSET_SIZE == limit) &&
-          ((sizeAndFlags & ~7) == 0)) {
-        break;
-      }
-      if (isFree) {
-        if (check == top) {
-          /*
-           * If the entry is the top value for an arena, we want the size of the
-           * allocation to include any writable bytes in the heap that follow
-           * the top allocation so that the results of "count free" reflect
-           * the bytes that are actually available for allocation.  Otherwise,
-           * if the end of the top allocation has shifted to a lower address
-           * without a corresponding shift in the end of the writable region for
-           * the heap, the total free count will be misleading.
-           */
-          typename VirtualAddressMap<Offset>::const_iterator itMap =
-              _addressMap.find(top);
-          Offset endWritableInHeap = itMap.Limit();
-          Offset endHeapRange = base + _maxHeapSize;
-          if (endWritableInHeap > endHeapRange) {
-            endWritableInHeap = endHeapRange;
-          }
-          allocationSize = endWritableInHeap - (check + 2 * OFFSET_SIZE);
-        }
-        RecordFree(check + 2 * OFFSET_SIZE, allocationSize);
-      } else {
-        RecordAllocated(check + 2 * OFFSET_SIZE, allocationSize);
-      }
-    }
-  }
-
-  void FindAllAllocations() {
-    MmappedAllocationsConstIterator itMmapped = _mmappedAllocations.begin();
-    MmappedAllocationsConstIterator itMmappedEnd = _mmappedAllocations.end();
-    HeapMapConstIterator itHeaps = _heaps.begin();
-    HeapMapConstIterator itHeapsEnd = _heaps.end();
-    MainArenaRunsConstIterator itPages = _mainArenaRuns.begin();
-    MainArenaRunsConstIterator itPagesEnd = _mainArenaRuns.end();
-    while (itMmapped != itMmappedEnd) {
-      if (itHeaps != itHeapsEnd) {
-        if (itPages != itPagesEnd) {
-          if (itMmapped->first < itHeaps->first) {
-            if (itMmapped->first < itPages->first) {
-              AddMmappedAllocation(itMmapped->first, itMmapped->second);
-              ++itMmapped;
-            } else {
-              AddAllocationsForMainArenaRun(itPages->first, itPages->second);
-              ++itPages;
-            }
-          } else {
-            if (itHeaps->first < itPages->first) {
-              AddAllocationsForHeap(itHeaps->second);
-              ++itHeaps;
-            } else {
-              AddAllocationsForMainArenaRun(itPages->first, itPages->second);
-              ++itPages;
-            }
-          }
-
-        } else {
-          if (itMmapped->first < itHeaps->first) {
-            AddMmappedAllocation(itMmapped->first, itMmapped->second);
-            ++itMmapped;
-          } else {
-            AddAllocationsForHeap(itHeaps->second);
-            ++itHeaps;
-          }
-        }
-      } else {
-        if (itPages != itPagesEnd) {
-          if (itMmapped->first < itPages->first) {
-            AddMmappedAllocation(itMmapped->first, itMmapped->second);
-            ++itMmapped;
-          } else {
-            AddAllocationsForMainArenaRun(itPages->first, itPages->second);
-            ++itPages;
-          }
-        } else {
-          for (; itMmapped != itMmappedEnd; ++itMmapped) {
-            AddMmappedAllocation(itMmapped->first, itMmapped->second);
-          }
-          return;
-        }
-      }
-    }
-    while (itHeaps != itHeapsEnd) {
-      if (itPages != itPagesEnd) {
-        if (itHeaps->first < itPages->first) {
-          AddAllocationsForHeap(itHeaps->second);
-          ++itHeaps;
-        } else {
-          AddAllocationsForMainArenaRun(itPages->first, itPages->second);
-          ++itPages;
-        }
-      } else {
-        for (; itHeaps != itHeapsEnd; ++itHeaps) {
-          AddAllocationsForHeap(itHeaps->second);
-        }
-      }
-    }
-    for (; itPages != itPagesEnd; ++itPages) {
-      AddAllocationsForMainArenaRun(itPages->first, itPages->second);
-    }
-  }
-
-  Offset ArenaAddressFor(Offset address) {
-    HeapMapConstIterator it = _heaps.find(address & ~(_maxHeapSize - 1));
-    return (it != _heaps.end()) ? it->second._arenaAddress : _mainArenaAddress;
-  }
-
-  void ReportFastBinCorruption(Arena& arena, Offset fastBinHeader, Offset node,
-                               const char* specificError) {
-    if (!arena._hasFastBinCorruption) {
-      arena._hasFastBinCorruption = true;
-      std::cerr << "Fast bin corruption was found for the arena"
-                   " at 0x"
-                << std::hex << arena._address << "\n";
-      std::cerr << "  Leak analysis will not be accurate.\n";
-      std::cerr << "  Used/free analysis will not be accurate "
-                   "for the arena.\n";
-    }
-    std::cerr << "  The fast bin list headed at 0x" << std::hex << fastBinHeader
-              << " has a node\n  0x" << node << " " << specificError << ".\n";
-  }
-
-  void MarkFastBinAllocationsAsFree() {
-    AllocationIndex noAllocation = _allocations.size();
-    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
-      Offset arenaAddress = it->first;
-      Arena& arena = it->second;
-      Offset fastBinLimit = arenaAddress + _fastBinLimitOffset;
-      Reader reader(_addressMap);
-      for (Offset fastBinCheck = arenaAddress + _fastBinStartOffset;
-           fastBinCheck < fastBinLimit; fastBinCheck += OFFSET_SIZE) {
-        try {
-          for (Offset nextNode = reader.ReadOffset(fastBinCheck); nextNode != 0;
-               nextNode = reader.ReadOffset(nextNode + OFFSET_SIZE * 2)) {
-            Offset allocation = nextNode + OFFSET_SIZE * 2;
-            AllocationIndex index = AllocationIndexOf(allocation);
-            if (index == noAllocation ||
-                _allocations[index].Address() != allocation) {
-              ReportFastBinCorruption(arena, fastBinCheck, nextNode,
-                                      "not matching an allocation");
-              // It is not possible to process the rest of this
-              // fast bin list because there is a break in the
-              // chain.
-              // TODO: A possible improvement would be to try
-              // to recognize any orphan fast bin lists.  Doing
-              // so here would be the best place because if we
-              // fail to find the rest of the fast bin list, which
-              // in rare cases can be huge, the used/free status
-              // will be wrong for remaining entries on that
-              // particular fast bin list.
-              break;
-            }
-            if (ArenaAddressFor(nextNode) != arenaAddress) {
-              ReportFastBinCorruption(arena, fastBinCheck, nextNode,
-                                      "in the wrong arena");
-              // It is not possible to process the rest of this
-              // fast bin list because there is a break in the
-              // chain.
-              // TODO: A possible improvement would be to try
-              // to recognize any orphan fast bin lists.  Doing
-              // so here would be the best place because if we
-              // fail to find the rest of the fast bin list, which
-              // in rare cases can be huge, the used/free status
-              // will be wrong for remaining entries on that
-              // particular fast bin list.
-              break;
-            }
-            _allocations[index].MarkAsFree();
-          }
-        } catch (NotMapped& e) {
-          // It is not possible to process the rest of this
-          // fast bin list because there is a break in the
-          // chain.
-          // TODO: A possible improvement would be to try
-          // to recognize any orphan fast bin lists.  Doing
-          // so here would be the best place because if we
-          // fail to find the rest of the fast bin list, which
-          // in rare cases can be huge, the used/free status
-          // will be wrong for remaining entries on that
-          // particular fast bin list.
-          if (e._address == fastBinCheck) {
-            std::cerr << "The arena header at 0x" << std::hex << arenaAddress
-                      << " is not in the core.\n";
-            return;
-          }
-          ReportFastBinCorruption(arena, fastBinCheck, e._address,
-                                  "not in the core");
-        }
-      }
-    }
-  }
-
-  void MarkThreadCachedAllocationsAsFree() {
-    Offset minSize = 0x40 * (1 + OFFSET_SIZE);
-    Offset maxSize = minSize + 0x40;
-    AllocationIndex numAllocations = NumAllocations();
-    Reader reader(_addressMap);
-    for (auto allocation : _allocations) {
-      if (!allocation.IsUsed()) {
-        continue;
-      }
-      Offset size = allocation.Size();
-      if (size < minSize || size > maxSize) {
-        continue;
-      }
-      int numMismatched = 0;
-      Offset cacheHeaderAddress = allocation.Address();
-      const char* allocationImage = 0;
-      Offset numBytesFound = _addressMap.FindMappedMemoryImage(
-          cacheHeaderAddress, &allocationImage);
-      if (numBytesFound < size) {
-        abort();
-      }
-
-      const uint8_t* listSizes = (const uint8_t*)allocationImage;
-      const Offset* listHeaders = (const Offset*)(allocationImage + 0x40);
-      int numMatchingCounts = 0;
-      for (size_t i = 0; i < 0x40; i++) {
-        size_t expectEntries = listSizes[i];
-        Offset listHeader = listHeaders[i];
-        Offset listEntry = listHeader;
-        while (expectEntries != 0) {
-          if (listEntry == 0) {
-            break;
-          }
-          AllocationIndex listEntryIndex = AllocationIndexOf(listEntry);
-          if (listEntryIndex == numAllocations) {
-            break;
-          }
-          Allocation& listEntryAllocation = _allocations[listEntryIndex];
-          if (!listEntryAllocation.IsUsed()) {
-            break;
-          }
-          if (listEntryAllocation.Size() != (((2 * i) + 3) * sizeof(Offset))) {
-            break;
-          }
-          if (listEntryAllocation.Address() != listEntry) {
-            break;
-          }
-          listEntry = reader.ReadOffset(listEntry);
-          expectEntries--;
-        }
-        if (expectEntries != 0 || listEntry != 0) {
-          if (++numMismatched > 2) {
-            /*
-             * We need to allow at least one mismatch here because at present
-             * there is no logic to deal with a thread cache in flux.
-             * Given that the cache head is local to one thread one would
-             * expect at most one of the chains to be in flux and so at most
-             * one mismatch.
-             */
-            break;
-          }
-        } else {
-          if (listHeader != 0) {
-            numMatchingCounts++;
-          }
-        }
-      }
-      if ((numMatchingCounts == 0) || (numMismatched > 1)) {
-        /*
-         * Don't bother with empty caches.  Allow at most one list/size pair
-         * to be inconsistent, as described in an earlier comment, unless
-         * we have seen enough well formed lists to be reasonably comfortable
-         * that one other inconsistency could be caused by corruption.
-         */
-        continue;
-      }
-
-      for (size_t i = 0; i < 0x40; i++) {
-        size_t expectEntries = listSizes[i];
-        Offset listEntry = listHeaders[i];
-        while (expectEntries != 0) {
-          if (listEntry == 0) {
-            break;
-          }
-          AllocationIndex listEntryIndex = AllocationIndexOf(listEntry);
-          if (listEntryIndex == numAllocations) {
-            break;
-          }
-          Allocation& listEntryAllocation = _allocations[listEntryIndex];
-          if (!listEntryAllocation.IsUsed()) {
-            break;
-          }
-          if (listEntryAllocation.Size() != (((2 * i) + 3) * sizeof(Offset))) {
-            break;
-          }
-          if (listEntryAllocation.Address() != listEntry) {
-            break;
-          }
-          listEntryAllocation.MarkAsFree();
-          if (_isThreadCached.empty()) {
-            _isThreadCached.resize(numAllocations, false);
-          }
-          _isThreadCached[listEntryIndex] = true;
-          listEntry = reader.ReadOffset(listEntry);
-          expectEntries--;
-        }
-      }
-    }
-  }
-
-  // ??? make sure to include logic related to registers and
-  // ??? stacks for arenas in flux
-  void ReportFreeListCorruption(Arena& arena, Offset freeListHeader,
-                                Offset node, const char* specificError) {
-    if (!arena._hasFreeListCorruption) {
-      arena._hasFastBinCorruption = true;
-      std::cerr << "Doubly linked free list corruption was "
-                   "found for the arena"
-                   " at 0x"
-                << std::hex << arena._address << "\n";
-      std::cerr << "  Leak analysis may not be accurate.\n";
-      /*
-       * Unlike the fast bin case, the chunks on the doubly linked free
-       * lists are actually marked as free, so a cut in a doubly linked
-       * list will not compromise the understanding of whether the remaining
-       * nodes on the list are free or not.
-       */
-    }
-    std::cerr << "  The free list headed at 0x" << std::hex << freeListHeader
-              << " has a node\n  0x" << node << " " << specificError << ".\n";
-  }
-
-  void CheckForDoublyLinkedListCorruption() {
-    AllocationIndex noAllocation = _allocations.size();
-    Reader reader(_addressMap);
-    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
-      if (it->second._missingOrUnfilledHeader) {
-        continue;
-      }
-      Offset arenaAddress = it->first;
-      Offset firstList =
-          arenaAddress + _arenaDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
-      Offset lastList =
-          arenaAddress + _arenaLastDoublyLinkedFreeListOffset - 2 * OFFSET_SIZE;
-      Arena& arena = it->second;
-      for (Offset list = firstList; list <= lastList; list += 2 * OFFSET_SIZE) {
-        try {
-          Offset firstNode = reader.ReadOffset(list + 2 * OFFSET_SIZE);
-          Offset lastNode = reader.ReadOffset(list + 3 * OFFSET_SIZE);
-          if (firstNode == list) {
-            if (lastNode != list) {
-              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, lastNode,
-                                       "at end of list with empty start");
-            }
-          } else {
-            if (lastNode == list) {
-              ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, lastNode,
-                                       "at start of list with empty end");
-            } else {
-              Offset prevNode = list;
-              for (Offset node = firstNode; node != list;
-                   node = reader.ReadOffset(node + 2 * OFFSET_SIZE)) {
-                Offset allocationAddr = node + 2 * OFFSET_SIZE;
-                AllocationIndex index = AllocationIndexOf(allocationAddr);
-                if (index == noAllocation) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
-                                           "not matching an allocation");
-                  break;
-                }
-                const Allocation& allocation = _allocations[index];
-                if (allocation.Address() != allocationAddr) {
-                  if (prevNode == list) {
-                    ReportFreeListCorruption(
-                        arena, list + 2 * OFFSET_SIZE, node,
-                        "with wrong offset from allocation");
-                  } else {
-                    ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE,
-                                             prevNode,
-                                             "with an unexpected forward link");
-                  }
-                  break;
-                }
-                Offset allocationSize = allocation.Size();
-                if ((reader.ReadOffset(allocationAddr + allocationSize) & 1) !=
-                    0) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
-                                           "with a wrong used/free status bit");
-                  break;
-                }
-                if (ArenaAddressFor(node) != arenaAddress) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
-                                           "in the wrong arena");
-                  break;
-                }
-                if (reader.ReadOffset(node + 3 * OFFSET_SIZE) != prevNode) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
-                                           "with an unexpected back pointer");
-                  break;
-                }
-                if (reader.ReadOffset(allocationAddr + allocationSize -
-                                      OFFSET_SIZE) !=
-                    allocationSize + OFFSET_SIZE) {
-                  ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, node,
-                                           "with a wrong prev size at end");
-                  break;
-                }
-                prevNode = node;
-              }
-            }
-          }
-        } catch (NotMapped& e) {
-          ReportFreeListCorruption(arena, list + 2 * OFFSET_SIZE, e._address,
-                                   "not in the core");
-        }
-      }
-    }
-  }
-  void CheckForCorruption() { CheckForDoublyLinkedListCorruption(); }
-
-  void SetCountsForArenas() {
-    for (auto allocation : _allocations) {
-      ArenaMapIterator it = _arenas.find(ArenaAddressFor(allocation.Address()));
-      Arena& arena = it->second;
-      Offset size = allocation.Size();
-      if (allocation.IsUsed()) {
-        arena._usedCount++;
-        arena._usedBytes += size;
-      } else {
-        arena._freeCount++;
-        arena._freeBytes += size;
-      }
-    }
-  }
-
   void ClaimHeapRanges() {
     typename VirtualAddressMap<Offset>::const_iterator itMapEnd =
         _addressMap.end();
@@ -2699,5 +1845,5 @@ class LibcMallocAllocationFinder : public Allocations::Finder<Offset> {
   }
 };
 
-}  // namespace Linux
+}  // namespace LibcMalloc
 }  // namespace chap

@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,8 +16,8 @@ class Allocations {
     Factory() : _setName("allocations") {}
     Allocations* MakeIterator(Commands::Context& /* context */,
                               const ProcessImage<Offset>& /* processImage */,
-                              const Finder<Offset>& allocationFinder) {
-      return new Allocations(allocationFinder.NumAllocations());
+                              const Directory<Offset>& directory) {
+      return new Allocations(directory.NumAllocations());
     }
     // TODO: allow adding taints
     const std::string& GetSetName() const { return _setName; }
@@ -33,7 +33,7 @@ class Allocations {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
   Allocations(AllocationIndex numAllocations)
       : _index(0), _numAllocations(numAllocations) {}

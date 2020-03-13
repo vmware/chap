@@ -1,33 +1,32 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include "Finder.h"
+#include "../VirtualAddressMap.h"
+#include "Directory.h"
 namespace chap {
 namespace Allocations {
 template <class Offset>
 class ExternalAnchorPointChecker {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
 
-  ExternalAnchorPointChecker(const Finder<Offset>& allocationFinder)
-      : _allocationFinder(allocationFinder),
-        _addressMap(allocationFinder.GetAddressMap()) {}
+  ExternalAnchorPointChecker(const Directory<Offset>& directory,
+                             const VirtualAddressMap<Offset>& addressMap)
+      : _directory(directory), _addressMap(addressMap) {}
 
   virtual ~ExternalAnchorPointChecker() {}
   virtual const char* GetExternalAnchorReason(
       AllocationIndex index,
       const ContiguousImage<Offset>& contiguousImage) const = 0;
 
-  const Finder<Offset>& GetAllocationFinder() const {
-    return _allocationFinder;
-  }
+  const Directory<Offset>& GetAllocationDirectory() const { return _directory; }
 
   const VirtualAddressMap<Offset>& GetAddressMap() const { return _addressMap; }
 
  protected:
-  const Finder<Offset>& _allocationFinder;
+  const Directory<Offset>& _directory;
   const VirtualAddressMap<Offset>& _addressMap;
 };
 }  // namespace Allocations

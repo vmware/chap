@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,21 +13,21 @@ template <typename Offset>
 class ListAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
   ListAllocationsTagger(Graph& graph, TagHolder& tagHolder)
       : _graph(graph),
         _tagHolder(tagHolder),
-        _finder(graph.GetAllocationFinder()),
-        _numAllocations(_finder.NumAllocations()),
-        _addressMap(_finder.GetAddressMap()),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _addressMap(graph.GetAddressMap()),
         _nodeReader(_addressMap),
         _nodeTagIndex(_tagHolder.RegisterTag("%ListNode")),
         _unknownHeadNodeTagIndex(_tagHolder.RegisterTag("%ListNode")) {}
@@ -50,7 +50,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
-  const Finder& _finder;
+  const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
   Reader _nodeReader;
@@ -100,7 +100,8 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
           AllocationIndex nextIndex =
               _graph.TargetAllocationIndex(index, _next);
           if (nextIndex != _numAllocations) {
-            const Allocation* nextAllocation = _finder.AllocationAt(nextIndex);
+            const Allocation* nextAllocation =
+                _directory.AllocationAt(nextIndex);
             if (nextAllocation->Address() == _next &&
                 _tagHolder.GetTagIndex(nextIndex) == _nodeTagIndex) {
               /*
@@ -147,7 +148,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         }
         listHead = node;
       } else {
-        const Allocation* allocation = _finder.AllocationAt(nodeIndex);
+        const Allocation* allocation = _directory.AllocationAt(nodeIndex);
         if (allocation->Address() != node) {
           if (listHead != 0) {
             return;
@@ -274,7 +275,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     Offset node = _address;
     AllocationIndex nodeIndex = index;
     do {
-      const Allocation* allocation = _finder.AllocationAt(nodeIndex);
+      const Allocation* allocation = _directory.AllocationAt(nodeIndex);
       totalSize += allocation->Size();
       totalCount++;
       node = _nodeReader.ReadOffset(node, 0xbad);
@@ -288,7 +289,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     node = _address;
     nodeIndex = index;
     do {
-      const Allocation* allocation = _finder.AllocationAt(nodeIndex);
+      const Allocation* allocation = _directory.AllocationAt(nodeIndex);
       Offset nodeSize = allocation->Size();
       if (minSize > nodeSize || nodeSize > maxSize) {
         if (listHead != 0) {
@@ -325,7 +326,7 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     for (const AllocationIndex* pNextIncoming = pFirstIncoming;
          pNextIncoming != pPastIncoming; ++pNextIncoming) {
       const Allocation* incomingAllocation =
-          _finder.AllocationAt(*pNextIncoming);
+          _directory.AllocationAt(*pNextIncoming);
       Offset incomingAddress = incomingAllocation->Address();
       if (incomingAddress == next || incomingAddress == prev) {
         continue;

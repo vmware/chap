@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,21 +13,21 @@ template <typename Offset>
 class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
   DequeAllocationsTagger(Graph& graph, TagHolder& tagHolder)
       : _graph(graph),
         _tagHolder(tagHolder),
-        _finder(graph.GetAllocationFinder()),
-        _numAllocations(_finder.NumAllocations()),
-        _addressMap(_finder.GetAddressMap()),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _addressMap(graph.GetAddressMap()),
         _mapReader(_addressMap),
         _endIterator(_addressMap.end()),
         _anchorIterator(_addressMap.end()),
@@ -63,7 +63,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
-  const Finder& _finder;
+  const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
   Reader _mapReader;
@@ -188,11 +188,11 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         if (_mapReader.ReadOffset(mNode, 0xbad) != address) {
           continue;
         }
-        AllocationIndex mapIndex = _finder.AllocationIndexOf(mNode);
+        AllocationIndex mapIndex = _directory.AllocationIndexOf(mNode);
         if (mapIndex == _numAllocations) {
           continue;
         }
-        const Allocation* mapAllocation = _finder.AllocationAt(mapIndex);
+        const Allocation* mapAllocation = _directory.AllocationAt(mapIndex);
 
         Offset bucketsAddress = mapAllocation->Address();
         if (asOffsets[-3] == bucketsAddress) {
@@ -297,7 +297,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
      * the check for a minimum maxEntries (really _M_map_size) somwhat
      * relaxed.
      */
-    Offset minMaxEntries = _finder.MinRequestSize(mapIndex) / sizeof(Offset);
+    Offset minMaxEntries = _directory.MinRequestSize(mapIndex) / sizeof(Offset);
 
     if (maxEntries == 0xbadbad || maxEntries > maxMaxEntries ||
         maxEntries < minMaxEntries) {
@@ -315,7 +315,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
       if (blockIndex == _numAllocations) {
         return false;
       }
-      const Allocation* blockAllocation = _finder.AllocationAt(blockIndex);
+      const Allocation* blockAllocation = _directory.AllocationAt(blockIndex);
       if (blockAllocation == nullptr) {
         return false;
       }
@@ -377,7 +377,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
       }
 
       if (TagAllocationsIfDeque(check, mapReader, mapIndex,
-                                *(_finder.AllocationAt(mapIndex)))) {
+                                *(_directory.AllocationAt(mapIndex)))) {
         check += 9;
       }
     }

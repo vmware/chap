@@ -7,7 +7,7 @@
 #include <stack>
 #include "../Commands/Runner.h"
 #include "../ProcessImage.h"
-#include "Finder.h"
+#include "Directory.h"
 #include "Graph.h"
 #include "PatternDescriberRegistry.h"
 #include "SignatureChecker.h"
@@ -24,8 +24,8 @@ namespace Allocations {
 template <class Offset, class Visitor>
 class ExtendedVisitor {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   ExtendedVisitor(
       Commands::Context& context, const ProcessImage<Offset>& processImage,
       const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
@@ -35,9 +35,9 @@ class ExtendedVisitor {
         _hasErrors(false),
         _patternDescriberRegistry(patternDescriberRegistry),
         _graph(0),
-        _finder(processImage.GetAllocationFinder()),
+        _directory(processImage.GetAllocationDirectory()),
         _addressMap(processImage.GetVirtualAddressMap()),
-        _numAllocations(_finder->NumAllocations()),
+        _numAllocations(_directory.NumAllocations()),
         _commentExtensions(false) {
     Commands::Error& error = context.GetError();
     size_t numExtensionArguments = context.GetNumArguments("extend");
@@ -307,7 +307,7 @@ class ExtendedVisitor {
           pNextCandidate = extensionContext._pNextCandidate;
           extensionContexts.pop();
 
-          memberAllocation = _finder->AllocationAt(memberIndex);
+          memberAllocation = _directory.AllocationAt(memberIndex);
           state = _rules[ruleIndex]._baseState;
           ruleIndexLimit = _stateToBase[state + 1];
           continue;
@@ -338,11 +338,11 @@ class ExtendedVisitor {
               continue;
             }
             Offset target = *((Offset*)(image));
-            candidateIndex = _finder->AllocationIndexOf(target);
+            candidateIndex = _directory.AllocationIndexOf(target);
             if (candidateIndex == _numAllocations) {
               continue;
             }
-            candidateAllocation = _finder->AllocationAt(candidateIndex);
+            candidateAllocation = _directory.AllocationAt(candidateIndex);
             if (rule._useOffsetInExtension &&
                 target != (candidateAllocation->Address() +
                            rule._offsetInExtension)) {
@@ -369,7 +369,7 @@ class ExtendedVisitor {
       if (ruleCheckProgress == RuleCheckProgress::IN_PROGRESS) {
         --numCandidatesLeft;
         candidateIndex = *(pNextCandidate++);
-        candidateAllocation = _finder->AllocationAt(candidateIndex);
+        candidateAllocation = _directory.AllocationAt(candidateIndex);
         if (numCandidatesLeft == 0) {
           ruleCheckProgress = RuleCheckProgress::RULE_DONE;
         }
@@ -569,7 +569,7 @@ class ExtendedVisitor {
   bool _canRun;
   const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
   const Graph<Offset>* _graph;
-  const Finder<Offset>* _finder;
+  const Directory<Offset>& _directory;
   const VirtualAddressMap<Offset>& _addressMap;
   AllocationIndex _numAllocations;
   std::vector<bool> _visited;

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -7,8 +7,8 @@
 #include "../ThreadMap.h"
 #include "../VirtualAddressMap.h"
 #include "ContiguousImage.h"
+#include "Directory.h"
 #include "ExternalAnchorPointChecker.h"
-#include "Finder.h"
 #include "IndexedDistances.h"
 #include "ObscuredReferenceChecker.h"
 
@@ -18,8 +18,8 @@ template <class Offset>
 class Graph {
  public:
   typedef VirtualAddressMap<Offset> AddressMap;
-  typedef typename Finder<Offset>::Allocation Allocation;
-  typedef typename Finder<Offset>::AllocationIndex Index;
+  typedef typename Directory<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex Index;
   typedef Offset EdgeIndex;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::NotMapped NotMapped;
@@ -39,16 +39,17 @@ class Graph {
                                 const char *image) = 0;
   };
 
-  Graph(const Finder<Offset> &finder, const ThreadMap<Offset> &threadMap,
+  Graph(const VirtualAddressMap<Offset> &addressMap,
+        const Directory<Offset> &directory, const ThreadMap<Offset> &threadMap,
         const std::map<Offset, Offset> &staticAnchorLimits,
         const ExternalAnchorPointChecker<Offset> *externalAnchorPointChecker,
         const ObscuredReferenceChecker<Offset> *obscuredReferenceChecker)
-      : _finder(finder),
-        _addressMap(finder.GetAddressMap()),
+      : _directory(directory),
+        _addressMap(addressMap),
         _threadMap(threadMap),
         _externalAnchorPointChecker(externalAnchorPointChecker),
         _obscuredReferenceChecker(obscuredReferenceChecker),
-        _numAllocations(finder.NumAllocations()),
+        _numAllocations(directory.NumAllocations()),
         _totalEdges(0),
         _staticAnchorDistances(_numAllocations),
         _stackAnchorDistances(_numAllocations),
@@ -61,7 +62,7 @@ class Graph {
     MarkLeakedChunks();
   }
 
-  const Finder<Offset> &GetAllocationFinder() const { return _finder; }
+  const Directory<Offset> &GetAllocationDirectory() const { return _directory; }
 
   const VirtualAddressMap<Offset> &GetAddressMap() const { return _addressMap; }
 
@@ -99,7 +100,7 @@ class Graph {
       while (base < limit) {
         size_t mid = (base + limit) / 2;
         Index target = _outgoing[mid];
-        const Allocation &allocation = *(_finder.AllocationAt(target));
+        const Allocation &allocation = *(_directory.AllocationAt(target));
         if (addr >= allocation.Address()) {
           if (addr < allocation.Address() + allocation.Size()) {
             return target;
@@ -119,8 +120,8 @@ class Graph {
   }
 
   bool IsAnchored(Index index) const {
-    return (index < _numAllocations) && _finder.AllocationAt(index)->IsUsed() &&
-           !_leaked[index];
+    return (index < _numAllocations) &&
+           _directory.AllocationAt(index)->IsUsed() && !_leaked[index];
   }
 
   bool IsAnchorPoint(Index index) const {
@@ -329,7 +330,7 @@ class Graph {
 
   bool CallAnchorChainVisitor(Index index, AnchorChainVisitor &visitor,
                               LocalVisitor anchorPointVisitor) const {
-    const Allocation *allocation = _finder.AllocationAt(index);
+    const Allocation *allocation = _directory.AllocationAt(index);
     if (allocation == 0 || !allocation->IsUsed()) {
       return false;
     }
@@ -354,7 +355,7 @@ class Graph {
       // It is not anchored in this way.
       return false;
     }
-    const Allocation *allocation = _finder.AllocationAt(index);
+    const Allocation *allocation = _directory.AllocationAt(index);
     if (allocation == 0 || !allocation->IsUsed()) {
       return false;
     }
@@ -375,7 +376,7 @@ class Graph {
       visited.reserve(_numAllocations);
       visited.resize(_numAllocations, false);
       for (Index freeIndex = 0; freeIndex < _numAllocations; freeIndex++) {
-        if (!_finder.AllocationAt(freeIndex)->IsUsed()) {
+        if (!_directory.AllocationAt(freeIndex)->IsUsed()) {
           visited[freeIndex] = true;
         }
       }
@@ -403,7 +404,7 @@ class Graph {
           // The graph has both used and free nodes but here we are only
           // interested in paths involving used nodes.
           visited[sourceIndex] = true;
-          const Allocation *allocation = _finder.AllocationAt(sourceIndex);
+          const Allocation *allocation = _directory.AllocationAt(sourceIndex);
           if (allocation == 0 || !allocation->IsUsed()) {
             continue;
           }
@@ -430,7 +431,7 @@ class Graph {
                    edgesToVisit.rbegin();
                it != edgesToVisit.rend(); ++it) {
             Offset linkIndex = it->first;
-            const Allocation *allocation = _finder.AllocationAt(linkIndex);
+            const Allocation *allocation = _directory.AllocationAt(linkIndex);
             if (allocation == 0 || !allocation->IsUsed()) {
               break;
             }
@@ -462,7 +463,7 @@ class Graph {
       isUnreferenced = true;
       for (const Index *pIncomingIndex = pFirstIncomingIndex;
            pIncomingIndex != pPastIncomingIndex; pIncomingIndex++) {
-        if (_finder.AllocationAt((*pIncomingIndex))->IsUsed()) {
+        if (_directory.AllocationAt((*pIncomingIndex))->IsUsed()) {
           isUnreferenced = false;
           break;
         }
@@ -478,7 +479,7 @@ class Graph {
   typedef std::map<Index, OffsetVector> AnchorPointMap;
   typedef typename AnchorPointMap::iterator AnchorPointMapIterator;
   typedef typename AnchorPointMap::const_iterator AnchorPointMapConstIterator;
-  const Finder<Offset> &_finder;
+  const Directory<Offset> &_directory;
   const AddressMap &_addressMap;
   const ThreadMap<Offset> &_threadMap;
   const ExternalAnchorPointChecker<Offset> *_externalAnchorPointChecker;
@@ -504,7 +505,7 @@ class Graph {
    * an allocation, returning an index for that allocation if so.
    */
   Index EdgeTargetIndex(Offset targetCandidate) {
-    Index targetIndex = _finder.AllocationIndexOf(targetCandidate);
+    Index targetIndex = _directory.AllocationIndexOf(targetCandidate);
     if (targetIndex == _numAllocations &&
         _obscuredReferenceChecker != nullptr) {
       targetIndex =
@@ -518,7 +519,7 @@ class Graph {
       return;
     }
 
-    Offset maxAllocationSize = _finder.MaxAllocationSize();
+    Offset maxAllocationSize = _directory.MaxAllocationSize();
     std::vector<Index> targets;
     targets.reserve(maxAllocationSize);
 
@@ -535,12 +536,12 @@ class Graph {
      * of incoming edges for allocation i, rather than the correct index
      * into _incoming.
      */
-    ContiguousImage<Offset> contiguousImage(_finder);
+    ContiguousImage<Offset> contiguousImage(_addressMap, _directory);
     Reader reader(_addressMap);
     for (Index i = 0; i < _numAllocations; i++) {
       contiguousImage.SetIndex(i);
       _firstOutgoing[i] = _totalEdges;
-      // const Allocation *allocation = _finder.AllocationAt(i);
+      // const Allocation *allocation = _directory.AllocationAt(i);
 
       /*
        * Note that we find all the edges, regardless of whether the source
@@ -639,7 +640,7 @@ class Graph {
     visited.reserve(_numAllocations);
     visited.resize(_numAllocations, false);
     for (Index index = 0; index < _numAllocations; index++) {
-      if (!_finder.AllocationAt(index)->IsUsed()) {
+      if (!_directory.AllocationAt(index)->IsUsed()) {
         visited[index] = true;
       }
     }
@@ -677,7 +678,7 @@ class Graph {
     visited.reserve(_numAllocations);
     visited.resize(_numAllocations, false);
     for (Index index = 0; index < _numAllocations; index++) {
-      if (!_finder.AllocationAt(index)->IsUsed()) {
+      if (!_directory.AllocationAt(index)->IsUsed()) {
         visited[index] = true;
       }
     }
@@ -719,7 +720,7 @@ class Graph {
       try {
         Offset candidateTarget = reader.ReadOffset(anchor);
         Index targetIndex = EdgeTargetIndex(candidateTarget);
-        const Allocation *target = _finder.AllocationAt(targetIndex);
+        const Allocation *target = _directory.AllocationAt(targetIndex);
         if ((target != 0) && target->IsUsed()) {
           AnchorPointMapIterator it = anchorPoints.find(targetIndex);
           if (it == anchorPoints.end()) {
@@ -757,8 +758,8 @@ class Graph {
         Offset candidateTarget = registers[i];
         if (candidateTarget != 0 &&
             (candidateTarget & (sizeof(Offset) - 1)) == 0) {
-          Index targetIndex = _finder.AllocationIndexOf(candidateTarget);
-          const Allocation *target = _finder.AllocationAt(targetIndex);
+          Index targetIndex = _directory.AllocationIndexOf(candidateTarget);
+          const Allocation *target = _directory.AllocationAt(targetIndex);
           if ((target != 0) && target->IsUsed()) {
             AnchorPointMapIterator itAnchor =
                 _registerAnchorPoints.find(targetIndex);
@@ -777,9 +778,9 @@ class Graph {
 
   void FindExternalAnchorPoints() {
     if (_externalAnchorPointChecker != 0) {
-      ContiguousImage<Offset> contiguousImage(_finder);
+      ContiguousImage<Offset> contiguousImage(_addressMap, _directory);
       for (Index i = 0; i < _numAllocations; i++) {
-        if (_finder.AllocationAt(i)->IsUsed()) {
+        if (_directory.AllocationAt(i)->IsUsed()) {
           contiguousImage.SetIndex(i);
           const char *externalAnchorReason =
               _externalAnchorPointChecker->GetExternalAnchorReason(
@@ -796,7 +797,7 @@ class Graph {
     _leaked.reserve(_numAllocations);
     _leaked.resize(_numAllocations, true);
     for (Index i = 0; i < _numAllocations; i++) {
-      if (!_finder.AllocationAt(i)->IsUsed()) {
+      if (!_directory.AllocationAt(i)->IsUsed()) {
         _leaked[i] = false;
       }
     }

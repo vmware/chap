@@ -3,7 +3,7 @@
 
 #pragma once
 #include "Allocations/AnchorDirectory.h"
-#include "Allocations/Finder.h"
+#include "Allocations/Directory.h"
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
 #include "Allocations/TagHolder.h"
@@ -40,7 +40,6 @@ class ProcessImage {
         _virtualMemoryPartition(virtualAddressMap),
         _moduleDirectory(_virtualMemoryPartition),
         _unfilledImages(virtualAddressMap),
-        _allocationFinder(nullptr),
         _allocationTagHolder(nullptr),
         _allocationGraph(nullptr),
         _pythonInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition) {
@@ -57,9 +56,6 @@ class ProcessImage {
   virtual ~ProcessImage() {
     if (_allocationGraph != nullptr) {
       delete _allocationGraph;
-    }
-    if (_allocationFinder != nullptr) {
-      delete _allocationFinder;
     }
     if (_allocationTagHolder != nullptr) {
       delete _allocationTagHolder;
@@ -94,8 +90,8 @@ class ProcessImage {
     return _anchorDirectory;
   }
 
-  const Allocations::Finder<Offset> *GetAllocationFinder() const {
-    return _allocationFinder;
+  const Allocations::Directory<Offset> &GetAllocationDirectory() const {
+    return _allocationDirectory;
   }
 
   const Allocations::TagHolder<Offset> *GetAllocationTagHolder() const {
@@ -120,11 +116,11 @@ class ProcessImage {
 
  protected:
   const AddressMap &_virtualAddressMap;
+  Allocations::Directory<Offset> _allocationDirectory;
   const ThreadMap<OffsetType> &_threadMap;
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
   ModuleDirectory<Offset> _moduleDirectory;
   UnfilledImages<Offset> _unfilledImages;
-  Allocations::Finder<Offset> *_allocationFinder;
   Allocations::TagHolder<Offset> *_allocationTagHolder;
   Allocations::Graph<Offset> *_allocationGraph;
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
@@ -136,8 +132,8 @@ class ProcessImage {
    * of the constructor for the derived class.
    */
   void TagAllocations() {
-    _allocationTagHolder =
-        new Allocations::TagHolder<Offset>(_allocationFinder->NumAllocations());
+    _allocationTagHolder = new Allocations::TagHolder<Offset>(
+        _allocationDirectory.NumAllocations());
 
     Allocations::TaggerRunner<Offset> runner(
         *_allocationGraph, *_allocationTagHolder, _signatureDirectory);

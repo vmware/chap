@@ -1,22 +1,24 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Finder.h"
+#include "../VirtualAddressMap.h"
+#include "Directory.h"
 namespace chap {
 namespace Allocations {
 template <class Offset>
 class ContiguousImage {
  public:
-  typedef typename Finder<Offset>::AllocationIndex Index;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex Index;
+  typedef typename Directory<Offset>::Allocation Allocation;
 
-  ContiguousImage(const Finder<Offset> &finder)
-      : _finder(finder),
-        _numAllocations(finder.NumAllocations()),
+  ContiguousImage(const VirtualAddressMap<Offset> &addressMap,
+                  const Directory<Offset> &directory)
+      : _directory(directory),
+        _numAllocations(directory.NumAllocations()),
         _index(_numAllocations),
-        _maxAllocationSize(finder.MaxAllocationSize()),
+        _maxAllocationSize(directory.MaxAllocationSize()),
         _buffer((_maxAllocationSize / sizeof(Offset)) + 2, 0),
         _bufferAsChars((char *)(&(_buffer[0]))),
         _bufferAsOffsets((Offset *)(&(_buffer[0]))),
@@ -24,7 +26,7 @@ class ContiguousImage {
         _pPastChars(_bufferAsChars),
         _pFirstOffset(_bufferAsOffsets),
         _pPastOffsets(_bufferAsOffsets),
-        _addressMap(finder.GetAddressMap()),
+        _addressMap(addressMap),
         _iterator(_addressMap.end()),
         _endIterator(_addressMap.end()),
         _regionImage(nullptr),
@@ -41,7 +43,7 @@ class ContiguousImage {
       _pPastChars = _bufferAsChars;
       _pFirstOffset = _bufferAsOffsets;
       _pPastOffsets = _bufferAsOffsets;
-      const Allocation *allocation = _finder.AllocationAt(index);
+      const Allocation *allocation = _directory.AllocationAt(index);
       if (allocation != nullptr) {
         Offset address = allocation->Address();
         Offset size = allocation->Size();
@@ -126,7 +128,7 @@ class ContiguousImage {
   const char *CharLimit() const { return _pPastChars; }
 
  private:
-  const Finder<Offset> &_finder;
+  const Directory<Offset> &_directory;
   const Index _numAllocations;
   Index _index;
   const Offset _maxAllocationSize;

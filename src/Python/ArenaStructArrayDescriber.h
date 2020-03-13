@@ -12,14 +12,16 @@ namespace Python {
 template <typename Offset>
 class ArenaStructArrayDescriber : public Allocations::PatternDescriber<Offset> {
  public:
-  typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef
+      typename Allocations::Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternDescriber<Offset> Base;
-  typedef typename Allocations::Finder<Offset>::Allocation Allocation;
+  typedef typename Allocations::Directory<Offset>::Allocation Allocation;
   ArenaStructArrayDescriber(const ProcessImage<Offset>& processImage)
       : Allocations::PatternDescriber<Offset>(processImage,
                                               "PythonArenaStructArray"),
         _infrastructureFinder(processImage.GetPythonInfrastructureFinder()),
-        _contiguousImage(*(processImage.GetAllocationFinder())) {}
+        _contiguousImage(processImage.GetVirtualAddressMap(),
+                         processImage.GetAllocationDirectory()) {}
 
   /*
    * Describe the specified allocation, which has already been pre-tagged

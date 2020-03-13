@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,9 +16,9 @@ class Chain {
     Factory() : _setName("chain") {}
     Chain* MakeIterator(Commands::Context& context,
                         const ProcessImage<Offset>& processImage,
-                        const Finder<Offset>& allocationFinder) {
+                        const Directory<Offset>& directory) {
       Chain* iterator = 0;
-      AllocationIndex numAllocations = allocationFinder.NumAllocations();
+      AllocationIndex numAllocations = directory.NumAllocations();
       size_t numPositionals = context.GetNumPositionals();
       Commands::Error& error = context.GetError();
       if (numPositionals < 4) {
@@ -35,14 +35,13 @@ class Chain {
           error << context.Positional(3)
                 << " is not a offset for the link field.\n";
         } else {
-          AllocationIndex index = allocationFinder.AllocationIndexOf(address);
+          AllocationIndex index = directory.AllocationIndexOf(address);
           if (index == numAllocations) {
             error << context.Positional(2)
                   << " is not part of an allocation.\n";
           } else {
-            iterator =
-                new Chain(allocationFinder, processImage.GetVirtualAddressMap(),
-                          index, numAllocations, linkOffset);
+            iterator = new Chain(directory, processImage.GetVirtualAddressMap(),
+                                 index, numAllocations, linkOffset);
           }
         }
       }
@@ -67,13 +66,13 @@ class Chain {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
 
-  Chain(const Finder<Offset>& finder,
+  Chain(const Directory<Offset>& directory,
         const VirtualAddressMap<Offset>& addressMap, AllocationIndex index,
         AllocationIndex numAllocations, Offset linkOffset)
-      : _finder(finder),
+      : _directory(directory),
         _addressMap(addressMap),
         _index(index),
         _numAllocations(numAllocations),
@@ -81,7 +80,7 @@ class Chain {
   AllocationIndex Next() {
     AllocationIndex returnValue = _index;
     if (_index != _numAllocations) {
-      const Allocation* allocation = _finder.AllocationAt(_index);
+      const Allocation* allocation = _directory.AllocationAt(_index);
       if (allocation == 0) {
         abort();
       }
@@ -93,7 +92,7 @@ class Chain {
         Offset numBytesFound = _addressMap.FindMappedMemoryImage(
             allocation->Address() + _linkOffset, &image);
         if (numBytesFound >= sizeof(Offset)) {
-          _index = _finder.AllocationIndexOf(*((Offset*)(image)));
+          _index = _directory.AllocationIndexOf(*((Offset*)(image)));
         }
       }
     }
@@ -101,7 +100,7 @@ class Chain {
   }
 
  private:
-  const Finder<Offset>& _finder;
+  const Directory<Offset>& _directory;
   const VirtualAddressMap<Offset>& _addressMap;
   AllocationIndex _index;
   AllocationIndex _numAllocations;

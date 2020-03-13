@@ -13,11 +13,11 @@ template <typename Offset>
 class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
@@ -25,9 +25,9 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   MapOrSetAllocationsTagger(Graph& graph, TagHolder& tagHolder)
       : _graph(graph),
         _tagHolder(tagHolder),
-        _finder(graph.GetAllocationFinder()),
-        _numAllocations(_finder.NumAllocations()),
-        _addressMap(_finder.GetAddressMap()),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _addressMap(graph.GetAddressMap()),
         _nodeReader(_addressMap),
         _nodeTagIndex(_tagHolder.RegisterTag("%MapOrSetNode")) {}
 
@@ -49,7 +49,7 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
-  const Finder& _finder;
+  const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
   Reader _nodeReader;
@@ -170,11 +170,11 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       if ((_nodeReader.ReadOffset(node, 0xbad) & 0xfe) != 0) {
         return;
       }
-      AllocationIndex index = _finder.AllocationIndexOf(node);
+      AllocationIndex index = _directory.AllocationIndexOf(node);
       if (index == _numAllocations) {
         return;
       }
-      const Allocation* allocation = _finder.AllocationAt(index);
+      const Allocation* allocation = _directory.AllocationAt(index);
       if (allocation == nullptr) {
         return;
       }
@@ -230,7 +230,8 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
 
     node = _firstNode;
     while (node != _parent) {
-      _tagHolder.TagAllocation(_finder.AllocationIndexOf(node), _nodeTagIndex);
+      _tagHolder.TagAllocation(_directory.AllocationIndexOf(node),
+                               _nodeTagIndex);
 
       Offset rightChild =
           _nodeReader.ReadOffset(node + 3 * sizeof(Offset), 0xbad);

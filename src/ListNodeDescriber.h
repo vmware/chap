@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -10,9 +10,10 @@ namespace chap {
 template <typename Offset>
 class ListNodeDescriber : public Allocations::PatternDescriber<Offset> {
  public:
-  typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef
+      typename Allocations::Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternDescriber<Offset> Base;
-  typedef typename Allocations::Finder<Offset>::Allocation Allocation;
+  typedef typename Allocations::Directory<Offset>::Allocation Allocation;
   ListNodeDescriber(const ProcessImage<Offset>& processImage)
       : Allocations::PatternDescriber<Offset>(processImage, "ListNode") {}
 
@@ -30,7 +31,7 @@ class ListNodeDescriber : public Allocations::PatternDescriber<Offset> {
       typename Allocations::TagHolder<Offset>::TagIndex tagIndex =
           Base::_tagHolder.GetTagIndex(index);
       typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
-      AllocationIndex numAllocations = Base::_finder->NumAllocations();
+      AllocationIndex numAllocations = Base::_directory.NumAllocations();
 
       /*
        * Figure out the header by scanning back to what does not appear to
@@ -46,7 +47,7 @@ class ListNodeDescriber : public Allocations::PatternDescriber<Offset> {
           Base::_graph->TargetAllocationIndex(index, prev);
       while (prevIndex != numAllocations &&
              Base::_tagHolder.GetTagIndex(prevIndex) == tagIndex &&
-             Base::_finder->AllocationAt(prevIndex)->Address() == prev) {
+             Base::_directory.AllocationAt(prevIndex)->Address() == prev) {
         if (prev == address) {
           output << "This allocation belongs to an std::list but the header "
                     "can't be determined.\n";

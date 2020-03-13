@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,9 +16,8 @@ class ThreadCached {
     Factory() : _setName("threadcached") {}
     ThreadCached* MakeIterator(Commands::Context& /* context */,
                                const ProcessImage<Offset>& /* processImage */,
-                               const Finder<Offset>& allocationFinder) {
-      return new ThreadCached(allocationFinder,
-                              allocationFinder.NumAllocations());
+                               const Directory<Offset>& directory) {
+      return new ThreadCached(directory, directory.NumAllocations());
     }
     // TODO: allow adding taints
     const std::string& GetSetName() const { return _setName; }
@@ -34,16 +33,15 @@ class ThreadCached {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
-  ThreadCached(const Finder<Offset>& allocationFinder,
+  ThreadCached(const Directory<Offset>& directory,
                AllocationIndex numAllocations)
-      : _index(allocationFinder.HasThreadCached() ? 0 : numAllocations),
-        _allocationFinder(allocationFinder),
+      : _index(directory.HasThreadCached() ? 0 : numAllocations),
+        _directory(directory),
         _numAllocations(numAllocations) {}
   AllocationIndex Next() {
-    while (_index != _numAllocations &&
-           !_allocationFinder.IsThreadCached(_index)) {
+    while (_index != _numAllocations && !_directory.IsThreadCached(_index)) {
       ++_index;
     }
     AllocationIndex next = _index;
@@ -55,7 +53,7 @@ class ThreadCached {
 
  private:
   AllocationIndex _index;
-  const Finder<Offset>& _allocationFinder;
+  const Directory<Offset>& _directory;
   AllocationIndex _numAllocations;
 };
 }  // namespace Iterators

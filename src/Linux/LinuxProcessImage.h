@@ -5,11 +5,11 @@
 #include <string.h>
 #include <map>
 #include "../Allocations/TaggerRunner.h"
+#include "../LibcMalloc/FinderGroup.h"
 #include "../ProcessImage.h"
 #include "../RangeMapper.h"
 #include "../Unmangler.h"
 #include "ELFImage.h"
-#include "LibcMallocAllocationFinder.h"
 
 namespace chap {
 namespace Linux {
@@ -52,15 +52,14 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       }
 
       /*
-       * Make the allocation finder eagerly unless chap is being used only
-       * to determine whether the core is truncated, in which case there
-       * won't be any need to find the allocations.
+       * This finds the large structures associated with libc malloc then
+       * registers any relevant allocation finders with the allocation
+       * directory.
        */
 
-      Base::_allocationFinder = _libcMallocAllocationFinder =
-          new LibcMallocAllocationFinder<Offset>(Base::_virtualMemoryPartition,
-                                                 Base::_moduleDirectory,
-                                                 Base::_unfilledImages);
+      _libcMallocFinderGroup.reset(new LibcMalloc::FinderGroup<Offset>(
+          Base::_virtualMemoryPartition, Base::_moduleDirectory,
+          Base::_allocationDirectory, Base::_unfilledImages));
 
       /*
        * If we haven't yet found the modules, now is a good time to do so
@@ -80,6 +79,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       }
 
       /*
+       * Now that any allocation finders have been registered with the
+       * allocaion directory, find out where all the allocations are.
+       */
+      Base::_allocationDirectory.ResolveAllocationBoundaries();
+
+      /*
        * Static anchor ranges should be found after the allocations and modules,
        * both because both the writable regions for modules and all imaged
        * writable
@@ -94,8 +99,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       FindStaticAnchorRanges();
 
       Base::_allocationGraph = new Allocations::Graph<Offset>(
-          *Base::_allocationFinder, Base::_threadMap, _staticAnchorLimits,
-          nullptr, nullptr);
+          Base::_virtualAddressMap, Base::_allocationDirectory,
+          Base::_threadMap, _staticAnchorLimits, nullptr, nullptr);
 
       /*
        * In Linux processes the current approach is to wait until the
@@ -123,6 +128,10 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
   }
 
+  LibcMalloc::FinderGroup<Offset>& GetLibcMallocFinderGroup() const {
+    return *(_libcMallocFinderGroup.get());
+  }
+
   void RefreshSignaturesAndAnchors() {
     if (!_symdefsRead) {
       ReadSymdefsFile();
@@ -136,15 +145,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     }
   };
 
-  const LibcMallocAllocationFinder<Offset>* GetLibcMallocAllocationFinder()
-      const {
-    return _libcMallocAllocationFinder;
-  }
-
  private:
-  LibcMallocAllocationFinder<Offset>* _libcMallocAllocationFinder;
+  std::unique_ptr<LibcMalloc::FinderGroup<Offset> > _libcMallocFinderGroup;
 
- protected:
   /*
    * Stacks that are associated with threads have already been registered at
    * this point, but stack guards for those stacks, which are identified in
@@ -1323,16 +1326,17 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
    */
 
   void FindSignaturesInAllocations() {
-    const Allocations::Finder<Offset>& finder = *(Base::_allocationFinder);
-    typename Allocations::Finder<Offset>::AllocationIndex numAllocations =
-        finder.NumAllocations();
+    const Allocations::Directory<Offset>& directory =
+        Base::_allocationDirectory;
+    typename Allocations::Directory<Offset>::AllocationIndex numAllocations =
+        directory.NumAllocations();
     Reader reader(Base::_virtualAddressMap);
     typename VirtualAddressMap<Offset>::const_iterator itEnd =
         Base::_virtualAddressMap.end();
-    for (typename Allocations::Finder<Offset>::AllocationIndex i = 0;
+    for (typename Allocations::Directory<Offset>::AllocationIndex i = 0;
          i < numAllocations; ++i) {
-      const typename Allocations::Finder<Offset>::Allocation* allocation =
-          finder.AllocationAt(i);
+      const typename Allocations::Directory<Offset>::Allocation* allocation =
+          directory.AllocationAt(i);
       if (!allocation->IsUsed() || (allocation->Size() < sizeof(Offset))) {
         continue;
       }
@@ -1547,13 +1551,14 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
   void AddAnchorRequestsToSymReqs(std::ofstream& gdbScriptFile) {
     const Allocations::Graph<Offset>& graph = *(Base::_allocationGraph);
-    const Allocations::Finder<Offset>& finder = *(Base::_allocationFinder);
-    typename Allocations::Finder<Offset>::AllocationIndex numAllocations =
-        finder.NumAllocations();
-    for (typename Allocations::Finder<Offset>::AllocationIndex i = 0;
+    const Allocations::Directory<Offset>& directory =
+        Base::_allocationDirectory;
+    typename Allocations::Directory<Offset>::AllocationIndex numAllocations =
+        directory.NumAllocations();
+    for (typename Allocations::Directory<Offset>::AllocationIndex i = 0;
          i < numAllocations; ++i) {
-      const typename Allocations::Finder<Offset>::Allocation* allocation =
-          finder.AllocationAt(i);
+      const typename Allocations::Directory<Offset>::Allocation* allocation =
+          directory.AllocationAt(i);
       if (!allocation->IsUsed() || !graph.IsStaticAnchorPoint(i)) {
         continue;
       }

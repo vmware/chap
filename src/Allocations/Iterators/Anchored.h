@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 #include "../Graph.h"
 namespace chap {
 namespace Allocations {
@@ -17,12 +17,12 @@ class Anchored {
     Factory() : _setName("anchored") {}
     Anchored* MakeIterator(Commands::Context& /* context */,
                            const ProcessImage<Offset>& processImage,
-                           const Finder<Offset>& allocationFinder) {
+                           const Directory<Offset>& directory) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();
       if (allocationGraph == 0) {
         return (Anchored*)(0);
       }
-      return new Anchored(allocationFinder, allocationFinder.NumAllocations(),
+      return new Anchored(directory, directory.NumAllocations(),
                           *allocationGraph);
     }
     // TODO: allow adding taints
@@ -39,12 +39,12 @@ class Anchored {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
-  Anchored(const Finder<Offset>& allocationFinder,
-           AllocationIndex numAllocations, const Graph<Offset>& allocationGraph)
+  Anchored(const Directory<Offset>& directory, AllocationIndex numAllocations,
+           const Graph<Offset>& allocationGraph)
       : _index(0),
-        _allocationFinder(allocationFinder),
+        _directory(directory),
         _numAllocations(numAllocations),
         _allocationGraph(allocationGraph) {}
   AllocationIndex Next() {
@@ -60,7 +60,7 @@ class Anchored {
 
  private:
   AllocationIndex _index;
-  const Finder<Offset>& _allocationFinder;
+  const Directory<Offset>& _directory;
   AllocationIndex _numAllocations;
   const Graph<Offset>& _allocationGraph;
 };

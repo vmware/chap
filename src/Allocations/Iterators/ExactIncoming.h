@@ -1,11 +1,11 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../ContiguousImage.h"
-#include "../Finder.h"
+#include "../Directory.h"
 #include "../Graph.h"
 namespace chap {
 namespace Allocations {
@@ -18,9 +18,9 @@ class ExactIncoming {
     Factory() : _setName("exactincoming") {}
     ExactIncoming* MakeIterator(Commands::Context& context,
                                 const ProcessImage<Offset>& processImage,
-                                const Finder<Offset>& allocationFinder) {
+                                const Directory<Offset>& directory) {
       ExactIncoming* iterator = 0;
-      AllocationIndex numAllocations = allocationFinder.NumAllocations();
+      AllocationIndex numAllocations = directory.NumAllocations();
       size_t numPositionals = context.GetNumPositionals();
       Commands::Error& error = context.GetError();
       if (numPositionals < 3) {
@@ -30,7 +30,7 @@ class ExactIncoming {
         if (!context.ParsePositional(2, address)) {
           error << context.Positional(2) << " is not a valid address.\n";
         } else {
-          AllocationIndex index = allocationFinder.AllocationIndexOf(address);
+          AllocationIndex index = directory.AllocationIndexOf(address);
           if (index == numAllocations) {
             error << context.Positional(2)
                   << " is not part of an allocation.\n";
@@ -38,7 +38,7 @@ class ExactIncoming {
             const Graph<Offset>* allocationGraph =
                 processImage.GetAllocationGraph();
             if (allocationGraph != 0) {
-              iterator = new ExactIncoming(allocationFinder, *allocationGraph,
+              iterator = new ExactIncoming(directory, *allocationGraph,
                                            processImage.GetVirtualAddressMap(),
                                            index, numAllocations);
             }
@@ -64,25 +64,25 @@ class ExactIncoming {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
 
-  ExactIncoming(const Finder<Offset>& finder, const Graph<Offset>& graph,
+  ExactIncoming(const Directory<Offset>& directory, const Graph<Offset>& graph,
                 const VirtualAddressMap<Offset>& addressMap,
                 AllocationIndex index, AllocationIndex numAllocations)
-      : _finder(finder),
-        _contiguousImage(_finder),
+      : _directory(directory),
+        _contiguousImage(addressMap, _directory),
         _graph(graph),
         _addressMap(addressMap),
         _index(index),
         _numAllocations(numAllocations) {
-    _target = _finder.AllocationAt(index)->Address();
+    _target = _directory.AllocationAt(index)->Address();
     _graph.GetIncoming(index, &_pNextIncoming, &_pPastIncoming);
   }
   AllocationIndex Next() {
     while (_pNextIncoming != _pPastIncoming) {
       AllocationIndex index = *(_pNextIncoming++);
-      const Allocation* allocation = _finder.AllocationAt(index);
+      const Allocation* allocation = _directory.AllocationAt(index);
       if (allocation == ((Allocation*)(0))) {
         abort();
       }
@@ -102,7 +102,7 @@ class ExactIncoming {
   }
 
  private:
-  const Finder<Offset>& _finder;
+  const Directory<Offset>& _directory;
   ContiguousImage<Offset> _contiguousImage;
   const Graph<Offset>& _graph;
   const VirtualAddressMap<Offset>& _addressMap;

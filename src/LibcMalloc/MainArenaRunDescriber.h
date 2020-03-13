@@ -1,40 +1,38 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../Describer.h"
 #include "../ProcessImage.h"
-#include "LibcMallocAllocationFinder.h"
+#include "InfrastructureFinder.h"
 
 namespace chap {
-namespace Linux {
+namespace LibcMalloc {
 template <typename Offset>
-class LibcMallocMainArenaRunDescriber : public Describer<Offset> {
+class MainArenaRunDescriber : public Describer<Offset> {
  public:
-  typedef typename LibcMallocAllocationFinder<Offset>::Heap Heap;
-  typedef typename LibcMallocAllocationFinder<Offset>::HeapMap HeapMap;
-  typedef typename LibcMallocAllocationFinder<Offset>::HeapMapConstIterator
+  typedef typename InfrastructureFinder<Offset>::Heap Heap;
+  typedef typename InfrastructureFinder<Offset>::HeapMap HeapMap;
+  typedef typename InfrastructureFinder<Offset>::HeapMapConstIterator
       HeapMapConstIterator;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
-  LibcMallocMainArenaRunDescriber(
-      const LibcMallocAllocationFinder<Offset> *finder)
-      : _mainArenaRuns((finder != nullptr) ? &(finder->GetMainArenaRuns())
-                                           : nullptr) {}
+  MainArenaRunDescriber(
+      const InfrastructureFinder<Offset> &infrastructureFinder)
+      : _mainArenaRuns(infrastructureFinder.GetMainArenaRuns()) {}
+
   /*
    * If the address is understood, provide a description for the address,
    * optionally with an additional explanation of why the address matches
    * the description, and return true.  Otherwise don't write anything
    * and return false.  Show addresses only if requested.
    */
+
   bool Describe(Commands::Context &context, Offset address, bool explain,
                 bool showAddresses) const {
-    if (_mainArenaRuns == nullptr) {
-      return false;
-    }
-    typename LibcMallocAllocationFinder<Offset>::MainArenaRunsConstIterator it =
-        _mainArenaRuns->upper_bound(address);
+    typename InfrastructureFinder<Offset>::MainArenaRunsConstIterator it =
+        _mainArenaRuns.upper_bound(address);
 
-    if (it == _mainArenaRuns->begin()) {
+    if (it == _mainArenaRuns.begin()) {
       return false;
     }
 
@@ -79,8 +77,7 @@ class LibcMallocMainArenaRunDescriber : public Describer<Offset> {
   }
 
  private:
-  const typename LibcMallocAllocationFinder<Offset>::MainArenaRuns
-      *_mainArenaRuns;
+  const typename InfrastructureFinder<Offset>::MainArenaRuns &_mainArenaRuns;
 };
-}  // namespace Linux
+}  // namespace LibcMalloc
 }  // namespace chap

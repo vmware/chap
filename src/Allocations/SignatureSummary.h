@@ -1,11 +1,11 @@
-// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <algorithm>
 #include <map>
 #include <set>
-#include "Finder.h"
+#include "Directory.h"
 #include "SignatureDirectory.h"
 #include "TagHolder.h"
 namespace chap {
@@ -44,7 +44,7 @@ class SignatureSummary {
   typedef std::map<std::string, Tally> NameToTally;
   typedef typename NameToTally::iterator NameToTallyIterator;
   typedef typename NameToTally::const_iterator NameToTallyConstIterator;
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   struct Item {
     std::string _name;
     Tally _totals;

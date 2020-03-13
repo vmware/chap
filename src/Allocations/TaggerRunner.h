@@ -1,9 +1,9 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "ContiguousImage.h"
-#include "Finder.h"
+#include "Directory.h"
 #include "Graph.h"
 #include "SignatureDirectory.h"
 #include "TagHolder.h"
@@ -23,17 +23,18 @@ namespace Allocations {
 template <typename Offset>
 class TaggerRunner {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   typedef typename Tagger<Offset>::Phase Phase;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
 
   TaggerRunner(const Graph<Offset>& graph, const TagHolder<Offset>& tagHolder,
                const SignatureDirectory<Offset>& signatureDirectory)
-      : _graph(graph),
-        _finder(graph.GetAllocationFinder()),
-        _contiguousImage(_finder),
-        _numAllocations(_finder.NumAllocations()),
+      : _addressMap(graph.GetAddressMap()),
+        _graph(graph),
+        _directory(graph.GetAllocationDirectory()),
+        _contiguousImage(_addressMap, _directory),
+        _numAllocations(_directory.NumAllocations()),
         _tagHolder(tagHolder),
         _signatureDirectory(signatureDirectory) {}
 
@@ -53,8 +54,9 @@ class TaggerRunner {
   }
 
  private:
+  const VirtualAddressMap<Offset> _addressMap;
   const Graph<Offset>& _graph;
-  const Finder<Offset>& _finder;
+  const Directory<Offset>& _directory;
   ContiguousImage<Offset> _contiguousImage;
   const AllocationIndex _numAllocations;
   const TagHolder<Offset>& _tagHolder;
@@ -71,9 +73,9 @@ class TaggerRunner {
    */
 
   void TagFromAllocations() {
-    Reader reader(_finder.GetAddressMap());
+    Reader reader(_addressMap);
     for (AllocationIndex i = 0; i < _numAllocations; i++) {
-      const Allocation* allocation = _finder.AllocationAt(i);
+      const Allocation* allocation = _directory.AllocationAt(i);
       if (!allocation->IsUsed()) {
         continue;
       }
@@ -110,11 +112,11 @@ class TaggerRunner {
    */
 
   void TagFromReferenced() {
-    Reader reader(_finder.GetAddressMap());
+    Reader reader(_addressMap);
     std::vector<AllocationIndex> unresolvedOutgoing;
-    unresolvedOutgoing.reserve(_finder.MaxAllocationSize());
+    unresolvedOutgoing.reserve(_directory.MaxAllocationSize());
     for (AllocationIndex i = 0; i < _numAllocations; i++) {
-      const Allocation* allocation = _finder.AllocationAt(i);
+      const Allocation* allocation = _directory.AllocationAt(i);
       if (!allocation->IsUsed()) {
         continue;
       }

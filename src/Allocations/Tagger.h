@@ -1,9 +1,9 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "ContiguousImage.h"
-#include "Finder.h"
+#include "Directory.h"
 
 namespace chap {
 namespace Allocations {
@@ -20,8 +20,8 @@ namespace Allocations {
 template <typename Offset>
 class Tagger {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
 
   /*

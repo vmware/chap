@@ -1,9 +1,9 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../ProcessImage.h"
-#include "Finder.h"
+#include "Directory.h"
 #include "Graph.h"
 #include "PatternDescriber.h"
 
@@ -12,8 +12,8 @@ namespace Allocations {
 template <typename Offset>
 class PatternDescriberRegistry {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   typedef typename TagHolder<Offset>::TagIndex TagIndex;
   typedef typename TagHolder<Offset>::TagIndices TagIndices;
   typedef typename std::multimap<std::string, PatternDescriber<Offset>*>

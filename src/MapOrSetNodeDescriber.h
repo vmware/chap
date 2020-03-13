@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -10,9 +10,10 @@ namespace chap {
 template <typename Offset>
 class MapOrSetNodeDescriber : public Allocations::PatternDescriber<Offset> {
  public:
-  typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef
+      typename Allocations::Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternDescriber<Offset> Base;
-  typedef typename Allocations::Finder<Offset>::Allocation Allocation;
+  typedef typename Allocations::Directory<Offset>::Allocation Allocation;
   MapOrSetNodeDescriber(const ProcessImage<Offset>& processImage)
       : Allocations::PatternDescriber<Offset>(processImage, "MapOrSetNode") {}
 
@@ -29,14 +30,14 @@ class MapOrSetNodeDescriber : public Allocations::PatternDescriber<Offset> {
       typename Allocations::TagHolder<Offset>::TagIndex tagIndex =
           Base::_tagHolder.GetTagIndex(index);
       typename VirtualAddressMap<Offset>::Reader reader(Base::_addressMap);
-      AllocationIndex numAllocations = Base::_finder->NumAllocations();
+      AllocationIndex numAllocations = Base::_directory.NumAllocations();
 
       Offset parent = reader.ReadOffset(address + sizeof(Offset), 0xbad);
       AllocationIndex parentIndex =
           Base::_graph->TargetAllocationIndex(index, parent);
       while (parentIndex != numAllocations &&
              Base::_tagHolder.GetTagIndex(parentIndex) == tagIndex &&
-             Base::_finder->AllocationAt(parentIndex)->Address() == parent) {
+             Base::_directory.AllocationAt(parentIndex)->Address() == parent) {
         address = parent;
         index = parentIndex;
         parent = reader.ReadOffset(address + sizeof(Offset), 0xbad);

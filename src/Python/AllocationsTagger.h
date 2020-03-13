@@ -15,11 +15,11 @@ namespace Python {
 template <typename Offset>
 class AllocationsTagger : public Allocations::Tagger<Offset> {
  public:
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
@@ -30,7 +30,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                     const ModuleDirectory<Offset>& moduleDirectory,
                     const InfrastructureFinder<Offset>& infrastructureFinder)
       : _graph(graph),
-        _finder(graph.GetAllocationFinder()),
+        _directory(graph.GetAllocationDirectory()),
         _tagHolder(tagHolder),
         _infrastructureFinder(infrastructureFinder),
         _arenaStructArray(infrastructureFinder.ArenaStructArray()),
@@ -92,7 +92,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                  pNextOutgoing != pPastOutgoing; pNextOutgoing++) {
               AllocationIndex arenaCandidateIndex = *pNextOutgoing;
               Offset arenaCandidate =
-                  _finder.AllocationAt(arenaCandidateIndex)->Address();
+                  _directory.AllocationAt(arenaCandidateIndex)->Address();
               if (_infrastructureFinder.ArenaStructFor(arenaCandidate) != 0) {
                 _tagHolder.TagAllocation(arenaCandidateIndex,
                                          _mallocedArenaTagIndex);
@@ -167,7 +167,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
 
  private:
   const Allocations::Graph<Offset>& _graph;
-  const Allocations::Finder<Offset>& _finder;
+  const Allocations::Directory<Offset>& _directory;
   TagHolder& _tagHolder;
   const InfrastructureFinder<Offset> _infrastructureFinder;
   const Offset _arenaStructArray;

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,21 +13,21 @@ template <typename Offset>
 class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
   VectorAllocationsTagger(Graph& graph, TagHolder& tagHolder)
       : _graph(graph),
         _tagHolder(tagHolder),
-        _finder(graph.GetAllocationFinder()),
-        _numAllocations(_finder.NumAllocations()),
-        _addressMap(_finder.GetAddressMap()),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _addressMap(graph.GetAddressMap()),
         _tagIndex(_tagHolder.RegisterTag("%VectorBody")) {}
 
   bool TagFromAllocation(const ContiguousImage& /* contiguousImage */,
@@ -112,7 +112,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
-  const Finder& _finder;
+  const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
   TagIndex _tagIndex;
@@ -122,7 +122,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
                                const std::vector<Offset>* anchors) {
     Offset bodyAddress = bodyAllocation.Address();
     Offset bodyLimit = bodyAddress + bodyAllocation.Size();
-    Offset minCapacity = _finder.MinRequestSize(bodyIndex);
+    Offset minCapacity = _directory.MinRequestSize(bodyIndex);
     if (minCapacity < 1) {
       minCapacity = 1;
     }
@@ -174,7 +174,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
       if (_tagHolder.GetTagIndex(bodyIndex) != 0) {
         continue;
       }
-      const Allocation* allocation = _finder.AllocationAt(bodyIndex);
+      const Allocation* allocation = _directory.AllocationAt(bodyIndex);
 
       Offset address = allocation->Address();
       Offset bodyLimit = address + allocation->Size();
@@ -190,7 +190,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
       Offset capacityLimit = check[2];
       if (capacityLimit < useLimit || capacityLimit > bodyLimit ||
           capacityLimit == address ||
-          (capacityLimit - address) < _finder.MinRequestSize(bodyIndex)) {
+          (capacityLimit - address) < _directory.MinRequestSize(bodyIndex)) {
         continue;
       }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2018,2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -11,9 +11,10 @@ namespace chap {
 template <typename Offset>
 class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
  public:
-  typedef typename Allocations::Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef
+      typename Allocations::Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Allocations::PatternDescriber<Offset> Base;
-  typedef typename Allocations::Finder<Offset>::Allocation Allocation;
+  typedef typename Allocations::Directory<Offset>::Allocation Allocation;
   VectorBodyDescriber(const ProcessImage<Offset>& processImage)
       : Allocations::PatternDescriber<Offset>(processImage, "VectorBody") {}
 
@@ -34,7 +35,8 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
     std::vector<VectorInfo> vectors;
     for (const AllocationIndex* pNextIncoming = pFirstIncoming;
          pNextIncoming < pPastIncoming; pNextIncoming++) {
-      const Allocation* incoming = Base::_finder->AllocationAt(*pNextIncoming);
+      const Allocation* incoming =
+          Base::_directory.AllocationAt(*pNextIncoming);
       if (incoming == 0) {
         abort();
       }

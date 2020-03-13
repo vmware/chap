@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 #include "../Graph.h"
 namespace chap {
 namespace Allocations {
@@ -17,9 +17,9 @@ class ReverseChain {
     Factory() : _setName("reversechain") {}
     ReverseChain* MakeIterator(Commands::Context& context,
                                const ProcessImage<Offset>& processImage,
-                               const Finder<Offset>& allocationFinder) {
+                               const Directory<Offset>& directory) {
       ReverseChain* iterator = 0;
-      AllocationIndex numAllocations = allocationFinder.NumAllocations();
+      AllocationIndex numAllocations = directory.NumAllocations();
       size_t numPositionals = context.GetNumPositionals();
       Commands::Error& error = context.GetError();
       if (numPositionals < 5) {
@@ -43,7 +43,7 @@ class ReverseChain {
           error << context.Positional(4)
                 << " is not a valid offset for the edge target.\n";
         } else {
-          AllocationIndex index = allocationFinder.AllocationIndexOf(address);
+          AllocationIndex index = directory.AllocationIndexOf(address);
           if (index == numAllocations) {
             error << context.Positional(2)
                   << " is not part of an allocation.\n";
@@ -52,7 +52,7 @@ class ReverseChain {
                 processImage.GetAllocationGraph();
             if (allocationGraph != 0) {
               iterator =
-                  new ReverseChain(allocationFinder, *allocationGraph,
+                  new ReverseChain(directory, *allocationGraph,
                                    processImage.GetVirtualAddressMap(), index,
                                    numAllocations, linkOffset, targetOffset);
             }
@@ -86,14 +86,14 @@ class ReverseChain {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
 
-  ReverseChain(const Finder<Offset>& finder, const Graph<Offset>& graph,
+  ReverseChain(const Directory<Offset>& directory, const Graph<Offset>& graph,
                const VirtualAddressMap<Offset>& addressMap,
                AllocationIndex index, AllocationIndex numAllocations,
                Offset linkOffset, Offset targetOffset)
-      : _finder(finder),
+      : _directory(directory),
         _graph(graph),
         _addressMap(addressMap),
         _index(index),
@@ -103,7 +103,7 @@ class ReverseChain {
   AllocationIndex Next() {
     AllocationIndex returnValue = _index;
     if (_index != _numAllocations) {
-      const Allocation* target = _finder.AllocationAt(_index);
+      const Allocation* target = _directory.AllocationAt(_index);
       if (target == 0) {
         abort();
       }
@@ -118,7 +118,7 @@ class ReverseChain {
         typename VirtualAddressMap<Offset>::Reader reader(_addressMap);
         while (pNextIncoming != pPastIncoming) {
           AllocationIndex index = *(pNextIncoming++);
-          const Allocation* source = _finder.AllocationAt(index);
+          const Allocation* source = _directory.AllocationAt(index);
           if (source == ((Allocation*)(0))) {
             abort();
           }
@@ -142,7 +142,7 @@ class ReverseChain {
   }
 
  private:
-  const Finder<Offset>& _finder;
+  const Directory<Offset>& _directory;
   const Graph<Offset>& _graph;
   const VirtualAddressMap<Offset>& _addressMap;
   AllocationIndex _index;

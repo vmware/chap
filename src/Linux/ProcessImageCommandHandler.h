@@ -2,12 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include "../LibcMalloc/FinderGroup.h"
+#include "../LibcMalloc/Subcommands/DescribeArenas.h"
 #include "../ProcessImageCommandHandler.h"
-#include "LibcMallocHeapDescriber.h"
-#include "LibcMallocMainArenaRunDescriber.h"
-#include "LibcMallocMmappedAllocationDescriber.h"
 #include "LinuxProcessImage.h"
-#include "Subcommands/DescribeArenas.h"
 
 namespace chap {
 namespace Linux {
@@ -17,15 +15,12 @@ class ProcessImageCommandHandler
  public:
   typedef typename ElfImage::Offset Offset;
   typedef typename chap::ProcessImageCommandHandler<Offset> Base;
-  ProcessImageCommandHandler(const LinuxProcessImage<ElfImage> &processImage)
+  ProcessImageCommandHandler(const LinuxProcessImage<ElfImage>& processImage)
       : Base(processImage),
-        _describeArenasSubcommand(processImage.GetLibcMallocAllocationFinder()),
-        _libcMallocHeapDescriber(processImage.GetLibcMallocAllocationFinder(),
-                                 processImage.GetVirtualAddressMap()),
-        _libcMallocMainArenaRunDescriber(
-            processImage.GetLibcMallocAllocationFinder()),
-        _libcMallocMmappedAllocationDescriber(
-            processImage.GetLibcMallocAllocationFinder()) {
+        _libcMallocFinderGroup(processImage.GetLibcMallocFinderGroup()),
+        _describeArenasSubcommand(
+            _libcMallocFinderGroup.GetInfrastructureFinder(),
+            processImage.GetAllocationDirectory()) {
     Base::_compoundDescriber.AddDescriber(Base::_allocationDescriber);
     Base::_compoundDescriber.AddDescriber(Base::_stackDescriber);
 
@@ -51,10 +46,7 @@ class ProcessImageCommandHandler
      * minimum
      * they should never be added before the _allocationDescriber.
      */
-    Base::_compoundDescriber.AddDescriber(_libcMallocHeapDescriber);
-    Base::_compoundDescriber.AddDescriber(_libcMallocMainArenaRunDescriber);
-    Base::_compoundDescriber.AddDescriber(
-        _libcMallocMmappedAllocationDescriber);
+    _libcMallocFinderGroup.AddDescribers(Base::_compoundDescriber);
 
     Base::_compoundDescriber.AddDescriber(Base::_stackOverflowGuardDescriber);
     Base::_compoundDescriber.AddDescriber(Base::_pythonArenaDescriber);
@@ -65,17 +57,14 @@ class ProcessImageCommandHandler
     Base::_compoundDescriber.AddDescriber(Base::_knownAddressDescriber);
   }
 
-  virtual void AddCommands(Commands::Runner &r) {
+  virtual void AddCommands(Commands::Runner& r) {
     Base::AddCommands(r);
     Base::RegisterSubcommand(r, _describeArenasSubcommand);
   }
 
  private:
-  Subcommands::DescribeArenas<Offset> _describeArenasSubcommand;
-  LibcMallocHeapDescriber<Offset> _libcMallocHeapDescriber;
-  LibcMallocMainArenaRunDescriber<Offset> _libcMallocMainArenaRunDescriber;
-  LibcMallocMmappedAllocationDescriber<Offset>
-      _libcMallocMmappedAllocationDescriber;
+  LibcMalloc::FinderGroup<Offset>& _libcMallocFinderGroup;
+  LibcMalloc::Subcommands::DescribeArenas<Offset> _describeArenasSubcommand;
 };
 
 }  // namespace Linux

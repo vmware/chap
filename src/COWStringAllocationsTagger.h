@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,12 +14,12 @@ template <typename Offset>
 class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
@@ -27,10 +27,10 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
                              const ModuleDirectory<Offset>& moduleDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
-        _finder(graph.GetAllocationFinder()),
-        _numAllocations(_finder.NumAllocations()),
-        _addressMap(_finder.GetAddressMap()),
-        _charsImage(_finder),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _addressMap(graph.GetAddressMap()),
+        _charsImage(_addressMap, _directory),
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _enabled(true),
@@ -132,7 +132,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
-  const Finder& _finder;
+  const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
   ContiguousImage _charsImage;
@@ -196,11 +196,11 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
         if (_numRefsMinus1 < 0) {
           return true;
         }
-        if (capacity + overhead < _finder.MinRequestSize(index)) {
+        if (capacity + overhead < _directory.MinRequestSize(index)) {
           /*
            * We want to assure that the capacity is sufficiently large
            * to account for the requested buffer size, but this depends
-           * on the allocation finder to provide a lower bound of what
+           * on the allocation directory to provide a lower bound of what
            * that requested buffer size might have been.
            */
           return true;
@@ -313,8 +313,8 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
         continue;
       }
       Offset charsAddress = check[0];
-      if ((_finder.AllocationAt(charsIndex)->Address() + 3 * sizeof(Offset)) ==
-          charsAddress) {
+      if ((_directory.AllocationAt(charsIndex)->Address() +
+           3 * sizeof(Offset)) == charsAddress) {
         if (--(_votesNeeded[charsIndex]) == 0) {
           _tagHolder.TagAllocation(charsIndex, _tagIndex);
         }

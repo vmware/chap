@@ -1,33 +1,27 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../Describer.h"
 #include "../ProcessImage.h"
-#include "LibcMallocAllocationFinder.h"
+#include "InfrastructureFinder.h"
 
 namespace chap {
-namespace Linux {
+namespace LibcMalloc {
 template <typename Offset>
-class LibcMallocHeapDescriber : public Describer<Offset> {
+class HeapDescriber : public Describer<Offset> {
  public:
-  typedef typename LibcMallocAllocationFinder<Offset>::Heap Heap;
-  typedef typename LibcMallocAllocationFinder<Offset>::HeapMap HeapMap;
-  typedef typename LibcMallocAllocationFinder<Offset>::HeapMapConstIterator
+  typedef typename InfrastructureFinder<Offset>::Heap Heap;
+  typedef typename InfrastructureFinder<Offset>::HeapMap HeapMap;
+  typedef typename InfrastructureFinder<Offset>::HeapMapConstIterator
       HeapMapConstIterator;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
-  LibcMallocHeapDescriber(const LibcMallocAllocationFinder<Offset> *finder,
-                          const VirtualAddressMap<Offset> &addressMap)
+  HeapDescriber(const InfrastructureFinder<Offset> &infrastructureFinder,
+                const VirtualAddressMap<Offset> &addressMap)
       : _addressMap(addressMap),
-        _maxHeapSize(0),
-        _heaps(nullptr),
-        _arenaStructSize(0) {
-    if (finder != nullptr) {
-      _maxHeapSize = finder->GetMaxHeapSize();
-      _heaps = &(finder->GetHeaps());
-      _arenaStructSize = finder->GetArenaStructSize();
-    }
-  }
+        _maxHeapSize(infrastructureFinder.GetMaxHeapSize()),
+        _heaps(infrastructureFinder.GetHeaps()),
+        _arenaStructSize(infrastructureFinder.GetArenaStructSize()) {}
   /*
    * If the address is understood, provide a description for the address,
    * optionally with an additional explanation of why the address matches
@@ -36,12 +30,9 @@ class LibcMallocHeapDescriber : public Describer<Offset> {
    */
   bool Describe(Commands::Context &context, Offset address, bool explain,
                 bool showAddresses) const {
-    if (_heaps == nullptr) {
-      return false;
-    }
     Offset heapStart = address & ~(_maxHeapSize - 1);
-    HeapMapConstIterator it = _heaps->find(heapStart);
-    if (it == _heaps->end()) {
+    HeapMapConstIterator it = _heaps.find(heapStart);
+    if (it == _heaps.end()) {
       return false;
     }
     const Heap &heap = it->second;
@@ -146,8 +137,8 @@ class LibcMallocHeapDescriber : public Describer<Offset> {
  protected:
   const VirtualAddressMap<Offset> &_addressMap;
   Offset _maxHeapSize;
-  const HeapMap *_heaps;
+  const HeapMap &_heaps;
   Offset _arenaStructSize;
 };
-}  // namespace Linux
+}  // namespace LibcMalloc
 }  // namespace chap

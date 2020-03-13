@@ -1,4 +1,4 @@
-// Copyright (c) 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,21 +13,21 @@ template <typename Offset>
 class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
-  typedef typename Allocations::Finder<Offset> Finder;
+  typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename Tagger::Phase Phase;
-  typedef typename Finder::AllocationIndex AllocationIndex;
-  typedef typename Finder::Allocation Allocation;
+  typedef typename Directory::AllocationIndex AllocationIndex;
+  typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
   UnorderedMapOrSetAllocationsTagger(Graph& graph, TagHolder& tagHolder)
       : _graph(graph),
         _tagHolder(tagHolder),
-        _finder(graph.GetAllocationFinder()),
-        _numAllocations(_finder.NumAllocations()),
-        _addressMap(_finder.GetAddressMap()),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _addressMap(graph.GetAddressMap()),
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _nodeReader(_addressMap),
@@ -154,7 +154,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
-  const Finder& _finder;
+  const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
   Reader _staticAnchorReader;
@@ -191,6 +191,14 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     Offset numEntries = unorderedMapOrSetReader.ReadOffset(
         unorderedMapOrSet + 3 * sizeof(Offset), 0xbad);
     if (expectEmpty != (numEntries == 0)) {
+      return false;
+    }
+    if (numEntries > (numBuckets * 4)) {
+      /*
+       * We expect the load factor to be less than 4 and we need to bound
+       * numEntries so that the loop to check the chain length is
+       * reasonably bounded.
+       */
       return false;
     }
 
@@ -235,7 +243,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
 
       firstNodeIndex =
           (unorderedMapOrSetIndex == _numAllocations)
-              ? _finder.AllocationIndexOf(firstNode)
+              ? _directory.AllocationIndexOf(firstNode)
               : _graph.TargetAllocationIndex(unorderedMapOrSetIndex, firstNode);
       node = firstNode;
       AllocationIndex nodeIndex = firstNodeIndex;
@@ -335,7 +343,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
         const Allocation* bucketsAllocation =
-            _finder.AllocationAt(bucketsIndex);
+            _directory.AllocationAt(bucketsIndex);
         if (bucketsAllocation->Address() != bucketsAddress) {
           continue;
         }
@@ -343,7 +351,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         if (numBuckets > maxBuckets) {
           continue;
         }
-        minBuckets = _finder.MinRequestSize(bucketsIndex) / sizeof(Offset);
+        minBuckets = _directory.MinRequestSize(bucketsIndex) / sizeof(Offset);
         if (minBuckets < 1) {
           minBuckets = 1;
         }
@@ -373,7 +381,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
         if (firstNodeAddress !=
-            _finder.AllocationAt(firstNodeIndex)->Address()) {
+            _directory.AllocationAt(firstNodeIndex)->Address()) {
           continue;
         }
         if (numMembers == 0) {
@@ -405,7 +413,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
             anchorReader.ReadOffset(anchor + 2 * sizeof(Offset), 0xbad);
         if ((firstNode & (sizeof(Offset) - 1)) == 0) {
           Offset maxBuckets = size / sizeof(Offset);
-          Offset minBuckets = _finder.MinRequestSize(index) / sizeof(Offset);
+          Offset minBuckets = _directory.MinRequestSize(index) / sizeof(Offset);
           if (minBuckets < 1) {
             minBuckets = 1;
           }

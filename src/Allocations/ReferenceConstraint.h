@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -6,7 +6,7 @@
 #include <set>
 #include <sstream>
 #include "../VirtualAddressMap.h"
-#include "Finder.h"
+#include "Directory.h"
 #include "Graph.h"
 #include "PatternDescriberRegistry.h"
 #include "SignatureChecker.h"
@@ -16,25 +16,25 @@ namespace Allocations {
 template <class Offset>
 class ReferenceConstraint {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   enum BoundaryType { MINIMUM, MAXIMUM };
   enum ReferenceType { INCOMING, OUTGOING };
   ReferenceConstraint(
-      const SignatureDirectory<Offset>& directory,
+      const SignatureDirectory<Offset>& signatureDirectory,
       const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
       const VirtualAddressMap<Offset>& addressMap, const std::string& signature,
       size_t count, bool wantUsed, BoundaryType boundaryType,
-      ReferenceType referenceType, const Finder<Offset>& finder,
+      ReferenceType referenceType, const Directory<Offset>& directory,
       const Graph<Offset>& graph)
 
-      : _signatureChecker(directory, patternDescriberRegistry, addressMap,
-                          signature),
+      : _signatureChecker(signatureDirectory, patternDescriberRegistry,
+                          addressMap, signature),
         _count(count),
         _wantUsed(wantUsed),
         _boundaryType(boundaryType),
         _referenceType(referenceType),
-        _finder(finder),
+        _directory(directory),
         _graph(graph) {}
   bool UnrecognizedSignature() const {
     return _signatureChecker.UnrecognizedSignature();
@@ -53,7 +53,7 @@ class ReferenceConstraint {
     }
     for (const AllocationIndex* pEdge = pFirstEdge; pEdge != pPastEdge;
          pEdge++) {
-      const Allocation& allocation = *(_finder.AllocationAt(*pEdge));
+      const Allocation& allocation = *(_directory.AllocationAt(*pEdge));
       if ((allocation.IsUsed() == _wantUsed) &&
           (_signatureChecker.Check(*pEdge, allocation))) {
         numMatchingEdges++;
@@ -69,7 +69,7 @@ class ReferenceConstraint {
   bool _wantUsed;
   BoundaryType _boundaryType;
   ReferenceType _referenceType;
-  const Finder<Offset>& _finder;
+  const Directory<Offset>& _directory;
   const Graph<Offset>& _graph;
 };
 }  // namespace Allocations

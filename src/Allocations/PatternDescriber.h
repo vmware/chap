@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -9,14 +9,14 @@ namespace Allocations {
 template <typename Offset>
 class PatternDescriber {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   PatternDescriber(const ProcessImage<Offset>& processImage,
                    const std::string& name)
       : _name(name),
         _processImage(processImage),
         _addressMap(processImage.GetVirtualAddressMap()),
-        _finder(processImage.GetAllocationFinder()),
+        _directory(processImage.GetAllocationDirectory()),
         _graph(processImage.GetAllocationGraph()),
         _moduleDirectory(processImage.GetModuleDirectory()),
         _tagHolder(*(processImage.GetAllocationTagHolder())) {}
@@ -34,7 +34,7 @@ class PatternDescriber {
   const std::string _name;
   const ProcessImage<Offset>& _processImage;
   const VirtualAddressMap<Offset>& _addressMap;
-  const Finder<Offset>* _finder;
+  const Directory<Offset>& _directory;
   const Graph<Offset>* _graph;
   const ModuleDirectory<Offset>& _moduleDirectory;
   const Allocations::TagHolder<Offset>& _tagHolder;

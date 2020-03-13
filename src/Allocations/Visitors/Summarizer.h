@@ -1,11 +1,11 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../../SizedTally.h"
-#include "../Finder.h"
+#include "../Directory.h"
 #include "../SignatureSummary.h"
 #include "../TagHolder.h"
 namespace chap {
@@ -14,8 +14,8 @@ namespace Visitors {
 template <class Offset>
 class Summarizer {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   typedef typename SignatureSummary<Offset>::Item SummaryItem;
   class Factory {
    public:

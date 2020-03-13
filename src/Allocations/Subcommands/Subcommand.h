@@ -7,8 +7,8 @@
 #include <sstream>
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
+#include "../Directory.h"
 #include "../ExtendedVisitor.h"
-#include "../Finder.h"
 #include "../PatternDescriberRegistry.h"
 #include "../ReferenceConstraint.h"
 #include "../SignatureChecker.h"
@@ -18,8 +18,8 @@ namespace Subcommands {
 template <class Offset, class Visitor, class Iterator>
 class Subcommand : public Commands::Subcommand {
  public:
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::Allocation Allocation;
   Subcommand(const ProcessImage<Offset>& processImage,
 
              typename Visitor::Factory& visitorFactory,
@@ -36,22 +36,12 @@ class Subcommand : public Commands::Subcommand {
     Commands::Output& output = context.GetOutput();
     Commands::Error& error = context.GetError();
     bool isRedirected = context.IsRedirected();
-    const Finder<Offset>* allocationFinder =
-        _processImage.GetAllocationFinder();
-    if (allocationFinder == 0) {
-      error << "This command is currently disabled.\n";
-      error << "Allocations cannot be found.\n";
-      if (isRedirected) {
-        output << "This command is currently disabled.\n";
-        output << "Allocations cannot be found.\n";
-      }
-      return;
-    }
-    AllocationIndex numAllocations = allocationFinder->NumAllocations();
+    const Directory<Offset>& directory = _processImage.GetAllocationDirectory();
+    AllocationIndex numAllocations = directory.NumAllocations();
 
     std::unique_ptr<Iterator> iterator;
-    iterator.reset(_iteratorFactory.MakeIterator(context, _processImage,
-                                                 *allocationFinder));
+    iterator.reset(
+        _iteratorFactory.MakeIterator(context, _processImage, directory));
     if (iterator.get() == 0) {
       return;
     }
@@ -172,36 +162,36 @@ class Subcommand : public Commands::Subcommand {
           switchError |
           AddReferenceConstraints(
               context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
-              ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints,
+              ReferenceConstraint<Offset>::INCOMING, true, directory, *graph,
+              signatureDirectory, addressMap, referenceConstraints,
               allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
-              ReferenceConstraint<Offset>::INCOMING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints,
+              ReferenceConstraint<Offset>::INCOMING, true, directory, *graph,
+              signatureDirectory, addressMap, referenceConstraints,
               allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
-              ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints,
+              ReferenceConstraint<Offset>::OUTGOING, true, directory, *graph,
+              signatureDirectory, addressMap, referenceConstraints,
               allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
-              ReferenceConstraint<Offset>::OUTGOING, true, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints,
+              ReferenceConstraint<Offset>::OUTGOING, true, directory, *graph,
+              signatureDirectory, addressMap, referenceConstraints,
               allowMissingSignatures);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minfreeoutgoing", ReferenceConstraint<Offset>::MINIMUM,
-              ReferenceConstraint<Offset>::OUTGOING, false, *allocationFinder,
-              *graph, signatureDirectory, addressMap, referenceConstraints,
+              ReferenceConstraint<Offset>::OUTGOING, false, directory, *graph,
+              signatureDirectory, addressMap, referenceConstraints,
               allowMissingSignatures);
     }
 
@@ -236,7 +226,7 @@ class Subcommand : public Commands::Subcommand {
     }
     for (AllocationIndex index = iterator->Next(); index != numAllocations;
          index = iterator->Next()) {
-      const Allocation* allocation = allocationFinder->AllocationAt(index);
+      const Allocation* allocation = directory.AllocationAt(index);
       if (allocation == 0) {
         abort();
       }
@@ -315,7 +305,8 @@ class Subcommand : public Commands::Subcommand {
       Commands::Context& context, const std::string& switchName,
       typename ReferenceConstraint<Offset>::BoundaryType boundaryType,
       typename ReferenceConstraint<Offset>::ReferenceType referenceType,
-      bool wantUsed, const Finder<Offset>& finder, const Graph<Offset>& graph,
+      bool wantUsed, const Directory<Offset>& directory,
+      const Graph<Offset>& graph,
       const SignatureDirectory<Offset>& signatureDirectory,
       const VirtualAddressMap<Offset>& addressMap,
       std::vector<ReferenceConstraint<Offset> >& constraints,
@@ -345,7 +336,7 @@ class Subcommand : public Commands::Subcommand {
       }
       constraints.emplace_back(signatureDirectory, _patternDescriberRegistry,
                                addressMap, signature, count, wantUsed,
-                               boundaryType, referenceType, finder, graph);
+                               boundaryType, referenceType, directory, graph);
       if (constraints.back().UnrecognizedSignature()) {
         if (!allowMissingSignatures) {
           error << "Signature \"" << signature << "\" is not recognized.\n";

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -6,7 +6,7 @@
 #include <set>
 #include <sstream>
 #include "../VirtualAddressMap.h"
-#include "Finder.h"
+#include "Directory.h"
 #include "PatternDescriberRegistry.h"
 #include "SignatureDirectory.h"
 
@@ -15,7 +15,7 @@ namespace Allocations {
 template <class Offset>
 class SignatureChecker {
  public:
-  typedef typename Finder<Offset>::Allocation Allocation;
+  typedef typename Directory<Offset>::Allocation Allocation;
   enum CheckType {
     NO_CHECK_NEEDED,         // This signature checker does nothing
     UNRECOGNIZED_SIGNATURE,  // Error code - indicates unknown signature
@@ -87,7 +87,7 @@ class SignatureChecker {
   }
   const std::string& GetSignature() { return _signature; }
   const std::string& GetPatternName() { return _patternName; }
-  bool Check(typename Finder<Offset>::AllocationIndex index,
+  bool Check(typename Directory<Offset>::AllocationIndex index,
              const Allocation& allocation) const {
     switch (_checkType) {
       case NO_CHECK_NEEDED:

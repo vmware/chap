@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 #include "../Graph.h"
 namespace chap {
 namespace Allocations {
@@ -17,13 +17,12 @@ class StaticAnchorPoints {
     Factory() : _setName("staticanchorpoints") {}
     StaticAnchorPoints* MakeIterator(Commands::Context& /* context */,
                                      const ProcessImage<Offset>& processImage,
-                                     const Finder<Offset>& allocationFinder) {
+                                     const Directory<Offset>& directory) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();
       if (allocationGraph == 0) {
         return (StaticAnchorPoints*)(0);
       }
-      return new StaticAnchorPoints(allocationFinder,
-                                    allocationFinder.NumAllocations(),
+      return new StaticAnchorPoints(directory, directory.NumAllocations(),
                                     *allocationGraph);
     }
     // TODO: allow adding taints
@@ -41,13 +40,13 @@ class StaticAnchorPoints {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
-  StaticAnchorPoints(const Finder<Offset>& allocationFinder,
+  StaticAnchorPoints(const Directory<Offset>& directory,
                      AllocationIndex numAllocations,
                      const Graph<Offset>& allocationGraph)
       : _index(0),
-        _allocationFinder(allocationFinder),
+        _directory(directory),
         _numAllocations(numAllocations),
         _allocationGraph(allocationGraph) {}
   AllocationIndex Next() {
@@ -64,7 +63,7 @@ class StaticAnchorPoints {
 
  private:
   AllocationIndex _index;
-  const Finder<Offset>& _allocationFinder;
+  const Directory<Offset>& _directory;
   AllocationIndex _numAllocations;
   const Graph<Offset>& _allocationGraph;
 };

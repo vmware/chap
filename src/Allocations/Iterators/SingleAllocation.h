@@ -1,10 +1,10 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
-#include "../Finder.h"
+#include "../Directory.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,9 +16,9 @@ class SingleAllocation {
     Factory() : _setName("allocation") {}
     SingleAllocation* MakeIterator(Commands::Context& context,
                                    const ProcessImage<Offset>&,
-                                   const Finder<Offset>& allocationFinder) {
+                                   const Directory<Offset>& directory) {
       SingleAllocation* iterator = 0;
-      AllocationIndex numAllocations = allocationFinder.NumAllocations();
+      AllocationIndex numAllocations = directory.NumAllocations();
       size_t numPositionals = context.GetNumPositionals();
       Commands::Error& error = context.GetError();
       if (numPositionals < 3) {
@@ -28,7 +28,7 @@ class SingleAllocation {
         if (!context.ParsePositional(2, address)) {
           error << context.Positional(2) << " is not a valid address.\n";
         } else {
-          AllocationIndex index = allocationFinder.AllocationIndexOf(address);
+          AllocationIndex index = directory.AllocationIndexOf(address);
           if (index == numAllocations) {
             error << context.Positional(2)
                   << " is not part of an allocation.\n";
@@ -54,7 +54,7 @@ class SingleAllocation {
     const std::vector<std::string> _taints;
     const std::string _setName;
   };
-  typedef typename Finder<Offset>::AllocationIndex AllocationIndex;
+  typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
   SingleAllocation(AllocationIndex index, AllocationIndex numAllocations)
       : _index(index), _numAllocations(numAllocations), _visitedFirst(false) {}
