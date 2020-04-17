@@ -23,7 +23,7 @@ class ContiguousImage {
         _bufferAsChars((char *)(&(_buffer[0]))),
         _bufferAsOffsets((Offset *)(&(_buffer[0]))),
         _pFirstChar(_bufferAsChars),
-        _pPastChars(_bufferAsChars),
+        _size(0),
         _pFirstOffset(_bufferAsOffsets),
         _pPastOffsets(_bufferAsOffsets),
         _addressMap(addressMap),
@@ -40,7 +40,6 @@ class ContiguousImage {
     if (index != _index) {
       _index = index;
       _pFirstChar = _bufferAsChars;
-      _pPastChars = _bufferAsChars;
       _pFirstOffset = _bufferAsOffsets;
       _pPastOffsets = _bufferAsOffsets;
       const Allocation *allocation = _directory.AllocationAt(index);
@@ -65,7 +64,7 @@ class ContiguousImage {
         }
         if (limit <= _regionLimit) {
           _pFirstChar = _regionImage + (address - _regionBase);
-          _pPastChars = _pFirstChar + size;
+          _size = size;
         } else {
           /*
            * This is very rare on Linux but could happen in the case of
@@ -110,10 +109,9 @@ class ContiguousImage {
           if (copiedTo < limit) {
             memset(_bufferAsChars + (copiedTo - address), 0, limit - copiedTo);
           }
-          _pPastChars = _bufferAsChars + size;
+          _size = size;
         }
-        if (_pFirstChar != _pPastChars &&
-            (address & (sizeof(Offset) - 1)) == 0) {
+        if (_size != 0 && (address & (sizeof(Offset) - 1)) == 0) {
           _pFirstOffset = (Offset *)(_pFirstChar);
           _pPastOffsets =
               (Offset *)(_pFirstChar + (size & ~(sizeof(Offset) - 1)));
@@ -125,7 +123,7 @@ class ContiguousImage {
   const Offset *FirstOffset() const { return _pFirstOffset; }
   const Offset *OffsetLimit() const { return _pPastOffsets; }
   const char *FirstChar() const { return _pFirstChar; }
-  const char *CharLimit() const { return _pPastChars; }
+  Offset Size() const { return _size; }
 
  private:
   const Directory<Offset> &_directory;
@@ -136,7 +134,7 @@ class ContiguousImage {
   char *_bufferAsChars;
   Offset *_bufferAsOffsets;
   const char *_pFirstChar;
-  const char *_pPastChars;
+  Offset _size;
   const Offset *_pFirstOffset;
   const Offset *_pPastOffsets;
   const VirtualAddressMap<Offset> &_addressMap;

@@ -18,6 +18,7 @@ class ProcessImageCommandHandler
   ProcessImageCommandHandler(const LinuxProcessImage<ElfImage>& processImage)
       : Base(processImage),
         _libcMallocFinderGroup(processImage.GetLibcMallocFinderGroup()),
+        _pythonFinderGroup(processImage.GetPythonFinderGroup()),
         _describeArenasSubcommand(
             _libcMallocFinderGroup.GetInfrastructureFinder(),
             processImage.GetAllocationDirectory()) {
@@ -47,9 +48,9 @@ class ProcessImageCommandHandler
      * they should never be added before the _allocationDescriber.
      */
     _libcMallocFinderGroup.AddDescribers(Base::_compoundDescriber);
+    _pythonFinderGroup.AddDescribers(Base::_compoundDescriber);
 
     Base::_compoundDescriber.AddDescriber(Base::_stackOverflowGuardDescriber);
-    Base::_compoundDescriber.AddDescriber(Base::_pythonArenaDescriber);
     /*
      * The following should alway be added last because describers are
      * checked in the order given and the first applicable describer applies.
@@ -64,6 +65,7 @@ class ProcessImageCommandHandler
 
  private:
   LibcMalloc::FinderGroup<Offset>& _libcMallocFinderGroup;
+  const Python::FinderGroup<Offset>& _pythonFinderGroup;
   LibcMalloc::Subcommands::DescribeArenas<Offset> _describeArenasSubcommand;
 };
 

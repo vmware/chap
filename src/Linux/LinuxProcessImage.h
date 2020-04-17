@@ -48,7 +48,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * pages used for the python arenas will make it cheaper to find other
          * things, such as the structures used by libc malloc.
          */
-        Base::_pythonInfrastructureFinder.Resolve();
+        Base::_pythonFinderGroup.Resolve();
       }
 
       /*
@@ -75,7 +75,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * Finding the python infrastructure depends on finding the modules
          * first.
          */
-        Base::_pythonInfrastructureFinder.Resolve();
+        Base::_pythonFinderGroup.Resolve();
       }
 
       /*

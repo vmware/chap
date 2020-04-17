@@ -669,6 +669,9 @@ This allocation matches pattern PyDictKeysObject.
 Anchored allocation at 55e087c3c580 of size e8
 This allocation matches pattern PyDictKeysObject.
 
+Anchored allocation at 55e087c3c670 of size 1a8
+This allocation matches pattern PyDictKeysObject.
+
 Anchored allocation at 55e087c3c820 of size e8
 This allocation matches pattern PyDictKeysObject.
 
@@ -1286,6 +1289,9 @@ It is usually not needed to use the zipimport module explicitly; it is
 used by the builtin import mechanism for sys.path items that are paths
 to Zip archives."
 
+Anchored allocation at 55e087c56d60 of size 1a8
+This allocation matches pattern PyDictKeysObject.
+
 Anchored allocation at 55e087c58100 of size e8
 This allocation matches pattern PyDictKeysObject.
 "__module__" : "signal"
@@ -1370,6 +1376,9 @@ This allocation matches pattern PyDictKeysObject.
 Anchored allocation at 55e087c5c4a0 of size e8
 This allocation matches pattern PyDictKeysObject.
 
+Anchored allocation at 55e087c5c590 of size 88
+This allocation matches pattern PyDictKeysObject.
+
 Anchored allocation at 55e087c5c650 of size 328
 This allocation matches pattern PyDictKeysObject.
 "REGISTRY_KEY" : "Software\Python\PythonCore\{sys_version}\Modules\{fullname}"
@@ -1444,6 +1453,9 @@ This allocation matches pattern PyDictKeysObject.
 "__module__" : "_frozen_importlib_external"
 
 Anchored allocation at 55e087c5fcc0 of size e8
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 55e087c5fdb0 of size 88
 This allocation matches pattern PyDictKeysObject.
 
 Anchored allocation at 55e087c5fe70 of size 1a8
@@ -1828,6 +1840,9 @@ This allocation matches pattern PyDictKeysObject.
 
     "
 "__module__" : "types"
+
+Anchored allocation at 55e087c72860 of size 1a8
+This allocation matches pattern PyDictKeysObject.
 
 Anchored allocation at 55e087c72a80 of size c28
 This allocation matches pattern PyDictKeysObject.
@@ -2323,6 +2338,9 @@ Anchored allocation at 55e087c92a50 of size e8
 This allocation matches pattern PyDictKeysObject.
 "__module__" : "encodings.utf_8"
 
+Anchored allocation at 55e087c92ef0 of size 88
+This allocation matches pattern PyDictKeysObject.
+
 Anchored allocation at 55e087c92f80 of size 328
 This allocation matches pattern PyDictKeysObject.
 "__name__" : "encodings.utf_8"
@@ -2500,6 +2518,9 @@ Written by Marc-Andre Lemburg (mal@lemburg.com).
 Anchored allocation at 55e087c9bab0 of size e8
 This allocation matches pattern PyDictKeysObject.
 
+Anchored allocation at 55e087c9bba0 of size 88
+This allocation matches pattern PyDictKeysObject.
+
 Anchored allocation at 55e087c9bfe0 of size e8
 This allocation matches pattern PyDictKeysObject.
 
@@ -2514,6 +2535,9 @@ Anchored allocation at 55e087c9c600 of size e8
 This allocation matches pattern PyDictKeysObject.
 
 Anchored allocation at 55e087c9c6f0 of size 88
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 55e087c9cd70 of size 1a8
 This allocation matches pattern PyDictKeysObject.
 
 Anchored allocation at 55e087c9cf20 of size e8
@@ -3203,6 +3227,9 @@ This allocation matches pattern PyDictKeysObject.
     "
 "__module__" : "abc"
 
+Anchored allocation at 55e087cae410 of size 1a8
+This allocation matches pattern PyDictKeysObject.
+
 Anchored allocation at 55e087cae650 of size 1a8
 This allocation matches pattern PyDictKeysObject.
 "__doc__" : "Helper class that provides a standard way to create an ABC using
@@ -3620,6 +3647,12 @@ This allocation matches pattern PyDictKeysObject.
     links.
     "
 "__module__" : "os"
+
+Anchored allocation at 55e087cc33f0 of size 1a8
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 55e087cc35a0 of size 88
+This allocation matches pattern PyDictKeysObject.
 
 Anchored allocation at 55e087cc4440 of size 1a8
 This allocation matches pattern PyDictKeysObject.
@@ -4831,6 +4864,9 @@ combinations(p, r)
 combinations_with_replacement(p, r)
 "
 "__name__" : "itertools"
+
+Anchored allocation at 55e087d0c0a0 of size 1a8
+This allocation matches pattern PyDictKeysObject.
 
 Anchored allocation at 55e087d0c250 of size 328
 This allocation matches pattern PyDictKeysObject.
@@ -9089,4 +9125,4 @@ This allocation matches pattern PyDictKeysObject.
 "TimeoutError" : "TimeoutError"
 "HAVE_ALIGNED_REQUIRED" : "HAVE_ALIGNED_REQUIRED"
 
-607 allocations use 0xc2860 (796,768) bytes.
+619 allocations use 0xc36a0 (800,416) bytes.

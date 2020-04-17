@@ -71,14 +71,35 @@ This is for module /lib/x86_64-linux-gnu/libpthread-2.23.so.
 Range [0x7f51eda61000, 0x7f51eda65000) uses 0x4000 bytes.
 Region use: unknown
 
-Range [0x7f51edabb000, 0x7f51edb7b000) uses 0xc0000 bytes.
-Region use: unknown
+Range [0x7f51edabb000, 0x7f51edafb000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f51edafb000, 0x7f51edb3b000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f51edb3b000, 0x7f51edb7b000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
 
 Range [0x7f51edb7b000, 0x7f51edbac000) uses 0x31000 bytes.
 Region use: libc malloc mmapped allocation
 This is an individually mmapped libc chunk for a single allocation.
 
-Range [0x7f51edbac000, 0x7f51edc71000) uses 0xc5000 bytes.
+Range [0x7f51edbac000, 0x7f51edbec000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f51edbec000, 0x7f51edc2c000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f51edc2c000, 0x7f51edc6c000) uses 0x40000 bytes.
+Region use: python arena
+This is a python arena.
+
+Range [0x7f51edc6c000, 0x7f51edc71000) uses 0x5000 bytes.
 Region use: unknown
 
 Range [0x7f51edc8b000, 0x7f51edc8d000) uses 0x2000 bytes.
@@ -89,4 +110,4 @@ Range [0x7fffe22bc000, 0x7fffe22dd000) uses 0x21000 bytes.
 Region use: stack
 This stack is used for thread 1.
 
-24 writable ranges use 0x23e7000 (37,646,336) bytes.
+29 writable ranges use 0x23e7000 (37,646,336) bytes.

@@ -15,6 +15,7 @@
 #include "ModuleDirectory.h"
 #include "OpenSSLAllocationsTagger.h"
 #include "Python/AllocationsTagger.h"
+#include "Python/FinderGroup.h"
 #include "Python/InfrastructureFinder.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
@@ -42,7 +43,8 @@ class ProcessImage {
         _unfilledImages(virtualAddressMap),
         _allocationTagHolder(nullptr),
         _allocationGraph(nullptr),
-        _pythonInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition) {
+        _pythonFinderGroup(_virtualMemoryPartition, _moduleDirectory,
+                           _allocationDirectory, _unfilledImages) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
       if (!_virtualMemoryPartition.ClaimRange(
@@ -108,7 +110,11 @@ class ProcessImage {
 
   const Python::InfrastructureFinder<Offset> &GetPythonInfrastructureFinder()
       const {
-    return _pythonInfrastructureFinder;
+    return _pythonFinderGroup.GetInfrastructureFinder();
+  }
+
+  const Python::FinderGroup<Offset> &GetPythonFinderGroup() const {
+    return _pythonFinderGroup;
   }
 
   const char *STACK;
@@ -125,7 +131,7 @@ class ProcessImage {
   Allocations::Graph<Offset> *_allocationGraph;
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
-  Python::InfrastructureFinder<Offset> _pythonInfrastructureFinder;
+  Python::FinderGroup<Offset> _pythonFinderGroup;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end
@@ -163,8 +169,8 @@ class ProcessImage {
         *(_allocationTagHolder), _moduleDirectory, _virtualAddressMap));
 
     runner.RegisterTagger(new Python::AllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory,
-        _pythonInfrastructureFinder));
+        *(_allocationGraph), *(_allocationTagHolder),
+        _pythonFinderGroup.GetInfrastructureFinder(), _virtualAddressMap));
 
     runner.ResolveAllAllocationTags();
   }

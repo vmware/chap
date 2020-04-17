@@ -36,7 +36,6 @@ class MallocedArenaDescriber : public Allocations::PatternDescriber<Offset> {
            << _infrastructureFinder.ArenaSize()
            << " bytes contain the arena.\n";
     _contiguousImage.SetIndex(index);
-    // TODO: Possibly dump the array as part of the description.
     if (explain) {
     }
   }

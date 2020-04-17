@@ -25,7 +25,8 @@ class DescribePointers : public Commands::Subcommand {
 
   void Run(Commands::Context& context) {
     Offset valueToMatch;
-    if (context.GetNumTokens() != 3 || !context.ParseTokenAt(2, valueToMatch)) {
+    if (context.GetNumPositionals() != 3 ||
+        !context.ParsePositional(2, valueToMatch)) {
       context.GetError() << "Use \"describe pointers <address>\" to describe "
                             "all pointer-aligned addresses\nthat point "
                             "to the given address.\n";

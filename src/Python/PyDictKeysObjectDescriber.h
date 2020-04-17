@@ -17,7 +17,9 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
   typedef typename Allocations::Directory<Offset>::Allocation Allocation;
   PyDictKeysObjectDescriber(const ProcessImage<Offset>& processImage)
       : Allocations::PatternDescriber<Offset>(processImage, "PyDictKeysObject"),
-        _stringTypeObj(0),
+        _infrastructureFinder(processImage.GetPythonInfrastructureFinder()),
+        _strType(_infrastructureFinder.StrType()),
+        _triplesInDictKeys(_infrastructureFinder.TriplesInDictKeys()),
         _contiguousImage(processImage.GetVirtualAddressMap(),
                          processImage.GetAllocationDirectory()) {}
 
@@ -32,10 +34,17 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
     output << "This allocation matches pattern PyDictKeysObject.\n";
     _contiguousImage.SetIndex(index);
     const Offset* asOffsets = _contiguousImage.FirstOffset();
-    Offset numSlots = asOffsets[1];
-    for (Offset slot = 0; slot < numSlots; slot++) {
-      Offset key = ((Offset*)(asOffsets))[5 + slot * 3];
-      Offset value = ((Offset*)(asOffsets))[6 + slot * 3];
+    Offset numSlots = (_triplesInDictKeys >= 2 * sizeof(Offset))
+                          ? asOffsets[1]
+                          : (((_contiguousImage.OffsetLimit() - asOffsets) -
+                              (_triplesInDictKeys / sizeof(Offset))) /
+                             3);
+    const char* firstTriple = _contiguousImage.FirstChar() + _triplesInDictKeys;
+    const char* pastTriples = firstTriple + (numSlots * 3 * sizeof(Offset));
+    for (const char* triple = firstTriple; triple < pastTriples;
+         triple += 3 * sizeof(Offset)) {
+      Offset key = ((Offset*)(triple))[1];
+      Offset value = ((Offset*)(triple))[2];
       if (key == 0 || value == 0) {
         continue;
       }
@@ -68,15 +77,8 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
         continue;
       }
 
-      if (_stringTypeObj == 0) {
-        if (strlen(keyImage + 6 * sizeof(Offset)) != ((Offset*)(keyImage))[2]) {
-          continue;
-        }
-        _stringTypeObj = keyType;
-      } else {
-        if (keyType != _stringTypeObj || valueType != _stringTypeObj) {
-          continue;
-        }
+      if (keyType != _strType || valueType != _strType) {
+        continue;
       }
       output << "\"" << (keyImage + 6 * sizeof(Offset)) << "\" : \""
              << (valueImage + 6 * sizeof(Offset)) << "\"\n";
@@ -86,7 +88,9 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
   }
 
  private:
-  mutable Offset _stringTypeObj;
+  const InfrastructureFinder<Offset>& _infrastructureFinder;
+  const Offset _strType;
+  const Offset _triplesInDictKeys;
   mutable Allocations::ContiguousImage<Offset> _contiguousImage;
 };
 }  // namespace Python

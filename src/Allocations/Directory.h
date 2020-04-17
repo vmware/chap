@@ -3,6 +3,7 @@
 
 #pragma once
 #include <algorithm>
+#include <functional>
 #include <set>
 #include <vector>
 namespace chap {
@@ -145,6 +146,8 @@ class Directory {
     virtual Offset MinRequestSize(Offset size) = 0;
   };
 
+  typedef std::function<void()> ResolutionDoneCallback;
+
   Directory()
       : _allocationBoundariesResolved(false),
         _freeStatusFinalized(false),
@@ -207,6 +210,9 @@ class Directory {
     }
 
     _allocationBoundariesResolved = true;
+    for (auto& callback : _resolutionDoneCallbacks) {
+      callback();
+    }
   }
 
   bool AllocationBoundariesResolved() const {
@@ -342,6 +348,14 @@ class Directory {
    */
   bool HasThreadCached() const { return _hasThreadCached; }
 
+  /*
+   * Add a callback to be invoked after all the allocation boundaries
+   * have been resolved.
+   */
+  void AddResolutionDoneCallback(ResolutionDoneCallback cb) const {
+    _resolutionDoneCallbacks.emplace_back(cb);
+  }
+
  private:
   std::vector<Allocation> _allocations;
   bool _allocationBoundariesResolved;
@@ -352,6 +366,7 @@ class Directory {
   std::vector<Finder*> _indexToFinder;
   std::vector<std::pair<AllocationIndex, Offset> > _limits;
   std::vector<std::vector<AllocationIndex> > _wrappers;
+  mutable std::vector<ResolutionDoneCallback> _resolutionDoneCallbacks;
 
   void ConsumeCurrentAllocation(size_t finderIndex, Finder* finder) {
     Offset address = finder->NextAddress();
