@@ -38,8 +38,9 @@ class DescribeArenas : public Commands::Subcommand {
       ArenaTally& arenaTally = _arenaTallies[address];
       output << "Arena at 0x" << std::hex << address << " has size 0x"
              << arena._size << " (" << std::dec << arena._size
-             << ")\nand maximum size 0x" << std::hex << arena._maxSize << " ("
-             << std::dec << arena._maxSize << ").\n"
+             << "),\nmaximum size 0x" << std::hex << arena._maxSize << " ("
+             << std::dec << arena._maxSize << ") and \"top\" address 0x"
+             << std::hex << arena._top << ".\n"
              << std::dec << arenaTally._freeCount << " free allocations take 0x"
              << std::hex << arenaTally._freeBytes << " (" << std::dec
              << arenaTally._freeBytes << ") bytes.\n"
