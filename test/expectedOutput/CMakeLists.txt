@@ -93,3 +93,5 @@ exout_test(PATH ELF64/LibcMalloc/MmappedPythonArenasTest
            FILES core.63767.bz2)
 exout_test(PATH ELF64/LibcMalloc/MallocedPythonArenasTest
            FILES core.6792.bz2)
+exout_test(PATH ELF64/LibcMalloc/JustABigOne
+           FILES core.justABigOne)
