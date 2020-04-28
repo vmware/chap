@@ -174,7 +174,8 @@ class Output {
 
   void width(int width) { _outputStack.top()->width(width); }
 
-  void HexDump(const uint64_t* image, uint64_t numBytes) {
+  void HexDump(const uint64_t* image, uint64_t numBytes,
+               bool showTrailingAscii) {
     int headerWidth = 0;
     if (numBytes > 0x20) {
       headerWidth = 1;
@@ -198,15 +199,28 @@ class Output {
       if (offset & 0x1f) {
         topStream << " ";
       } else {
+        if (showTrailingAscii) {
+          ShowTrailingAscii(topStream, 3, ((const char*)(image + 1)) - 0x20,
+                            0x20);
+        }
         topStream << std::endl;
       }
     }
-    if (offset & 0x1f) {
+    size_t trailing = offset & 0x1f;
+    if (trailing != 0) {
+      if (showTrailingAscii) {
+        size_t missing =
+            (0x20 - trailing) / sizeof(uint64_t) * (2 * sizeof(uint64_t) + 1) +
+            2;
+        ShowTrailingAscii(topStream, missing, ((const char*)(image)) - trailing,
+                          trailing);
+      }
       topStream << std::endl;
     }
   }
 
-  void HexDump(const uint32_t* image, uint32_t numBytes) {
+  void HexDump(const uint32_t* image, uint32_t numBytes,
+               bool showTrailingAscii) {
     int headerWidth = 0;
     if (numBytes > 0x20) {
       headerWidth = 1;
@@ -230,16 +244,42 @@ class Output {
       if (offset & 0x1f) {
         topStream << " ";
       } else {
+        if (showTrailingAscii) {
+          ShowTrailingAscii(topStream, 3, ((const char*)(image + 1)) - 0x20,
+                            0x20);
+        }
         topStream << std::endl;
       }
     }
-    if (offset & 0x1f) {
+    size_t trailing = offset & 0x1f;
+    if (trailing != 0) {
+      if (showTrailingAscii) {
+        size_t missing =
+            (0x20 - trailing) / sizeof(uint32_t) * (2 * sizeof(uint32_t) + 1) +
+            2;
+        ShowTrailingAscii(topStream, missing, ((const char*)(image)) - trailing,
+                          trailing);
+      }
       topStream << std::endl;
     }
   }
 
  private:
   std::stack<std::ostream*> _outputStack;
+  void ShowTrailingAscii(std::ostream& topStream, size_t numBlanks,
+                         const char* chars, size_t numBytes) {
+    for (size_t i = 0; i < numBlanks; i++) {
+      topStream << ' ';
+    }
+    const char* limit = chars + numBytes;
+    while (chars < limit) {
+      char c = *(chars++);
+      if (c < ' ' || c > '~') {
+        c = '.';
+      }
+      topStream << c;
+    }
+  }
 };
 
 template <typename T>

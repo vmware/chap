@@ -1,4 +1,4 @@
-// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -39,6 +39,8 @@ class DumpCommand : public Commands::Command {
     } else {
       argsOK = false;
     }
+    bool showAscii = false;
+    (void)context.ParseBooleanSwitch("showAscii", showAscii);
     if (argsOK) {
       const char* image;
       Offset numBytesFound =
@@ -48,7 +50,7 @@ class DumpCommand : public Commands::Command {
               << " bytes were mapped starting from that address\n";
         size = numBytesFound;
       }
-      context.GetOutput().HexDump((const Offset*)image, size);
+      context.GetOutput().HexDump((const Offset*)image, size, showAscii);
     } else {
       error << "Use \"dump <address-in-hex> <size-in-hex>\" to dump the "
                "specified range.\n";

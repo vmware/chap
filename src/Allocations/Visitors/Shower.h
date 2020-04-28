@@ -20,8 +20,10 @@ class Shower {
     Factory() : _commandName("show") {}
     Shower* MakeVisitor(Commands::Context& context,
                         const ProcessImage<Offset>& processImage) {
+      bool showAscii = false;
+      (void)context.ParseBooleanSwitch("showAscii", showAscii);
       return new Shower(context, processImage.GetSignatureDirectory(),
-                        processImage.GetVirtualAddressMap());
+                        processImage.GetVirtualAddressMap(), showAscii);
     }
     const std::string& GetCommandName() const { return _commandName; }
     // TODO: allow adding taints
@@ -42,15 +44,17 @@ class Shower {
 
   Shower(Commands::Context& context,
          const SignatureDirectory<Offset>& signatureDirectory,
-         const VirtualAddressMap<Offset>& addressMap)
+         const VirtualAddressMap<Offset>& addressMap, bool showAscii)
       : _context(context),
         _signatureDirectory(signatureDirectory),
         _addressMap(addressMap),
+        _showAscii(showAscii),
         _sizedTally(context, "allocations") {}
   void Visit(AllocationIndex /* index */, const Allocation& allocation) {
     size_t size = allocation.Size();
     _sizedTally.AdjustTally(size);
     Commands::Output& output = _context.GetOutput();
+
     if (allocation.IsUsed()) {
       output << "Used allocation at ";
     } else {
@@ -78,7 +82,7 @@ class Shower {
       }
     }
     if (size > 0) {
-      output.HexDump((const Offset*)image, size);
+      output.HexDump((const Offset*)image, size, _showAscii);
     }
     output << "\n";
   }
@@ -87,6 +91,7 @@ class Shower {
   Commands::Context& _context;
   const SignatureDirectory<Offset>& _signatureDirectory;
   const VirtualAddressMap<Offset>& _addressMap;
+  const bool _showAscii;
   SizedTally<Offset> _sizedTally;
 };
 }  // namespace Visitors
