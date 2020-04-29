@@ -46,7 +46,11 @@ At present this has only been tested on Linux, with the `chap` binary built for 
 At the time of this writing, the only process image file formats supported by `chap` are little-endian 32 bit ELF cores and little-endian 64 bit ELF cores, both of which are expected to be complete.  Run `chap` without any arguments to get a current list of supported process image file formats.
 
 ### Supported Memory Allocators
-At present the only memory allocator for which `chap` will be able to find allocations in the process image is the version of malloc used by glibc on Linux.  Even lacking support for jemalloc or tcmalloc there are many processes for which `chap` is useful, because many processes use glibc malloc, including many processes that are mostly using C++, C, Python, or Java code.  Python, at least on Linux, heavily uses glibc malloc.   The use of glibc malloc in programs written mostly in java is often due to use of shared libraries written in C.
+At present the only memory allocators for which `chap` will be able to find allocations in the process image are the following:
+* the version of malloc used by glibc on Linux
+* the arena-based allocator for Python 2.x and 3.x (only checked so far on 2.6, 2.7 and 3.5, including both cases where arenas are mmapped and where they are allocated using malloc)
+
+Even lacking support for jemalloc or tcmalloc there are many processes for which `chap` is useful, because many processes use glibc malloc as part of native libraries.
 
 A quick way to determine whether `chap` is likely to be useful for your process is to gather a core (for example, using gcore) then open chap and use **count allocations**.  If the count is non-zero, `chap` is applicable.
 
@@ -233,7 +237,11 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * DequeBlock - the inner structure used for a deque (or for an std::queue that is based on one), which holds one or more entries on the deque
 * SSL - SSL type associated with openssl
 * SSL_CTX - SSL_CTX type associated with openssl
-* PyDictKeysObject -PyDictKeysObject associated with python (works python for 3.5, not for python 2.7)
+* PyDictKeysObject -PyDictKeysObject associated with python (works for python 3.5 but for python 2.6 or 2.7 it actually refers to just the triples associated with a dict)
+* PythonArenaStructArray - a singleton array of information about all the python arenas
+* PythonMallocedArena - an allocation made by malloc that contains an arena that in turn contains smaller python objects
+* SimplePythonObject - a python object that does not reference other python objects (e.g. str, int ...)
+* ContainerPythonObject - a python object that references other python objects (e.g. tuple, list, dict ...)
 
 Anywhere one can provide a pattern name preceded by '%', one can use **?** to narrow the scope to unsigned allocations that do not match any pattern.
 
@@ -247,7 +255,7 @@ Anywhere one can provide a pattern name preceded by '%', one can use **?** to na
       * **anchorpoints** refers to the subset of **anchored** that is referenced from outside of dynamically allocated memory.
         * **stackanchorpoints** refers to the subset of **anchorpoints** that is referenced from the stack for at least one thread.
         * **registeranchorpoints** refers to the subset of **anchorpoints** that is referenced from at least one register for at least on thread.
-        * **staticanchorpoints** refers to the subset of **anchorpoints** that is referenced from at least one region considered to be statically allocated.  Not that one should be somewhat skeptical of this set because `chap` generally considers writable memory that it cannot otherwise explain to be statically allocated.  Some cases where this is incorrect includes memory used for python objects or java objects or memory otherwise dynamically allocated using mmap.  The reason `chap` behaves this way is to avoid reporting false leaks.
+        * **staticanchorpoints** refers to the subset of **anchorpoints** that is referenced from at least one region considered to be statically allocated.  Not that one should be somewhat skeptical of this set because `chap` generally considers writable memory that it cannot otherwise explain to be statically allocated.  Some cases where this is incorrect includes memory used for java objects or memory otherwise dynamically allocated using mmap.  The reason `chap` behaves this way is to avoid reporting false leaks.
         * **threadonlyanchorpoints** refers to the subset of **anchorpoints** directly referenced by registers or stack for at least one thread but not anchored in any other way.
       * **stackanchored** refers to the subset of **anchored** that is reachable by following zero or more references from a stack anchor point.
       * **registeranchored** refers to the subset of **anchored** that is reachable by following zero or more references from a register anchor point.
