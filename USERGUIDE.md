@@ -356,7 +356,7 @@ If a *signature* or *pattern* is supplied in the extension-constraints, allocati
 
 If you want to understand a bit more how the extensions are being applied, or perhaps to have information about references even when they would extend to an allocation that has already been reached, add **/commentExtensions true** to the end of your chap command.
 
-####General Extension Examples With Pictures
+#### General Extension Examples With Pictures
 
 Minor variants of the following picture, which represents allocations and references between them, but doesn't deal with anchoring at all, will be used for examples throughout this section.  The variants of this picture will look mostly like this first one, in that the allocations and references will be the same, but they will have markings to explain a particular command, typically numbers on the allocations to show the sequence in which they are visited.  
 
@@ -502,10 +502,10 @@ show unreferenced Foo /extend ~>
 describe unreferenced /extend ~> /commentExtensions true
 ```
 
-####Examples About Traversing C++ Containers
+#### Examples About Traversing C++ Containers
 There are certainly other ways outside of chap to traverse containers from a core file, but if you are already in chap and want to visit all the allocations associated within a core, you can at least approximate this with `chap`, with the likely case that you may not see the order correctly, and the possibility that you might see more allocations than you bargained for due to false references.  Some examples follow.
 
-#####Showing Allocations for std::vector
+##### Showing Allocations for std::vector
 An std::vector keeps the data, if any, associated with that vector in a separate allocation matched by the pattern %VectorBody.
 
 ```
