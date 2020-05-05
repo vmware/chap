@@ -26,13 +26,15 @@
     * [Restricting by Signatures or Patterns](#restricting-by-signatures-or-patterns)
     * [Restricting by Counts of Incoming or Outgoing References](#restricting-by-counts-of-incoming-or-outgoing-references)
     * [Set Extensions](#set-extensions)
+        * [General Extension Examples With Pictures](#general-extension-examples-with-pictures)
+        * [Examples About Traversing C++ Containers](#examples-about-traversing-C++-containers)
 * [Use Cases](#use-cases)
     * [Detecting Memory Leaks](#detecting-memory-leaks)
     * [Analyzing Memory Leaks](#analyzing-memory-leaks)
     * [Supplementing gdb](#supplementing-gdb)
     * [Analyzing Memory Growth](#analyzing-memory-growth)
-        * [Analyzing Growth Due to Used Allocations](#analyzing-memory-growth-due-to-used-allocations)
-        * [Analyzing Growth Due to Free Allocations](#analyzing-memory-growth-due-to-free-allocations)
+        * [Analyzing Memory Growth Due to Used Allocations](#analyzing-memory-growth-due-to-used-allocations)
+        * [Analyzing Memory Growth Due to Free Allocations](#analyzing-memory-growth-due-to-free-allocations)
     * [Detecting Memory Corruption](#detecting-memory-corruption)
 
 
@@ -354,7 +356,7 @@ If a *signature* or *pattern* is supplied in the extension-constraints, allocati
 
 If you want to understand a bit more how the extensions are being applied, or perhaps to have information about references even when they would extend to an allocation that has already been reached, add **/commentExtensions true** to the end of your chap command.
 
-Some examples:
+####General Extension Examples With Pictures
 
 Minor variants of the following picture, which represents allocations and references between them, but doesn't deal with anchoring at all, will be used for examples throughout this section.  The variants of this picture will look mostly like this first one, in that the allocations and references will be the same, but they will have markings to explain a particular command, typically numbers on the allocations to show the sequence in which they are visited.  
 
@@ -499,6 +501,39 @@ show unreferenced Foo /extend ~>
 # the application of extension rules.
 describe unreferenced /extend ~> /commentExtensions true
 ```
+
+####Examples About Traversing C++ Containers
+There are certainly other ways outside of chap to traverse containers from a core file, but if you are already in chap and want to visit all the allocations associated within a core, you can at least approximate this with `chap`, with the likely case that you may not see the order correctly, and the possibility that you might see more allocations than you bargained for due to false references.  Some examples follow.
+
+#####Showing Allocations for std::vector
+An std::vector keeps the data, if any, associated with that vector in a separate allocation matched by the pattern %VectorBody.
+
+```
+# Show all the used instances of Foo, followed by each associated vector body
+show used Foo /extend Foo->%VectorBody
+
+# Show all the used instances of Foo, followed by the vector body for the
+# std::vector that is at offset 0x28 in type Foo.
+show used Foo /extend Foo@28->%VectorBody
+
+# For type Foo that has a vector<string> at offset 0x40, in the case where an old C++
+# ABI is used (prior to the C++11 ABI), show Foo plus the vector body and any
+# additional allocations for the strings.
+show used Foo /extend Foo@0x40->%VectorBody \
+ /extend %VectorBody->%COWStringBody \
+ /showAscii true
+
+# For a type Foo that has a vector<string> at offset 0x40, in the case where the
+# current C++ API is used, show Foo plus the vector body and any additional
+# allocations for the strings.
+show used Foo /extend Foo@0x40->%VectorBody \
+ /extend %VectorBody->%LongString \
+ /showAscii true
+
+```
+
+
+
 
 
 ## Use Cases
