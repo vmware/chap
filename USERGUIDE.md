@@ -27,7 +27,7 @@
     * [Restricting by Counts of Incoming or Outgoing References](#restricting-by-counts-of-incoming-or-outgoing-references)
     * [Set Extensions](#set-extensions)
         * [General Extension Examples With Pictures](#general-extension-examples-with-pictures)
-        * [Examples About Traversing C++ Containers](#examples-about-traversing-C++-containers)
+        * [Examples About Traversing C++ Containers](#examples-about-traversing-C-containers)
 * [Use Cases](#use-cases)
     * [Detecting Memory Leaks](#detecting-memory-leaks)
     * [Analyzing Memory Leaks](#analyzing-memory-leaks)
