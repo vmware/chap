@@ -9,6 +9,7 @@
 #include "Allocations/TagHolder.h"
 #include "COWStringAllocationsTagger.h"
 #include "DequeAllocationsTagger.h"
+#include "GoLang/FinderGroup.h"
 #include "ListAllocationsTagger.h"
 #include "LongStringAllocationsTagger.h"
 #include "MapOrSetAllocationsTagger.h"
@@ -44,6 +45,8 @@ class ProcessImage {
         _allocationTagHolder(nullptr),
         _allocationGraph(nullptr),
         _pythonFinderGroup(_virtualMemoryPartition, _moduleDirectory,
+                           _allocationDirectory, _unfilledImages),
+        _goLangFinderGroup(_virtualMemoryPartition, _moduleDirectory,
                            _allocationDirectory, _unfilledImages) {
     for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != _threadMap.end(); ++it) {
@@ -132,6 +135,7 @@ class ProcessImage {
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
   Python::FinderGroup<Offset> _pythonFinderGroup;
+  GoLang::FinderGroup<Offset> _goLangFinderGroup;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end

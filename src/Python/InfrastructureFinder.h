@@ -106,7 +106,7 @@ class InfrastructureFinder {
       if (_executablePath.find("python3") != std::string::npos) {
         switch (_majorVersion) {
           case Version2:
-            std::cerr << "Warning: persion derived from executable conflicts "
+            std::cerr << "Warning: version derived from executable conflicts "
                          "with one "
                          "from library\n"
                          "Please raise an issue (at "
@@ -125,7 +125,7 @@ class InfrastructureFinder {
           case Version2:
             break;
           case Version3:
-            std::cerr << "Warning: persion derived from executable conflicts "
+            std::cerr << "Warning: version derived from executable conflicts "
                          "with one "
                          "from library\n"
                          "Please raise an issue (at "

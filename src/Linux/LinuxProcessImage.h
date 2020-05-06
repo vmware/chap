@@ -49,6 +49,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * things, such as the structures used by libc malloc.
          */
         Base::_pythonFinderGroup.Resolve();
+        /*
+         * As soon as the modules have been found it is pretty easy to find
+         * the large regions used by GoLang.
+         */
+        Base::_goLangFinderGroup.Resolve();
       }
 
       /*
@@ -76,6 +81,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * first.
          */
         Base::_pythonFinderGroup.Resolve();
+        /*
+         * Finding the GoLang infrastructure depends on finding the modules
+         * first.
+         */
+        Base::_goLangFinderGroup.Resolve();
       }
 
       /*
