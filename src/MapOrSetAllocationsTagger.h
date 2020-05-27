@@ -64,9 +64,9 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   bool TagFromRootNode(const ContiguousImage& contiguousImage,
                        AllocationIndex index, Phase phase,
                        const Allocation& allocation) {
-    if (_tagHolder.GetTagIndex(index) != 0) {
+    if (_tagHolder.IsStronglyTagged(index)) {
       /*
-       * This was already tagged, generally as a result of following
+       * This was already strongly tagged, generally as a result of following
        * outgoing references from an allocation already being tagged.
        * From this we conclude that the given allocation is not the root
        * node for a map or set.

@@ -66,7 +66,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     if (!_enabled) {
       return true;  // There is nothing more to check.
     }
-    if (_tagHolder.GetTagIndex(index) != 0) {
+    if (_tagHolder.IsStronglyTagged(index)) {
+	// This allocation was already strongly tagged as something else.
       return true;  // We are finished looking at this allocation.
     }
 

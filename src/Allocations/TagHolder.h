@@ -26,9 +26,10 @@ class TagHolder {
     _tags.reserve(numAllocations);
     _tags.resize(numAllocations, 0);
     _indexToName.push_back("");
+    _tagIsStrong.push_back(false);
   }
 
-  TagIndex RegisterTag(const char* name) {
+  TagIndex RegisterTag(const char* name, bool tagIsStrong = true) {
     TagIndex newIndex = _indexToName.size();
     if (_indexToName.size() == 0x255) {
       std::cerr
@@ -36,6 +37,7 @@ class TagHolder {
       abort();
     }
     _indexToName.push_back(name);
+    _tagIsStrong.push_back(tagIsStrong);
     _nameToTagIndices[name].insert(newIndex);
     return newIndex;
   }
@@ -49,7 +51,8 @@ class TagHolder {
       std::cerr << "Invalid allocation index " << allocationIndex << "\n";
       abort();
     }
-    if (_tags[allocationIndex] == 0) {
+    TagIndex oldTag = _tags[allocationIndex];
+    if (oldTag == 0 || (_tagIsStrong[tagIndex] && !_tagIsStrong[oldTag])) {
       _tags[allocationIndex] = tagIndex;
       return true;
     }
@@ -80,10 +83,16 @@ class TagHolder {
 
   size_t GetNumTags() const { return _indexToName.size(); }
 
+  bool IsStronglyTagged(AllocationIndex allocationIndex) const {
+    return (allocationIndex < _numAllocations &&
+            _tagIsStrong[_tags[allocationIndex]]);
+  }
+
  private:
   const AllocationIndex _numAllocations;
   std::vector<TagIndex> _tags;
   std::vector<std::string> _indexToName;
+  std::vector<bool> _tagIsStrong;
   std::unordered_map<std::string, TagIndices> _nameToTagIndices;
 };
 }  // namespace Allocations

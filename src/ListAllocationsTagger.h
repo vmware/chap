@@ -70,9 +70,9 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     _size = allocation.Size();
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
-        if (_tagHolder.GetTagIndex(index) != 0) {
+        if (_tagHolder.IsStronglyTagged(index)) {
           /*
-           * This was already tagged, generally as a result of following
+           * This was already strongly tagged, generally as a result of following
            * outgoing references from an allocation already being tagged.
            * From this we conclude that the given allocation is not a list node
            * or that it was already tagged as such.

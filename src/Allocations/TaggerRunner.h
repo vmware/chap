@@ -128,7 +128,7 @@ class TaggerRunner {
            check < offsetLimit; check++) {
         AllocationIndex targetIndex = _graph.TargetAllocationIndex(i, *check);
         if (targetIndex != _numAllocations) {
-          if (_tagHolder.GetTagIndex(targetIndex) != 0) {
+          if (_tagHolder.IsStronglyTagged(targetIndex)) {
             targetIndex = _numAllocations;
           } else {
             numUnresolved++;
@@ -144,14 +144,6 @@ class TaggerRunner {
         _finishedWithPass[taggersIndex] = false;
       }
       _numFinishedWithPass = 0;
-      bool isUnsigned = true;
-      if (allocation->Size() >= sizeof(Offset)) {
-        Offset signatureCandidate =
-            reader.ReadOffset(allocation->Address(), 0xbad);
-        if (_signatureDirectory.IsMapped(signatureCandidate)) {
-          isUnsigned = false;
-        }
-      }
       AllocationIndex* pUnresolvedOutgoing = &(unresolvedOutgoing[0]);
       if (!RunTagFromReferencedPhase(reader, i, Phase::QUICK_INITIAL_CHECK,
                                      *allocation, pUnresolvedOutgoing) &&

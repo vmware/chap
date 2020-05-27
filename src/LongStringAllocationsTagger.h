@@ -92,13 +92,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
       // The C++11 ABI doesn't appear to have been used in the process.
       return true;
     }
-    if (_tagHolder.GetTagIndex(index) != 0) {
-      /*
-       * This was already tagged, generally as a result of following
-       * outgoing references from an allocation already being tagged.
-       * From this we conclude that the given allocation does not hold the
-       * characters for a long string.
-       */
+    if (_tagHolder.IsStronglyTagged(index)) {
+      // Don't override any strong tags but do override weak ones.
       return true;  // We are finished looking at this allocation for this pass.
     }
     return TagAnchorPointLongStringChars(contiguousImage, index, phase,
@@ -233,9 +228,9 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
 
   /*
    * Check whether the specified allocation contains any strings (but not the
-   * old style that uses COW string bodies).  If so, for any of those strings
-   * that are sufficiently long to use external buffers, tag the external
-   * buffers.
+   * C++11 ABI style that uses COW string bodies).  If so, for any of those
+   * strings that are sufficiently long to use external buffers, tag the
+   * external buffers.
    */
   bool TagFromContainedStrings(const ContiguousImage& contiguousImage,
                                Phase phase, const Allocation& allocation,
@@ -272,7 +267,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
       if (charsIndex == _numAllocations) {
         continue;
       }
-      if (_tagHolder.GetTagIndex(charsIndex) != 0) {
+      if (_tagHolder.IsStronglyTagged(charsIndex)) {
+        // Don't override any strong tags but do override weak ones.
         continue;
       }
       Offset charsAddress = check[0];

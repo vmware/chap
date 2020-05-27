@@ -50,12 +50,12 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
      * array
      * then tag both the buckets array and nodes accordingly.
      */
-    if (_tagHolder.GetTagIndex(index) != 0) {
+    if (_tagHolder.IsStronglyTagged(index)) {
       /*
-       * This was already tagged, generally as a result of following
+       * This was already strongly tagged, generally as a result of following
        * outgoing references from an allocation already being tagged.
        * From this we conclude that the given allocation is not a buckets
-       * array.
+       * array or first item.
        */
       return true;  // We are finished looking at this allocation for this pass.
     }
@@ -290,7 +290,13 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     Offset node = firstNode;
     AllocationIndex nodeIndex = firstNodeIndex;
     while (node != 0) {
-      _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
+      if (!_tagHolder.TagAllocation(nodeIndex, _nodeTagIndex)) {
+        std::cerr << "Warning: failed to tag allocation at 0x"
+                  << node << " as %UnorderedMapOrSetNode."
+                  "It was already tagged as "
+                  << _tagHolder.GetTagName(nodeIndex)
+                  << "\n";
+      }
       node = _nodeReader.ReadOffset(node, 0);
       nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
     }

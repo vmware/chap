@@ -79,11 +79,14 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
    */
   bool TagAnchorPointDequeMap(Reader& reader, AllocationIndex index,
                               Phase phase, const Allocation& allocation) {
-    if (_tagHolder.GetTagIndex(index) != 0) {
+    if (_tagHolder.IsStronglyTagged(index)) {
       /*
-       * This was already tagged, generally as a result of following
+       * This was already strongly tagged, generally as a result of following
        * outgoing references from an allocation already being tagged.
        * From this we conclude that the given allocation is not a deque map.
+       * Note that in theory such an allocation could be weakly tagged,
+       * because the start of the deque map is initialized only lazily and
+       * could easily match something based on those stale starting bytes.
        */
       return true;  // We are finished looking at this allocation for this pass.
     }
@@ -372,7 +375,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
       if (mapIndex == _numAllocations) {
         continue;
       }
-      if (_tagHolder.GetTagIndex(mapIndex) != 0) {
+      if (_tagHolder.IsStronglyTagged(mapIndex)) {
+        // Don't override any strongly tagged allocations.
         continue;
       }
 
