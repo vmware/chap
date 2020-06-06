@@ -26,6 +26,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       : ProcessImage<Offset>(elfImage.GetVirtualAddressMap(),
                              elfImage.GetThreadMap()),
         _elfImage(elfImage),
+        _firstReadableStackGuardFound(false),
         _symdefsRead(false) {
     if (_elfImage.GetELFType() != ET_CORE) {
       /*
@@ -158,6 +159,16 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
  private:
   std::unique_ptr<LibcMalloc::FinderGroup<Offset> > _libcMallocFinderGroup;
 
+  void WarnIfFirstReadableStackGuardFound() {
+    if (!_firstReadableStackGuardFound) {
+      _firstReadableStackGuardFound = true;
+      std::cerr
+          << "Warning: At least one readable stack guard has been found.\n"
+             "This generally means that the gdb code that created the core "
+             "has a bug\n"
+             "and that the permissions were marked wrong in the core.\n";
+    }
+  }
   /*
    * Stacks that are associated with threads have already been registered at
    * this point, but stack guards for those stacks, which are identified in
@@ -189,9 +200,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
             if ((permissions & (RangeAttributes::PERMISSIONS_MASK ^
                                 RangeAttributes::IS_READABLE)) !=
                 RangeAttributes::HAS_KNOWN_PERMISSIONS) {
-              std::cerr
-                  << "Warning: unexpected permissions found for overflow guard "
-                  << "for thread " << std::dec << it->_threadNum << ".\n";
+              std::cerr << "Warning: unexpected permissions found for "
+                           "overflow guard "
+                        << "for thread " << std::dec << it->_threadNum << ".\n";
               break;
             }
             if ((permissions & RangeAttributes::IS_READABLE) != 0) {
@@ -202,6 +213,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
                * running.  We'll grudgingly accept the core's version of the
                * facts here.
                */
+              WarnIfFirstReadableStackGuardFound();
               if (!Base::_virtualMemoryPartition.ClaimRange(
                       guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
                 std::cerr
@@ -265,13 +277,16 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         if (reader.ReadOffset(check, 0) == guardBase &&
             reader.ReadOffset(check + sizeof(Offset), 0) == sizeWithGuard &&
             reader.ReadOffset(check + 2 * sizeof(Offset), 0) == 0x1000) {
-          /*
-           * There are some cores where the guard region
-           * has been improperly marked as read-only, even after having
-           * been verified as inaccessible at the time the process was
-           * running.  We'll grudgingly accept the core's version of the
-           * facts but still mark it as a guard.
-           */
+          if (guardMappedReadOnly) {
+            /*
+             * There are some cores where the guard region
+             * has been improperly marked as read-only, even after having
+             * been verified as inaccessible at the time the process was
+             * running.  We'll grudgingly accept the core's version of the
+             * facts but still mark it as a guard.
+             */
+            WarnIfFirstReadableStackGuardFound();
+          }
           if (!Base::_virtualMemoryPartition.ClaimRange(
                   guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
             std::cerr << "Warning: unexpected overlap found for overflow "
@@ -1173,6 +1188,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
  private:
   ElfImage& _elfImage;
+  bool _firstReadableStackGuardFound;
   bool _symdefsRead;
   std::map<Offset, Offset> _staticAnchorLimits;
 
