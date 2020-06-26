@@ -306,7 +306,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
       if (charsIndex == _numAllocations) {
         continue;
       }
-      if (_tagHolder.GetTagIndex(charsIndex) != 0) {
+      if (_tagHolder.IsStronglyTagged(charsIndex)) {
         continue;
       }
       if (_votesNeeded[charsIndex] == 0xff) {
