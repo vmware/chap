@@ -11,6 +11,7 @@
 #include "../ExtendedVisitor.h"
 #include "../PatternDescriberRegistry.h"
 #include "../ReferenceConstraint.h"
+#include "../SetCache.h"
 #include "../SignatureChecker.h"
 namespace chap {
 namespace Allocations {
@@ -21,15 +22,16 @@ class Subcommand : public Commands::Subcommand {
   typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Directory<Offset>::Allocation Allocation;
   Subcommand(const ProcessImage<Offset>& processImage,
-
              typename Visitor::Factory& visitorFactory,
              typename Iterator::Factory& iteratorFactory,
-             const PatternDescriberRegistry<Offset>& patternDescriberRegistry)
+             const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
+             SetCache<Offset>& setCache)
       : Commands::Subcommand(visitorFactory.GetCommandName(),
                              iteratorFactory.GetSetName()),
         _visitorFactory(visitorFactory),
         _iteratorFactory(iteratorFactory),
         _patternDescriberRegistry(patternDescriberRegistry),
+        _setCache(setCache),
         _processImage(processImage) {}
 
   void Run(Commands::Context& context) {
@@ -40,8 +42,8 @@ class Subcommand : public Commands::Subcommand {
     AllocationIndex numAllocations = directory.NumAllocations();
 
     std::unique_ptr<Iterator> iterator;
-    iterator.reset(
-        _iteratorFactory.MakeIterator(context, _processImage, directory));
+    iterator.reset(_iteratorFactory.MakeIterator(context, _processImage,
+                                                 directory, _setCache));
     if (iterator.get() == 0) {
       return;
     }
@@ -137,6 +139,27 @@ class Subcommand : public Commands::Subcommand {
       }
     }
 
+    bool assignDefault = false;
+    bool subtractFromDefault = false;
+    size_t numSetOperationArguments = context.GetNumArguments("setOperation");
+    if (numSetOperationArguments > 0) {
+      if (numSetOperationArguments > 1) {
+        std::cerr << "At most one /setOperation switch is allowed.\n";
+        switchError = true;
+      }
+      const std::string& operation = context.Argument("setOperation", 0);
+      if (operation == "assign") {
+        assignDefault = true;
+      } else if (operation == "subtract") {
+        subtractFromDefault = true;
+      } else {
+        std::cerr << "Set operation " << operation << " is not supported.\n";
+        switchError = true;
+      }
+    }
+
+    Set<Offset>& visited = _setCache.GetVisited();
+
     std::vector<ReferenceConstraint<Offset> > referenceConstraints;
     const Graph<Offset>* graph = 0;
     size_t numMinIncoming = context.GetNumArguments("minincoming");
@@ -195,9 +218,9 @@ class Subcommand : public Commands::Subcommand {
               allowMissingSignatures);
     }
 
-    ExtendedVisitor<Offset, Visitor> extendedVisitor(context, _processImage,
-                                                     _patternDescriberRegistry,
-                                                     allowMissingSignatures);
+    ExtendedVisitor<Offset, Visitor> extendedVisitor(
+        context, _processImage, _patternDescriberRegistry,
+        allowMissingSignatures, visited);
     if (extendedVisitor.HasErrors() || switchError || signatureOrPatternError) {
       return;
     }
@@ -224,6 +247,7 @@ class Subcommand : public Commands::Subcommand {
         }
       }
     }
+    visited.Clear();
     for (AllocationIndex index = iterator->Next(); index != numAllocations;
          index = iterator->Next()) {
       const Allocation* allocation = directory.AllocationAt(index);
@@ -253,8 +277,14 @@ class Subcommand : public Commands::Subcommand {
       if (extendedVisitorIsEnabled) {
         extendedVisitor.Visit(index, *allocation, visitorRef);
       } else {
+        visited.Add(index);
         visitorRef.Visit(index, *allocation);
       }
+    }
+    if (assignDefault) {
+      _setCache.GetDerived().Assign(visited);
+    } else if (subtractFromDefault) {
+      _setCache.GetDerived().Subtract(visited);
     }
   }
 
@@ -299,6 +329,7 @@ class Subcommand : public Commands::Subcommand {
   typename Visitor::Factory& _visitorFactory;
   typename Iterator::Factory& _iteratorFactory;
   const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
+  SetCache<Offset>& _setCache;
   const ProcessImage<Offset>& _processImage;
 
   bool AddReferenceConstraints(

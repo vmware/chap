@@ -5,6 +5,7 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
+#include "../SetCache.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,7 +17,8 @@ class SingleAllocation {
     Factory() : _setName("allocation") {}
     SingleAllocation* MakeIterator(Commands::Context& context,
                                    const ProcessImage<Offset>&,
-                                   const Directory<Offset>& directory) {
+                                   const Directory<Offset>& directory,
+                                   const SetCache<Offset>&) {
       SingleAllocation* iterator = 0;
       AllocationIndex numAllocations = directory.NumAllocations();
       size_t numPositionals = context.GetNumPositionals();

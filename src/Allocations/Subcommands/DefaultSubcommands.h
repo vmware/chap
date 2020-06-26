@@ -10,6 +10,7 @@
 #include "../Iterators/AnchorPoints.h"
 #include "../Iterators/Anchored.h"
 #include "../Iterators/Chain.h"
+#include "../Iterators/Derived.h"
 #include "../Iterators/ExactIncoming.h"
 #include "../Iterators/ExternalAnchorPoints.h"
 #include "../Iterators/ExternalAnchored.h"
@@ -32,6 +33,7 @@
 #include "../Iterators/Unreferenced.h"
 #include "../Iterators/Used.h"
 #include "../PatternDescriberRegistry.h"
+#include "../SetCache.h"
 #include "../Visitors/DefaultVisitorFactories.h"
 #include "SubcommandsForOneIterator.h"
 namespace chap {
@@ -45,77 +47,85 @@ class DefaultSubcommands {
       const Describer<Offset> &describer,
       const PatternDescriberRegistry<Offset> &patternDescriberRegistry)
       : _defaultVisitorFactories(describer),
+        _setCache(processImage.GetAllocationDirectory().NumAllocations()),
         _singleAllocationSubcommands(
             processImage, _singleAllocationIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _allocationsSubcommands(processImage, _allocationsIteratorFactory,
                                 _defaultVisitorFactories,
-                                patternDescriberRegistry),
+                                patternDescriberRegistry, _setCache),
         _usedSubcommands(processImage, _usedIteratorFactory,
-                         _defaultVisitorFactories, patternDescriberRegistry),
+                         _defaultVisitorFactories, patternDescriberRegistry,
+                         _setCache),
         _freeSubcommands(processImage, _freeIteratorFactory,
-                         _defaultVisitorFactories, patternDescriberRegistry),
+                         _defaultVisitorFactories, patternDescriberRegistry,
+                         _setCache),
         _threadCachedSubcommands(processImage, _threadCachedIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry),
+                                 patternDescriberRegistry, _setCache),
         _leakedSubcommands(processImage, _leakedIteratorFactory,
-                           _defaultVisitorFactories, patternDescriberRegistry),
+                           _defaultVisitorFactories, patternDescriberRegistry,
+                           _setCache),
         _unreferencedSubcommands(processImage, _unreferencedIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry),
+                                 patternDescriberRegistry, _setCache),
         _anchoredSubcommands(processImage, _anchoredIteratorFactory,
-                             _defaultVisitorFactories,
-                             patternDescriberRegistry),
+                             _defaultVisitorFactories, patternDescriberRegistry,
+                             _setCache),
         _anchorPointsSubcommands(processImage, _anchorPointsIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry),
+                                 patternDescriberRegistry, _setCache),
         _staticAnchoredSubcommands(processImage, _staticAnchoredIteratorFactory,
                                    _defaultVisitorFactories,
-                                   patternDescriberRegistry),
+                                   patternDescriberRegistry, _setCache),
         _staticAnchorPointsSubcommands(
             processImage, _staticAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _stackAnchoredSubcommands(processImage, _stackAnchoredIteratorFactory,
                                   _defaultVisitorFactories,
-                                  patternDescriberRegistry),
+                                  patternDescriberRegistry, _setCache),
         _stackAnchorPointsSubcommands(
             processImage, _stackAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _registerAnchoredSubcommands(
             processImage, _registerAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _registerAnchorPointsSubcommands(
             processImage, _registerAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _externalAnchoredSubcommands(
             processImage, _externalAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _externalAnchorPointsSubcommands(
             processImage, _externalAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _threadOnlyAnchoredSubcommands(
             processImage, _threadOnlyAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _threadOnlyAnchorPointsSubcommands(
             processImage, _threadOnlyAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry),
+            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
         _incomingSubcommands(processImage, _incomingIteratorFactory,
-                             _defaultVisitorFactories,
-                             patternDescriberRegistry),
+                             _defaultVisitorFactories, patternDescriberRegistry,
+                             _setCache),
         _exactIncomingSubcommands(processImage, _exactIncomingIteratorFactory,
                                   _defaultVisitorFactories,
-                                  patternDescriberRegistry),
+                                  patternDescriberRegistry, _setCache),
         _outgoingSubcommands(processImage, _outgoingIteratorFactory,
-                             _defaultVisitorFactories,
-                             patternDescriberRegistry),
+                             _defaultVisitorFactories, patternDescriberRegistry,
+                             _setCache),
         _freeOutgoingSubcommands(processImage, _freeOutgoingIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry),
+                                 patternDescriberRegistry, _setCache),
         _chainSubcommands(processImage, _chainIteratorFactory,
-                          _defaultVisitorFactories, patternDescriberRegistry),
+                          _defaultVisitorFactories, patternDescriberRegistry,
+                          _setCache),
         _reverseChainSubcommands(processImage, _reverseChainIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry) {}
+                                 patternDescriberRegistry, _setCache),
+        _derivedSubcommands(processImage, _derivedIteratorFactory,
+                            _defaultVisitorFactories, patternDescriberRegistry,
+                            _setCache) {}
 
   void RegisterSubcommands(Commands::Runner &runner) {
     _singleAllocationSubcommands.RegisterSubcommands(runner);
@@ -143,10 +153,12 @@ class DefaultSubcommands {
     _freeOutgoingSubcommands.RegisterSubcommands(runner);
     _chainSubcommands.RegisterSubcommands(runner);
     _reverseChainSubcommands.RegisterSubcommands(runner);
+    _derivedSubcommands.RegisterSubcommands(runner);
   }
 
  private:
   typename Visitors::DefaultVisitorFactories<Offset> _defaultVisitorFactories;
+  SetCache<Offset> _setCache;
 
   typedef typename Iterators::SingleAllocation<Offset> SingleAllocationIterator;
   typename SingleAllocationIterator::Factory _singleAllocationIteratorFactory;
@@ -276,6 +288,10 @@ class DefaultSubcommands {
   typename ReverseChainIterator::Factory _reverseChainIteratorFactory;
   SubcommandsForOneIterator<Offset, ReverseChainIterator>
       _reverseChainSubcommands;
+
+  typedef typename Iterators::Derived<Offset> DerivedIterator;
+  typename DerivedIterator::Factory _derivedIteratorFactory;
+  SubcommandsForOneIterator<Offset, DerivedIterator> _derivedSubcommands;
 };
 }  // namespace Subcommands
 }  // namespace Allocations

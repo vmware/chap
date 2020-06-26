@@ -10,6 +10,7 @@
 #include "Directory.h"
 #include "Graph.h"
 #include "PatternDescriberRegistry.h"
+#include "Set.h"
 #include "SignatureChecker.h"
 #include "SignatureDirectory.h"
 
@@ -29,7 +30,7 @@ class ExtendedVisitor {
   ExtendedVisitor(
       Commands::Context& context, const ProcessImage<Offset>& processImage,
       const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
-      bool allowMissingSignatures)
+      bool allowMissingSignatures, Set<Offset>& visited)
       : _context(context),
         _isEnabled(false),
         _hasErrors(false),
@@ -38,6 +39,7 @@ class ExtendedVisitor {
         _directory(processImage.GetAllocationDirectory()),
         _addressMap(processImage.GetVirtualAddressMap()),
         _numAllocations(_directory.NumAllocations()),
+        _visited(visited),
         _commentExtensions(false) {
     Commands::Error& error = context.GetError();
     size_t numExtensionArguments = context.GetNumArguments("extend");
@@ -223,7 +225,6 @@ class ExtendedVisitor {
         _isEnabled = true;
         _graph = processImage.GetAllocationGraph();
         _hasErrors = (_graph == 0);
-        _visited.resize(_numAllocations, false);
       }
     }
   }
@@ -267,7 +268,7 @@ class ExtendedVisitor {
      * add some comments to the output if commentExtensions is true.
      */
 
-    if (_visited[memberIndex]) {
+    if (_visited.Has(memberIndex)) {
       if (_commentExtensions) {
         _context.GetOutput()
             << "# Base set member at 0x" << std::hex << allocation.Address()
@@ -280,7 +281,7 @@ class ExtendedVisitor {
      * Visit the given member of the set before looking for any extensions.
      */
 
-    _visited[memberIndex] = true;
+    _visited.Add(memberIndex);
     visitor.Visit(memberIndex, allocation);
 
     std::stack<ExtensionContext> extensionContexts;
@@ -375,7 +376,7 @@ class ExtendedVisitor {
         }
       }
 
-      bool alreadyVisited = _visited[candidateIndex];
+      bool alreadyVisited = _visited.Has(candidateIndex);
       if (!_commentExtensions && alreadyVisited) {
         continue;
       }
@@ -472,7 +473,7 @@ class ExtendedVisitor {
 
       memberIndex = candidateIndex;
       memberAllocation = candidateAllocation;
-      _visited[memberIndex] = true;
+      _visited.Add(memberIndex);
       visitor.Visit(memberIndex, *memberAllocation);
       state = rule._newState;
       ruleIndex = _stateToBase[state];
@@ -572,7 +573,7 @@ class ExtendedVisitor {
   const Directory<Offset>& _directory;
   const VirtualAddressMap<Offset>& _addressMap;
   AllocationIndex _numAllocations;
-  std::vector<bool> _visited;
+  Set<Offset>& _visited;
   std::vector<Rule> _rules;
   std::vector<size_t> _stateToBase;
   bool _commentExtensions;

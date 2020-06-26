@@ -1,31 +1,26 @@
-// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
-#include "../Graph.h"
 #include "../SetCache.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
 template <class Offset>
-class StackAnchored {
+class Derived {
  public:
   class Factory {
    public:
-    Factory() : _setName("stackanchored") {}
-    StackAnchored* MakeIterator(Commands::Context& /* context */,
-                                const ProcessImage<Offset>& processImage,
-                                const Directory<Offset>& directory,
-                                const SetCache<Offset>&) {
-      const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();
-      if (allocationGraph == 0) {
-        return (StackAnchored*)(0);
-      }
-      return new StackAnchored(directory, directory.NumAllocations(),
-                               *allocationGraph);
+    Factory() : _setName("derived") {}
+    Derived* MakeIterator(Commands::Context& /* context */,
+                          const ProcessImage<Offset>& /* processImage */,
+                          const Directory<Offset>& directory,
+                          const SetCache<Offset>& setCache) {
+      return new Derived(directory, directory.NumAllocations(),
+                         setCache.GetDerived());
     }
     // TODO: allow adding taints
     const std::string& GetSetName() const { return _setName; }
@@ -33,9 +28,7 @@ class StackAnchored {
     const std::vector<std::string>& GetTaints() const { return _taints; }
     void ShowHelpMessage(Commands::Context& context) {
       Commands::Output& output = context.GetOutput();
-      output << "Use \"stackanchored\" to specify"
-                " the set of all allocations anchored by\n"
-                "at least one thread's stack.\n";
+      output << "Use \"derived\" to specify the derived set.\n";
     }
 
    private:
@@ -44,18 +37,14 @@ class StackAnchored {
   };
   typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
 
-  StackAnchored(const Directory<Offset>& directory,
-                AllocationIndex numAllocations,
-                const Graph<Offset>& allocationGraph)
+  Derived(const Directory<Offset>& directory, AllocationIndex numAllocations,
+          const Set<Offset>& derived)
       : _index(0),
         _directory(directory),
         _numAllocations(numAllocations),
-        _allocationGraph(allocationGraph) {}
+        _derived(derived) {}
   AllocationIndex Next() {
-    while (_index != _numAllocations &&
-           !_allocationGraph.IsStackAnchored(_index)) {
-      ++_index;
-    }
+    _index = _derived.NextUsed(_index);
     AllocationIndex next = _index;
     if (_index != _numAllocations) {
       ++_index;
@@ -67,7 +56,7 @@ class StackAnchored {
   AllocationIndex _index;
   const Directory<Offset>& _directory;
   AllocationIndex _numAllocations;
-  const Graph<Offset>& _allocationGraph;
+  const Set<Offset>& _derived;
 };
 }  // namespace Iterators
 }  // namespace Allocations

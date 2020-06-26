@@ -6,6 +6,7 @@
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
 #include "../Graph.h"
+#include "../SetCache.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -18,7 +19,8 @@ class ThreadOnlyAnchorPoints {
     ThreadOnlyAnchorPoints* MakeIterator(
         Commands::Context& /* context */,
         const ProcessImage<Offset>& processImage,
-        const Directory<Offset>& directory) {
+        const Directory<Offset>& directory,
+        const SetCache<Offset>&) {
       const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();
       if (allocationGraph == 0) {
         return (ThreadOnlyAnchorPoints*)(0);

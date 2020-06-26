@@ -6,6 +6,7 @@
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
 #include "../Graph.h"
+#include "../SetCache.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -17,7 +18,8 @@ class ReverseChain {
     Factory() : _setName("reversechain") {}
     ReverseChain* MakeIterator(Commands::Context& context,
                                const ProcessImage<Offset>& processImage,
-                               const Directory<Offset>& directory) {
+                               const Directory<Offset>& directory,
+                               const SetCache<Offset>&) {
       ReverseChain* iterator = 0;
       AllocationIndex numAllocations = directory.NumAllocations();
       size_t numPositionals = context.GetNumPositionals();

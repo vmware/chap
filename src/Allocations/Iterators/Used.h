@@ -5,6 +5,7 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
+#include "../SetCache.h"
 namespace chap {
 namespace Allocations {
 namespace Iterators {
@@ -16,7 +17,8 @@ class Used {
     Factory() : _setName("used") {}
     Used* MakeIterator(Commands::Context& /* context */,
                        const ProcessImage<Offset>& /* processImage */,
-                       const Directory<Offset>& directory) {
+                       const Directory<Offset>& directory,
+                       const SetCache<Offset>&) {
       return new Used(directory, directory.NumAllocations());
     }
     // TODO: allow adding taints

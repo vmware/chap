@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -6,6 +6,7 @@
 #include "../../Commands/SetBasedCommand.h"
 #include "../../ProcessImage.h"
 #include "../PatternDescriberRegistry.h"
+#include "../SetCache.h"
 #include "../Visitors/DefaultVisitorFactories.h"
 #include "Subcommand.h"
 namespace chap {
@@ -18,22 +19,27 @@ class SubcommandsForOneIterator {
       const ProcessImage<Offset>& processImage,
       typename Iterator::Factory& iteratorFactory,
       typename Visitors::DefaultVisitorFactories<Offset>& visitorFactories,
-      const PatternDescriberRegistry<Offset>& patternDescriberRegistry)
+      const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
+      SetCache<Offset>& setCache)
       : _iteratorFactory(iteratorFactory),
         _countSubcommand(processImage, visitorFactories._counterFactory,
-                         iteratorFactory, patternDescriberRegistry),
+                         iteratorFactory, patternDescriberRegistry, setCache),
         _summarizeSubcommand(processImage, visitorFactories._summarizerFactory,
-                             iteratorFactory, patternDescriberRegistry),
+                             iteratorFactory, patternDescriberRegistry,
+                             setCache),
         _enumerateSubcommand(processImage, visitorFactories._enumeratorFactory,
-                             iteratorFactory, patternDescriberRegistry),
+                             iteratorFactory, patternDescriberRegistry,
+                             setCache),
         _listSubcommand(processImage, visitorFactories._listerFactory,
-                        iteratorFactory, patternDescriberRegistry),
+                        iteratorFactory, patternDescriberRegistry, setCache),
         _showSubcommand(processImage, visitorFactories._showerFactory,
-                        iteratorFactory, patternDescriberRegistry),
+                        iteratorFactory, patternDescriberRegistry, setCache),
         _describeSubcommand(processImage, visitorFactories._describerFactory,
-                            iteratorFactory, patternDescriberRegistry),
+                            iteratorFactory, patternDescriberRegistry,
+                            setCache),
         _explainSubcommand(processImage, visitorFactories._explainerFactory,
-                           iteratorFactory, patternDescriberRegistry) {}
+                           iteratorFactory, patternDescriberRegistry,
+                           setCache) {}
 
   void RegisterSubcommands(Commands::Runner& runner) {
     RegisterSubcommand(runner, _countSubcommand);

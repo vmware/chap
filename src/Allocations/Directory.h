@@ -4,7 +4,6 @@
 #pragma once
 #include <algorithm>
 #include <functional>
-#include <set>
 #include <vector>
 namespace chap {
 namespace Allocations {
