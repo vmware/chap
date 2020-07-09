@@ -38,7 +38,6 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _typeType(infrastructureFinder.TypeType()),
         _dictType(infrastructureFinder.DictType()),
         _keysInDict(infrastructureFinder.KeysInDict()),
-        _triplesInDictKeys(infrastructureFinder.TriplesInDictKeys()),
         _nonEmptyGarbageCollectionLists(
             infrastructureFinder.NonEmptyGarbageCollectionLists()),
         _garbageCollectionHeaderSize(
@@ -67,7 +66,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
       return true;  // There is nothing more to check.
     }
     if (_tagHolder.IsStronglyTagged(index)) {
-	// This allocation was already strongly tagged as something else.
+      // This allocation was already strongly tagged as something else.
       return true;  // We are finished looking at this allocation.
     }
 
@@ -110,7 +109,6 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   const Offset _typeType;
   const Offset _dictType;
   const Offset _keysInDict;
-  const Offset _triplesInDictKeys;
   const std::vector<Offset> _nonEmptyGarbageCollectionLists;
   const Offset _garbageCollectionHeaderSize;
   const Offset _cachedKeysInHeapTypeObject;
@@ -167,12 +165,15 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     Reader reader(_virtualAddressMap);
     for (auto listHead : _nonEmptyGarbageCollectionLists) {
       Offset prevNode = listHead;
-      for (Offset node = reader.ReadOffset(listHead, listHead);
-           node != listHead; node = reader.ReadOffset(node, 0)) {
+      for (Offset node =
+               reader.ReadOffset(listHead, listHead) & ~(sizeof(Offset) - 1);
+           node != listHead;
+           node = reader.ReadOffset(node, 0) & ~(sizeof(Offset) - 1)) {
         if (node == 0) {
           break;
         }
-        if (reader.ReadOffset(node + sizeof(Offset), 0) != prevNode) {
+        if ((reader.ReadOffset(node + sizeof(Offset), 0) &
+             ~(sizeof(Offset) - 1)) != prevNode) {
           // The list is corrupt, but this has already been reported.
           break;
         }

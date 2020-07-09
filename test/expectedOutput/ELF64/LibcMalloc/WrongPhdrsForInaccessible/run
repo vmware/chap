@@ -1,8 +1,9 @@
-# Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2018-2020 VMware, Inc. All Rights Reserved.
 # SPDX-License-Identifier: GPL-2.0
 
-# This tests various commands against a live core from a simple python program
-# that starts 4 extra threads, each of which sleeps an hour.
+# This tests various commands against a live core from a simple python
+# program that starts 4 extra threads, each of which sleeps an hour.
+# The program was run using python 2.7.
 # In this particular case, the core was gathered against a recent redhat
 # distribution for which gdb has a bug that when it creates a core it
 # marks any inaccessible sections as read-only, rather than as inaccessible.

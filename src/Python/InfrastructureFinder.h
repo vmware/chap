@@ -3,6 +3,8 @@
 
 #pragma once
 #include <algorithm>
+#include <regex>
+#include <unordered_set>
 #include "../ModuleDirectory.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
@@ -14,18 +16,6 @@ template <typename Offset>
 class InfrastructureFinder {
  public:
   static constexpr Offset TYPE_IN_PYOBJECT = sizeof(Offset);
-  static constexpr Offset PYTHON2_MASK_IN_DICT = 4 * sizeof(Offset);
-  static constexpr Offset PYTHON2_KEYS_IN_DICT = 5 * sizeof(Offset);
-  static constexpr Offset PYTHON2_TRIPLES_IN_DICT_KEYS = 0;
-  static constexpr Offset PYTHON2_CSTRING_IN_STR = 0x24;
-  static constexpr Offset PYTHON3_KEYS_IN_DICT = 3 * sizeof(Offset);
-  static constexpr Offset PYTHON3_CAPACITY_IN_DICT_KEYS = sizeof(Offset);
-  static constexpr Offset PYTHON3_TRIPLES_IN_DICT_KEYS = 4 * sizeof(Offset);
-  static constexpr Offset PYTHON3_CSTRING_IN_STR = 6 * sizeof(Offset);
-  static constexpr Offset PYTHON2_GARBAGE_COLLECTION_HEADER_SIZE =
-      4 * sizeof(Offset);
-  static constexpr Offset PYTHON3_GARBAGE_COLLECTION_HEADER_SIZE =
-      3 * sizeof(Offset);
   static constexpr Offset LENGTH_IN_STR = 2 * sizeof(Offset);
   static constexpr Offset UNKNOWN_OFFSET = ~0;
   enum MajorVersion { Version2, Version3, VersionUnknownOrOther };
@@ -64,10 +54,13 @@ class InfrastructureFinder {
         _getSetInType(UNKNOWN_OFFSET),
         _dictType(0),
         _keysInDict(UNKNOWN_OFFSET),
-        _triplesInDictKeys(UNKNOWN_OFFSET),
+        _dictKeysHeaderSize(UNKNOWN_OFFSET),
+        _sizeInDictKeys(UNKNOWN_OFFSET),
+        _numElementsInDictKeys(UNKNOWN_OFFSET),
+        _dictKeysHaveIndex(false),
         _strType(0),
         _cstringInStr(UNKNOWN_OFFSET),
-        _garbageCollectionHeaderSize(0),
+        _garbageCollectionHeaderSize(UNKNOWN_OFFSET),
         _cachedKeysInHeapTypeObject(UNKNOWN_OFFSET) {}
   void Resolve() {
     if (_isResolved) {
@@ -77,6 +70,8 @@ class InfrastructureFinder {
       abort();
     }
 
+    std::regex moduleRegex("^.*/(lib)?python([23])?[^/]+$");
+    std::smatch moduleSmatch;
     typename ModuleDirectory<Offset>::const_iterator itLib =
         _moduleDirectory.end();
     typename ModuleDirectory<Offset>::const_iterator itExe =
@@ -84,58 +79,39 @@ class InfrastructureFinder {
     for (typename ModuleDirectory<Offset>::const_iterator it =
              _moduleDirectory.begin();
          it != _moduleDirectory.end(); ++it) {
-      if (it->first.find("libpython") != std::string::npos) {
+      const std::string& modulePath = it->first;
+      if (!std::regex_match(modulePath, moduleSmatch, moduleRegex)) {
+        continue;
+      }
+
+      std::string majorVersion = moduleSmatch[2];
+      if (!majorVersion.empty()) {
+        if (majorVersion == "2") {
+          if (_majorVersion != VersionUnknownOrOther &&
+              !(_majorVersion == Version2)) {
+            std::cerr << "Warning: error finding major python version.\n";
+          }
+          _majorVersion = Version2;
+        } else if (majorVersion == "3") {
+          if (_majorVersion != VersionUnknownOrOther &&
+              !(_majorVersion == Version3)) {
+            std::cerr << "Warning: error finding major python version.\n";
+          }
+          _majorVersion = Version3;
+        }
+      }
+      if (moduleSmatch[1].length() > 0) {
+        if (!_libraryPath.empty()) {
+          std::cerr << "Warning: error finding python library path.\n";
+        }
         itLib = it;
         _libraryPath = it->first;
-        break;
-      }
-      if ((it->first.find("/python") != std::string::npos) ||
-          (it->first.find("python") == 0)) {
+      } else {
+        if (!_executablePath.empty()) {
+          std::cerr << "Warning: error finding python executable path.\n";
+        }
         itExe = it;
         _executablePath = it->first;
-      }
-    }
-    if (itLib != _moduleDirectory.end()) {
-      if (_libraryPath.find("libpython3") != std::string::npos) {
-        _majorVersion = Version3;
-      } else if (_libraryPath.find("libpython2") != std::string::npos) {
-        _majorVersion = Version2;
-      }
-    }
-    if (itExe != _moduleDirectory.end()) {
-      if (_executablePath.find("python3") != std::string::npos) {
-        switch (_majorVersion) {
-          case Version2:
-            std::cerr << "Warning: version derived from executable conflicts "
-                         "with one "
-                         "from library\n"
-                         "Please raise an issue (at "
-                         "https://github.com/vmware/chap).\n";
-            _majorVersion = VersionUnknownOrOther;
-            break;
-          case Version3:
-            break;
-          case VersionUnknownOrOther:
-            _majorVersion = Version3;
-            break;
-        }
-      }
-      if (_executablePath.find("python2") != std::string::npos) {
-        switch (_majorVersion) {
-          case Version2:
-            break;
-          case Version3:
-            std::cerr << "Warning: version derived from executable conflicts "
-                         "with one "
-                         "from library\n"
-                         "Please raise an issue (at "
-                         "https://github.com/vmware/chap).\n";
-            _majorVersion = VersionUnknownOrOther;
-            break;
-          case VersionUnknownOrOther:
-            _majorVersion = Version2;
-            break;
-        }
       }
     }
 
@@ -205,7 +181,7 @@ class InfrastructureFinder {
   Offset DictInType() const { return _dictInType; }
   Offset DictType() const { return _dictType; }
   Offset KeysInDict() const { return _keysInDict; }
-  Offset TriplesInDictKeys() const { return _triplesInDictKeys; }
+  Offset DictKeysHeaderSize() const { return _dictKeysHeaderSize; }
   Offset StrType() const { return _strType; }
   Offset CstringInStr() const { return _cstringInStr; }
   const std::vector<Offset> NonEmptyGarbageCollectionLists() const {
@@ -251,6 +227,57 @@ class InfrastructureFinder {
     return false;
   }
 
+  void GetTriplesAndLimitFromDict(Offset dict, Offset& triples,
+                                  Offset& limit) const {
+    triples = 0;
+    limit = 0;
+    Reader reader(_virtualAddressMap);
+    Offset keys = reader.ReadOffset(dict + _keysInDict, 0xbad);
+
+    if ((keys & (sizeof(Offset) - 1)) != 0) {
+      return;
+    }
+
+    if (_dictKeysHeaderSize > 0) {
+      GetTriplesAndLimitFromDictKeys(keys, triples, limit);
+    } else {
+      Offset entrySize = (Offset)(3) * (Offset)(sizeof(Offset));
+      Offset capacity = reader.ReadOffset(dict + PYTHON2_MASK_IN_DICT, ~0) + 1;
+      triples = keys;
+      limit = triples + capacity * entrySize;
+    }
+  }
+
+  void GetTriplesAndLimitFromDictKeys(Offset keys, Offset& triples,
+                                      Offset& limit) const {
+    triples = 0;
+    limit = 0;
+    if (_dictKeysHeaderSize == 0) {
+      return;
+    }
+    Reader reader(_virtualAddressMap);
+
+    if ((keys & (sizeof(Offset) - 1)) != 0) {
+      return;
+    }
+
+    Offset entrySize = (Offset)(3) * (Offset)(sizeof(Offset));
+    Offset capacity = reader.ReadOffset(keys + _sizeInDictKeys, 0);
+    triples = keys + _dictKeysHeaderSize;
+    if (_dictKeysHaveIndex) {
+      triples += (capacity * ((capacity < 0x80) ? ((Offset)(1))
+                                                : (capacity < 0x8000)
+                                                      ? ((Offset)(2))
+                                                      : (capacity < 0x80000000)
+                                                            ? ((Offset)(4))
+                                                            : ((Offset)(8))));
+      limit = triples +
+              reader.ReadOffset(keys + _numElementsInDictKeys, 0) * entrySize;
+    } else {
+      limit = triples + capacity * entrySize;
+    }
+  }
+
  private:
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
@@ -279,6 +306,23 @@ class InfrastructureFinder {
   Offset _maxPoolsIfAligned;
   Offset _maxPoolsIfNotAligned;
   bool _allArenasAreAligned;
+  /*
+   * These constants are private because we want any users of this
+   * infrastructure to used the calculated values rather than these
+   * constants.
+   */
+  static constexpr Offset PYTHON2_MASK_IN_DICT = 4 * sizeof(Offset);
+  static constexpr Offset PYTHON2_KEYS_IN_DICT = 5 * sizeof(Offset);
+  static constexpr Offset PYTHON2_DICT_KEYS_HEADER_SIZE = 0;
+  static constexpr Offset PYTHON2_CSTRING_IN_STR = 0x24;
+  static constexpr Offset PYTHON3_5_KEYS_IN_DICT = 3 * sizeof(Offset);
+  static constexpr Offset PYTHON3_6_KEYS_IN_DICT = 4 * sizeof(Offset);
+  static constexpr Offset PYTHON3_SIZE_IN_DICT_KEYS = sizeof(Offset);
+  static constexpr Offset PYTHON3_5_DICT_KEYS_HEADER_SIZE = 4 * sizeof(Offset);
+  static constexpr Offset PYTHON3_6_NUM_ELEMENTS_IN_DICT_KEYS =
+      4 * sizeof(Offset);
+  static constexpr Offset PYTHON3_6_DICT_KEYS_HEADER_SIZE = 5 * sizeof(Offset);
+  static constexpr Offset PYTHON3_CSTRING_IN_STR = 6 * sizeof(Offset);
   Offset _typeType;
   Offset _typeSize;
   Offset _baseInType;
@@ -287,7 +331,10 @@ class InfrastructureFinder {
   Offset _getSetInType;
   Offset _dictType;
   Offset _keysInDict;
-  Offset _triplesInDictKeys;
+  Offset _dictKeysHeaderSize;
+  Offset _sizeInDictKeys;
+  Offset _numElementsInDictKeys;
+  bool _dictKeysHaveIndex;
   Offset _strType;
   Offset _cstringInStr;
   std::vector<uint32_t> _activeIndices;
@@ -324,6 +371,7 @@ class InfrastructureFinder {
         for (Offset moduleAddr = base; moduleAddr < limit;
              moduleAddr += sizeof(Offset)) {
           Offset arenaStruct0 = moduleReader.ReadOffset(moduleAddr, 0xbad);
+
           if ((arenaStruct0 & (sizeof(Offset) - 1)) != 0) {
             continue;
           }
@@ -647,7 +695,7 @@ class InfrastructureFinder {
             FindStaticallyAllocatedTypes(base, limit, reader);
 
             Offset builtinDict = 0;
-            if (_keysInDict == PYTHON3_KEYS_IN_DICT) {
+            if (_keysInDict != 0) {
               builtinDict = FindPython3Builtins(base, limit);
             } else if (_keysInDict == PYTHON2_KEYS_IN_DICT) {
               builtinDict = FindPython2Builtins(base, limit);
@@ -662,15 +710,55 @@ class InfrastructureFinder {
     }
   }
 
+  bool SetHtCachedKeysOffset(Reader& reader, Offset typeCandidate) {
+    for (Offset keysOffset = _typeSize - 0x10 * sizeof(Offset);
+         keysOffset < _typeSize; keysOffset += sizeof(Offset)) {
+      Offset keysCandidate =
+          reader.ReadOffset(typeCandidate + keysOffset, 0xbad);
+      if ((keysCandidate & (sizeof(Offset) - 1)) != 0) {
+        continue;
+      }
+      if (reader.ReadOffset(keysCandidate, 0) != 1) {
+        /*
+         * This is not true of PyDictKeysObject in general, because the
+         * ref count can quite easily be something other than 1, but it
+         * happens to be true for most of the ones that are referenced
+         * from type objects and in fact we need just one to figure
+         * out the offset.
+         */
+        continue;
+      }
+      Offset size = reader.ReadOffset(keysCandidate + sizeof(Offset), 0);
+      if (size == 0 || ((size | (size - 1)) != (size ^ (size - 1)))) {
+        continue;
+      }
+      Offset usable =
+          reader.ReadOffset(keysCandidate + 3 * sizeof(Offset), 0xbad);
+      if (size - 1 != usable) {
+        continue;
+      }
+      if (usable < reader.ReadOffset(keysCandidate + 4 * sizeof(Offset), ~0)) {
+        continue;
+      }
+      _cachedKeysInHeapTypeObject = keysOffset;
+      return true;
+    }
+    return false;
+  }
+
   void FindDynamicallyAllocatedTypes() {
     bool needHtCachedKeysOffset = (_majorVersion != Version2);
     Reader reader(_virtualAddressMap);
     Reader otherReader(_virtualAddressMap);
+    std::unordered_set<Offset> deferredTypeChecks;
     for (auto listHead : _nonEmptyGarbageCollectionLists) {
       Offset prevNode = listHead;
-      for (Offset node = reader.ReadOffset(listHead, listHead);
-           node != listHead; node = reader.ReadOffset(node, listHead)) {
-        if (reader.ReadOffset(node + sizeof(Offset), 0) != prevNode) {
+      for (Offset node =
+               reader.ReadOffset(listHead, listHead) & ~(sizeof(Offset) - 1);
+           node != listHead;
+           node = reader.ReadOffset(node, listHead) & ~(sizeof(Offset) - 1)) {
+        if ((reader.ReadOffset(node + sizeof(Offset), 0) &
+             ~(sizeof(Offset) - 1)) != prevNode) {
           std::cerr << "Warning: GC list at 0x" << std::hex << listHead
                     << " is ill-formed near 0x" << node << ".\n";
           break;
@@ -680,47 +768,36 @@ class InfrastructureFinder {
         if (_typeDirectory.HasType(typeCandidate)) {
           continue;
         }
-        if (IsATypeType(
-                reader.ReadOffset(typeCandidate + TYPE_IN_PYOBJECT, 0))) {
-          _typeDirectory.RegisterType(typeCandidate, "");
-          if (needHtCachedKeysOffset) {
-            for (Offset keysOffset = _typeSize - 0x10 * sizeof(Offset);
-                 keysOffset < _typeSize; keysOffset += sizeof(Offset)) {
-              Offset keysCandidate =
-                  reader.ReadOffset(typeCandidate + keysOffset, 0xbad);
-              if ((keysCandidate & (sizeof(Offset) - 1)) != 0) {
-                continue;
-              }
-              if (otherReader.ReadOffset(keysCandidate, 0) != 1) {
-                /*
-                 * This is not true of PyDictKeysObject in general, because the
-                 * ref count can quite easily be something other than 1, but it
-                 * happens to be true for most of the ones that are referenced
-                 * from type objects and in fact we need just one to figure
-                 * out the offset.
-                 */
-                continue;
-              }
-              Offset size =
-                  otherReader.ReadOffset(keysCandidate + sizeof(Offset), 0);
-              if (size == 0 || ((size | (size - 1)) != (size ^ (size - 1)))) {
-                continue;
-              }
-              Offset usable = otherReader.ReadOffset(
-                  keysCandidate + 3 * sizeof(Offset), 0xbad);
-              if (size - 1 != usable) {
-                continue;
-              }
-              if (usable < otherReader.ReadOffset(
-                               keysCandidate + 4 * sizeof(Offset), ~0)) {
-                continue;
-              }
-              _cachedKeysInHeapTypeObject = keysOffset;
-              needHtCachedKeysOffset = false;
-              break;
-            }
-          }
+        Offset typeTypeCandidate =
+            reader.ReadOffset(typeCandidate + TYPE_IN_PYOBJECT, 0);
+        if (typeTypeCandidate == 0) {
+          continue;
         }
+        if (IsATypeType(typeTypeCandidate)) {
+          _typeDirectory.RegisterType(typeCandidate, "");
+          if (needHtCachedKeysOffset &&
+              SetHtCachedKeysOffset(otherReader, typeCandidate)) {
+            needHtCachedKeysOffset = false;
+          }
+        } else {
+          deferredTypeChecks.insert(typeTypeCandidate);
+        }
+      }
+    }
+    /*
+     * This is needed because type objects may be statically allocated in
+     * plugins.  An alternative would be to scan those modules for type
+     * declarations.
+     */
+
+    for (Offset typeCandidate : deferredTypeChecks) {
+      if (_typeDirectory.HasType(typeCandidate)) {
+        continue;
+      }
+      Offset typeTypeCandidate =
+          reader.ReadOffset(typeCandidate + TYPE_IN_PYOBJECT, 0);
+      if (typeTypeCandidate != 0 && IsATypeType(typeTypeCandidate)) {
+        _typeDirectory.RegisterType(typeCandidate, "");
       }
     }
   }
@@ -769,19 +846,11 @@ class InfrastructureFinder {
    * shared libraries.
    */
   void RegisterBuiltinTypesFromDict(Offset builtinDict) {
+    Offset triples = 0;
+    Offset triplesLimit = 0;
+    GetTriplesAndLimitFromDict(builtinDict, triples, triplesLimit);
+
     Reader reader(_virtualAddressMap);
-    Offset keys = reader.ReadOffset(builtinDict + _keysInDict, 0xbad);
-
-    if ((keys & (sizeof(Offset) - 1)) != 0) {
-      return;
-    }
-
-    Offset capacity =
-        (_triplesInDictKeys == 0)
-            ? (reader.ReadOffset(builtinDict + PYTHON2_MASK_IN_DICT, ~0) + 1)
-            : reader.ReadOffset(keys + PYTHON3_CAPACITY_IN_DICT_KEYS, ~0);
-    Offset triples = keys + _triplesInDictKeys;
-    Offset triplesLimit = triples + capacity * 3 * sizeof(Offset);
     for (Offset triple = triples; triple < triplesLimit;
          triple += (3 * sizeof(Offset))) {
       Offset key = reader.ReadOffset(triple + sizeof(Offset), 0);
@@ -825,25 +894,20 @@ class InfrastructureFinder {
           _dictType) {
         continue;
       }
-      Offset keys = dictReader.ReadOffset(dictCandidate + _keysInDict, 0xbad);
-
-      if ((keys & (sizeof(Offset) - 1)) != 0) {
-        continue;
-      }
-      Offset capacity =
-          dictReader.ReadOffset(keys + PYTHON3_CAPACITY_IN_DICT_KEYS, ~0);
-      if (capacity >= 0x200) {
+      Offset triples = 0;
+      Offset triplesLimit = 0;
+      GetTriplesAndLimitFromDict(dictCandidate, triples, triplesLimit);
+      if (triplesLimit - triples > 0x3000) {
         // We don't expect that many built-ins.
         continue;
       }
 
-      Offset firstValue = keys + _triplesInDictKeys + 2 * sizeof(Offset);
+      Offset firstValue = triples + (Offset)(2 * sizeof(Offset));
 
-      Offset valuesLimit = firstValue + capacity * 3 * sizeof(Offset);
       bool foundTypeType = false;
       bool foundObjectType = false;
       bool foundDictType = false;
-      for (Offset o = firstValue; o < valuesLimit; o += (3 * sizeof(Offset))) {
+      for (Offset o = firstValue; o < triplesLimit; o += (3 * sizeof(Offset))) {
         Offset typeCandidate = dictReader.ReadOffset(o, 0xbad);
         if (typeCandidate == _typeType) {
           foundTypeType = true;
@@ -884,7 +948,7 @@ class InfrastructureFinder {
         continue;
       }
       Offset capacity = mask + 1;
-      Offset firstKey = keys + _triplesInDictKeys + sizeof(Offset);
+      Offset firstKey = keys + sizeof(Offset);
       Offset keysLimit = firstKey + capacity * 3 * sizeof(Offset);
       Offset builtinDict = 0;
       for (Offset o = firstKey; o < keysLimit; o += (3 * sizeof(Offset))) {
@@ -919,46 +983,47 @@ class InfrastructureFinder {
     }
     return 0;
   }
+
   bool CalculateOffsetsForDictAndStr(Offset dictForTypeType) {
-    bool succeeded = true;
-    switch (_majorVersion) {
-      case Version2:
-        _keysInDict = PYTHON2_KEYS_IN_DICT;
-        _triplesInDictKeys = PYTHON2_TRIPLES_IN_DICT_KEYS;
-        _cstringInStr = PYTHON2_CSTRING_IN_STR;
-        if (!CheckDictAndStrOffsets(dictForTypeType)) {
+    if (_majorVersion == Version2 || _majorVersion == VersionUnknownOrOther) {
+      _keysInDict = PYTHON2_KEYS_IN_DICT;
+      _dictKeysHeaderSize = 0;
+      _cstringInStr = PYTHON2_CSTRING_IN_STR;
+      if (CheckDictAndStrOffsets(dictForTypeType)) {
+        return true;
+      } else {
+        if (_majorVersion == Version2) {
           std::cerr << "Warning: Failed to confirm dict and str offsets for "
                        "python2.\n";
-          succeeded = false;
+          return false;
         }
-        break;
-      case Version3:
-        _keysInDict = PYTHON3_KEYS_IN_DICT;
-        _triplesInDictKeys = PYTHON3_TRIPLES_IN_DICT_KEYS;
-        _cstringInStr = PYTHON3_CSTRING_IN_STR;
-        if (!CheckDictAndStrOffsets(dictForTypeType)) {
-          std::cerr << "Warning: Failed to confirm dict and str offsets for "
-                       "python3.\n";
-          succeeded = false;
-        }
-        break;
-      case VersionUnknownOrOther:
-        _keysInDict = PYTHON2_KEYS_IN_DICT;
-        _triplesInDictKeys = PYTHON2_TRIPLES_IN_DICT_KEYS;
-        _cstringInStr = PYTHON2_CSTRING_IN_STR;
-        if (!CheckDictAndStrOffsets(dictForTypeType)) {
-          _keysInDict = PYTHON3_KEYS_IN_DICT;
-          _triplesInDictKeys = PYTHON3_TRIPLES_IN_DICT_KEYS;
-          _cstringInStr = PYTHON3_CSTRING_IN_STR;
-          if (!CheckDictAndStrOffsets(dictForTypeType)) {
-            std::cerr << "Warning: Failed to determine offsets for python dict "
-                         "and str.\n";
-            succeeded = false;
-          }
-        }
-        break;
+      }
     }
-    return succeeded;
+    _keysInDict = PYTHON3_5_KEYS_IN_DICT;
+    _dictKeysHeaderSize = PYTHON3_5_DICT_KEYS_HEADER_SIZE;
+    _sizeInDictKeys = PYTHON3_SIZE_IN_DICT_KEYS;
+    _cstringInStr = PYTHON3_CSTRING_IN_STR;
+    if (CheckDictAndStrOffsets(dictForTypeType)) {
+      return true;
+    }
+
+    _keysInDict = PYTHON3_6_KEYS_IN_DICT;
+    _dictKeysHeaderSize = PYTHON3_6_DICT_KEYS_HEADER_SIZE;
+    _numElementsInDictKeys = PYTHON3_6_NUM_ELEMENTS_IN_DICT_KEYS;
+    _dictKeysHaveIndex = true;
+
+    if (CheckDictAndStrOffsets(dictForTypeType)) {
+      return true;
+    }
+
+    if (_majorVersion == Version3) {
+      std::cerr << "Warning: Failed to confirm dict and str offsets for "
+                   "python3.\n";
+    } else {
+      std::cerr << "Warning: Failed to determine offsets for python dict "
+                   "and str.\n";
+    }
+    return false;
   }
 
   /*
@@ -968,31 +1033,9 @@ class InfrastructureFinder {
    */
   bool CheckDictAndStrOffsets(Offset dictForTypeType) {
     Reader reader(_virtualAddressMap);
-    Offset dictKeys = reader.ReadOffset(dictForTypeType + _keysInDict, 0xbad);
-    if ((dictKeys & (sizeof(Offset) - 1)) != 0) {
-      return false;
-    }
-    Offset capacity = 0;
-    /*
-     * Warning: This is not really sufficiently general but happens to work for
-     * the dictionary associated with the python type type.
-     */
-    if (_triplesInDictKeys > 0) {
-      capacity =
-          reader.ReadOffset(dictKeys + PYTHON3_CAPACITY_IN_DICT_KEYS, ~0);
-      if (capacity == (Offset)(~0)) {
-        return false;
-      }
-    } else {
-      Offset mask =
-          reader.ReadOffset(dictForTypeType + PYTHON2_MASK_IN_DICT, ~0);
-      if (mask == (Offset)(~0)) {
-        return false;
-      }
-      capacity = mask + 1;
-    }
-    Offset triples = dictKeys + _triplesInDictKeys;
-    Offset triplesLimit = triples + capacity * 3 * sizeof(Offset);
+    Offset triples = 0;
+    Offset triplesLimit = 0;
+    GetTriplesAndLimitFromDict(dictForTypeType, triples, triplesLimit);
     for (Offset triple = triples; triple < triplesLimit;
          triple += 3 * sizeof(Offset)) {
       if (reader.ReadOffset(triple, 0) == 0) {
@@ -1030,14 +1073,20 @@ class InfrastructureFinder {
     return false;
   }
 
+  bool CheckGarbageCollectionHeaderSize(Reader& reader, Offset firstEntry,
+                                        Offset sizeCandidate) {
+    Offset objectType =
+        reader.ReadOffset(firstEntry + sizeCandidate + TYPE_IN_PYOBJECT, 0);
+    if (objectType != 0 &&
+        reader.ReadOffset(objectType + TYPE_IN_PYOBJECT, 0) == _typeType) {
+      _garbageCollectionHeaderSize = sizeCandidate;
+      return true;
+    }
+    return false;
+  }
+
   void FindNonEmptyGarbageCollectionLists(Offset base, Offset limit,
                                           Reader& reader) {
-    if (_majorVersion == Version2) {
-      _garbageCollectionHeaderSize = PYTHON2_GARBAGE_COLLECTION_HEADER_SIZE;
-    } else if (_majorVersion == Version3) {
-      _garbageCollectionHeaderSize = PYTHON3_GARBAGE_COLLECTION_HEADER_SIZE;
-    }
-
     Reader otherReader(_virtualAddressMap);
     Offset listCandidateLimit = limit - 2 * sizeof(Offset);
     for (Offset listCandidate = base; listCandidate < listCandidateLimit;
@@ -1046,50 +1095,28 @@ class InfrastructureFinder {
       if (firstEntry == 0 || firstEntry == listCandidate) {
         continue;
       }
-      if (otherReader.ReadOffset(firstEntry + sizeof(Offset), 0) !=
-          listCandidate) {
+      if ((otherReader.ReadOffset(firstEntry + sizeof(Offset), 0) &
+           ~(sizeof(Offset) - 1)) != listCandidate) {
         continue;
       }
       Offset lastEntry = reader.ReadOffset(listCandidate + sizeof(Offset), 0);
       if (lastEntry == 0 || lastEntry == listCandidate) {
         continue;
       }
-      if (otherReader.ReadOffset(lastEntry, 0) != listCandidate) {
+      if ((otherReader.ReadOffset(lastEntry, 0) & ~(sizeof(Offset) - 1)) !=
+          listCandidate) {
         continue;
       }
-      bool foundList = false;
-      if (_garbageCollectionHeaderSize == 0) {
-        Offset objectType = otherReader.ReadOffset(
-            firstEntry + PYTHON2_GARBAGE_COLLECTION_HEADER_SIZE +
-                TYPE_IN_PYOBJECT,
-            0);
-        if (objectType != 0 &&
-            otherReader.ReadOffset(objectType + TYPE_IN_PYOBJECT, 0) ==
-                _typeType) {
-          foundList = true;
-          _garbageCollectionHeaderSize = PYTHON2_GARBAGE_COLLECTION_HEADER_SIZE;
-        }
-        if (!foundList) {
-          objectType = otherReader.ReadOffset(
-              firstEntry + PYTHON3_GARBAGE_COLLECTION_HEADER_SIZE +
-                  TYPE_IN_PYOBJECT,
-              0);
-          if (objectType != 0 &&
-              otherReader.ReadOffset(objectType + TYPE_IN_PYOBJECT, 0) ==
-                  _typeType) {
-            foundList = true;
-            _garbageCollectionHeaderSize =
-                PYTHON3_GARBAGE_COLLECTION_HEADER_SIZE;
-          }
-        }
-      } else {
-        Offset objectType = otherReader.ReadOffset(
-            firstEntry + _garbageCollectionHeaderSize + TYPE_IN_PYOBJECT, 0);
-        foundList = (objectType != 0 &&
-                     otherReader.ReadOffset(objectType + TYPE_IN_PYOBJECT, 0) ==
-                         _typeType);
-      }
-      if (foundList) {
+
+      if ((_garbageCollectionHeaderSize == UNKNOWN_OFFSET)
+              ? (CheckGarbageCollectionHeaderSize(otherReader, firstEntry,
+                                                  2 * sizeof(Offset)) ||
+                 CheckGarbageCollectionHeaderSize(otherReader, firstEntry,
+                                                  3 * sizeof(Offset)) ||
+                 CheckGarbageCollectionHeaderSize(otherReader, firstEntry,
+                                                  4 * sizeof(Offset)))
+              : CheckGarbageCollectionHeaderSize(
+                    otherReader, firstEntry, _garbageCollectionHeaderSize)) {
         _nonEmptyGarbageCollectionLists.push_back(listCandidate);
         listCandidate += 2 * sizeof(Offset);
       }
