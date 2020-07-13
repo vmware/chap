@@ -225,11 +225,11 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
           typename VirtualAddressMap<Offset>::const_iterator itMap =
               _addressMap.find(_top);
           Offset endWritableInHeap = itMap.Limit();
-          Offset endHeapRange = _base + _maxHeapSize;
+          Offset endHeapRange = _heapMapIterator->first + _maxHeapSize; 
           if (endWritableInHeap > endHeapRange) {
             endWritableInHeap = endHeapRange;
           }
-          _allocationSize = endWritableInHeap - (_check + 2 * sizeof(Offset));
+          _allocationSize = endWritableInHeap - _allocationAddress;
         }
         _allocationIsUsed = false;
       } else {
