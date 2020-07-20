@@ -259,8 +259,9 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     const char* firstChar = contiguousImage.FirstChar();
     Offset size = contiguousImage.Size();
     if (size >= _garbageCollectionHeaderSize + 2 * sizeof(Offset) &&
-        (*((Offset*)(firstChar + 2 * sizeof(Offset))) & ((Offset)(~7))) ==
-            ((Offset)(~7))) {
+        ((_garbageCollectionHeaderSize == 2 * sizeof(Offset)) ||
+         (*((Offset*)(firstChar + 2 * sizeof(Offset))) & ((Offset)(~7))) ==
+             ((Offset)(~7)))) {
       Offset typeCandidate =
           *((Offset*)(firstChar + _garbageCollectionHeaderSize +
                       InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT));

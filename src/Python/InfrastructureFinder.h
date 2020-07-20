@@ -60,6 +60,8 @@ class InfrastructureFinder {
         _dictKeysHaveIndex(false),
         _strType(0),
         _cstringInStr(UNKNOWN_OFFSET),
+        _mainInterpreterState(0),
+        _builtinsInInterpreterState(UNKNOWN_OFFSET),
         _garbageCollectionHeaderSize(UNKNOWN_OFFSET),
         _cachedKeysInHeapTypeObject(UNKNOWN_OFFSET) {}
   void Resolve() {
@@ -337,6 +339,8 @@ class InfrastructureFinder {
   bool _dictKeysHaveIndex;
   Offset _strType;
   Offset _cstringInStr;
+  Offset _mainInterpreterState;
+  Offset _builtinsInInterpreterState;
   std::vector<uint32_t> _activeIndices;
   std::vector<Offset> _nonEmptyGarbageCollectionLists;
   Offset _garbageCollectionHeaderSize;
@@ -694,15 +698,7 @@ class InfrastructureFinder {
 
             FindStaticallyAllocatedTypes(base, limit, reader);
 
-            Offset builtinDict = 0;
-            if (_keysInDict != 0) {
-              builtinDict = FindPython3Builtins(base, limit);
-            } else if (_keysInDict == PYTHON2_KEYS_IN_DICT) {
-              builtinDict = FindPython2Builtins(base, limit);
-            }
-            if (builtinDict != 0) {
-              RegisterBuiltinTypesFromDict(builtinDict);
-            }
+            FindMainInterpreterStateAndBuiltinNames(base, limit);
             return;
           }
         }
@@ -838,19 +834,17 @@ class InfrastructureFinder {
   }
 
   /*
-   * The following function attempts to use the specified built-in dict
+   * The following function attempts to use the specified dict
    * to determine names for any built-in types for which the name was
    * statically allocated and didn't make it into the core.  This can
    * happen because it is not uncommon for gdb to not keep images for
    * things that can be obtained from the main executable or from
    * shared libraries.
    */
-  void RegisterBuiltinTypesFromDict(Offset builtinDict) {
+  void RegisterBuiltinTypesFromDict(Reader& reader, Offset dict) {
     Offset triples = 0;
     Offset triplesLimit = 0;
-    GetTriplesAndLimitFromDict(builtinDict, triples, triplesLimit);
-
-    Reader reader(_virtualAddressMap);
+    GetTriplesAndLimitFromDict(dict, triples, triplesLimit);
     for (Offset triple = triples; triple < triplesLimit;
          triple += (3 * sizeof(Offset))) {
       Offset key = reader.ReadOffset(triple + sizeof(Offset), 0);
@@ -881,107 +875,200 @@ class InfrastructureFinder {
     }
   }
 
-  Offset FindPython3Builtins(Offset base, Offset limit) {
+  void RegisterImportedTypes(Reader& reader, Offset dictForModule,
+                             const char* moduleName) {
+    Offset triples = 0;
+    Offset triplesLimit = 0;
+    GetTriplesAndLimitFromDict(dictForModule, triples, triplesLimit);
+    std::string modulePrefix(moduleName);
+    modulePrefix.append(".");
+
+    for (Offset triple = triples; triple < triplesLimit;
+         triple += (3 * sizeof(Offset))) {
+      Offset key = reader.ReadOffset(triple + sizeof(Offset), 0);
+      if (key == 0) {
+        continue;
+      }
+      Offset value = reader.ReadOffset(triple + 2 * sizeof(Offset), 0);
+      if (value == 0) {
+        continue;
+      }
+      const char* image;
+      Offset numBytesFound =
+          _virtualAddressMap.FindMappedMemoryImage(key, &image);
+      if (numBytesFound < _cstringInStr + 2) {
+        continue;
+      }
+      if (*((Offset*)(image + TYPE_IN_PYOBJECT)) != _strType) {
+        continue;
+      }
+      Offset length = *((Offset*)(image + LENGTH_IN_STR));
+      if (numBytesFound < _cstringInStr + length + 1) {
+        continue;
+      }
+      if (reader.ReadOffset(value + TYPE_IN_PYOBJECT, 0) != _typeType) {
+        continue;
+      }
+      std::string unqualifiedName(image + _cstringInStr);
+      std::string qualifiedName = modulePrefix + unqualifiedName;
+      _typeDirectory.RegisterType(value, image + _cstringInStr);
+    }
+  }
+
+  void FindMainInterpreterStateAndBuiltinNames(Offset base, Offset limit) {
     Reader reader(_virtualAddressMap);
-    Reader dictReader(_virtualAddressMap);
-    for (Offset dictRefCandidate = base; dictRefCandidate < limit;
-         dictRefCandidate += sizeof(Offset)) {
-      Offset dictCandidate = reader.ReadOffset(dictRefCandidate, 0xbad);
-      if ((dictCandidate & (sizeof(Offset) - 1)) != 0) {
+    Reader iscReader(_virtualAddressMap);
+    Reader otherReader(_virtualAddressMap);
+    for (Offset mainInterpreterStateRefCandidate = base;
+         mainInterpreterStateRefCandidate < limit;
+         mainInterpreterStateRefCandidate += sizeof(Offset)) {
+      Offset mainInterpreterStateCandidate =
+          reader.ReadOffset(mainInterpreterStateRefCandidate, 0xbad);
+      if ((mainInterpreterStateCandidate & (sizeof(Offset) - 1)) != 0) {
         continue;
       }
-      if (dictReader.ReadOffset(dictCandidate + TYPE_IN_PYOBJECT, 0xbad) !=
-          _dictType) {
+      if (iscReader.ReadOffset(mainInterpreterStateCandidate, 0xbad) != 0) {
         continue;
       }
+      Offset threadStateCandidate = iscReader.ReadOffset(
+          mainInterpreterStateCandidate + sizeof(Offset), 0xbad);
+      if ((threadStateCandidate & (sizeof(Offset) - 1)) != 0) {
+        continue;
+      }
+      if (otherReader.ReadOffset(threadStateCandidate + sizeof(Offset),
+                                 0xbad) != mainInterpreterStateCandidate &&
+          otherReader.ReadOffset(threadStateCandidate + 2 * sizeof(Offset),
+                                 0xbad) != mainInterpreterStateCandidate) {
+        continue;
+      }
+
+      /*
+       * At present, the first dict found in a PyInterpreterState maps
+       * from module name to module object.
+       */
+      Offset firstDict = 0;
+      for (Offset o = 2 * sizeof(Offset); o < 16 * sizeof(Offset);
+           o += sizeof(Offset)) {
+        Offset dictCandidate =
+            iscReader.ReadOffset(mainInterpreterStateCandidate + o, 0xbad);
+        if ((dictCandidate & (sizeof(Offset) - 1)) != 0) {
+          continue;
+        }
+        if (otherReader.ReadOffset(dictCandidate + TYPE_IN_PYOBJECT, 0xbad) ==
+            _dictType) {
+          firstDict = dictCandidate;
+          break;
+        }
+      }
+
       Offset triples = 0;
       Offset triplesLimit = 0;
-      GetTriplesAndLimitFromDict(dictCandidate, triples, triplesLimit);
+      GetTriplesAndLimitFromDict(firstDict, triples, triplesLimit);
       if (triplesLimit - triples > 0x3000) {
-        // We don't expect that many built-ins.
+        // We don't expect that many modules
         continue;
       }
 
-      Offset firstValue = triples + (Offset)(2 * sizeof(Offset));
-
-      bool foundTypeType = false;
-      bool foundObjectType = false;
-      bool foundDictType = false;
-      for (Offset o = firstValue; o < triplesLimit; o += (3 * sizeof(Offset))) {
-        Offset typeCandidate = dictReader.ReadOffset(o, 0xbad);
-        if (typeCandidate == _typeType) {
-          foundTypeType = true;
-        } else if (typeCandidate == _objectType) {
-          foundObjectType = true;
-        } else if (typeCandidate == _dictType) {
-          foundDictType = true;
-        }
-      }
-      if (foundTypeType && foundObjectType && foundDictType) {
-        return dictCandidate;
-      }
-    }
-    return 0;
-  }
-  Offset FindPython2Builtins(Offset base, Offset limit) {
-    Reader reader(_virtualAddressMap);
-    Reader dictReader(_virtualAddressMap);
-    for (Offset dictRefCandidate = base; dictRefCandidate < limit;
-         dictRefCandidate += sizeof(Offset)) {
-      Offset outerDictCandidate = reader.ReadOffset(dictRefCandidate, 0xbad);
-      if ((outerDictCandidate & (sizeof(Offset) - 1)) != 0) {
-        continue;
-      }
-      if (dictReader.ReadOffset(outerDictCandidate + TYPE_IN_PYOBJECT, 0xbad) !=
-          _dictType) {
-        continue;
-      }
-      Offset keys =
-          dictReader.ReadOffset(outerDictCandidate + _keysInDict, 0xbad);
-
-      if ((keys & (sizeof(Offset) - 1)) != 0) {
-        continue;
-      }
-      Offset mask =
-          dictReader.ReadOffset(outerDictCandidate + PYTHON2_MASK_IN_DICT, ~0);
-      if (mask == (Offset)(~0)) {
-        continue;
-      }
-      Offset capacity = mask + 1;
-      Offset firstKey = keys + sizeof(Offset);
-      Offset keysLimit = firstKey + capacity * 3 * sizeof(Offset);
-      Offset builtinDict = 0;
-      for (Offset o = firstKey; o < keysLimit; o += (3 * sizeof(Offset))) {
-        Offset dictCandidate = dictReader.ReadOffset(o + sizeof(Offset), 0xbad);
-        if (dictCandidate == 0) {
+      Offset builtinsModule = 0;
+      Offset moduleType = 0;
+      for (Offset triple = triples; triple < triplesLimit;
+           triple += (3 * sizeof(Offset))) {
+        Offset key = otherReader.ReadOffset(triple + sizeof(Offset), 0);
+        if (key == 0) {
           continue;
         }
-        if (dictReader.ReadOffset(dictCandidate + TYPE_IN_PYOBJECT, 0xbad) !=
-            _dictType) {
-          continue;
-        }
-        Offset strCandidate = dictReader.ReadOffset(o, 0xbad);
-        if (strCandidate == 0) {
-          continue;
-        }
-        if ((strCandidate & (sizeof(Offset) - 1)) != 0) {
-          continue;
-        }
-        const char* image;
+        const char* keyImage;
         Offset numBytesFound =
-            _virtualAddressMap.FindMappedMemoryImage(strCandidate, &image);
-        if (numBytesFound < _cstringInStr + 12) {
+            _virtualAddressMap.FindMappedMemoryImage(key, &keyImage);
+        if (numBytesFound < _cstringInStr + 2) {
           continue;
         }
-        if (!strcmp("__builtin__", image + _cstringInStr)) {
-          builtinDict = dictCandidate;
+        if (*((Offset*)(keyImage + TYPE_IN_PYOBJECT)) != _strType) {
+          continue;
+        }
+        Offset length = *((Offset*)(keyImage + LENGTH_IN_STR));
+        if (numBytesFound < _cstringInStr + length + 1) {
+          continue;
+        }
+        if (!strcmp("__builtin__", keyImage + _cstringInStr) ||
+            !strcmp("builtins", keyImage + _cstringInStr)) {
+          Offset value = otherReader.ReadOffset(triple + 2 * sizeof(Offset), 0);
+          if (value == 0) {
+            std::cerr << "Error: unable to find module for name"
+                      << (keyImage + _cstringInStr) << "\n";
+            return;
+          } else {
+            builtinsModule = value;
+            moduleType =
+                otherReader.ReadOffset(value + TYPE_IN_PYOBJECT, 0xbad);
+            _typeDirectory.RegisterType(moduleType, "module");
+            Offset dictForModule = otherReader.ReadOffset(
+                value + TYPE_IN_PYOBJECT + sizeof(Offset), 0xbad);
+            if (otherReader.ReadOffset(dictForModule + TYPE_IN_PYOBJECT, 0) !=
+                _dictType) {
+              std::cerr
+                  << "Error: Unexpected type for dict for builtins module\n";
+              return;
+            }
+            RegisterBuiltinTypesFromDict(otherReader, dictForModule);
+          }
+          break;
         }
       }
-      if (builtinDict != 0) {
-        return builtinDict;
+      if (builtinsModule == 0) {
+        // We probaly didn't actually find a real PyInterpreterState.
+        continue;
       }
+      _mainInterpreterState = mainInterpreterStateCandidate;
+      for (Offset triple = triples; triple < triplesLimit;
+           triple += (3 * sizeof(Offset))) {
+        Offset module = otherReader.ReadOffset(triple + 2 * sizeof(Offset), 0);
+        if (module == builtinsModule) {
+          continue;
+        }
+
+        Offset moduleName = otherReader.ReadOffset(triple + sizeof(Offset), 0);
+        if (moduleName == 0) {
+          continue;
+        }
+        const char* moduleNameImage;
+        Offset numBytesFound = _virtualAddressMap.FindMappedMemoryImage(
+            moduleName, &moduleNameImage);
+        if (numBytesFound < _cstringInStr + 2) {
+          continue;
+        }
+        if (*((Offset*)(moduleNameImage + TYPE_IN_PYOBJECT)) != _strType) {
+          std::cerr
+              << "Warning: Unexpected key type found in dict of modules\n";
+          continue;
+        }
+        Offset length = *((Offset*)(moduleNameImage + LENGTH_IN_STR));
+        if (numBytesFound < _cstringInStr + length + 1) {
+          continue;
+        }
+        Offset expectModuleType =
+            otherReader.ReadOffset(module + TYPE_IN_PYOBJECT, 0);
+        if (expectModuleType != moduleType) {
+          // This can happen, for example, if there is no module of the given
+          // name,
+          // in which case the value will be set to None.
+          continue;
+        }
+
+        Offset dictForModule = otherReader.ReadOffset(
+            module + TYPE_IN_PYOBJECT + sizeof(Offset), 0);
+        Offset expectDictType =
+            otherReader.ReadOffset(dictForModule + TYPE_IN_PYOBJECT, 0);
+        if (expectDictType != _dictType) {
+          std::cerr << "Warning: dict 0x" << std::hex << dictForModule
+                    << " for module 0x" << module << " has unexpected type 0x"
+                    << expectDictType << "\n";
+        }
+        RegisterImportedTypes(otherReader, dictForModule,
+                              moduleNameImage + _cstringInStr);
+      }
+      break;
     }
-    return 0;
   }
 
   bool CalculateOffsetsForDictAndStr(Offset dictForTypeType) {
