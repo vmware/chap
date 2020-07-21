@@ -22,6 +22,7 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
         _directory(_graph.GetAllocationDirectory()),
         _infrastructureFinder(processImage.GetPythonInfrastructureFinder()),
         _strType(_infrastructureFinder.StrType()),
+        _cstringInStr(_infrastructureFinder.CstringInStr()),
         _garbageCollectionHeaderSize(
             _infrastructureFinder.GarbageCollectionHeaderSize()),
         _keysInDict(_infrastructureFinder.KeysInDict()),
@@ -111,6 +112,7 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
         continue;
       }
       Offset keyType = ((Offset*)(keyImage))[1];
+      Offset keyLength = ((Offset*)(keyImage))[2];
 
       const char* valueImage;
       Offset numValueBytesFound =
@@ -120,6 +122,7 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
         continue;
       }
       Offset valueType = ((Offset*)(valueImage))[1];
+      Offset valueLength = ((Offset*)(valueImage))[2];
 
       if (keyType != valueType) {
         /*
@@ -135,8 +138,11 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
       if (keyType != _strType || valueType != _strType) {
         continue;
       }
-      output << "\"" << (keyImage + 6 * sizeof(Offset)) << "\" : \""
-             << (valueImage + 6 * sizeof(Offset)) << "\"\n";
+      output << "\"";
+      output.ShowEscapedAscii(keyImage + _cstringInStr, keyLength);
+      output << "\" : \"";
+      output.ShowEscapedAscii(valueImage + _cstringInStr, valueLength);
+      output << "\"\n";
     }
     if (explain) {
     }
@@ -147,6 +153,7 @@ class PyDictKeysObjectDescriber : public Allocations::PatternDescriber<Offset> {
   const Allocations::Directory<Offset>& _directory;
   const InfrastructureFinder<Offset>& _infrastructureFinder;
   const Offset _strType;
+  const Offset _cstringInStr;
   const Offset _garbageCollectionHeaderSize;
   const Offset _keysInDict;
   const Offset _dictKeysHeaderSize;

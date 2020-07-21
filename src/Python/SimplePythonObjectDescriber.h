@@ -50,10 +50,13 @@ class SimplePythonObjectDescriber
       output << "This has a string of length " << std::dec << stringLength;
       const char* stringStart = _contiguousImage.FirstChar() + _cstringInStr;
       if (explain || stringLength < 77) {
-        output << " containing\n\"" << stringStart << "\".\n";
+        output << " containing\n\"";
+        output.ShowEscapedAscii(stringStart, stringLength);
+        output << "\".\n";
       } else {
-        output << " starting with\n\"" << std::string(stringStart, 77)
-               << "\".\n";
+        output << " starting with\n\"";
+        output.ShowEscapedAscii(stringStart, 77);
+        output << "\".\n";
       }
     }
   }

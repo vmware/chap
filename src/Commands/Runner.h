@@ -264,6 +264,25 @@ class Output {
     }
   }
 
+  /*
+   * The goal here is not to escape things in some reversable way but only
+   * to make it so the output is all printable ascii.
+   */
+  void ShowEscapedAscii(const char* chars, size_t numBytes) {
+    std::ostream& topStream = *_outputStack.top();
+    const char* limit = chars + numBytes;
+    while (chars < limit) {
+      char c = *(chars++);
+      if ((c < ' ' || c > '~') && (c != '\t') && (c != '\r') && (c != '\n')) {
+        topStream << "\\x";
+        topStream << std::hex << (((int)(c >> 4)) & 0xf);
+        topStream << std::hex << (((int)(c)) & 0xf);
+      } else {
+        topStream << c;
+      }
+    }
+  }
+
  private:
   std::stack<std::ostream*> _outputStack;
   void ShowTrailingAscii(std::ostream& topStream, size_t numBlanks,
