@@ -48,7 +48,6 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
       return;
     }
 
-    bool found_ZN = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
              moduleDirectory.begin();
          it != moduleDirectory.end(); ++it) {
@@ -72,15 +71,13 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
             if (!strncmp(check, "_ZNSt7__cxx1112basic_string", 27)) {
               return;
             }
-            if (!strncmp(check, "_ZN", 3)) {
-              found_ZN = true;
+            if (!strncmp(check, "_ZNSs6assign", 12)) {
+              _enabled = false;
+              return;
             }
           }
         }
       }
-    }
-    if (found_ZN) {
-      _enabled = false;
     }
   }
 

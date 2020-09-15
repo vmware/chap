@@ -49,7 +49,6 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
       return;
     }
 
-    bool found_ZN = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
              moduleDirectory.begin();
          it != moduleDirectory.end(); ++it) {
@@ -66,22 +65,20 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
           Offset base = itRange->_base;
           Offset limit = itRange->_limit;
           typename VirtualAddressMap<Offset>::const_iterator itVirt =
-              _addressMap.find(base);
+             _addressMap.find(base);
           const char* check = itVirt.GetImage() + (base - itVirt.Base());
           const char* checkLimit = check + (limit - base) - 26;
           for (; check < checkLimit; check++) {
             if (!strncmp(check, "_ZNSs6assign", 12)) {
               return;
             }
-            if (!strncmp(check, "_ZN", 3)) {
-              found_ZN = true;
+            if (!strncmp(check, "_ZNSt7__cxx1112basic_string", 27)) {
+              _enabled = false;
+              return;
             }
           }
         }
       }
-    }
-    if (found_ZN) {
-      _enabled = false;
     }
   }
 
