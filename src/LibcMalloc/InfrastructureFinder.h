@@ -720,29 +720,29 @@ class InfrastructureFinder {
 
   bool FindNonMainArenasByRingFromMainArena() {
     Reader reader(_addressMap);
-    try {
-      Offset limit = _mainArenaAddress + 0x120 * OFFSET_SIZE;
-      for (Offset checkAt = _mainArenaAddress + 0x80 * OFFSET_SIZE;
-           checkAt < limit; checkAt += OFFSET_SIZE) {
-        if (reader.ReadOffset(checkAt) == _mainArenaAddress) {
-          /*
-           * The arena points to itself so there really is just one
-           * arena and no non-main arenas exist.
-           */
-          return false;
-        }
+    Offset limit = _mainArenaAddress + 0x120 * OFFSET_SIZE;
+    for (Offset checkAt = _mainArenaAddress + 0x80 * OFFSET_SIZE;
+         checkAt < limit; checkAt += OFFSET_SIZE) {
+      if (reader.ReadOffset(checkAt, 0xbadbad) == _mainArenaAddress) {
+        /*
+         * The arena points to itself so there really is just one
+         * arena and no non-main arenas exist.
+         */
+        return false;
       }
+    }
 
-      for (Offset checkAt = _mainArenaAddress; checkAt < limit;
-           checkAt += OFFSET_SIZE) {
-        Offset candidate = reader.ReadOffset(checkAt);
-        Offset nextOffset = checkAt - _mainArenaAddress;
-        std::vector<Offset> candidates;
+    for (Offset checkAt = _mainArenaAddress; checkAt < limit;
+         checkAt += OFFSET_SIZE) {
+      Offset candidate = reader.ReadOffset(checkAt, 0xbadbad);
+      Offset nextOffset = checkAt - _mainArenaAddress;
+      std::vector<Offset> candidates;
 
-        while ((candidate & 0xffff) == (4 * OFFSET_SIZE)) {
+      if ((candidate & 0xffff) == (4 * OFFSET_SIZE)) {
+        do {
           candidates.push_back(candidate);
-          candidate = reader.ReadOffset(candidate + nextOffset);
-        }
+          candidate = reader.ReadOffset(candidate + nextOffset, 0xbadbad);
+        } while ((candidate & 0xffff) == (4 * OFFSET_SIZE));
         if (candidate == _mainArenaAddress) {
           /*
            * We had to have made it at least one time through the ring
@@ -758,7 +758,6 @@ class InfrastructureFinder {
            */
         }
       }
-    } catch (NotMapped&) {
     }
     return false;
   }
@@ -794,21 +793,22 @@ class InfrastructureFinder {
     Offset arenaAddress = _mainArenaAddress;
     std::vector<Offset> inRing;
     Reader reader(_addressMap);
-    try {
-      do {
-        Offset nextArena = reader.ReadOffset(arenaAddress + bestNextOffset);
-        inRing.push_back(arenaAddress);
-        arenaAddress = nextArena;
-        if (arenaAddress == _mainArenaAddress) {
-          if (SetArenasBasedOnRing(inRing)) {
-            return true;  // The ring was found and verified.
-          }
-          _mainArenaAddress = 0;
-          break;
+    do {
+      Offset nextArena =
+          reader.ReadOffset(arenaAddress + bestNextOffset, 0xbad);
+      if (nextArena == 0xbad) {
+        return false;
+      }
+      inRing.push_back(arenaAddress);
+      arenaAddress = nextArena;
+      if (arenaAddress == _mainArenaAddress) {
+        if (SetArenasBasedOnRing(inRing)) {
+          return true;  // The ring was found and verified.
         }
-      } while ((arenaAddress & 0xffff) == (4 * OFFSET_SIZE));
-    } catch (NotMapped&) {
-    }
+        _mainArenaAddress = 0;
+        break;
+      }
+    } while ((arenaAddress & 0xffff) == (4 * OFFSET_SIZE));
     _mainArenaAddress = 0;
     return false;  // The ring was never found or failed verfication.
   }
@@ -944,6 +944,13 @@ class InfrastructureFinder {
       if (bestNextOffsetVotes == 0) {
         if (showErrors) {
           std::cerr << "The arena next pointer was not found.\n";
+          std::cerr << "Scanning started at offset 0x" << std::hex
+                    << (_arenaLastDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE)
+                    << " and applied to the following arenas:\n";
+          for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end();
+               ++it) {
+            std::cerr << "0x" << it->first << "\n";
+          }
         }
         return false;
       } else {
