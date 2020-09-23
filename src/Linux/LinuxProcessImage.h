@@ -136,6 +136,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       Base::_virtualMemoryPartition.ClaimUnclaimedRangesAsUnknown();
 
       Base::TagAllocations();
+
+      WarnForModulesWithNoWritableRanges();
     }
   }
 
@@ -164,9 +166,9 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       _firstReadableStackGuardFound = true;
       std::cerr
           << "Warning: At least one readable stack guard has been found.\n"
-             "This generally means that the gdb code that created the core "
+             " This generally means that the gdb code that created the core "
              "has a bug\n"
-             "and that the permissions were marked wrong in the core.\n";
+             " and that the permissions were marked wrong in the core.\n";
     }
   }
   /*
@@ -1640,6 +1642,34 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     for (const auto& range :
          Base::_virtualMemoryPartition.GetStaticAnchorCandidates()) {
       _staticAnchorLimits[range._base] = range._limit;
+    }
+  }
+
+  void WarnForModulesWithNoWritableRanges() {
+    bool atLeastOneModuleHasNoWritableRegions = false;
+    for (const auto& moduleNameAndRanges : Base::_moduleDirectory) {
+      if (moduleNameAndRanges.first == "/usr/lib/locale/locale-archive") {
+        continue;
+      }
+      bool moduleHasNoWritableRegions = true;
+      for (const auto& range : moduleNameAndRanges.second) {
+        if ((range._value & RangeAttributes::IS_WRITABLE) != 0) {
+          moduleHasNoWritableRegions = false;
+          break;
+        }
+      }
+      if (moduleHasNoWritableRegions) {
+        if (!atLeastOneModuleHasNoWritableRegions) {
+          std::cerr
+              << "Warning: The following modules have no writable regions:\n";
+          atLeastOneModuleHasNoWritableRegions = true;
+        }
+        std::cerr << " " << moduleNameAndRanges.first << "\n";
+      }
+    }
+    if (atLeastOneModuleHasNoWritableRegions) {
+      std::cerr << " This may indicate an incomplete core, which could cause "
+                   "false leak reports.\n";
     }
   }
 };
