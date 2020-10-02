@@ -4,6 +4,7 @@
 #pragma once
 #include <string.h>
 #include <map>
+#include <regex>
 #include "../Allocations/TaggerRunner.h"
 #include "../LibcMalloc/FinderGroup.h"
 #include "../ProcessImage.h"
@@ -1646,9 +1647,12 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
   }
 
   void WarnForModulesWithNoWritableRanges() {
+    std::regex sharedLibRegex("^.*\\.so(\\..*)?");
+    std::smatch sharedLibSmatch;
     bool atLeastOneModuleHasNoWritableRegions = false;
     for (const auto& moduleNameAndRanges : Base::_moduleDirectory) {
-      if (moduleNameAndRanges.first == "/usr/lib/locale/locale-archive") {
+      if (!std::regex_match(moduleNameAndRanges.first, sharedLibSmatch,
+                            sharedLibRegex)) {
         continue;
       }
       bool moduleHasNoWritableRegions = true;
