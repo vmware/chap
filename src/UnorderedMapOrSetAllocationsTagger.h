@@ -291,11 +291,10 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     AllocationIndex nodeIndex = firstNodeIndex;
     while (node != 0) {
       if (!_tagHolder.TagAllocation(nodeIndex, _nodeTagIndex)) {
-        std::cerr << "Warning: failed to tag allocation at 0x"
+        std::cerr << "Warning: failed to tag allocation at 0x" << std::hex
                   << node << " as %UnorderedMapOrSetNode."
-                  "It was already tagged as "
-                  << _tagHolder.GetTagName(nodeIndex)
-                  << "\n";
+                             "It was already tagged as "
+                  << _tagHolder.GetTagName(nodeIndex) << "\n";
       }
       node = _nodeReader.ReadOffset(node, 0);
       nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
