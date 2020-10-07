@@ -354,6 +354,8 @@ class InfrastructureFinder {
 
     Offset bestBase = 0;
     Offset bestLimit = 0;
+    Offset moduleBase = rangeToFlags.begin()->_base;
+    Offset moduleLimit = rangeToFlags.rbegin()->_limit;
     for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
              itRange = rangeToFlags.begin();
          itRange != rangeToFlags.end(); ++itRange) {
@@ -576,9 +578,9 @@ class InfrastructureFinder {
                                0xbad);
     });
     if (_arenaStructCount != 0) {
-      FindTypes(bestBase, bestLimit, reader);
+      FindTypes(moduleBase, moduleLimit, bestBase, bestLimit, reader);
       if (_typeType != 0) {
-        FindNonEmptyGarbageCollectionLists(bestBase, bestLimit, reader);
+        FindNonEmptyGarbageCollectionLists(rangeToFlags, reader);
         FindDynamicallyAllocatedTypes();
       }
     }
@@ -588,7 +590,8 @@ class InfrastructureFinder {
    * This is not as expensive as it looks, as it normally converges within the
    * first 10 blocks in the first pool of the first arena.
    */
-  void FindTypes(Offset base, Offset limit, Reader& reader) {
+  void FindTypes(Offset moduleBase, Offset moduleLimit, Offset base,
+                 Offset limit, Reader& reader) {
     if (_majorVersion == VersionUnknownOrOther) {
       /*
        * At present this could happen in the case of a statically linked
@@ -635,15 +638,15 @@ class InfrastructureFinder {
             continue;
           }
           if (candidateTypeType !=
-              reader.ReadOffset(candidateTypeType + TYPE_IN_PYOBJECT, 0)) {
+              reader.ReadOffset(candidateTypeType + TYPE_IN_PYOBJECT, 0xbadbad)) {
             continue;
           }
-          if (candidateTypeType < base || candidateTypeType >= limit) {
+          if (candidateTypeType < moduleBase || candidateTypeType >= moduleLimit) {
             continue;
           }
           Offset typeSize =
               reader.ReadOffset(candidateTypeType + 4 * sizeof(Offset), ~0);
-          if (limit - candidateTypeType < typeSize) {
+          if (typeSize >= 0x800) {
             continue;
           }
           Offset baseInType = 0x18 * sizeof(Offset);
@@ -1170,6 +1173,31 @@ class InfrastructureFinder {
       return true;
     }
     return false;
+  }
+
+  void FindNonEmptyGarbageCollectionLists(
+      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags,
+      Reader& reader) {
+    for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
+             itRange = rangeToFlags.begin();
+         itRange != rangeToFlags.end(); ++itRange) {
+      int flags = itRange->_value;
+      if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
+        Offset base = itRange->_base;
+        /*
+         * At present the module finding logic can get a lower value for the
+         * limit than the true limit.  It is conservative about selecting the
+         * limit to avoid tagging too large a range in the partition.  However
+         * this conservative estimate is problematic if the pointer to the
+         * arena struct array lies between the calculated limit and the real
+         * limit.  This code works around this to extend the limit to the
+         * last consecutive byte that has the same permission as the last
+         * byte in the range.
+         */
+        Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
+        FindNonEmptyGarbageCollectionLists(base, limit, reader);
+      }
+    }
   }
 
   void FindNonEmptyGarbageCollectionLists(Offset base, Offset limit,

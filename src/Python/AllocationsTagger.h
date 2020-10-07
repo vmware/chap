@@ -238,7 +238,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     const Offset* offsetLimit = contiguousImage.OffsetLimit();
     const Offset* offsets = contiguousImage.FirstOffset();
 
-    if (offsetLimit - offsets >= 2 &&
+    if (_typeType != 0 && offsetLimit - offsets >= 2 &&
         _reader.ReadOffset(
             offsets[1] + InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT, ~0) ==
             _typeType) {
