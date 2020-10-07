@@ -638,10 +638,12 @@ class InfrastructureFinder {
             continue;
           }
           if (candidateTypeType !=
-              reader.ReadOffset(candidateTypeType + TYPE_IN_PYOBJECT, 0xbadbad)) {
+              reader.ReadOffset(candidateTypeType + TYPE_IN_PYOBJECT,
+                                0xbadbad)) {
             continue;
           }
-          if (candidateTypeType < moduleBase || candidateTypeType >= moduleLimit) {
+          if (candidateTypeType < moduleBase ||
+              candidateTypeType >= moduleLimit) {
             continue;
           }
           Offset typeSize =
@@ -699,7 +701,7 @@ class InfrastructureFinder {
               return;
             }
 
-            FindStaticallyAllocatedTypes(base, limit, reader);
+            FindStaticallyAllocatedTypes(reader);
 
             FindMainInterpreterStateAndBuiltinNames(base, limit);
             return;
@@ -797,6 +799,35 @@ class InfrastructureFinder {
           reader.ReadOffset(typeCandidate + TYPE_IN_PYOBJECT, 0);
       if (typeTypeCandidate != 0 && IsATypeType(typeTypeCandidate)) {
         _typeDirectory.RegisterType(typeCandidate, "");
+      }
+    }
+  }
+
+  void FindStaticallyAllocatedTypes(Reader& reader) {
+    for (typename ModuleDirectory<Offset>::const_iterator it =
+             _moduleDirectory.begin();
+         it != _moduleDirectory.end(); ++it) {
+      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags =
+          it->second;
+      for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
+               itRange = rangeToFlags.begin();
+           itRange != rangeToFlags.end(); ++itRange) {
+        int flags = itRange->_value;
+        if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
+          Offset base = itRange->_base;
+          /*
+           * At present the module finding logic can get a lower value for the
+           * limit than the true limit.  It is conservative about selecting the
+           * limit to avoid tagging too large a range in the partition.  However
+           * this conservative estimate is problematic if the pointer to the
+           * arena struct array lies between the calculated limit and the real
+           * limit.  This code works around this to extend the limit to the
+           * last consecutive byte that has the same permission as the last
+           * byte in the range.
+           */
+          Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
+          FindStaticallyAllocatedTypes(base, limit, reader);
+        }
       }
     }
   }
