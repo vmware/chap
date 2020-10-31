@@ -22,34 +22,52 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
-  VectorAllocationsTagger(Graph& graph, TagHolder& tagHolder)
+  VectorAllocationsTagger(
+      Graph& graph, TagHolder& tagHolder,
+      const Allocations::SignatureDirectory<Offset>& signatureDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _signatureDirectory(signatureDirectory),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
         _tagIndex(_tagHolder.RegisterTag("%VectorBody", false)) {}
 
-  bool TagFromAllocation(const ContiguousImage& /* contiguousImage */,
+  bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
-                         bool /* isUnsigned */) {
-    /*
-     * Note that we cannot assume anything based on the start of a vector
-     * body because we don't know the type of the entries.  For this reason
-     * we ignore whether the allocation is signed.
-     */
-
-    if (_tagHolder.GetTagIndex(index) != 0) {
-      /*
-       * This was already tagged as something other than a vector body.
-       */
-      return true;  // We are finished looking at this allocation for this pass.
-    }
-
+                         bool isUnsigned) {
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
+        if (_tagHolder.GetTagIndex(index) != 0) {
+          /*
+           * This was already tagged as something other than a vector body.
+           */
+          return true;  // We are finished looking at this allocation for this
+                        // pass.
+        }
+        if (!isUnsigned) {
+          /*
+           * Strictly speaking, we can't assume that something that is signed is
+           * not a vector body, because we don't know the type of the
+           * individual elements and, for example, it could be a vector body for
+           * a vector<T>, where objects of type T have vtable pointers at the
+           * start, or it could be a vector body for a vector<const char *>,
+           * where those pointers are to read-only memory.  At present, simply
+           * because it is much more common to have a typed object classified
+           * falsely as a vector than it is to have vectors containing objects
+           * that have vtable pointers, we'll choose to err by not matching the
+           * pattern in the case a vtable pointer is present.
+           */
+          const Offset* offsetLimit = contiguousImage.OffsetLimit();
+          const Offset* firstOffset = contiguousImage.FirstOffset();
+          if (offsetLimit > firstOffset) {
+            if (_signatureDirectory.IsKnownVtablePointer(*firstOffset)) {
+              return true;
+            }
+          }
+        }
         return (allocation.Size() < 2 * sizeof(Offset));
         break;
       case Tagger::MEDIUM_CHECK:
@@ -112,6 +130,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  const Allocations::SignatureDirectory<Offset>& _signatureDirectory;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -161,7 +180,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
 
   void CheckEmbeddedVectors(const ContiguousImage& contiguousImage,
                             const AllocationIndex* unresolvedOutgoing) {
-    Reader mapReader(_addressMap);
+    Reader bodyReader(_addressMap);
 
     const Offset* offsetLimit = contiguousImage.OffsetLimit() - 2;
     const Offset* firstOffset = contiguousImage.FirstOffset();
@@ -192,6 +211,21 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
           capacityLimit == address ||
           (capacityLimit - address) < _directory.MinRequestSize(bodyIndex)) {
         continue;
+      }
+
+      if (bodyLimit - address >= sizeof(Offset)) {
+        /*
+         * For cases where an allocation looks both like it starts with a
+         * vtable pointer and where it appears to be referenced like a
+         * vector, treat it as being of the type correspoinding to the
+         * allocation.  This may result in missing tagging a few vector
+         * bodies but likely eliminates more false tagging due to stale
+         * references.
+         */
+        if (_signatureDirectory.IsKnownVtablePointer(
+                bodyReader.ReadOffset(address, 0xbad))) {
+          continue;
+        }
       }
 
       /*

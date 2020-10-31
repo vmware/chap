@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -83,6 +83,33 @@ class SignatureDirectory {
 
   bool IsMapped(Offset signature) const {
     return _signatureToName.find(signature) != _signatureToName.end();
+  }
+
+  bool IsKnownVtablePointer(Offset signature) const {
+    SignatureNameAndStatusConstIterator it = _signatureToName.find(signature);
+    if (it != _signatureToName.end()) {
+      switch (it->second.second) {
+        case UNWRITABLE_PENDING_SYMDEFS:
+          return false;
+        case UNWRITABLE_MISSING_FROM_SYMDEFS:
+          return false;
+        case VTABLE_WITH_NAME_FROM_SYMDEFS:
+          return true;
+        case UNWRITABLE_WITH_NAME_FROM_SYMDEFS:
+          return false;
+        case VTABLE_WITH_NAME_FROM_PROCESS_IMAGE:
+          return true;
+        case WRITABLE_VTABLE_WITH_NAME_FROM_PROCESS_IMAGE:
+          return true;
+        case VTABLE_WITH_NAME_FROM_BINARY:
+          return true;
+        case WRITABLE_MODULE_REFERENCE:
+          return false;
+        case VTABLE_WITH_NAME_FROM_BINDEFS:
+          return false;
+      }
+    }
+    return false;
   }
 
   const std::string& Name(Offset signature) const {

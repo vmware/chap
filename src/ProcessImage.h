@@ -164,7 +164,7 @@ class ProcessImage {
         *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory));
 
     runner.RegisterTagger(new VectorAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder)));
+        *(_allocationGraph), *(_allocationTagHolder), _signatureDirectory));
 
     runner.RegisterTagger(new COWStringAllocationsTagger<Offset>(
         *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory));
