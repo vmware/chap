@@ -34,11 +34,12 @@ class BlockAllocationFinder : public Allocations::Directory<Offset>::Finder {
       _blockUsedInPool.resize(maxBlocksInPool, true);
       _arena = _reader.ReadOffset(_arenaStructArray +
                                   _arenaStructSize * (*_itActiveIndices));
-      while (!AdvanceToFirstAllocationOfArena()) {
-        if (++_itActiveIndices == _activeIndices.end()) {
-          break;
-        }
-      }
+      /*
+       * Find the first block in the first pool or treat the entire first pool
+       * as a free allocation if there are no blocks, free or otherwise, in
+       * the first pool.
+       */
+      AdvanceToFirstAllocationOfArena();
     }
   }
 
@@ -77,14 +78,22 @@ class BlockAllocationFinder : public Allocations::Directory<Offset>::Finder {
   virtual void Advance() {
     if (_itActiveIndices != _activeIndices.end()) {
       if (!AdvanceToNextAllocationOfArena()) {
-        do {
-          if (++_itActiveIndices == _activeIndices.end()) {
-            // ?? any finalization needed now that all are numbered
-            return;
-          }
+        /*
+         * There are no more allocations in the current arena.
+         */
+        if (++_itActiveIndices != _activeIndices.end()) {
+          /*
+           * We still have at least one arena to visit.
+           */
           _arena = _reader.ReadOffset(_arenaStructArray +
                                       _arenaStructSize * (*_itActiveIndices));
-        } while (!AdvanceToFirstAllocationOfArena());
+          /*
+           * Find the first block in the first pool or treat the entire first
+           * pool as a free allocation if there are no blocks, free or
+           * otherwise, in the first pool.
+           */
+          AdvanceToFirstAllocationOfArena();
+        }
       }
     }
   }
@@ -120,17 +129,37 @@ class BlockAllocationFinder : public Allocations::Directory<Offset>::Finder {
   Offset _allocationSize;
   bool _allocationIsUsed;
 
-  bool AdvanceToFirstAllocationOfArena() {
+  /*
+   * The first allocation for a given pool is either the first block, if the
+   * pool actually has any blocks, free or otherwise, or the entire memory
+   * range for the pool if the regions is simply available for use as a
+   * pool.
+   */
+  void AdvanceToFirstAllocationForPool() {
+    if (!AdvanceToFirstBlockOfPool()) {
+      /*
+       * There were no memory blocks for the pool, free or otherwise.
+       * This generally means that the range is not currently in use to
+       * store blocks of any particular size.  Treat this case as if the
+       * pool is a single free allocation of size _poolSize, so that the
+       * results of "count free" reflect this memory that is actually
+       * owned by the process and still available for allocations of
+       * other python blocks.
+       */
+      _allocationAddress = _pool;
+      _allocationSize = _poolSize;
+      _allocationIsUsed = false;
+    }
+  }
+
+  void AdvanceToFirstAllocationOfArena() {
     _firstPool = (_arena + (_poolSize - 1)) & ~(_poolSize - 1);
     _poolsLimit = (_arena + _arenaSize) & ~(_poolSize - 1);
-    for (_pool = _firstPool; _pool < _poolsLimit; _pool += _poolSize) {
-      if (AdvanceToFirstAllocationOfPool()) {
-        return true;
-      }
-    }
-    return false;
+    _pool = _firstPool;
+    AdvanceToFirstAllocationForPool();
   }
-  bool AdvanceToFirstAllocationOfPool() {
+
+  bool AdvanceToFirstBlockOfPool() {
     if (_reader.ReadU32(_pool, 0) == 0) {
       return false;
     }
@@ -180,19 +209,27 @@ class BlockAllocationFinder : public Allocations::Directory<Offset>::Finder {
     _allocationIsUsed = _blockUsedInPool[0];
     return true;
   }
+
   bool AdvanceToNextAllocationOfArena() {
-    _block += _blockSize;
-    ++_blockIndex;
-    if (_block < _blocksLimit) {
-      _allocationAddress = _block;
-      _allocationSize = _blockSize;
-      _allocationIsUsed = _blockUsedInPool[_blockIndex];
-      return true;
-    }
-    for (_pool += _poolSize; _pool < _poolsLimit; _pool += _poolSize) {
-      if (AdvanceToFirstAllocationOfPool()) {
+    if (_allocationSize != _poolSize) {
+      /*
+       * The last allocation reported was a block in a pool, as opposed to a
+       * region reserved for use as a pool.  If there are any more blocks
+       * in the pool, set up the next allocation to be the next block.
+       */
+      _block += _blockSize;
+      ++_blockIndex;
+      if (_block < _blocksLimit) {
+        _allocationAddress = _block;
+        _allocationSize = _blockSize;
+        _allocationIsUsed = _blockUsedInPool[_blockIndex];
         return true;
       }
+    }
+    _pool += _poolSize;
+    if (_pool < _poolsLimit) {
+      AdvanceToFirstAllocationForPool();
+      return true;
     }
     return false;
   }

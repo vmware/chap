@@ -1,4 +1,4 @@
-// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -21,6 +21,20 @@ class CompoundDescriber : public Describer<Offset> {
     for (auto describer : _describers) {
       if (describer->Describe(context, addressToDescribe, explain,
                               showAddresses)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /*
+   * Describe the range of memory that has the given page-aligned
+   * address, but only if this describer covers the entire mapped range.
+   */
+  virtual bool DescribeRange(Commands::Context &context,
+                             Offset addressToDescribe) const {
+    for (auto describer : _describers) {
+      if (describer->DescribeRange(context, addressToDescribe)) {
         return true;
       }
     }

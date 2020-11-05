@@ -35,6 +35,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _tagHolder(tagHolder),
         _infrastructureFinder(infrastructureFinder),
         _arenaStructArray(infrastructureFinder.ArenaStructArray()),
+        _arenaSize(infrastructureFinder.ArenaSize()),
+        _poolSize(infrastructureFinder.PoolSize()),
         _typeType(infrastructureFinder.TypeType()),
         _dictType(infrastructureFinder.DictType()),
         _keysInDict(infrastructureFinder.KeysInDict()),
@@ -106,6 +108,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   TagHolder& _tagHolder;
   const InfrastructureFinder<Offset> _infrastructureFinder;
   const Offset _arenaStructArray;
+  const Offset _arenaSize;
+  const Offset _poolSize;
   const Offset _typeType;
   const Offset _dictType;
   const Offset _keysInDict;
@@ -133,21 +137,38 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
       const AllocationIndex* pFirstOutgoing;
       const AllocationIndex* pPastOutgoing;
       _graph.GetOutgoing(index, &pFirstOutgoing, &pPastOutgoing);
-      /*
-       * The most common case is that the python arenas are all
-       * allocated by mmap() but it is possible, based on an #ifdef
-       * that the arenas can be allocated via malloc().  This checks
-       * for the latter case in a way that favors the former; if no
-       * arenas are malloced, there will not be any outgoing references
-       * from the array of arena structures.
-       */
       for (const AllocationIndex* pNextOutgoing = pFirstOutgoing;
            pNextOutgoing != pPastOutgoing; pNextOutgoing++) {
+        /*
+         * References between allocations are always to the inner-most
+         * allocation that contains the referenced address.  The start
+         * of an allocation may or may not be the start of a pool, but
+         * the start of a pool is not the start of some block within
+         * the pool because each pool has a header.
+         */
         AllocationIndex arenaCandidateIndex = *pNextOutgoing;
-        Offset arenaCandidate =
-            _directory.AllocationAt(arenaCandidateIndex)->Address();
-        if (_infrastructureFinder.ArenaStructFor(arenaCandidate) != 0) {
-          _tagHolder.TagAllocation(arenaCandidateIndex, _mallocedArenaTagIndex);
+        const Allocation* allocation =
+            _directory.AllocationAt(arenaCandidateIndex);
+        Offset arenaCandidate = allocation->Address();
+        Offset allocationSize = allocation->Size();
+
+        if (allocationSize == _poolSize) {
+          if (!allocation->IsWrapped()) {
+            continue;
+          }
+          Offset firstPoolAddress = arenaCandidate;
+          allocation = _directory.AllocationAt(--arenaCandidateIndex);
+          arenaCandidate = allocation->Address();
+          Offset allocationSize = allocation->Size();
+          if (arenaCandidate + allocationSize < firstPoolAddress + _poolSize) {
+            continue;
+          }
+        }
+        if (allocationSize >= _arenaSize) {
+          if (_infrastructureFinder.ArenaStructFor(arenaCandidate) != 0) {
+            _tagHolder.TagAllocation(arenaCandidateIndex,
+                                     _mallocedArenaTagIndex);
+          }
         }
       }
       return true;

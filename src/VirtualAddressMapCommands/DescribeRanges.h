@@ -40,7 +40,7 @@ class DescribeRanges : public Commands::Subcommand {
              << ") uses 0x" << range._size << " bytes.\n";
       output << "Region use: " << range._value << "\n";
       if (range._value != _keyForUnknown) {
-        (void)_describer.Describe(context, rangeBase, false, false);
+        (void)_describer.DescribeRange(context, rangeBase);
       }
       output << "\n";
     }

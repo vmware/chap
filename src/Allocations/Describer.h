@@ -56,6 +56,17 @@ class Describer : public chap::Describer<Offset> {
     return true;
   }
 
+  /*
+   * Describe the range of memory that has the given page-aligned
+   * address, but only if this describer covers the entire mapped range.
+   */
+  virtual bool DescribeRange(Commands::Context& /* context */,
+                             Offset /* addressToDescribe */) const {
+    // An allocation describer doesn't cover the entire range that
+    // contains the allocation.
+    return false;
+  }
+
   void Describe(Commands::Context& context, AllocationIndex index,
                 const Allocation& allocation, bool explain,
                 Offset offsetInAllocation, bool showAddresses) const {
@@ -115,7 +126,8 @@ class Describer : public chap::Describer<Offset> {
        * is very allocator specific.  In particular for free allocations
        * they might be thread cached (reserved for allocation by some
        * particular thread) or for libc malloc they might be on a fast
-       * bin list or not.
+       * bin list or not.  An explanation of a free allocation might also
+       * defer to the allocation finder.
        */
       if (isUsed) {
         if (!isLeaked) {

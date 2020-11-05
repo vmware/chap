@@ -1,4 +1,4 @@
-// Copyright (c) 2017,2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019,2020 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -16,5 +16,13 @@ class Describer {
    */
   virtual bool Describe(Commands::Context& context, Offset addressToDescribe,
                         bool explain, bool showAddresses) const = 0;
+  /*
+   * Describe the range of memory that has the given page-aligned
+   * address, but only if this describer covers the entire mapped range.
+   */
+  virtual bool DescribeRange(Commands::Context& context,
+                             Offset addressToDescribe) const {
+    return Describe(context, addressToDescribe, false, false);
+  }
 };
 }  // namespace chap
