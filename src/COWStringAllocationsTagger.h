@@ -49,6 +49,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
       return;
     }
 
+    bool cPlusPlus11ABIFound = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
              moduleDirectory.begin();
          it != moduleDirectory.end(); ++it) {
@@ -65,7 +66,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
           Offset base = itRange->_base;
           Offset limit = itRange->_limit;
           typename VirtualAddressMap<Offset>::const_iterator itVirt =
-             _addressMap.find(base);
+              _addressMap.find(base);
           const char* check = itVirt.GetImage() + (base - itVirt.Base());
           const char* checkLimit = check + (limit - base) - 26;
           for (; check < checkLimit; check++) {
@@ -73,12 +74,18 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
               return;
             }
             if (!strncmp(check, "_ZNSt7__cxx1112basic_string", 27)) {
-              _enabled = false;
-              return;
+              cPlusPlus11ABIFound = true;
             }
           }
         }
       }
+    }
+    if (cPlusPlus11ABIFound) {
+      /*
+       * We found evidence that the C++ 11 ABI is present, but no evidence
+       * that the older ABI is.
+       */
+      _enabled = false;
     }
   }
 

@@ -48,6 +48,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
       return;
     }
 
+    bool preCPlusPlus11ABIFound = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
              moduleDirectory.begin();
          it != moduleDirectory.end(); ++it) {
@@ -72,12 +73,19 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
               return;
             }
             if (!strncmp(check, "_ZNSs6assign", 12)) {
-              _enabled = false;
-              return;
+              preCPlusPlus11ABIFound = true;
             }
           }
         }
       }
+    }
+    if (preCPlusPlus11ABIFound) {
+      /*
+       * We found no evidence that the C++ 11 ABI is present, but evidence
+       * that the older ABI is.
+       */
+      _enabled = false;
+      return;
     }
   }
 
