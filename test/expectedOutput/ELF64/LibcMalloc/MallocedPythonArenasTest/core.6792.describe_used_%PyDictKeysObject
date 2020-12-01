@@ -1,0 +1,3885 @@
+Anchored allocation at 227d690 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "The most base type"
+
+Anchored allocation at 227dce0 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 227e5b0 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "__builtin__"
+"__doc__" : "Built-in functions, exceptions, and other objects.
+
+Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices."
+
+Anchored allocation at 22815c0 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22821d0 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2282de0 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2283d00 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "int(x[, base]) -> integer
+
+Convert a string or number to an integer, if possible.  A floating point
+argument will be truncated towards zero (this does not include a string
+representation of a floating point number!)  When converting a string, use
+the optional base.  It is an error to supply a base when converting a
+non-string.  If base is zero, the proper base is guessed based on the
+string content.  If the argument is outside the integer range a
+long object will be returned instead."
+
+Anchored allocation at 2284a30 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "bool(x) -> bool
+
+Returns True when the argument x is true, False otherwise.
+The builtins True and False are the only two instances of the class bool.
+The class bool is a subclass of the class int, and cannot be subclassed."
+
+Anchored allocation at 2285290 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "str(object) -> string
+
+Return a nice string representation of the object.
+If the argument is a string, the return value is the same object."
+
+Anchored allocation at 22861b0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "bytearray(iterable_of_ints) -> bytearray.
+bytearray(string, encoding[, errors]) -> bytearray.
+bytearray(bytes_or_bytearray) -> mutable copy of bytes_or_bytearray.
+bytearray(memory_view) -> bytearray.
+
+Construct an mutable bytearray object from:
+  - an iterable yielding integers in range(256)
+  - a text string encoded using the specified encoding
+  - a bytes or a bytearray object
+  - any object implementing the buffer API.
+
+bytearray(int) -> bytearray.
+
+Construct a zero-initialized bytearray of the given length."
+
+Anchored allocation at 22870d0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "list() -> new empty list
+list(iterable) -> new list initialized from iterable's items"
+
+Anchored allocation at 2287f20 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "super(type) -> unbound super object
+super(type, obj) -> bound super object; requires isinstance(obj, type)
+super(type, type2) -> bound super object; requires issubclass(type2, type)
+Typical use to call a cooperative superclass method:
+class C(B):
+    def meth(self, arg):
+        super(C, self).meth(arg)"
+
+Anchored allocation at 22884b0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "xrange([start,] stop[, step]) -> xrange object
+
+Like range(), but instead of returning a list, returns an object that
+generates the numbers in the range on demand.  For looping, this is 
+slightly faster than range() and more memory efficient."
+
+Anchored allocation at 2288d20 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "dict() -> new empty dictionary
+dict(mapping) -> new dictionary initialized from a mapping object's
+    (key, value) pairs
+dict(iterable) -> new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+        d[k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs
+    in the keyword argument list.  For example:  dict(one=1, two=2)"
+
+Anchored allocation at 2289c40 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "set() -> new empty set object
+set(iterable) -> new set object
+
+Build an unordered collection of unique elements."
+
+Anchored allocation at 228ab60 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "unicode(string [, encoding[, errors]]) -> object
+
+Create a new Unicode object from the given encoded string.
+encoding defaults to the current default string encoding.
+errors can be 'strict', 'replace' or 'ignore' and defaults to 'strict'."
+
+Anchored allocation at 228b770 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "slice([start,] stop[, step])
+
+Create a slice object.  This is used for extended slicing (e.g. a[0:10:2])."
+
+Anchored allocation at 228c0f0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "complex(real[, imag]) -> complex number
+
+Create a complex number from a real part and an optional imaginary part.
+This is equivalent to (real + imag*1j) where imag defaults to 0."
+
+Anchored allocation at 228cd00 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "buffer(object [, offset[, size]])
+
+Create a new buffer object which references the given object.
+The buffer will reference a slice of the target object from the
+start of the object (or at the specified offset). The slice will
+extend to the end of the target object (or with the specified size)."
+
+Anchored allocation at 228d010 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "float(x) -> floating point number
+
+Convert a string or number to a floating point number, if possible."
+
+Anchored allocation at 228e1b0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "long(x[, base]) -> integer
+
+Convert a string or number to a long integer, if possible.  A floating
+point argument will be truncated towards zero (this does not include a
+string representation of a floating point number!)  When converting a
+string, use the optional base.  It is an error to supply a base when
+converting a non-string."
+
+Anchored allocation at 228f0d0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "frozenset() -> empty frozenset object
+frozenset(iterable) -> frozenset object
+
+Build an immutable unordered collection of unique elements."
+
+Anchored allocation at 228fce0 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2290300 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "tuple() -> empty tuple
+tuple(iterable) -> tuple initialized from iterable's items
+
+If the argument is a tuple, the return value is the same object."
+
+Anchored allocation at 22910d0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "reversed(sequence) -> reverse iterator over values of the sequence
+
+Return a reverse iterator"
+
+Anchored allocation at 2291930 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "code(argcount, nlocals, stacksize, flags, codestring, constants, names,
+      varnames, filename, name, firstlineno, lnotab[, freevars[, cellvars]])
+
+Create a code object.  Not for the faint of heart."
+
+Anchored allocation at 2292540 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2292850 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2292c80 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22933c0 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2293fd0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "classobj(name, bases, dict)
+
+Create a class object.  The name must be a string; the second argument
+a tuple of classes, and the third a dictionary."
+
+Anchored allocation at 22945f0 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2295200 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2295510 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2295940 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22960e0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "instance(class[, dict])
+
+Create an instance without calling its __init__() method.
+The class must be a classic class.
+If present, dict must be a dictionary or None."
+
+Anchored allocation at 2296cf0 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22991b0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "sys.floatinfo
+
+A structseq holding information about the float type. It contains low level
+information about the precision and internal representation. Please study
+your system's :file:`float.h` for more information."
+
+Anchored allocation at 229b770 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/linecache.pyc"
+"__name__" : "linecache"
+"__doc__" : "Cache lines from files.
+
+This is intended to read lines from modules imported -- hence if a filename
+is not found, it will look down the module search path for a file by
+that name.
+"
+
+Anchored allocation at 229c440 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "warnings"
+"__doc__" : "Holds the result of a single showwarning() call."
+
+Anchored allocation at 229c870 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Define names for all type symbols known in the standard interpreter.
+
+Types that are part of optional modules (e.g. array) are not listed.
+"
+"__file__" : "/usr/lib64/python2.6/types.pyc"
+"__name__" : "types"
+
+Anchored allocation at 229d870 of size c08
+This allocation matches pattern PyDictKeysObject.
+"default_action" : "default"
+"__file__" : "/usr/lib64/python2.6/warnings.pyc"
+"__name__" : "warnings"
+"defaultaction" : "default"
+"__doc__" : "Python part of the warnings subsystem."
+
+Anchored allocation at 229ee30 of size 188
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "warnings"
+"__doc__" : "A context manager that copies and restores the warnings filter upon
+    exiting the context.
+
+    The 'record' argument specifies whether warnings should be captured by a
+    custom implementation of warnings.showwarning() and be appended to a list
+    returned by the context manager. Otherwise None is returned by the context
+    manager. The objects appended to the list are arguments whose attributes
+    mirror the arguments to showwarning().
+
+    The 'module' argument is to specify an alternative module to the module
+    named 'warnings' and imported under that name. This argument is only useful
+    when testing the warnings module itself.
+
+    "
+
+Anchored allocation at 229f260 of size c08
+This allocation matches pattern PyDictKeysObject.
+"pardir" : ".."
+"sep" : "/"
+"defpath" : ":/bin:/usr/bin"
+"pathsep" : ":"
+"curdir" : "."
+"devnull" : "/dev/null"
+"__doc__" : "Common operations on Posix pathnames.
+
+Instead of importing this module directly, import os and refer to
+this module as os.path.  The "os.path" name is an alias for this
+module on Posix systems; on other systems (e.g. Mac, Windows),
+os.path provides the same operations in a manner specific to that
+platform, and is an alias to another module (e.g. macpath, ntpath).
+
+Some of this can actually be useful on non-Posix systems too, e.g.
+for manipulation of the pathname component of URLs.
+"
+"__file__" : "/usr/lib64/python2.6/posixpath.pyc"
+"__name__" : "posixpath"
+"extsep" : "."
+
+Anchored allocation at 22a0aa0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "UserDict"
+
+Anchored allocation at 22a25c0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/abc.pyc"
+"__name__" : "abc"
+"__doc__" : "Abstract Base Classes (ABCs) according to PEP 3119."
+
+Anchored allocation at 22a3d70 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "abc"
+"__doc__" : "Metaclass for defining Abstract Base Classes (ABCs).
+
+    Use this metaclass to create an ABC.  An ABC can be subclassed
+    directly, and then acts as a mix-in class.  You can also register
+    unrelated concrete classes (even built-in classes) and unrelated
+    ABCs as 'virtual subclasses' -- these and their descendants will
+    be considered subclasses of the registering ABC by the built-in
+    issubclass() function, but the registering ABC won't show up in
+    their MRO (Method Resolution Order) nor will method
+    implementations defined by the registering ABC be callable (not
+    even via super()).
+
+    "
+
+Anchored allocation at 22a47e0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22a58f0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22a6f30 of size c08
+This allocation matches pattern PyDictKeysObject.
+"prefix" : "/usr"
+"byteorder" : "little"
+"executable" : "/usr/bin/python"
+"copyright" : "Copyright (c) 2001-2010 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved."
+"exec_prefix" : "/usr"
+"platform" : "linux2"
+"version" : "2.6.6 (r266:84292, Jan 22 2014, 09:42:36) 
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]"
+"__doc__" : "This module provides access to some objects used or maintained by the
+interpreter and to functions that interact strongly with the interpreter.
+
+Dynamic objects:
+
+argv -- command line arguments; argv[0] is the script pathname if known
+path -- module search path; path[0] is the script directory, else ''
+modules -- dictionary of loaded modules
+
+displayhook -- called to show results in an interactive session
+excepthook -- called to handle any uncaught exception other than SystemExit
+  To customize printing in an interactive session or to install a custom
+  top-level exception handler, assign other functions to replace these.
+
+exitfunc -- if sys.exitfunc exists, this routine is called when Python exits
+  Assigning to sys.exitfunc is deprecated; use the atexit module instead.
+
+stdin -- standard input file object; used by raw_input() and input()
+stdout -- standard output file object; used by the print statement
+stderr -- standard error object; used for error messages
+  By assigning other file objects (or objects that behave like files)
+  to these, it is possible to redirect all of the interpreter's I/O.
+
+last_type -- type of last uncaught exception
+last_value -- value of last uncaught exception
+last_traceback -- traceback of last uncaught exception
+  These three are only available in an interactive session after a
+  traceback has been printed.
+
+exc_type -- type of exception currently being handled
+exc_value -- value of exception currently being handled
+exc_traceback -- traceback of exception currently being handled
+  The function exc_info() should be used instead of these three,
+  because it is thread-safe.
+
+Static objects:
+
+maxint -- the largest supported integer (the smallest is -maxint-1)
+maxsize -- the largest supported length of containers.
+maxunicode -- the largest supported character
+builtin_module_names -- tuple of module names built into this interpreter
+version -- the version of this interpreter as a string
+version_info -- version information as a tuple
+hexversion -- version information encoded as a single integer
+copyright -- copyright notice pertaining to this interpreter
+platform -- platform identifier
+executable -- pathname of this Python interpreter
+prefix -- prefix used to find the Python library
+exec_prefix -- prefix used to find the machine-specific Python library
+__stdin__ -- the original stdin; don't touch!
+__stdout__ -- the original stdout; don't touch!
+__stderr__ -- the original stderr; don't touch!
+__displayhook__ -- the original displayhook; don't touch!
+__excepthook__ -- the original excepthook; don't touch!
+
+Functions:
+
+displayhook() -- print an object to the screen, and save it in __builtin__._
+excepthook() -- print an exception and its traceback to sys.stderr
+exc_info() -- return thread-safe information about the current exception
+exc_clear() -- clear the exception state for the current thread
+exit() -- exit the interpreter by raising SystemExit
+getdlopenflags() -- returns flags to be used for dlopen() calls
+getprofile() -- get the global profiling function
+getrefcount() -- return the reference count for an object (plus one :-)
+getrecursionlimit() -- return the max recursion depth for the interpreter
+getsizeof() -- return the size of an object in bytes
+gettrace() -- get the global debug tracing function
+setcheckinterval() -- control how often the interpreter checks for events
+setdlopenflags() -- set the flags to be used for dlopen() calls
+setprofile() -- set the global profiling function
+setrecursionlimit() -- set the max recursion depth for the interpreter
+settrace() -- set the global debug tracing function
+"
+"__name__" : "sys"
+
+Anchored allocation at 22a8980 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "sys.flags
+
+Flags provided through command line arguments or environment vars."
+
+Anchored allocation at 22a9590 of size c08
+This allocation matches pattern PyDictKeysObject.
+"prefix" : "/usr"
+"executable" : "/usr/bin/python"
+"copyright" : "Copyright (c) 2001-2010 Python Software Foundation.
+All Rights Reserved.
+
+Copyright (c) 2000 BeOpen.com.
+All Rights Reserved.
+
+Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+All Rights Reserved.
+
+Copyright (c) 1991-1995 Stichting Mathematisch Centrum, Amsterdam.
+All Rights Reserved."
+"exec_prefix" : "/usr"
+"platform" : "linux2"
+"version" : "2.6.6 (r266:84292, Jan 22 2014, 09:42:36) 
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-4)]"
+"__doc__" : "This module provides access to some objects used or maintained by the
+interpreter and to functions that interact strongly with the interpreter.
+
+Dynamic objects:
+
+argv -- command line arguments; argv[0] is the script pathname if known
+path -- module search path; path[0] is the script directory, else ''
+modules -- dictionary of loaded modules
+
+displayhook -- called to show results in an interactive session
+excepthook -- called to handle any uncaught exception other than SystemExit
+  To customize printing in an interactive session or to install a custom
+  top-level exception handler, assign other functions to replace these.
+
+exitfunc -- if sys.exitfunc exists, this routine is called when Python exits
+  Assigning to sys.exitfunc is deprecated; use the atexit module instead.
+
+stdin -- standard input file object; used by raw_input() and input()
+stdout -- standard output file object; used by the print statement
+stderr -- standard error object; used for error messages
+  By assigning other file objects (or objects that behave like files)
+  to these, it is possible to redirect all of the interpreter's I/O.
+
+last_type -- type of last uncaught exception
+last_value -- value of last uncaught exception
+last_traceback -- traceback of last uncaught exception
+  These three are only available in an interactive session after a
+  traceback has been printed.
+
+exc_type -- type of exception currently being handled
+exc_value -- value of exception currently being handled
+exc_traceback -- traceback of exception currently being handled
+  The function exc_info() should be used instead of these three,
+  because it is thread-safe.
+
+Static objects:
+
+maxint -- the largest supported integer (the smallest is -maxint-1)
+maxsize -- the largest supported length of containers.
+maxunicode -- the largest supported character
+builtin_module_names -- tuple of module names built into this interpreter
+version -- the version of this interpreter as a string
+version_info -- version information as a tuple
+hexversion -- version information encoded as a single integer
+copyright -- copyright notice pertaining to this interpreter
+platform -- platform identifier
+executable -- pathname of this Python interpreter
+prefix -- prefix used to find the Python library
+exec_prefix -- prefix used to find the machine-specific Python library
+__stdin__ -- the original stdin; don't touch!
+__stdout__ -- the original stdout; don't touch!
+__stderr__ -- the original stderr; don't touch!
+__displayhook__ -- the original displayhook; don't touch!
+__excepthook__ -- the original excepthook; don't touch!
+
+Functions:
+
+displayhook() -- print an object to the screen, and save it in __builtin__._
+excepthook() -- print an exception and its traceback to sys.stderr
+exc_info() -- return thread-safe information about the current exception
+exc_clear() -- clear the exception state for the current thread
+exit() -- exit the interpreter by raising SystemExit
+getdlopenflags() -- returns flags to be used for dlopen() calls
+getprofile() -- get the global profiling function
+getrefcount() -- return the reference count for an object (plus one :-)
+getrecursionlimit() -- return the max recursion depth for the interpreter
+getsizeof() -- return the size of an object in bytes
+gettrace() -- get the global debug tracing function
+setcheckinterval() -- control how often the interpreter checks for events
+setdlopenflags() -- set the flags to be used for dlopen() calls
+setprofile() -- set the global profiling function
+setrecursionlimit() -- set the max recursion depth for the interpreter
+settrace() -- set the global debug tracing function
+"
+"__name__" : "sys"
+"byteorder" : "little"
+
+Anchored allocation at 22aa1a0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Common base class for all exceptions"
+
+Anchored allocation at 22aadb0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Base class for I/O related errors."
+
+Anchored allocation at 22abae0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Invalid syntax."
+
+Anchored allocation at 22ac6f0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Unicode encoding error."
+
+Anchored allocation at 22acb20 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Unicode decoding error."
+
+Anchored allocation at 22acf50 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Unicode translation error."
+
+Anchored allocation at 22aec70 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "module(name[, doc])
+
+Create a module object.
+The name must be a string; the optional doc argument can have any type."
+
+Anchored allocation at 22af290 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Python's standard exception class hierarchy.
+
+Exceptions found here are defined both in the exceptions module and the
+built-in namespace.  It is recommended that user-defined exceptions
+inherit from Exception.  See the documentation for the exception
+inheritance hierarchy.
+"
+"__name__" : "exceptions"
+
+Anchored allocation at 22afea0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "exceptions"
+"__doc__" : "Python's standard exception class hierarchy.
+
+Exceptions found here are defined both in the exceptions module and the
+built-in namespace.  It is recommended that user-defined exceptions
+inherit from Exception.  See the documentation for the exception
+inheritance hierarchy.
+"
+
+Anchored allocation at 22b0ab0 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "__builtin__"
+"__doc__" : "Built-in functions, exceptions, and other objects.
+
+Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices."
+
+Anchored allocation at 22b3e20 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "zipimporter(archivepath) -> zipimporter object
+
+Create a new zipimporter instance. 'archivepath' must be a path to
+a zipfile, or to a specific path inside a zipfile. For example, it can be
+'/tmp/myimport.zip', or '/tmp/myimport.zip/mydirectory', if mydirectory is a
+valid directory inside the archive.
+
+'ZipImportError is raised if 'archivepath' doesn't point to a valid Zip
+archive.
+
+The 'archive' attribute of zipimporter objects contains the name of the
+zipfile targeted."
+
+Anchored allocation at 22b4ce0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "zipimport"
+"__doc__" : "zipimport provides support for importing Python modules from Zip archives.
+
+This module exports three objects:
+- zipimporter: a class; its constructor takes a path to a Zip archive.
+- ZipImportError: exception raised by zipimporter objects. It's a
+  subclass of ImportError, so it can be caught as ImportError, too.
+- _zip_directory_cache: a dict, mapping archive paths to zip directory
+  info dicts, as used in zipimporter._files.
+
+It is usually not needed to use the zipimport module explicitly; it is
+used by the builtin import mechanism for sys.path items that are paths
+to Zip archives."
+
+Anchored allocation at 22b5110 of size 188
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "zipimport"
+"__doc__" : "zipimport provides support for importing Python modules from Zip archives.
+
+This module exports three objects:
+- zipimporter: a class; its constructor takes a path to a Zip archive.
+- ZipImportError: exception raised by zipimporter objects. It's a
+  subclass of ImportError, so it can be caught as ImportError, too.
+- _zip_directory_cache: a dict, mapping archive paths to zip directory
+  info dicts, as used in zipimporter._files.
+
+It is usually not needed to use the zipimport module explicitly; it is
+used by the builtin import mechanism for sys.path items that are paths
+to Zip archives."
+
+Anchored allocation at 22b5ba0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "This module provides mechanisms to use signal handlers in Python.
+
+Functions:
+
+alarm() -- cause SIGALRM after a specified time [Unix only]
+setitimer() -- cause a signal (described below) after a specified
+               float time and the timer may restart then [Unix only]
+getitimer() -- get current value of timer [Unix only]
+signal() -- set the action for a given signal
+getsignal() -- get the signal action for a given signal
+pause() -- wait until a signal arrives [Unix only]
+default_int_handler() -- default SIGINT handler
+
+signal constants:
+SIG_DFL -- used to refer to the system default handler
+SIG_IGN -- used to ignore the signal
+NSIG -- number of defined signals
+SIGINT, SIGTERM, etc. -- signal numbers
+
+itimer constants:
+ITIMER_REAL -- decrements in real time, and delivers SIGALRM upon
+               expiration
+ITIMER_VIRTUAL -- decrements only when the process is executing,
+               and delivers SIGVTALRM upon expiration
+ITIMER_PROF -- decrements both when the process is executing and
+               when the system is executing on behalf of the process.
+               Coupled with ITIMER_VIRTUAL, this timer is usually
+               used to profile the time spent by the application
+               in user and kernel space. SIGPROF is delivered upon
+               expiration.
+
+
+*** IMPORTANT NOTICE ***
+A signal handler function is called with two arguments:
+the first is the signal number, the second is the interrupted stack frame."
+"__name__" : "signal"
+
+Anchored allocation at 22b6b70 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "This module provides mechanisms to use signal handlers in Python.
+
+Functions:
+
+alarm() -- cause SIGALRM after a specified time [Unix only]
+setitimer() -- cause a signal (described below) after a specified
+               float time and the timer may restart then [Unix only]
+getitimer() -- get current value of timer [Unix only]
+signal() -- set the action for a given signal
+getsignal() -- get the signal action for a given signal
+pause() -- wait until a signal arrives [Unix only]
+default_int_handler() -- default SIGINT handler
+
+signal constants:
+SIG_DFL -- used to refer to the system default handler
+SIG_IGN -- used to ignore the signal
+NSIG -- number of defined signals
+SIGINT, SIGTERM, etc. -- signal numbers
+
+itimer constants:
+ITIMER_REAL -- decrements in real time, and delivers SIGALRM upon
+               expiration
+ITIMER_VIRTUAL -- decrements only when the process is executing,
+               and delivers SIGVTALRM upon expiration
+ITIMER_PROF -- decrements both when the process is executing and
+               when the system is executing on behalf of the process.
+               Coupled with ITIMER_VIRTUAL, this timer is usually
+               used to profile the time spent by the application
+               in user and kernel space. SIGPROF is delivered upon
+               expiration.
+
+
+*** IMPORTANT NOTICE ***
+A signal handler function is called with two arguments:
+the first is the signal number, the second is the interrupted stack frame."
+"__name__" : "signal"
+
+Anchored allocation at 22b7bb0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"default_action" : "default"
+"__name__" : "_warnings"
+"__doc__" : "_warnings provides basic warning filtering support.
+It is a helper module to speed up interpreter start-up."
+
+Anchored allocation at 22bc490 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/UserDict.pyc"
+"__name__" : "UserDict"
+"__doc__" : "A more or less complete user-defined wrapper around dictionary objects."
+
+Anchored allocation at 22beef0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "site"
+"__doc__" : "Define the built-in 'help'.
+    This is a wrapper around pydoc.help (with a twist).
+
+    "
+
+Anchored allocation at 22bf690 of size 1808
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "This module makes available standard errno system symbols.
+
+The value of each symbol is the corresponding integer value,
+e.g., on most systems, errno.ENOENT equals the integer 2.
+
+The dictionary errno.errorcode maps numeric codes to symbol names,
+e.g., errno.errorcode[2] could be the string 'ENOENT'.
+
+Symbols that are not relevant to the underlying system are not defined.
+
+To map error codes to error messages, use the function os.strerror(),
+e.g. os.strerror(2) could return 'No such file or directory'."
+"__name__" : "errno"
+
+Anchored allocation at 22c0ea0 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22c14d0 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "errno"
+"__doc__" : "This module makes available standard errno system symbols.
+
+The value of each symbol is the corresponding integer value,
+e.g., on most systems, errno.ENOENT equals the integer 2.
+
+The dictionary errno.errorcode maps numeric codes to symbol names,
+e.g., errno.errorcode[2] could be the string 'ENOENT'.
+
+Symbols that are not relevant to the underlying system are not defined.
+
+To map error codes to error messages, use the function os.strerror(),
+e.g. os.strerror(2) could return 'No such file or directory'."
+
+Anchored allocation at 22c44e0 of size 3008
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22c7610 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22c8410 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "posix"
+"__doc__" : "This module provides access to operating system functionality that is
+standardized by the C Standard and the POSIX standard (a thinly
+disguised Unix interface).  Refer to the library manual and
+corresponding Unix manual entries for more information on calls."
+
+Anchored allocation at 22cb420 of size c08
+This allocation matches pattern PyDictKeysObject.
+"LESSOPEN" : "||/usr/bin/lesspipe.sh %s"
+"SSH_CLIENT" : "10.129.222.187 54382 22"
+"CVS_RSH" : "ssh"
+"LOGNAME" : "tim"
+"USER" : "tim"
+"QTDIR" : "/usr/lib64/qt-3.3"
+"PATH" : "/build/toolchain/lin64/jdk-1.7.0_51/bin:/build/trees/bin:/build/apps/bin:/mts-cm/home/tim/bin:/usr/lib64/qt-3.3/bin:/opt/quest/sbin:/opt/quest/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/build/toolchain/lin32/patch-2.5.9/bin:/build/toolchain/noarch/apache-ant-1.8.3/bin:/dbc/pa-dbc1129/tim/git/cayman_cmake/cmake/src/cmake-3.7.1-Linux-x86_64/bin"
+"gitdir" : "/dbc/pa-dbc1129/tim/git"
+"LANG" : "en_US.UTF-8"
+"QTLIB" : "/usr/lib64/qt-3.3/lib"
+"TERM" : "xterm-256color"
+"SHELL" : "/bin/bash"
+"QTINC" : "/usr/lib64/qt-3.3/include"
+"G_BROKEN_FILENAMES" : "1"
+"HISTSIZE" : "1000"
+"chapbin" : "/dbc/pa-dbc1129/tim/git/cayman_chap/build/obj/lin64+gcc6+clang/chap/build/chap"
+"HOME" : "/mts-cm/home/tim"
+"P4EDITOR" : "emacs"
+"chapsrc" : "/dbc/pa-dbc1129/tim/git/cayman_chap/chap/src"
+"TCROOT" : "/build/toolchain"
+"DBC_ENV" : "1"
+"P4CONFIG" : ".p4config"
+"_" : "/usr/bin/python"
+"SSH_CONNECTION" : "10.129.222.187 54382 10.162.210.29 22"
+"SSH_TTY" : "/dev/pts/70"
+"OLDPWD" : "/mts-cm/home/tim"
+"HOSTNAME" : "pa-dbc1129.eng.vmware.com"
+"HISTCONTROL" : "ignoredups"
+"SHLVL" : "1"
+"PWD" : "/dbc/pa-dbc1129/tim/git/cayman_chap/chap/src"
+"MAIL" : "/var/spool/mail/tim"
+"LS_COLORS" : "rs=0:di=38;5;27:ln=38;5;51:mh=44;38;5;15:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=05;48;5;232;38;5;15:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;34:*.tar=38;5;9:*.tgz=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lz=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.bz=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.rar=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.axv=38;5;13:*.anx=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.axa=38;5;45:*.oga=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:"
+
+Anchored allocation at 22cc730 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22cde40 of size 188
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "site"
+"__doc__" : "interactive prompt objects for printing the license text, a list of
+    contributors and the copyright notice."
+
+Anchored allocation at 22ce260 of size 3008
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22d1270 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "stat_result: Result from stat or lstat.
+
+This object may be accessed either as a tuple of
+  (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime)
+or via the attributes st_mode, st_ino, st_dev, st_nlink, st_uid, and so on.
+
+Posix/windows: If your platform supports st_blksize, st_blocks, st_rdev,
+or st_flags, they are available as attributes only.
+
+See os.stat for more information."
+
+Anchored allocation at 22d1e80 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "statvfs_result: Result from statvfs or fstatvfs.
+
+This object may be accessed either as a tuple of
+  (bsize, frsize, blocks, bfree, bavail, files, ffree, favail, flag, namemax),
+or via the attributes f_bsize, f_frsize, f_blocks, f_bfree, and so on.
+
+See os.statvfs for more information."
+
+Anchored allocation at 22d2a90 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "posix"
+"__doc__" : "This module provides access to operating system functionality that is
+standardized by the C Standard and the POSIX standard (a thinly
+disguised Unix interface).  Refer to the library manual and
+corresponding Unix manual entries for more information on calls."
+
+Anchored allocation at 22d6c30 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"pathsep" : ":"
+"linesep" : "
+"
+"devnull" : "/dev/null"
+"__file__" : "/usr/lib64/python2.6/os.pyc"
+"pardir" : ".."
+"sep" : "/"
+"defpath" : ":/bin:/usr/bin"
+"extsep" : "."
+"__name__" : "os"
+"name" : "posix"
+"__doc__" : "OS routines for Mac, NT, or Posix depending on what system we're on.
+
+This exports:
+  - all functions from posix, nt, os2, or ce, e.g. unlink, stat, etc.
+  - os.path is one of the modules posixpath, or ntpath
+  - os.name is 'posix', 'nt', 'os2', 'ce' or 'riscos'
+  - os.curdir is a string representing the current directory ('.' or ':')
+  - os.pardir is a string representing the parent directory ('..' or '::')
+  - os.sep is the (or a most common) pathname separator ('/' or ':' or '\\')
+  - os.extsep is the extension separator ('.' or '/')
+  - os.altsep is the alternate pathname separator (None or '/')
+  - os.pathsep is the component separator used in $PATH etc
+  - os.linesep is the line separator in text files ('\r' or '\n' or '\r\n')
+  - os.defpath is the default search path for executables
+  - os.devnull is the file path of the null device ('/dev/null', etc.)
+
+Programs that import and use 'os' stand a better chance of being
+portable between different platforms.  Of course, they must then
+only use functions that are defined by all platforms (e.g., unlink
+and opendir), and leave all pathname manipulation to os.path
+(e.g., split and join).
+"
+"curdir" : "."
+
+Anchored allocation at 22dabc0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/genericpath.pyc"
+"__name__" : "genericpath"
+"__doc__" : "
+Path operations common to more than one OS
+Do not use directly.  The OS specific modules import the appropriate
+functions from this module themselves.
+"
+
+Anchored allocation at 22db280 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Constants/functions for interpreting results of os.stat() and os.lstat().
+
+Suggested usage: from stat import *
+"
+"__file__" : "/usr/lib64/python2.6/stat.pyc"
+"__name__" : "stat"
+
+Anchored allocation at 22dc800 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "os"
+
+Anchored allocation at 22dd020 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22dd810 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22de2e0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22dedb0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22dfa70 of size 608
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+"__doc__" : "A set is a finite, iterable container.
+
+    This class provides concrete generic implementations of all
+    methods except for __contains__, __iter__ and __len__.
+
+    To override the comparisons (presumably for speed, as the
+    semantics are fixed), all you have to do is redefine __le__ and
+    then the other operations will automatically follow suit.
+    "
+
+Anchored allocation at 22e0cd0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e17d0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e1ea0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e2840 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e31e0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e34f0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Abstract Base Classes (ABCs) for collections, according to PEP 3119.
+
+DON'T USE THIS MODULE DIRECTLY!  The classes here should be imported
+via collections; they are defined here only to alleviate certain
+bootstrapping issues.  Unit tests are in test_collections.
+"
+"__file__" : "/usr/lib64/python2.6/_abcoll.pyc"
+"__name__" : "_abcoll"
+
+Anchored allocation at 22e44c0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e53c0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e5ec0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+"__doc__" : "All the operations on a read-only sequence.
+
+    Concrete subclasses must override __new__ or __init__,
+    __getitem__, and __len__.
+    "
+
+Anchored allocation at 22e6410 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "UserDict"
+
+Anchored allocation at 22e6c00 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "_abcoll"
+
+Anchored allocation at 22e7440 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 22e8400 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "Helper to provide extensibility for pickle/cPickle.
+
+This is only useful to add pickle support for extension types defined in
+C, not for instances of user-defined classes.
+"
+"__file__" : "/usr/lib64/python2.6/copy_reg.pyc"
+"__name__" : "copy_reg"
+
+Anchored allocation at 22faa60 of size c08
+This allocation matches pattern PyDictKeysObject.
+"USER_SITE" : "/mts-cm/home/tim/.local/lib/python2.6/site-packages"
+"USER_BASE" : "/mts-cm/home/tim/.local"
+"__doc__" : "Append module search paths for third-party packages to sys.path.
+
+****************************************************************
+* This module is automatically imported during initialization. *
+****************************************************************
+
+In earlier versions of Python (up to 1.5a3), scripts or modules that
+needed to use site-specific modules would place ``import site''
+somewhere near the top of their code.  Because of the automatic
+import, this is no longer necessary (but code that does it still
+works).
+
+This will append site-specific paths to the module search path.  On
+Unix (including Mac OSX), it starts with sys.prefix and
+sys.exec_prefix (if different) and appends
+lib/python<version>/site-packages as well as lib/site-python.
+On other platforms (such as Windows), it tries each of the
+prefixes directly, as well as with lib/site-packages appended.  The
+resulting directories, if they exist, are appended to sys.path, and
+also inspected for path configuration files.
+
+A path configuration file is a file whose name has the form
+<package>.pth; its contents are additional directories (one per line)
+to be added to sys.path.  Non-existing directories (or
+non-directories) are never added to sys.path; no directory is added to
+sys.path more than once.  Blank lines and lines beginning with
+'#' are skipped. Lines starting with 'import' are executed.
+
+For example, suppose sys.prefix and sys.exec_prefix are set to
+/usr/local and there is a directory /usr/local/lib/python2.5/site-packages
+with three subdirectories, foo, bar and spam, and two path
+configuration files, foo.pth and bar.pth.  Assume foo.pth contains the
+following:
+
+  # foo package configuration
+  foo
+  bar
+  bletch
+
+and bar.pth contains:
+
+  # bar package configuration
+  bar
+
+Then the following directories are added to sys.path, in this order:
+
+  /usr/local/lib/python2.5/site-packages/bar
+  /usr/local/lib/python2.5/site-packages/foo
+
+Note that bletch is omitted because it doesn't exist; bar precedes foo
+because bar.pth comes alphabetically before foo.pth; and spam is
+omitted because it is not mentioned in either path configuration file.
+
+After these path manipulations, an attempt is made to import a module
+named sitecustomize, which can perform arbitrary additional
+site-specific customizations.  If this import fails with an
+ImportError exception, it is silently ignored.
+
+"
+"__file__" : "/usr/lib64/python2.6/site.pyc"
+"__name__" : "site"
+
+Anchored allocation at 22fda90 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__doc__" : "file(name[, mode[, buffering]]) -> file object
+
+Open a file.  The mode can be 'r', 'w' or 'a' for reading (default),
+writing or appending.  The file will be created if it doesn't exist
+when opened for writing or appending; it will be truncated when
+opened for writing.  Add a 'b' to the mode for binary files.
+Add a '+' to the mode to allow simultaneous reading and writing.
+If the buffering argument is given, 0 means unbuffered, 1 means line
+buffered, and larger numbers specify the buffer size.  The preferred way
+to open a file is with the builtin open() function.
+Add a 'U' to mode to open the file for input with universal newline
+support.  Any line ending in the input file will be seen as a '\n'
+in Python.  Also, a file so opened gains the attribute 'newlines';
+the value for this attribute is one of None (no newline read yet),
+'\r', '\n', '\r\n' or a tuple containing all the newline types seen.
+
+'U' cannot be combined with 'w' or '+' mode.
+"
+
+Anchored allocation at 22fee50 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "site"
+
+Anchored allocation at 2300070 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/encodings/utf_8.pyc"
+"__package__" : "encodings"
+"__name__" : "encodings.utf_8"
+"__doc__" : " Python 'utf-8' Codec
+
+
+Written by Marc-Andre Lemburg (mal@lemburg.com).
+
+(c) Copyright CNRI, All Rights Reserved. NO WARRANTY.
+
+"
+
+Anchored allocation at 2301410 of size 308
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2302600 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/site-packages/abrt_exception_handler.pyc"
+"__name__" : "abrt_exception_handler"
+"__author__" : "Harald Hoyer <harald@redhat.com>"
+"__doc__" : "
+Module for the ABRT exception handling hook
+"
+
+Anchored allocation at 2302910 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/encodings/__init__.pyc"
+"__package__" : "encodings"
+"_unknown" : "--unknown--"
+"__name__" : "encodings"
+"_norm_encoding_map" : "                                              . 0123456789       ABCDEFGHIJKLMNOPQRSTUVWXYZ      abcdefghijklmnopqrstuvwxyz                                                                                                                                     "
+"__doc__" : " Standard "encodings" Package
+
+    Standard Python encoding modules are stored in this package
+    directory.
+
+    Codec modules must have names corresponding to normalized encoding
+    names as defined in the normalize_encoding() function below, e.g.
+    'utf-8' must be implemented by the module 'utf_8.py'.
+
+    Each codec module must export the following interface:
+
+    * getregentry() -> codecs.CodecInfo object
+    The getregentry() API must a CodecInfo object with encoder, decoder,
+    incrementalencoder, incrementaldecoder, streamwriter and streamreader
+    atttributes which adhere to the Python Codec Interface Standard.
+
+    In addition, a module may optionally also define the following
+    APIs which are then used by the package's codec search function:
+
+    * getaliases() -> sequence of encoding name strings to use as aliases
+
+    Alias names returned by getaliases() must be normalized encoding
+    names as defined by normalize_encoding().
+
+Written by Marc-Andre Lemburg (mal@lemburg.com).
+
+(c) Copyright CNRI, All Rights Reserved. NO WARRANTY.
+
+"
+
+Anchored allocation at 23031c0 of size 318
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/encodings/aliases.pyc"
+"__name__" : "encodings.aliases"
+"__doc__" : " Encoding Aliases Support
+
+    This module is used by the encodings package search function to
+    map encodings names to module names.
+
+    Note that the search function normalizes the encoding names before
+    doing the lookup, so the mapping will have to map normalized
+    encoding names to module names.
+
+    Contents:
+
+        The following aliases dictionary contains mappings of all IANA
+        character set names for which the Python core library provides
+        codecs. In addition to these, a few Python specific codec
+        aliases have also been added.
+
+"
+
+Anchored allocation at 23034e0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "_codecs"
+
+Anchored allocation at 23040f0 of size c08
+This allocation matches pattern PyDictKeysObject.
+"__name__" : "_codecs"
+
+Anchored allocation at 2306a80 of size 188
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+"__doc__" : "
+    An IncrementalEncoder encodes an input in multiple steps. The input can be
+    passed piece by piece to the encode() method. The IncrementalEncoder remembers
+    the state of the Encoding process between calls to encode().
+    "
+
+Anchored allocation at 23070f0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+"__doc__" : "
+    This subclass of IncrementalEncoder can be used as the baseclass for an
+    incremental encoder if the encoder must keep some of the output in a
+    buffer between calls to encode().
+    "
+
+Anchored allocation at 2307bf0 of size 188
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+"__doc__" : "
+    An IncrementalDecoder decodes an input in multiple steps. The input can be
+    passed piece by piece to the decode() method. The IncrementalDecoder
+    remembers the state of the decoding process between calls to decode().
+    "
+
+Anchored allocation at 23085a0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+"__doc__" : "
+    This subclass of IncrementalDecoder can be used as the baseclass for an
+    incremental decoder if the decoder must be able to handle incomplete byte
+    sequences.
+    "
+
+Anchored allocation at 23088b0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+
+Anchored allocation at 2308eb0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+
+Anchored allocation at 23094a0 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+"encoding" : "unknown"
+"__doc__" : " StreamReaderWriter instances allow wrapping streams which
+        work in both read and write modes.
+
+        The design is such that one can use the factory functions
+        returned by the codec.lookup() function to construct the
+        instance.
+
+    "
+
+Anchored allocation at 2309a90 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__module__" : "codecs"
+"data_encoding" : "unknown"
+"file_encoding" : "unknown"
+"__doc__" : " StreamRecoder instances provide a frontend - backend
+        view of encoding data.
+
+        They use the complete set of APIs returned by the
+        codecs.lookup() function to implement their task.
+
+        Data written to the stream is first decoded into an
+        intermediate format (which is dependent on the given codec
+        combination) and then written to the stream using an instance
+        of the provided Writer class.
+
+        In the other direction, data is read from the stream using a
+        Reader instance and then return encoded data to the caller.
+
+    "
+
+Anchored allocation at 230a700 of size 308
+This allocation matches pattern PyDictKeysObject.
+"name" : "utf-8"
+
+Anchored allocation at 230acf0 of size 318
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "sleepy.py"
+"__name__" : "__main__"
+
+Anchored allocation at 230b500 of size 308
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/lib-dynload/timemodule.so"
+"__name__" : "time"
+"__doc__" : "This module provides various functions to manipulate time values.
+
+There are two standard representations of time.  One is the number
+of seconds since the Epoch, in UTC (a.k.a. GMT).  It may be an integer
+or a floating point number (to represent fractions of seconds).
+The Epoch is system-defined; on Unix, it is generally January 1st, 1970.
+The actual value can be retrieved by calling gmtime(0).
+
+The other representation is a tuple of 9 integers giving local time.
+The tuple items are:
+  year (four digits, e.g. 1998)
+  month (1-12)
+  day (1-31)
+  hours (0-23)
+  minutes (0-59)
+  seconds (0-59)
+  weekday (0-6, Monday is 0)
+  Julian day (day in the year, 1-366)
+  DST (Daylight Savings Time) flag (-1, 0 or 1)
+If the DST flag is 0, the time is given in the regular time zone;
+if it is 1, the time is given in the DST time zone;
+if it is -1, mktime() should guess based on the date and time.
+
+Variables:
+
+timezone -- difference in seconds between UTC and local standard time
+altzone -- difference in  seconds between UTC and local DST time
+daylight -- whether local time should reflect DST
+tzname -- tuple of (standard time zone name, DST time zone name)
+
+Functions:
+
+time() -- return current time in seconds since the Epoch as a float
+clock() -- return CPU time since process start as a float
+sleep() -- delay for a number of seconds given as a float
+gmtime() -- convert seconds since Epoch to UTC tuple
+localtime() -- convert seconds since Epoch to local time tuple
+asctime() -- convert time tuple to string
+ctime() -- convert time in seconds to string
+mktime() -- convert local time tuple to seconds since Epoch
+strftime() -- convert time tuple to string according to format specification
+strptime() -- parse string to time tuple according to format specification
+tzset() -- change the local timezone"
+
+Anchored allocation at 2310710 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"BOM" : "\xff\xfe"
+"BOM64_BE" : "\x00\x00\xfe\xff"
+"__file__" : "/usr/lib64/python2.6/codecs.pyc"
+"BOM_UTF32" : "\xff\xfe\x00\x00"
+"BOM_BE" : "\xfe\xff"
+"BOM_UTF16_BE" : "\xfe\xff"
+"__name__" : "codecs"
+"BOM32_BE" : "\xfe\xff"
+"BOM_UTF32_LE" : "\xff\xfe\x00\x00"
+"BOM32_LE" : "\xff\xfe"
+"__doc__" : " codecs -- Python Codec Registry, API and helpers.
+
+
+Written by Marc-Andre Lemburg (mal@lemburg.com).
+
+(c) Copyright CNRI, All Rights Reserved. NO WARRANTY.
+
+"
+"BOM_UTF32_BE" : "\x00\x00\xfe\xff"
+"BOM_UTF16_LE" : "\xff\xfe"
+"BOM_LE" : "\xff\xfe"
+"BOM_UTF16" : "\xff\xfe"
+"BOM_UTF8" : "\xef\xbb\xbf"
+"BOM64_LE" : "\xff\xfe\x00\x00"
+
+Anchored allocation at 2313720 of size 3008
+This allocation matches pattern PyDictKeysObject.
+"iso_ir_6" : "ascii"
+"1140" : "cp1140"
+"tis620" : "tis_620"
+"iso8859" : "latin_1"
+"chinese" : "gb2312"
+"mskanji" : "cp932"
+"s_jis" : "shift_jis"
+"iso_celtic" : "iso8859_14"
+"utf32" : "utf_32"
+"ebcdic_cp_wt" : "cp037"
+"csibm863" : "cp863"
+"ebcdic_cp_he" : "cp424"
+"csHPRoman8" : "hp_roman8"
+"cp936" : "gbk"
+"thai" : "iso8859_11"
+"maccyrillic" : "mac_cyrillic"
+"csibm857" : "cp857"
+"iso_8859_6_1987" : "iso8859_6"
+"csibm855" : "cp855"
+"ibm1140" : "cp1140"
+"eucjis2004" : "euc_jis_2004"
+"csibm1026" : "cp1026"
+"ansi_x3_4_1968" : "ascii"
+"dbcs" : "mbcs"
+"rot13" : "rot_13"
+"ibm367" : "ascii"
+"tis_620_2529_1" : "tis_620"
+"eucjp" : "euc_jp"
+"latin10" : "iso8859_16"
+"shiftjis2004" : "shift_jis_2004"
+"932" : "cp932"
+"ibm1026" : "cp1026"
+"utf_16le" : "utf_16_le"
+"csibm500" : "cp500"
+"u32" : "utf_32"
+"iso_ir_127" : "iso8859_6"
+"uhc" : "cp949"
+"iso_8859_11" : "iso8859_11"
+"cspc862latinhebrew" : "cp862"
+"tis_620_2529_0" : "tis_620"
+"ksc5601" : "euc_kr"
+"iso_8859_11_2001" : "iso8859_11"
+"ibm424" : "cp424"
+"csibm869" : "cp869"
+"iso_ir_101" : "iso8859_2"
+"l5" : "iso8859_9"
+"ibm500" : "cp500"
+"csibm860" : "cp860"
+"csibm861" : "cp861"
+"csibm866" : "cp866"
+"korean" : "euc_kr"
+"csibm864" : "cp864"
+"csibm865" : "cp865"
+"iso_2022_kr" : "iso2022_kr"
+"maccentraleurope" : "mac_latin2"
+"eucjisx0213" : "euc_jisx0213"
+"iso_8859_16_2001" : "iso8859_16"
+"iso646_us" : "ascii"
+"iso_8859_3_1988" : "iso8859_3"
+"iso_8859_8_1988" : "iso8859_8"
+"ibm857" : "cp857"
+"l7" : "iso8859_13"
+"ibm855" : "cp855"
+"euckr" : "euc_kr"
+"l2" : "iso8859_2"
+"ibm852" : "cp852"
+"ibm850" : "cp850"
+"quopri" : "quopri_codec"
+"l8" : "iso8859_14"
+"l9" : "iso8859_15"
+"utf_16be" : "utf_16_be"
+"zlib" : "zlib_codec"
+"shiftjisx0213" : "shift_jisx0213"
+"latin" : "latin_1"
+"gb18030_2000" : "gb18030"
+"ebcdic_cp_us" : "cp037"
+"iso_2022_jp_2" : "iso2022_jp_2"
+"ibm437" : "cp437"
+"csbig5" : "big5"
+"cp1361" : "johab"
+"us" : "ascii"
+"ebcdic_cp_nl" : "cp037"
+"csisolatin1" : "latin_1"
+"csisolatin2" : "iso8859_2"
+"ksx1001" : "euc_kr"
+"csisolatin4" : "iso8859_4"
+"037" : "cp037"
+"csisolatin6" : "iso8859_10"
+"l6" : "iso8859_10"
+"iso_8859_10_1992" : "iso8859_10"
+"iso2022jp" : "iso2022_jp"
+"csisolatinarabic" : "iso8859_6"
+"quoted_printable" : "quopri_codec"
+"euc_cn" : "gb2312"
+"l10" : "iso8859_16"
+"l4" : "iso8859_4"
+"iso_ir_110" : "iso8859_4"
+"1256" : "cp1256"
+"1257" : "cp1257"
+"1254" : "cp1254"
+"1255" : "cp1255"
+"1252" : "cp1252"
+"1253" : "cp1253"
+"1250" : "cp1250"
+"1251" : "cp1251"
+"unicode_1_1_utf_7" : "utf_7"
+"ms950" : "cp950"
+"cskoi8r" : "koi8_r"
+"424" : "cp424"
+"1258" : "cp1258"
+"l3" : "iso8859_3"
+"iso_ir_199" : "iso8859_14"
+"hzgb" : "hz"
+"sjisx0213" : "shift_jisx0213"
+"ms1361" : "johab"
+"csiso58gb231280" : "gb2312"
+"l1" : "latin_1"
+"cspc850multilingual" : "cp850"
+"857" : "cp857"
+"s_jisx0213" : "shift_jisx0213"
+"base_64" : "base64_codec"
+"iso_8859_5_1988" : "iso8859_5"
+"ks_c_5601" : "euc_kr"
+"u8" : "utf_8"
+"ibm039" : "cp037"
+"iso_ir_58" : "gb2312"
+"greek8" : "iso8859_7"
+"iso_ir_109" : "iso8859_3"
+"iso_2022_jp" : "iso2022_jp"
+"iso2022kr" : "iso2022_kr"
+"cp367" : "ascii"
+"r8" : "hp_roman8"
+"ms949" : "cp949"
+"ibm037" : "cp037"
+"ms_kanji" : "cp932"
+"uu" : "uu_codec"
+"iso_2022_jp_1" : "iso2022_jp_1"
+"iso_2022_jp_3" : "iso2022_jp_3"
+"646" : "ascii"
+"437" : "cp437"
+"iso2022jp_ext" : "iso2022_jp_ext"
+"utf16" : "utf_16"
+"cspc8codepage437" : "cp437"
+"iso_ir_226" : "iso8859_16"
+"iso_ir_100" : "latin_1"
+"jisx0213" : "euc_jis_2004"
+"hkscs" : "big5hkscs"
+"base64" : "base64_codec"
+"us_ascii" : "ascii"
+"iso_2022_jp_ext" : "iso2022_jp_ext"
+"csascii" : "ascii"
+"cp_is" : "cp861"
+"tis260" : "tactis"
+"iso2022jp_1" : "iso2022_jp_1"
+"ecma_118" : "iso8859_7"
+"iso2022jp_3" : "iso2022_jp_3"
+"iso2022jp_2" : "iso2022_jp_2"
+"s_jis_2004" : "shift_jis_2004"
+"shiftjis" : "shift_jis"
+"csisolatin3" : "iso8859_3"
+"ujis" : "euc_jp"
+"maclatin2" : "mac_latin2"
+"csiso2022kr" : "iso2022_kr"
+"855" : "cp855"
+"asmo_708" : "iso8859_6"
+"ibm775" : "cp775"
+"850" : "cp850"
+"ks_c_5601_1987" : "euc_kr"
+"852" : "cp852"
+"ms936" : "gbk"
+"iso_ir_138" : "iso8859_8"
+"u7" : "utf_7"
+"iso_8859_8" : "iso8859_8"
+"hex" : "hex_codec"
+"iso_8859_7" : "iso8859_7"
+"windows_1258" : "cp1258"
+"iso_8859_6" : "iso8859_6"
+"windows_1254" : "cp1254"
+"windows_1255" : "cp1255"
+"big5_tw" : "big5"
+"windows_1257" : "cp1257"
+"windows_1250" : "cp1250"
+"windows_1251" : "cp1251"
+"windows_1252" : "cp1252"
+"windows_1253" : "cp1253"
+"zip" : "zlib_codec"
+"csshiftjis" : "shift_jis"
+"ibm869" : "cp869"
+"ibm866" : "cp866"
+"ibm864" : "cp864"
+"ibm865" : "cp865"
+"ibm862" : "cp862"
+"ibm863" : "cp863"
+"ibm860" : "cp860"
+"ibm861" : "cp861"
+"ks_x_1001" : "euc_kr"
+"iso_2022_jp_2004" : "iso2022_jp_2004"
+"iso_8859_9_1989" : "iso8859_9"
+"windows_1256" : "cp1256"
+"unicodelittleunmarked" : "utf_16_le"
+"869" : "cp869"
+"iso_ir_126" : "iso8859_7"
+"1026" : "cp1026"
+"utf" : "utf_8"
+"cp_gr" : "cp869"
+"hz_gb_2312" : "hz"
+"861" : "cp861"
+"860" : "cp860"
+"863" : "cp863"
+"862" : "cp862"
+"865" : "cp865"
+"864" : "cp864"
+"ansi_x3.4_1986" : "ascii"
+"866" : "cp866"
+"utf8_ucs4" : "utf_8"
+"sjis_2004" : "shift_jis_2004"
+"ibm819" : "latin_1"
+"u_jis" : "euc_jp"
+"iso_646.irv_1991" : "ascii"
+"csibm424" : "cp424"
+"utf8_ucs2" : "utf_8"
+"utf_32le" : "utf_32_le"
+"u16" : "utf_16"
+"iso8859_1" : "latin_1"
+"936" : "gbk"
+"csisolatinhebrew" : "iso8859_8"
+"cp819" : "latin_1"
+"ecma_114" : "iso8859_6"
+"iso_8859_9" : "iso8859_9"
+"euccn" : "gb2312"
+"elot_928" : "iso8859_7"
+"ms932" : "cp932"
+"iso_8859_5" : "iso8859_5"
+"iso_8859_4" : "iso8859_4"
+"iso_8859_3" : "iso8859_3"
+"iso_8859_2" : "iso8859_2"
+"iso_8859_1" : "latin_1"
+"iso_8859_7_1987" : "iso8859_7"
+"iso_ir_166" : "tis_620"
+"iso_8859_2_1987" : "iso8859_2"
+"eucgb2312_cn" : "gb2312"
+"hebrew" : "iso8859_8"
+"arabic" : "iso8859_6"
+"cp154" : "ptcp154"
+"roman8" : "hp_roman8"
+"bz2" : "bz2_codec"
+"cspc775baltic" : "cp775"
+"cyrillic" : "iso8859_5"
+"iso_8859_14_1998" : "iso8859_14"
+"950" : "cp950"
+"euc_jis2004" : "euc_jis_2004"
+"utf8" : "utf_8"
+"csisolatin5" : "iso8859_9"
+"cspcp852" : "cp852"
+"iso_8859_16" : "iso8859_16"
+"iso_8859_15" : "iso8859_15"
+"iso_8859_14" : "iso8859_14"
+"iso_8859_13" : "iso8859_13"
+"iso_ir_157" : "iso8859_10"
+"iso2022jp_2004" : "iso2022_jp_2004"
+"iso_8859_10" : "iso8859_10"
+"ebcdic_cp_ch" : "cp500"
+"ebcdic_cp_be" : "cp500"
+"macgreek" : "mac_greek"
+"cyrillic-asian" : "ptcp154"
+"csibm037" : "cp037"
+"775" : "cp775"
+"ansi_x3.4_1968" : "ascii"
+"iso_8859_4_1988" : "iso8859_4"
+"maciceland" : "mac_iceland"
+"utf7" : "utf_7"
+"csisolatingreek" : "iso8859_7"
+"gb2312_1980" : "gb2312"
+"csisolatincyrillic" : "iso8859_5"
+"quotedprintable" : "quopri_codec"
+"csptcp154" : "ptcp154"
+"hz_gb" : "hz"
+"pt154" : "ptcp154"
+"macturkish" : "mac_turkish"
+"500" : "cp500"
+"csiso2022jp" : "iso2022_jp"
+"gb2312_80" : "gb2312"
+"latin4" : "iso8859_4"
+"latin5" : "iso8859_9"
+"latin6" : "iso8859_10"
+"latin7" : "iso8859_13"
+"latin1" : "latin_1"
+"latin2" : "iso8859_2"
+"949" : "cp949"
+"macroman" : "mac_roman"
+"iso_8859_1_1987" : "latin_1"
+"sjis" : "shift_jis"
+"latin8" : "iso8859_14"
+"latin9" : "iso8859_15"
+"greek" : "iso8859_7"
+"8859" : "latin_1"
+"big5_hkscs" : "big5hkscs"
+"iso_ir_144" : "iso8859_5"
+"unicodebigunmarked" : "utf_16_be"
+"latin3" : "iso8859_3"
+"iso_ir_148" : "iso8859_9"
+"utf_32be" : "utf_32_be"
+"ebcdic_cp_ca" : "cp037"
+"tis_620_0" : "tis_620"
+
+Anchored allocation at 2318e80 of size c08
+This allocation matches pattern PyDictKeysObject.
+
+Anchored allocation at 2319a90 of size 608
+This allocation matches pattern PyDictKeysObject.
+"__file__" : "/usr/lib64/python2.6/lib-dynload/timemodule.so"
+"__name__" : "time"
+"__doc__" : "This module provides various functions to manipulate time values.
+
+There are two standard representations of time.  One is the number
+of seconds since the Epoch, in UTC (a.k.a. GMT).  It may be an integer
+or a floating point number (to represent fractions of seconds).
+The Epoch is system-defined; on Unix, it is generally January 1st, 1970.
+The actual value can be retrieved by calling gmtime(0).
+
+The other representation is a tuple of 9 integers giving local time.
+The tuple items are:
+  year (four digits, e.g. 1998)
+  month (1-12)
+  day (1-31)
+  hours (0-23)
+  minutes (0-59)
+  seconds (0-59)
+  weekday (0-6, Monday is 0)
+  Julian day (day in the year, 1-366)
+  DST (Daylight Savings Time) flag (-1, 0 or 1)
+If the DST flag is 0, the time is given in the regular time zone;
+if it is 1, the time is given in the DST time zone;
+if it is -1, mktime() should guess based on the date and time.
+
+Variables:
+
+timezone -- difference in seconds between UTC and local standard time
+altzone -- difference in  seconds between UTC and local DST time
+daylight -- whether local time should reflect DST
+tzname -- tuple of (standard time zone name, DST time zone name)
+
+Functions:
+
+time() -- return current time in seconds since the Epoch as a float
+clock() -- return CPU time since process start as a float
+sleep() -- delay for a number of seconds given as a float
+gmtime() -- convert seconds since Epoch to UTC tuple
+localtime() -- convert seconds since Epoch to local time tuple
+asctime() -- convert time tuple to string
+ctime() -- convert time in seconds to string
+mktime() -- convert local time tuple to seconds since Epoch
+strftime() -- convert time tuple to string according to format specification
+strptime() -- parse string to time tuple according to format specification
+tzset() -- change the local timezone"
+
+Anchored allocation at 7f402610f010 of size 30ff0
+This allocation matches pattern PyDictKeysObject.
+"" : ""
+"latin_1_encode" : "latin_1_encode"
+"__lshift__" : "__lshift__"
+"n_sequence_fields" : "n_sequence_fields"
+"zipimporter" : "zipimporter"
+"prefix" : "prefix"
+"sleep" : "sleep"
+"csisolatin5" : "csisolatin5"
+"utf_16le" : "utf_16le"
+"_from_iterable" : "_from_iterable"
+"aliases" : "aliases"
+"abrt" : "abrt"
+"_filters" : "_filters"
+"umask" : "umask"
+"file_info" : "file_info"
+"TypeType" : "TypeType"
+"eucjp" : "eucjp"
+"sitedirs" : "sitedirs"
+"EX_NOINPUT" : "EX_NOINPUT"
+"localtime" : "localtime"
+"PC_PRIO_IO" : "PC_PRIO_IO"
+"__instancecheck__" : "__instancecheck__"
+"_Printer__name" : "_Printer__name"
+"iso_ir_199" : "iso_ir_199"
+"getloadavg" : "getloadavg"
+"euc_jis_2004" : "euc_jis_2004"
+"__oct__" : "__oct__"
+"isdir" : "isdir"
+"__nonzero__" : "__nonzero__"
+"RuntimeWarning" : "RuntimeWarning"
+"decodedbytes" : "decodedbytes"
+"MAX" : "MAX"
+"cmd" : "cmd"
+"extxt" : "extxt"
+"tis_620_0" : "tis_620_0"
+"indices" : "indices"
+"cmp" : "cmp"
+"sizehint" : "sizehint"
+"aliased_encoding" : "aliased_encoding"
+"ibm437" : "ibm437"
+"issubclass" : "issubclass"
+"maciceland" : "maciceland"
+"errors" : "errors"
+"PC_SYNC_IO" : "PC_SYNC_IO"
+"ST_NLINK" : "ST_NLINK"
+"pickle_function" : "pickle_function"
+"load_module" : "load_module"
+"SC_SAVED_IDS" : "SC_SAVED_IDS"
+"division_new" : "division_new"
+"SC_XOPEN_SHM" : "SC_XOPEN_SHM"
+"new" : "new"
+"iso_8859_8_1988" : "iso_8859_8_1988"
+"hzgb" : "hzgb"
+"SC_THREAD_DESTRUCTOR_ITERATIONS" : "SC_THREAD_DESTRUCTOR_ITERATIONS"
+"here" : "here"
+"cspc850multilingual" : "cspc850multilingual"
+"ibm1140" : "ibm1140"
+"codecs" : "codecs"
+"S_ISDIR" : "S_ISDIR"
+"path" : "path"
+"euc_kr" : "euc_kr"
+"getsid" : "getsid"
+"SC_XOPEN_UNIX" : "SC_XOPEN_UNIX"
+"S_IRWXG" : "S_IRWXG"
+"items" : "items"
+"k" : "k"
+"S_IRWXO" : "S_IRWXO"
+"S_IRWXU" : "S_IRWXU"
+"csshiftjis" : "csshiftjis"
+"iso_ir_226" : "iso_ir_226"
+"search_function" : "search_function"
+"EX_OSFILE" : "EX_OSFILE"
+"_abc_negative_cache" : "_abc_negative_cache"
+"dont_write_bytecode" : "dont_write_bytecode"
+"replace" : "replace"
+"Ellipsis" : "Ellipsis"
+"iso8859_16" : "iso8859_16"
+"SC_SHARED_MEMORY_OBJECTS" : "SC_SHARED_MEMORY_OBJECTS"
+"base_64" : "base_64"
+"mktime" : "mktime"
+"n_unnamed_fields" : "n_unnamed_fields"
+"SC_SHRT_MIN" : "SC_SHRT_MIN"
+"O_WRONLY" : "O_WRONLY"
+"newchars" : "newchars"
+"iso_8859_16_2001" : "iso_8859_16_2001"
+"type" : "type"
+"tell" : "tell"
+"PYTHONUSERBASE" : "PYTHONUSERBASE"
+"GetSetDescriptorType" : "GetSetDescriptorType"
+"isatty" : "isatty"
+"st_nlink" : "st_nlink"
+"iso2022jp_2004" : "iso2022jp_2004"
+"closerange" : "closerange"
+"__author__" : "__author__"
+"warn" : "warn"
+"__iter__" : "__iter__"
+"get_platform" : "get_platform"
+"join" : "join"
+"constructor_ob" : "constructor_ob"
+"err" : "err"
+"makedev" : "makedev"
+"strerror" : "strerror"
+"SC_XBS5_LPBIG_OFFBIG" : "SC_XBS5_LPBIG_OFFBIG"
+"tabcheck" : "tabcheck"
+"_showwarning" : "_showwarning"
+"unicode_internal_decode" : "unicode_internal_decode"
+"exceptions" : "exceptions"
+"backslashreplace" : "backslashreplace"
+"co_names" : "co_names"
+"gb18030" : "gb18030"
+"Lib" : "Lib"
+"endswith" : "endswith"
+"gb2312" : "gb2312"
+"CS_XBS5_ILP32_OFF32_LIBS" : "CS_XBS5_ILP32_OFF32_LIBS"
+"SIGCLD" : "SIGCLD"
+"unichr" : "unichr"
+"supports_unicode_filenames" : "supports_unicode_filenames"
+"enc" : "enc"
+"end" : "end"
+"getgroups" : "getgroups"
+"SC_2_C_DEV" : "SC_2_C_DEV"
+"_current_frames" : "_current_frames"
+"env" : "env"
+"getppid" : "getppid"
+"spawnle" : "spawnle"
+"S_IFSOCK" : "S_IFSOCK"
+"tm_year" : "tm_year"
+"register_error" : "register_error"
+"setgroups" : "setgroups"
+"types" : "types"
+"isdisjoint" : "isdisjoint"
+"BufferType" : "BufferType"
+"execusercustomize" : "execusercustomize"
+"_make_statvfs_result" : "_make_statvfs_result"
+"classmethod" : "classmethod"
+"alias" : "alias"
+"environ" : "environ"
+"NotImplementedError" : "NotImplementedError"
+"__" : "__"
+"vars" : "vars"
+"WarningMessage" : "WarningMessage"
+"mskanji" : "mskanji"
+"ibm500" : "ibm500"
+"_C" : "_C"
+"S_IMODE" : "S_IMODE"
+"SIGPOLL" : "SIGPOLL"
+"f_restricted" : "f_restricted"
+"__class__" : "__class__"
+"NameError" : "NameError"
+"iso_8859_14" : "iso_8859_14"
+"setgid" : "setgid"
+"kwargs" : "kwargs"
+"ms_kanji" : "ms_kanji"
+"cls" : "cls"
+"__setstate__" : "__setstate__"
+"SC_RTSIG_MAX" : "SC_RTSIG_MAX"
+"iso_8859_10" : "iso_8859_10"
+"cspc862latinhebrew" : "cspc862latinhebrew"
+"__subclasscheck__" : "__subclasscheck__"
+"iso646_us" : "iso646_us"
+"makepath" : "makepath"
+"l" : "l"
+"timeout" : "timeout"
+"debug" : "debug"
+"gi_code" : "gi_code"
+"rU" : "rU"
+"charmap_build" : "charmap_build"
+"ino1" : "ino1"
+"ino2" : "ino2"
+"UnicodeTranslateError" : "UnicodeTranslateError"
+"st_atime" : "st_atime"
+"_zip_directory_cache" : "_zip_directory_cache"
+"SC_2_UPE" : "SC_2_UPE"
+"ebcdic_cp_nl" : "ebcdic_cp_nl"
+"WIFSIGNALED" : "WIFSIGNALED"
+"EX_CONFIG" : "EX_CONFIG"
+"/usr/lib64/python2.6/lib-dynload/timemodule.so" : "/usr/lib64/python2.6/lib-dynload/timemodule.so"
+"iso_8859_1_1987" : "iso_8859_1_1987"
+"re" : "re"
+"rb" : "rb"
+"reader" : "reader"
+"unicode_1_1_utf_7" : "unicode_1_1_utf_7"
+"lib64" : "lib64"
+"FileType" : "FileType"
+"addbuilddir" : "addbuilddir"
+"EX_NOUSER" : "EX_NOUSER"
+"f_lasti" : "f_lasti"
+"EX_SOFTWARE" : "EX_SOFTWARE"
+"iso_ir_58" : "iso_ir_58"
+"getincrementalencoder" : "getincrementalencoder"
+"__setitem__" : "__setitem__"
+"W" : "W"
+"filenames" : "filenames"
+"ST_CTIME" : "ST_CTIME"
+"cp1255" : "cp1255"
+"traceback" : "traceback"
+"r8" : "r8"
+"ismount" : "ismount"
+"cp1256" : "cp1256"
+"ST_SIZE" : "ST_SIZE"
+"unknown" : "unknown"
+"make_identity_dict" : "make_identity_dict"
+"cp1251" : "cp1251"
+"SC_CHAR_MIN" : "SC_CHAR_MIN"
+"cp1250" : "cp1250"
+"cp1253" : "cp1253"
+"MASK" : "MASK"
+"RuntimeError" : "RuntimeError"
+"utf_32" : "utf_32"
+"enumerate" : "enumerate"
+"basestring" : "basestring"
+"isalnum" : "isalnum"
+"top" : "top"
+"CS_LFS_LDFLAGS" : "CS_LFS_LDFLAGS"
+"isalpha" : "isalpha"
+"setcheckinterval" : "setcheckinterval"
+"SC_PHYS_PAGES" : "SC_PHYS_PAGES"
+"B" : "B"
+"csisolatingreek" : "csisolatingreek"
+"SC_CHAR_BIT" : "SC_CHAR_BIT"
+"LongType" : "LongType"
+"Set" : "Set"
+"format_exception" : "format_exception"
+"UnboundMethodType" : "UnboundMethodType"
+"mknod" : "mknod"
+"SC_PII_SOCKET" : "SC_PII_SOCKET"
+"tzname" : "tzname"
+"SC_MAPPED_FILES" : "SC_MAPPED_FILES"
+"utf_32_be_encode" : "utf_32_be_encode"
+"pw_dir" : "pw_dir"
+"__radd__" : "__radd__"
+"altsepIndex" : "altsepIndex"
+"__main__" : "__main__"
+"seen" : "seen"
+"seek" : "seek"
+"__new__" : "__new__"
+"SC_LINE_MAX" : "SC_LINE_MAX"
+"-" : "-"
+"utf_32_le" : "utf_32_le"
+"decoding_map" : "decoding_map"
+"_formatter_parser" : "_formatter_parser"
+"__getstate__" : "__getstate__"
+"tblast" : "tblast"
+"stacklevel" : "stacklevel"
+"st_blocks" : "st_blocks"
+"DictMixin" : "DictMixin"
+"denominator" : "denominator"
+"normcase" : "normcase"
+"__rlshift__" : "__rlshift__"
+"entry" : "entry"
+"IndentationError" : "IndentationError"
+"saved_exc" : "saved_exc"
+"alarm" : "alarm"
+"partition" : "partition"
+"m" : "m"
+"ebcdic_cp_ca" : "ebcdic_cp_ca"
+"utf_16_be_encode" : "utf_16_be_encode"
+"AttributeError" : "AttributeError"
+"onceregistry" : "onceregistry"
+"dot" : "dot"
+"1140" : "1140"
+"EX_IOERR" : "EX_IOERR"
+"difference_update" : "difference_update"
+"known_paths" : "known_paths"
+"__str__" : "__str__"
+"CS_XBS5_ILP32_OFFBIG_LINTFLAGS" : "CS_XBS5_ILP32_OFFBIG_LINTFLAGS"
+"has_key" : "has_key"
+"once_registry" : "once_registry"
+"csHPRoman8" : "csHPRoman8"
+"S_ISSOCK" : "S_ISSOCK"
+"thai" : "thai"
+"StreamWriter" : "StreamWriter"
+"__base__" : "__base__"
+"SIGILL" : "SIGILL"
+"ST_NODIRATIME" : "ST_NODIRATIME"
+"version" : "version"
+"__call__" : "__call__"
+"macturkish" : "macturkish"
+"IncrementalDecoder" : "IncrementalDecoder"
+"oct" : "oct"
+"SystemExit" : "SystemExit"
+"dup2" : "dup2"
+"func_name" : "func_name"
+"setdefaultencoding" : "setdefaultencoding"
+"stop" : "stop"
+"SC_PII_OSI_CLTS" : "SC_PII_OSI_CLTS"
+"UF_NODUMP" : "UF_NODUMP"
+"popitem" : "popitem"
+"X" : "X"
+"reload" : "reload"
+"st_uid" : "st_uid"
+"SC_TIMER_MAX" : "SC_TIMER_MAX"
+"pardir" : "pardir"
+"result" : "result"
+"linebuffer" : "linebuffer"
+"USER_SITE" : "USER_SITE"
+"__rand__" : "__rand__"
+"quopri_codec" : "quopri_codec"
+"ValuesView" : "ValuesView"
+"filename" : "filename"
+"C" : "C"
+"extend" : "extend"
+"defaultaction" : "defaultaction"
+"stat_float_times" : "stat_float_times"
+"warn_explicit" : "warn_explicit"
+"__unicode__" : "__unicode__"
+"ST_NOEXEC" : "ST_NOEXEC"
+"SC_AIO_PRIO_DELTA_MAX" : "SC_AIO_PRIO_DELTA_MAX"
+"1253" : "1253"
+"_getframe" : "_getframe"
+"SHUT_WR" : "SHUT_WR"
+"iso_2022_jp_ext" : "iso_2022_jp_ext"
+"EX_DATAERR" : "EX_DATAERR"
+"tis260" : "tis260"
+"readsize" : "readsize"
+"loader" : "loader"
+"ascii_decode" : "ascii_decode"
+"iterable" : "iterable"
+"union" : "union"
+"_reconstructor" : "_reconstructor"
+"NotImplementedType" : "NotImplementedType"
+"SIGINT" : "SIGINT"
+"_execvpe" : "_execvpe"
+"SC_COLL_WEIGHTS_MAX" : "SC_COLL_WEIGHTS_MAX"
+"maxsize" : "maxsize"
+"csibm424" : "csibm424"
+"itervalues" : "itervalues"
+"__doc__" : "__doc__"
+"__len__" : "__len__"
+"SC_FSYNC" : "SC_FSYNC"
+"ob_type" : "ob_type"
+"get_source" : "get_source"
+"euc_jis2004" : "euc_jis2004"
+"WNOHANG" : "WNOHANG"
+"UnicodeEncodeError" : "UnicodeEncodeError"
+"f_exc_value" : "f_exc_value"
+"SC_PRIORITY_SCHEDULING" : "SC_PRIORITY_SCHEDULING"
+"PC_NAME_MAX" : "PC_NAME_MAX"
+"zlib" : "zlib"
+"SC_MQ_PRIO_MAX" : "SC_MQ_PRIO_MAX"
+"n" : "n"
+"f_bfree" : "f_bfree"
+"CS_XBS5_LP64_OFF64_LDFLAGS" : "CS_XBS5_LP64_OFF64_LDFLAGS"
+"property" : "property"
+"FunctionType" : "FunctionType"
+"__ge__" : "__ge__"
+"hexversion" : "hexversion"
+"DictType" : "DictType"
+"MemoryError" : "MemoryError"
+"S_IXOTH" : "S_IXOTH"
+"it" : "it"
+"_false" : "_false"
+"hebrew" : "hebrew"
+"id" : "id"
+"Python" : "Python"
+"UnicodeWarning" : "UnicodeWarning"
+"__mro__" : "__mro__"
+"os2emx" : "os2emx"
+"iso_8859_16" : "iso_8859_16"
+"iso_8859_15" : "iso_8859_15"
+"complex" : "complex"
+"iso_8859_13" : "iso_8859_13"
+"split" : "split"
+"iso_8859_11" : "iso_8859_11"
+"xmlcharrefreplace" : "xmlcharrefreplace"
+"waitpid" : "waitpid"
+"getencoder" : "getencoder"
+"abstractmethod" : "abstractmethod"
+"__idiv__" : "__idiv__"
+"S_IREAD" : "S_IREAD"
+"SC_PII" : "SC_PII"
+"charmap_decode" : "charmap_decode"
+"confstr_names" : "confstr_names"
+"cp437" : "cp437"
+"S_IWGRP" : "S_IWGRP"
+"8859" : "8859"
+"_dump_registry" : "_dump_registry"
+"ebcdic_cp_ch" : "ebcdic_cp_ch"
+"iso2022_jp_ext" : "iso2022_jp_ext"
+"settimeout" : "settimeout"
+"OverflowError" : "OverflowError"
+"__ror__" : "__ror__"
+"EX_NOHOST" : "EX_NOHOST"
+"O_RDONLY" : "O_RDONLY"
+"iso_celtic" : "iso_celtic"
+"SF_SNAPSHOT" : "SF_SNAPSHOT"
+"__dict__" : "__dict__"
+"yes" : "yes"
+"keepends" : "keepends"
+"CS_LFS64_LIBS" : "CS_LFS64_LIBS"
+"__slotnames__" : "__slotnames__"
+"instance" : "instance"
+"cp500" : "cp500"
+"SC_NL_NMAX" : "SC_NL_NMAX"
+"tmpnam" : "tmpnam"
+"CS_XBS5_ILP32_OFFBIG_LIBS" : "CS_XBS5_ILP32_OFFBIG_LIBS"
+"altzone" : "altzone"
+"rng" : "rng"
+"textwrap" : "textwrap"
+"st_mode" : "st_mode"
+"updatecache" : "updatecache"
+"_MutableMapping__marker" : "_MutableMapping__marker"
+"SC_2_CHAR_TERM" : "SC_2_CHAR_TERM"
+"ctime" : "ctime"
+"SC_SIGQUEUE_MAX" : "SC_SIGQUEUE_MAX"
+"line0withoutend" : "line0withoutend"
+"renames" : "renames"
+"getsizeof" : "getsizeof"
+"_extension_registry" : "_extension_registry"
+"SC_XOPEN_LEGACY" : "SC_XOPEN_LEGACY"
+"__long__" : "__long__"
+"_Printer__lines" : "_Printer__lines"
+"conf_enabled" : "conf_enabled"
+"aliasmbcs" : "aliasmbcs"
+"old" : "old"
+"exc_clear" : "exc_clear"
+"intern" : "intern"
+"escape" : "escape"
+"getgid" : "getgid"
+"ctermid" : "ctermid"
+"setegid" : "setegid"
+"float_info" : "float_info"
+"__iand__" : "__iand__"
+"FloatType" : "FloatType"
+"getcwdu" : "getcwdu"
+"/" : "/"
+"SC_2_FORT_RUN" : "SC_2_FORT_RUN"
+"StringTypes" : "StringTypes"
+"new_comps" : "new_comps"
+"424" : "424"
+"ImportWarning" : "ImportWarning"
+"__ne__" : "__ne__"
+"gmtime" : "gmtime"
+"st_dev" : "st_dev"
+"_buffer_decode" : "_buffer_decode"
+"pickle_complex" : "pickle_complex"
+"s_jis_2004" : "s_jis_2004"
+"super" : "super"
+"deleter" : "deleter"
+"obj" : "obj"
+"utf32" : "utf32"
+"__length_hint__" : "__length_hint__"
+"numerator" : "numerator"
+"ST_INO" : "ST_INO"
+"BOM32_BE" : "BOM32_BE"
+"SC_NL_LANGMAX" : "SC_NL_LANGMAX"
+"O_DSYNC" : "O_DSYNC"
+"tempnam" : "tempnam"
+"getrecursionlimit" : "getrecursionlimit"
+"float" : "float"
+"getpgid" : "getpgid"
+"__and__" : "__and__"
+"SC_NZERO" : "SC_NZERO"
+"rounds" : "rounds"
+"__rpow__" : "__rpow__"
+"ptcp154" : "ptcp154"
+"SC_INT_MIN" : "SC_INT_MIN"
+"f_frsize" : "f_frsize"
+"PIPE" : "PIPE"
+"_Printer__data" : "_Printer__data"
+"default_action" : "default_action"
+"fork" : "fork"
+"__isub__" : "__isub__"
+"head" : "head"
+"utf_8" : "utf_8"
+"co_code" : "co_code"
+"epsilon" : "epsilon"
+"_mapping" : "_mapping"
+"utf_7" : "utf_7"
+"fstat" : "fstat"
+"encoder" : "encoder"
+"decoder" : "decoder"
+"SIGTERM" : "SIGTERM"
+"tm_wday" : "tm_wday"
+"wait4" : "wait4"
+"attr" : "attr"
+"wait3" : "wait3"
+"saved_tb" : "saved_tb"
+"CS_XBS5_LPBIG_OFFBIG_CFLAGS" : "CS_XBS5_LPBIG_OFFBIG_CFLAGS"
+"local_values" : "local_values"
+"no_site" : "no_site"
+"SC_XOPEN_XCU_VERSION" : "SC_XOPEN_XCU_VERSION"
+"_inverted_registry" : "_inverted_registry"
+"filterwarnings" : "filterwarnings"
+"SIGUSR2" : "SIGUSR2"
+"item" : "item"
+"_ClassType" : "_ClassType"
+"SIGIOT" : "SIGIOT"
+"EnvironmentError" : "EnvironmentError"
+"co_cellvars" : "co_cellvars"
+"timezone" : "timezone"
+"SC_PASS_MAX" : "SC_PASS_MAX"
+"SC_PII_INTERNET" : "SC_PII_INTERNET"
+"archive" : "archive"
+"WEXITSTATUS" : "WEXITSTATUS"
+"line0withend" : "line0withend"
+"__reduce_ex__" : "__reduce_ex__"
+"no" : "no"
+"__slots__" : "__slots__"
+"ebcdic_cp_be" : "ebcdic_cp_be"
+"nt" : "nt"
+"unicodelittleunmarked" : "unicodelittleunmarked"
+"genericpath" : "genericpath"
+"E" : "E"
+"truncate" : "truncate"
+"SC_2_LOCALEDEF" : "SC_2_LOCALEDEF"
+"update" : "update"
+"StreamRecoder" : "StreamRecoder"
+"getegid" : "getegid"
+"gb2312_80" : "gb2312_80"
+"max_exp" : "max_exp"
+"getctime" : "getctime"
+"ignore_environment" : "ignore_environment"
+"__globals__" : "__globals__"
+"__ipow__" : "__ipow__"
+"big5_hkscs" : "big5_hkscs"
+"time" : "time"
+"setrecursionlimit" : "setrecursionlimit"
+"S_IWRITE" : "S_IWRITE"
+"chain" : "chain"
+"symmetric_difference" : "symmetric_difference"
+"SC_T_IOV_MAX" : "SC_T_IOV_MAX"
+"subclass" : "subclass"
+"cp424" : "cp424"
+"__rshift__" : "__rshift__"
+"SC_THREAD_KEYS_MAX" : "SC_THREAD_KEYS_MAX"
+"SC_XOPEN_XPG4" : "SC_XOPEN_XPG4"
+"co_firstlineno" : "co_firstlineno"
+"SC_XOPEN_XPG3" : "SC_XOPEN_XPG3"
+"S_IFDIR" : "S_IFDIR"
+"dbcs" : "dbcs"
+"format_exception_only" : "format_exception_only"
+"1255" : "1255"
+"SC_2_C_VERSION" : "SC_2_C_VERSION"
+"isspace" : "isspace"
+"ObjectType" : "ObjectType"
+"rel_list" : "rel_list"
+"__exit__" : "__exit__"
+"1250" : "1250"
+"delattr" : "delattr"
+"seteuid" : "seteuid"
+"fromkeys" : "fromkeys"
+"_Printer__files" : "_Printer__files"
+"SC_LONG_BIT" : "SC_LONG_BIT"
+"IndexError" : "IndexError"
+"SC_BC_BASE_MAX" : "SC_BC_BASE_MAX"
+"level" : "level"
+"SC_SELECT" : "SC_SELECT"
+"dig" : "dig"
+"iter" : "iter"
+"p" : "p"
+"1258" : "1258"
+"resetwarnings" : "resetwarnings"
+"LambdaType" : "LambdaType"
+"round" : "round"
+"dir" : "dir"
+"upper" : "upper"
+"lstrip" : "lstrip"
+"unicode_escape_encode" : "unicode_escape_encode"
+"iso_8859_10_1992" : "iso_8859_10_1992"
+"openlog" : "openlog"
+"abstractproperty" : "abstractproperty"
+"u32" : "u32"
+"Quitter" : "Quitter"
+"SC_NL_ARGMAX" : "SC_NL_ARGMAX"
+"utf_16_le_encode" : "utf_16_le_encode"
+"ms950" : "ms950"
+"True" : "True"
+"istitle" : "istitle"
+"MappingView" : "MappingView"
+"setregid" : "setregid"
+"extsep" : "extsep"
+"__hex__" : "__hex__"
+"wait" : "wait"
+"O_DIRECTORY" : "O_DIRECTORY"
+"csibm1026" : "csibm1026"
+"KeyboardInterrupt" : "KeyboardInterrupt"
+"S_IFMT" : "S_IFMT"
+"__repr__" : "__repr__"
+"437" : "437"
+"BaseException" : "BaseException"
+"O_RSYNC" : "O_RSYNC"
+"__getslice__" : "__getslice__"
+"handleMyException" : "handleMyException"
+"SIGXCPU" : "SIGXCPU"
+"iterencode" : "iterencode"
+"st_mtime" : "st_mtime"
+"rindex" : "rindex"
+"bool" : "bool"
+"curdir" : "curdir"
+"encode" : "encode"
+"__rfloordiv__" : "__rfloordiv__"
+"st_rdev" : "st_rdev"
+"F" : "F"
+"f_favail" : "f_favail"
+"pathconf" : "pathconf"
+"shiftjis2004" : "shiftjis2004"
+"iso_8859_5_1988" : "iso_8859_5_1988"
+"__defaults__" : "__defaults__"
+"__self__" : "__self__"
+"cat" : "cat"
+"values" : "values"
+"abrt_exception_handler" : "abrt_exception_handler"
+"cp775" : "cp775"
+"pickle" : "pickle"
+"fget" : "fget"
+"GeneratorExit" : "GeneratorExit"
+"sysconf" : "sysconf"
+"startswith" : "startswith"
+"iso_8859_7" : "iso_8859_7"
+"iso_8859_6" : "iso_8859_6"
+"ENOTDIR" : "ENOTDIR"
+"iso_8859_4" : "iso_8859_4"
+"iso_8859_3" : "iso_8859_3"
+"dotpth" : "dotpth"
+"iso_8859_1" : "iso_8859_1"
+"expandvars" : "expandvars"
+"BOM_LE" : "BOM_LE"
+"abort" : "abort"
+"o" : "o"
+"getregentry" : "getregentry"
+"__sizeof__" : "__sizeof__"
+"chroot" : "chroot"
+"s2" : "s2"
+"s1" : "s1"
+"unicode_escape_decode" : "unicode_escape_decode"
+"write" : "write"
+"dev2" : "dev2"
+"dev1" : "dev1"
+"iso_ir_157" : "iso_ir_157"
+"incrementaldecoder" : "incrementaldecoder"
+"forkpty" : "forkpty"
+"NotImplemented" : "NotImplemented"
+"map" : "map"
+"unsetenv" : "unsetenv"
+"max" : "max"
+"csptcp154" : "csptcp154"
+"__delslice__" : "__delslice__"
+"im_class" : "im_class"
+"SIGVTALRM" : "SIGVTALRM"
+"ITIMER_PROF" : "ITIMER_PROF"
+"sr" : "sr"
+"stdin" : "stdin"
+"UnboundLocalError" : "UnboundLocalError"
+"q" : "q"
+"setpgrp" : "setpgrp"
+"utf_8_encode" : "utf_8_encode"
+"fp1" : "fp1"
+"fp2" : "fp2"
+"formatwarning" : "formatwarning"
+"nondirs" : "nondirs"
+"sethelper" : "sethelper"
+"failobj" : "failobj"
+"__rdiv__" : "__rdiv__"
+"SC_AIO_MAX" : "SC_AIO_MAX"
+"tb_lasti" : "tb_lasti"
+"group" : "group"
+"ST_ATIME" : "ST_ATIME"
+"simplefilter" : "simplefilter"
+"platform" : "platform"
+"SC_AVPHYS_PAGES" : "SC_AVPHYS_PAGES"
+"splitext" : "splitext"
+"932" : "932"
+"main" : "main"
+"936" : "936"
+"expanduser" : "expanduser"
+"SC_EQUIV_CLASS_MAX" : "SC_EQUIV_CLASS_MAX"
+"sorted" : "sorted"
+"iso2022jp_2" : "iso2022jp_2"
+"iso2022_jp_3" : "iso2022_jp_3"
+"iso2022_jp_2" : "iso2022_jp_2"
+"iso2022_jp_1" : "iso2022_jp_1"
+"iso_2022_kr" : "iso_2022_kr"
+"name" : "name"
+"eucjisx0213" : "eucjisx0213"
+"no_user_site" : "no_user_site"
+"statvfs" : "statvfs"
+"setreuid" : "setreuid"
+"data_info" : "data_info"
+"win32" : "win32"
+"splitlines" : "splitlines"
+"followlinks" : "followlinks"
+"O_NOFOLLOW" : "O_NOFOLLOW"
+"ex" : "ex"
+"dirname" : "dirname"
+"_norm_encoding_map" : "_norm_encoding_map"
+"ST_RDONLY" : "ST_RDONLY"
+"BytesWarning" : "BytesWarning"
+"SIGALRM" : "SIGALRM"
+"SC_XOPEN_VERSION" : "SC_XOPEN_VERSION"
+"__builtins__" : "__builtins__"
+"args" : "args"
+"getcwd" : "getcwd"
+"warnoptions" : "warnoptions"
+"argv" : "argv"
+"py3k_warning" : "py3k_warning"
+"ord" : "ord"
+"u8" : "u8"
+"greek8" : "greek8"
+"l10" : "l10"
+"setdefault" : "setdefault"
+"iso2022kr" : "iso2022kr"
+"cp367" : "cp367"
+"BOM_BE" : "BOM_BE"
+"WUNTRACED" : "WUNTRACED"
+"ms949" : "ms949"
+"XRangeType" : "XRangeType"
+"iso_ir_138" : "iso_ir_138"
+"islower" : "islower"
+"isupper" : "isupper"
+"u7" : "u7"
+"info" : "info"
+"issubset" : "issubset"
+"csascii" : "csascii"
+"norm_encoding" : "norm_encoding"
+"mac_latin2" : "mac_latin2"
+"BooleanType" : "BooleanType"
+"message" : "message"
+"open" : "open"
+"size" : "size"
+"__subclasses__" : "__subclasses__"
+"latin_1_decode" : "latin_1_decode"
+"__loader__" : "__loader__"
+"os.path" : "os.path"
+"big5_tw" : "big5_tw"
+"bits" : "bits"
+"frame" : "frame"
+"confstr" : "confstr"
+"ibm869" : "ibm869"
+"ibm866" : "ibm866"
+"_codecs" : "_codecs"
+"ibm864" : "ibm864"
+"ibm865" : "ibm865"
+"ibm862" : "ibm862"
+"ibm863" : "ibm863"
+"ibm860" : "ibm860"
+"ibm861" : "ibm861"
+"getlines" : "getlines"
+"cp949" : "cp949"
+"copy" : "copy"
+"wpid" : "wpid"
+"translate" : "translate"
+"BOM32_LE" : "BOM32_LE"
+"setattr" : "setattr"
+"RequireAbsolutePath" : "RequireAbsolutePath"
+"macroman" : "macroman"
+"r" : "r"
+"posix" : "posix"
+"fullname" : "fullname"
+"PC_MAX_INPUT" : "PC_MAX_INPUT"
+"Container" : "Container"
+"euccn" : "euccn"
+"_get_filename" : "_get_filename"
+"__getattribute__" : "__getattribute__"
+"min_exp" : "min_exp"
+"any" : "any"
+"greek" : "greek"
+"csisolatin4" : "csisolatin4"
+"SC_XOPEN_REALTIME_THREADS" : "SC_XOPEN_REALTIME_THREADS"
+"PC_CHOWN_RESTRICTED" : "PC_CHOWN_RESTRICTED"
+"Mapping" : "Mapping"
+"codecaliases" : "codecaliases"
+"libpath" : "libpath"
+"PC_ASYNC_IO" : "PC_ASYNC_IO"
+"tis_620_2529_1" : "tis_620_2529_1"
+"tis_620_2529_0" : "tis_620_2529_0"
+"realpath" : "realpath"
+"getlogin" : "getlogin"
+"_pickle_stat_result" : "_pickle_stat_result"
+"trace" : "trace"
+"buffer" : "buffer"
+"normalize_encoding" : "normalize_encoding"
+"CS_LFS64_LINTFLAGS" : "CS_LFS64_LINTFLAGS"
+"path_list" : "path_list"
+"]" : "]"
+"AssertionError" : "AssertionError"
+"iso2022jp" : "iso2022jp"
+"f_trace" : "f_trace"
+"SC_THREAD_SAFE_FUNCTIONS" : "SC_THREAD_SAFE_FUNCTIONS"
+"linecache" : "linecache"
+"mro" : "mro"
+"iso_ir_144" : "iso_ir_144"
+"_formatter_field_name_split" : "_formatter_field_name_split"
+"iso_ir_148" : "iso_ir_148"
+"WTERMSIG" : "WTERMSIG"
+"iso_8859_9" : "iso_8859_9"
+"SIGTSTP" : "SIGTSTP"
+"cp1140" : "cp1140"
+"_Environ" : "_Environ"
+"subprocess" : "subprocess"
+"maxint" : "maxint"
+"__irshift__" : "__irshift__"
+"bytebuffer" : "bytebuffer"
+"data" : "data"
+"showwarning" : "showwarning"
+"iso_2022_jp" : "iso_2022_jp"
+"title" : "title"
+"OSError" : "OSError"
+"dict" : "dict"
+"CS_LFS_LIBS" : "CS_LFS_LIBS"
+"iso8859" : "iso8859"
+"reset" : "reset"
+"get" : "get"
+"_init_pathinfo" : "_init_pathinfo"
+"repr" : "repr"
+"big5" : "big5"
+"fileno" : "fileno"
+"S_ISBLK" : "S_ISBLK"
+"_category_name" : "_category_name"
+"pydoc" : "pydoc"
+"subtype" : "subtype"
+"sendall" : "sendall"
+"__module__" : "__module__"
+"softspace" : "softspace"
+"iso2022_jp_2004" : "iso2022_jp_2004"
+"SIGQUIT" : "SIGQUIT"
+"cp1361" : "cp1361"
+"excepthook" : "excepthook"
+"start_list" : "start_list"
+"co_varnames" : "co_varnames"
+"StringType" : "StringType"
+"__all__" : "__all__"
+"quoted_printable" : "quoted_printable"
+"cp936" : "cp936"
+"makedirs" : "makedirs"
+"SC_SEMAPHORES" : "SC_SEMAPHORES"
+"errorcode" : "errorcode"
+"getattr" : "getattr"
+"ModuleType" : "ModuleType"
+"stat_result" : "stat_result"
+"getdefaultencoding" : "getdefaultencoding"
+"tup" : "tup"
+"comp" : "comp"
+"co_lnotab" : "co_lnotab"
+"iso_8859_2" : "iso_8859_2"
+"bytes_warning" : "bytes_warning"
+"FrameType" : "FrameType"
+"filenameIndex" : "filenameIndex"
+"_extension_cache" : "_extension_cache"
+"UserWarning" : "UserWarning"
+"data_encoding" : "data_encoding"
+"s" : "s"
+"ST_DEV" : "ST_DEV"
+"utf_16_le_decode" : "utf_16_le_decode"
+"jisx0213" : "jisx0213"
+"tzset" : "tzset"
+"StreamReaderWriter" : "StreamReaderWriter"
+"pow" : "pow"
+"topdown" : "topdown"
+"pop" : "pop"
+"StopIteration" : "StopIteration"
+"SC_UIO_MAXIOV" : "SC_UIO_MAXIOV"
+"ms932" : "ms932"
+"SIGKILL" : "SIGKILL"
+"S_IWOTH" : "S_IWOTH"
+"S_IWUSR" : "S_IWUSR"
+"SIGUSR1" : "SIGUSR1"
+"path_hooks" : "path_hooks"
+"unicode_internal_encode" : "unicode_internal_encode"
+"500" : "500"
+"u16" : "u16"
+"execvpe" : "execvpe"
+"readlines" : "readlines"
+"iso_ir_166" : "iso_ir_166"
+"S_ISVTX" : "S_ISVTX"
+"SC_MQ_OPEN_MAX" : "SC_MQ_OPEN_MAX"
+"__eq__" : "__eq__"
+"hasattr" : "hasattr"
+"__mod__" : "__mod__"
+"ksx1001" : "ksx1001"
+"compile" : "compile"
+"__rrshift__" : "__rrshift__"
+"utf_16_le" : "utf_16_le"
+"setuid" : "setuid"
+"IntType" : "IntType"
+"stdout" : "stdout"
+"execsitecustomize" : "execsitecustomize"
+"KeysView" : "KeysView"
+"EX_OK" : "EX_OK"
+"meta_path" : "meta_path"
+"f_builtins" : "f_builtins"
+"SIGCONT" : "SIGCONT"
+"SyntaxWarning" : "SyntaxWarning"
+"__getformat__" : "__getformat__"
+"n_fields" : "n_fields"
+"ascii" : "ascii"
+"fdel" : "fdel"
+"__init__" : "__init__"
+"spawnlpe" : "spawnlpe"
+"__ior__" : "__ior__"
+"getdlopenflags" : "getdlopenflags"
+"cp_is" : "cp_is"
+"utf_16" : "utf_16"
+"<lambda>" : "<lambda>"
+"S_ISUID" : "S_ISUID"
+"isnumeric" : "isnumeric"
+"SC_BC_STRING_MAX" : "SC_BC_STRING_MAX"
+"_Helper" : "_Helper"
+"utf7" : "utf7"
+"I" : "I"
+"utf8" : "utf8"
+"Modules" : "Modules"
+"SC_POLL" : "SC_POLL"
+"CS_XBS5_LPBIG_OFFBIG_LDFLAGS" : "CS_XBS5_LPBIG_OFFBIG_LDFLAGS"
+"fchown" : "fchown"
+"SC_NPROCESSORS_CONF" : "SC_NPROCESSORS_CONF"
+"ntext" : "ntext"
+"env_base" : "env_base"
+"SIGRTMAX" : "SIGRTMAX"
+"displayhook" : "displayhook"
+"__flags__" : "__flags__"
+"O_NDELAY" : "O_NDELAY"
+"__int__" : "__int__"
+"PC_MAX_CANON" : "PC_MAX_CANON"
+"st_ino" : "st_ino"
+"addpackage" : "addpackage"
+"kill" : "kill"
+"BOM" : "BOM"
+"unicode" : "unicode"
+"<module>" : "<module>"
+"euc_jisx0213" : "euc_jisx0213"
+"SC_USHRT_MAX" : "SC_USHRT_MAX"
+"default_int_handler" : "default_int_handler"
+"hex_codec" : "hex_codec"
+"setBEGINLIBPATH" : "setBEGINLIBPATH"
+"SIGURG" : "SIGURG"
+"BOM64_BE" : "BOM64_BE"
+"subversion" : "subversion"
+"f_blocks" : "f_blocks"
+"SC_PII_INTERNET_STREAM" : "SC_PII_INTERNET_STREAM"
+"SC_EXPR_NEST_MAX" : "SC_EXPR_NEST_MAX"
+"SIG_IGN" : "SIG_IGN"
+"real" : "real"
+"SC_2_SW_DEV" : "SC_2_SW_DEV"
+"SC_SSIZE_MAX" : "SC_SSIZE_MAX"
+"print_file_and_line" : "print_file_and_line"
+"modname" : "modname"
+"BOM_UTF32" : "BOM_UTF32"
+"ListType" : "ListType"
+"tis620" : "tis620"
+"CS_XBS5_ILP32_OFF32_LDFLAGS" : "CS_XBS5_ILP32_OFF32_LDFLAGS"
+"mod" : "mod"
+"t" : "t"
+"output" : "output"
+"PC_SOCK_MAXBUF" : "PC_SOCK_MAXBUF"
+"ebcdic_cp_us" : "ebcdic_cp_us"
+"SC_SCHAR_MAX" : "SC_SCHAR_MAX"
+"funcobj" : "funcobj"
+"tm_sec" : "tm_sec"
+"slice" : "slice"
+"SC_TZNAME_MAX" : "SC_TZNAME_MAX"
+"CS_XBS5_ILP32_OFF32_CFLAGS" : "CS_XBS5_ILP32_OFF32_CFLAGS"
+"SC_LOGIN_NAME_MAX" : "SC_LOGIN_NAME_MAX"
+"iso_8859_6_1987" : "iso_8859_6_1987"
+"exit" : "exit"
+"sitedir" : "sitedir"
+"GeneratorType" : "GeneratorType"
+"islink" : "islink"
+"ibm852" : "ibm852"
+"iso2022_jp" : "iso2022_jp"
+"getitimer" : "getitimer"
+"rjust" : "rjust"
+"symmetric_difference_update" : "symmetric_difference_update"
+"__reduce__" : "__reduce__"
+"inspect" : "inspect"
+"SC_PAGE_SIZE" : "SC_PAGE_SIZE"
+"SC_ULONG_MAX" : "SC_ULONG_MAX"
+"__name__" : "__name__"
+"throw" : "throw"
+"_" : "_"
+"EncodedFile" : "EncodedFile"
+"ok" : "ok"
+"APPDATA" : "APPDATA"
+"__setslice__" : "__setslice__"
+"ms936" : "ms936"
+"whence" : "whence"
+"srw" : "srw"
+"co_stacksize" : "co_stacksize"
+"SC_THREAD_STACK_MIN" : "SC_THREAD_STACK_MIN"
+"utf16" : "utf16"
+"os" : "os"
+"us_ascii" : "us_ascii"
+"SC_NL_TEXTMAX" : "SC_NL_TEXTMAX"
+"O_LARGEFILE" : "O_LARGEFILE"
+"ENABLE_USER_SITE" : "ENABLE_USER_SITE"
+"strip" : "strip"
+"_cache" : "_cache"
+"__debug__" : "__debug__"
+"is_integer" : "is_integer"
+"log" : "log"
+"putenv" : "putenv"
+"find_module" : "find_module"
+"fdopen" : "fdopen"
+"_pickle_statvfs_result" : "_pickle_statvfs_result"
+"utf_32_le_decode" : "utf_32_le_decode"
+"hex" : "hex"
+"<uninitialized file>" : "<uninitialized file>"
+"decode" : "decode"
+"start" : "start"
+"rmdir" : "rmdir"
+"abs__file__" : "abs__file__"
+"_warnings" : "_warnings"
+"_InstanceType" : "_InstanceType"
+"__invert__" : "__invert__"
+"SOCK_STREAM" : "SOCK_STREAM"
+"X_OK" : "X_OK"
+"__get__" : "__get__"
+"1026" : "1026"
+"default" : "default"
+"SIGPWR" : "SIGPWR"
+"__le__" : "__le__"
+"windows_1252" : "windows_1252"
+"SIGHUP" : "SIGHUP"
+"cp819" : "cp819"
+"onerror" : "onerror"
+"modules" : "modules"
+"SC_TTY_NAME_MAX" : "SC_TTY_NAME_MAX"
+"BufferedIncrementalEncoder" : "BufferedIncrementalEncoder"
+"file" : "file"
+"getaliases" : "getaliases"
+"utf_32be" : "utf_32be"
+"check_enableusersite" : "check_enableusersite"
+"get_data" : "get_data"
+"execfile" : "execfile"
+"_abcoll" : "_abcoll"
+"utf-8" : "utf-8"
+"_Printer__dirs" : "_Printer__dirs"
+"iso2022_kr" : "iso2022_kr"
+"module_globals" : "module_globals"
+"usercustomize" : "usercustomize"
+"swapcase" : "swapcase"
+"latin_1" : "latin_1"
+"CS_LFS_CFLAGS" : "CS_LFS_CFLAGS"
+"BOM_UTF8" : "BOM_UTF8"
+"getuid" : "getuid"
+"S_IFBLK" : "S_IFBLK"
+"intersection_update" : "intersection_update"
+"SC_MEMLOCK_RANGE" : "SC_MEMLOCK_RANGE"
+"chown" : "chown"
+"u" : "u"
+"unicodebigunmarked" : "unicodebigunmarked"
+"bytearray" : "bytearray"
+"all" : "all"
+"SC_REALTIME_SIGNALS" : "SC_REALTIME_SIGNALS"
+"maccyrillic" : "maccyrillic"
+"chinese" : "chinese"
+"pth" : "pth"
+"bz2_codec" : "bz2_codec"
+"SC_THREADS" : "SC_THREADS"
+"ItimerError" : "ItimerError"
+"__rmod__" : "__rmod__"
+"utf_32_decode" : "utf_32_decode"
+"iterator" : "iterator"
+"pwent" : "pwent"
+"strptime" : "strptime"
+"linesep" : "linesep"
+"rcls" : "rcls"
+"__cmp__" : "__cmp__"
+"getsignal" : "getsignal"
+"tail" : "tail"
+"DictProxyType" : "DictProxyType"
+"rstrip" : "rstrip"
+"ibm1026" : "ibm1026"
+"tb" : "tb"
+"O_CREAT" : "O_CREAT"
+"encodings.utf_8" : "encodings.utf_8"
+"mbcs" : "mbcs"
+"CS_LFS64_LDFLAGS" : "CS_LFS64_LDFLAGS"
+"difference" : "difference"
+"utime" : "utime"
+"newpath" : "newpath"
+"tcsetpgrp" : "tcsetpgrp"
+"list" : "list"
+"isabs" : "isabs"
+"P_NOWAITO" : "P_NOWAITO"
+"euckr" : "euckr"
+"_abc_negative_cache_version" : "_abc_negative_cache_version"
+"stderr" : "stderr"
+"SC_SYNCHRONIZED_IO" : "SC_SYNCHRONIZED_IO"
+"__missing__" : "__missing__"
+"getprofile" : "getprofile"
+"EX_CANTCREAT" : "EX_CANTCREAT"
+"syslog" : "syslog"
+"__truediv__" : "__truediv__"
+"value" : "value"
+"__weakrefoffset__" : "__weakrefoffset__"
+"dispatch_table" : "dispatch_table"
+"abc" : "abc"
+"clock" : "clock"
+"sum" : "sum"
+"MAXLINES" : "MAXLINES"
+"abs" : "abs"
+"s_jis" : "s_jis"
+"hash" : "hash"
+"setpgid" : "setpgid"
+"component" : "component"
+"removeduppaths" : "removeduppaths"
+"fchdir" : "fchdir"
+"iso8859_4" : "iso8859_4"
+"SC_XOPEN_XPG2" : "SC_XOPEN_XPG2"
+"sepIndex" : "sepIndex"
+"search" : "search"
+"iso8859_6" : "iso8859_6"
+"CS_XBS5_LP64_OFF64_LIBS" : "CS_XBS5_LP64_OFF64_LIBS"
+"popen" : "popen"
+"__xor__" : "__xor__"
+"elot_928" : "elot_928"
+"SC_CHAR_MAX" : "SC_CHAR_MAX"
+"f_back" : "f_back"
+"action" : "action"
+"PC_PATH_MAX" : "PC_PATH_MAX"
+"verbose" : "verbose"
+"shiftjis" : "shiftjis"
+"SC_STREAM_MAX" : "SC_STREAM_MAX"
+"__setformat__" : "__setformat__"
+"getmtime" : "getmtime"
+"Reader" : "Reader"
+"SF_ARCHIVED" : "SF_ARCHIVED"
+"files" : "files"
+"855" : "855"
+"executable" : "executable"
+"_Printer__linecnt" : "_Printer__linecnt"
+"850" : "850"
+"852" : "852"
+"charmap_encode" : "charmap_encode"
+"__import__" : "__import__"
+"fdatasync" : "fdatasync"
+"StreamReader" : "StreamReader"
+"minor" : "minor"
+"clearcache" : "clearcache"
+"__coerce__" : "__coerce__"
+"abspath" : "abspath"
+"__isabstractmethod__" : "__isabstractmethod__"
+"S_ISCHR" : "S_ISCHR"
+"O_SYNC" : "O_SYNC"
+"zlib_codec" : "zlib_codec"
+"tb_next" : "tb_next"
+"SIGXFSZ" : "SIGXFSZ"
+"u_jis" : "u_jis"
+"encodings.aliases" : "encodings.aliases"
+"v" : "v"
+"ftruncate" : "ftruncate"
+"statvfs_result" : "statvfs_result"
+"csisolatinhebrew" : "csisolatinhebrew"
+"f1" : "f1"
+"f2" : "f2"
+"staticmethod" : "staticmethod"
+"prompt" : "prompt"
+"coerce" : "coerce"
+"Codec" : "Codec"
+"MutableSet" : "MutableSet"
+"cp154" : "cp154"
+"filter" : "filter"
+"tis_620" : "tis_620"
+"cspc775baltic" : "cspc775baltic"
+"cp950" : "cp950"
+"ValueError" : "ValueError"
+"csibm037" : "csibm037"
+"SliceType" : "SliceType"
+"fp" : "fp"
+"_hash" : "_hash"
+"mapping" : "mapping"
+"backslashreplace_errors" : "backslashreplace_errors"
+"unlink" : "unlink"
+"capitalize" : "capitalize"
+"tcgetpgrp" : "tcgetpgrp"
+"a" : "a"
+"utf_32_le_encode" : "utf_32_le_encode"
+"ascii_encode" : "ascii_encode"
+"register" : "register"
+"co_filename" : "co_filename"
+"utf_16_be" : "utf_16_be"
+"_resolve_link" : "_resolve_link"
+"help" : "help"
+"co_freevars" : "co_freevars"
+"SC_PII_OSI_COTS" : "SC_PII_OSI_COTS"
+"basename" : "basename"
+"uname" : "uname"
+"filters" : "filters"
+"_clear_type_cache" : "_clear_type_cache"
+"cp932" : "cp932"
+"SIGPROF" : "SIGPROF"
+"__weakref__" : "__weakref__"
+"csibm857" : "csibm857"
+"streamwriter" : "streamwriter"
+"csibm855" : "csibm855"
+"getpid" : "getpid"
+"F_OK" : "F_OK"
+"SC_PAGESIZE" : "SC_PAGESIZE"
+"devnull" : "devnull"
+"f_namemax" : "f_namemax"
+"rwa" : "rwa"
+"uhc" : "uhc"
+"StandardError" : "StandardError"
+"L" : "L"
+"ksc5601" : "ksc5601"
+"utf_32_ex_decode" : "utf_32_ex_decode"
+"PC_FILESIZEBITS" : "PC_FILESIZEBITS"
+"SC_ATEXIT_MAX" : "SC_ATEXIT_MAX"
+"buffering" : "buffering"
+"rsplit" : "rsplit"
+"latin10" : "latin10"
+"func_globals" : "func_globals"
+"execl" : "execl"
+"gi_running" : "gi_running"
+"always" : "always"
+"ibm857" : "ibm857"
+"ibm855" : "ibm855"
+"SC_XOPEN_ENH_I18N" : "SC_XOPEN_ENH_I18N"
+"ibm850" : "ibm850"
+"execv" : "execv"
+"utf_16_be_decode" : "utf_16_be_decode"
+"gb18030_2000" : "gb18030_2000"
+"reduce" : "reduce"
+"O_APPEND" : "O_APPEND"
+"utf_32le" : "utf_32le"
+"connect" : "connect"
+"isfile" : "isfile"
+"BEGINLIBPATH" : "BEGINLIBPATH"
+"BOM64_LE" : "BOM64_LE"
+"csisolatinarabic" : "csisolatinarabic"
+"euc_cn" : "euc_cn"
+"__abstractmethods__" : "__abstractmethods__"
+"iso_ir_110" : "iso_ir_110"
+"setsid" : "setsid"
+"lineno" : "lineno"
+"tm_hour" : "tm_hour"
+"print" : "print"
+"dirs" : "dirs"
+"None" : "None"
+"AF_UNIX" : "AF_UNIX"
+"co_flags" : "co_flags"
+"base" : "base"
+"clear_extension_cache" : "clear_extension_cache"
+"recv" : "recv"
+"ibm039" : "ibm039"
+"set_wakeup_fd" : "set_wakeup_fd"
+"getincrementaldecoder" : "getincrementaldecoder"
+"CS_LFS64_CFLAGS" : "CS_LFS64_CFLAGS"
+"ibm037" : "ibm037"
+"_Printer__setup" : "_Printer__setup"
+"iso_2022_jp_1" : "iso_2022_jp_1"
+"w" : "w"
+"iso_2022_jp_2" : "iso_2022_jp_2"
+"cspc8codepage437" : "cspc8codepage437"
+"major" : "major"
+"encoding" : "encoding"
+"cp1026" : "cp1026"
+"spawnve" : "spawnve"
+"ujis" : "ujis"
+"path_importer_cache" : "path_importer_cache"
+"ljust" : "ljust"
+"spawnvp" : "spawnvp"
+"__alloc__" : "__alloc__"
+"__float__" : "__float__"
+"ABCMeta" : "ABCMeta"
+"IncrementalEncoder" : "IncrementalEncoder"
+"posixpath" : "posixpath"
+"builtin_module_names" : "builtin_module_names"
+"SC_THREAD_ATTR_STACKSIZE" : "SC_THREAD_ATTR_STACKSIZE"
+"__ixor__" : "__ixor__"
+"InstanceType" : "InstanceType"
+"__rdivmod__" : "__rdivmod__"
+"SC_CHARCLASS_NAME_MAX" : "SC_CHARCLASS_NAME_MAX"
+"__thisclass__" : "__thisclass__"
+"EX_NOPERM" : "EX_NOPERM"
+"SC_BC_DIM_MAX" : "SC_BC_DIM_MAX"
+"settrace" : "settrace"
+"setprofile" : "setprofile"
+"st_gid" : "st_gid"
+"mac_turkish" : "mac_turkish"
+"getter" : "getter"
+"869" : "869"
+"b" : "b"
+"861" : "861"
+"860" : "860"
+"863" : "863"
+"862" : "862"
+"865" : "865"
+"SC_UCHAR_MAX" : "SC_UCHAR_MAX"
+"866" : "866"
+"str" : "str"
+"sts" : "sts"
+"UF_APPEND" : "UF_APPEND"
+"interactive" : "interactive"
+"st_ctime" : "st_ctime"
+"SIGFPE" : "SIGFPE"
+"conjugate" : "conjugate"
+"O_NONBLOCK" : "O_NONBLOCK"
+"EX_UNAVAILABLE" : "EX_UNAVAILABLE"
+"paths" : "paths"
+"DeprecationWarning" : "DeprecationWarning"
+"bz2" : "bz2"
+"lib" : "lib"
+"argrest" : "argrest"
+"geteuid" : "geteuid"
+"_entered" : "_entered"
+"__div__" : "__div__"
+"MethodType" : "MethodType"
+"SC_THREAD_PRIO_PROTECT" : "SC_THREAD_PRIO_PROTECT"
+"775" : "775"
+"shift_jisx0213" : "shift_jisx0213"
+"warnings" : "warnings"
+"chars" : "chars"
+"comps" : "comps"
+"ZeroDivisionError" : "ZeroDivisionError"
+"pathconf_names" : "pathconf_names"
+"IterableUserDict" : "IterableUserDict"
+"exc" : "exc"
+"clear" : "clear"
+"SC_CLK_TCK" : "SC_CLK_TCK"
+"iso_ir_6" : "iso_ir_6"
+"SyntaxError" : "SyntaxError"
+"fstatvfs" : "fstatvfs"
+"encodings.encodings" : "encodings.encodings"
+"ST_RELATIME" : "ST_RELATIME"
+"find" : "find"
+"S_ISFIFO" : "S_ISFIFO"
+"copyright" : "copyright"
+"writer" : "writer"
+"SC_SEM_NSEMS_MAX" : "SC_SEM_NSEMS_MAX"
+"fchmod" : "fchmod"
+"paths_seen" : "paths_seen"
+"8" : "8"
+"darwin" : "darwin"
+"__file__" : "__file__"
+"iso_8859_11_2001" : "iso_8859_11_2001"
+"csibm869" : "csibm869"
+"remove_extension" : "remove_extension"
+"O_RDWR" : "O_RDWR"
+"csibm863" : "csibm863"
+"csibm860" : "csibm860"
+"csibm861" : "csibm861"
+"False" : "False"
+"csibm864" : "csibm864"
+"csibm865" : "csibm865"
+"division_warning" : "division_warning"
+"ST_SYNCHRONOUS" : "ST_SYNCHRONOUS"
+"cskoi8r" : "cskoi8r"
+"bytes" : "bytes"
+"remove" : "remove"
+"x" : "x"
+"execlpe" : "execlpe"
+"set" : "set"
+"bytesdecoded" : "bytesdecoded"
+"sep" : "sep"
+"locale" : "locale"
+"add_extension" : "add_extension"
+"864" : "864"
+"csbig5" : "csbig5"
+"arg" : "arg"
+"SC_2_VERSION" : "SC_2_VERSION"
+"__imod__" : "__imod__"
+"isdecimal" : "isdecimal"
+"accept2dyear" : "accept2dyear"
+"locals" : "locals"
+"#" : "#"
+"SC_BC_SCALE_MAX" : "SC_BC_SCALE_MAX"
+"FloatingPointError" : "FloatingPointError"
+"utf_16_decode" : "utf_16_decode"
+"co_name" : "co_name"
+"as_integer_ratio" : "as_integer_ratio"
+"WIFCONTINUED" : "WIFCONTINUED"
+"FutureWarning" : "FutureWarning"
+"latin" : "latin"
+"lstat" : "lstat"
+"mac_iceland" : "mac_iceland"
+"lookup_error" : "lookup_error"
+"SC_ASYNCHRONOUS_IO" : "SC_ASYNCHRONOUS_IO"
+"SF_IMMUTABLE" : "SF_IMMUTABLE"
+"hp_roman8" : "hp_roman8"
+"__divmod__" : "__divmod__"
+"frozenset" : "frozenset"
+"c" : "c"
+"TypeError" : "TypeError"
+"SC_XOPEN_REALTIME" : "SC_XOPEN_REALTIME"
+"reverse" : "reverse"
+"license" : "license"
+"__trunc__" : "__trunc__"
+"utf_32_be" : "utf_32_be"
+"setdlopenflags" : "setdlopenflags"
+"iso_ir_101" : "iso_ir_101"
+"iso_ir_100" : "iso_ir_100"
+"eucgb2312_cn" : "eucgb2312_cn"
+"scls" : "scls"
+"iso2022jp_ext" : "iso2022jp_ext"
+"_getaction" : "_getaction"
+"setencoding" : "setencoding"
+"EX_TEMPFAIL" : "EX_TEMPFAIL"
+"WCOREDUMP" : "WCOREDUMP"
+"rpartition" : "rpartition"
+"PC_NO_TRUNC" : "PC_NO_TRUNC"
+"__rsub__" : "__rsub__"
+"shutdown" : "shutdown"
+"mac_cyrillic" : "mac_cyrillic"
+"slots" : "slots"
+"csiso2022kr" : "csiso2022kr"
+"asmo_708" : "asmo_708"
+"java" : "java"
+"NSIG" : "NSIG"
+"riscos" : "riscos"
+"_reduce_ex" : "_reduce_ex"
+"__abs__" : "__abs__"
+"iso_2022_jp_3" : "iso_2022_jp_3"
+"dup" : "dup"
+"S_IROTH" : "S_IROTH"
+"SC_JOB_CONTROL" : "SC_JOB_CONTROL"
+"samefile" : "samefile"
+"imag" : "imag"
+"execvp" : "execvp"
+"ST_MODE" : "ST_MODE"
+"N" : "N"
+"charbuffer_encode" : "charbuffer_encode"
+"zfill" : "zfill"
+"SC_UINT_MAX" : "SC_UINT_MAX"
+"func" : "func"
+"getatime" : "getatime"
+"execve" : "execve"
+"CS_XBS5_LPBIG_OFFBIG_LINTFLAGS" : "CS_XBS5_LPBIG_OFFBIG_LINTFLAGS"
+"maccentraleurope" : "maccentraleurope"
+"ClassType" : "ClassType"
+"sjis_2004" : "sjis_2004"
+"error" : "error"
+"__hash__" : "__hash__"
+"struct_time" : "struct_time"
+"Hashable" : "Hashable"
+"copy_reg" : "copy_reg"
+"ST_NOATIME" : "ST_NOATIME"
+"gettotalrefcount" : "gettotalrefcount"
+"R_OK" : "R_OK"
+"xreadlines" : "xreadlines"
+"mac_roman" : "mac_roman"
+"SIGCHLD" : "SIGCHLD"
+"_abc_cache" : "_abc_cache"
+"SC_XBS5_ILP32_OFF32" : "SC_XBS5_ILP32_OFF32"
+"read" : "read"
+"cp852" : "cp852"
+"envpath" : "envpath"
+"cp857" : "cp857"
+"keys" : "keys"
+"SEEK_SET" : "SEEK_SET"
+"checkcache" : "checkcache"
+"quotedprintable" : "quotedprintable"
+"sys" : "sys"
+"cp1254" : "cp1254"
+"cp1257" : "cp1257"
+"utf_32_encode" : "utf_32_encode"
+"_hasattr" : "_hasattr"
+"__or__" : "__or__"
+"__add__" : "__add__"
+"cp1252" : "cp1252"
+"cp1258" : "cp1258"
+"lower" : "lower"
+"S_IXGRP" : "S_IXGRP"
+"setitimer" : "setitimer"
+"O_EXCL" : "O_EXCL"
+"cyrillic" : "cyrillic"
+"elem" : "elem"
+"flags" : "flags"
+"__neg__" : "__neg__"
+"johab" : "johab"
+"EX_PROTOCOL" : "EX_PROTOCOL"
+"self" : "self"
+"ST_MTIME" : "ST_MTIME"
+"mant_dig" : "mant_dig"
+"__path__" : "__path__"
+"SIGBUS" : "SIGBUS"
+"CodeType" : "CodeType"
+"EPIPE" : "EPIPE"
+"__code__" : "__code__"
+"newlines" : "newlines"
+"response" : "response"
+"SC_SEM_VALUE_MAX" : "SC_SEM_VALUE_MAX"
+"$" : "$"
+"CS_XBS5_ILP32_OFFBIG_CFLAGS" : "CS_XBS5_ILP32_OFFBIG_CFLAGS"
+"maclatin2" : "maclatin2"
+"f_files" : "f_files"
+"_files" : "_files"
+"lchown" : "lchown"
+"input" : "input"
+"csibm500" : "csibm500"
+"bin" : "bin"
+"zipimport" : "zipimport"
+"big5hkscs" : "big5hkscs"
+"format" : "format"
+"__reversed__" : "__reversed__"
+"tm_isdst" : "tm_isdst"
+"O_NOATIME" : "O_NOATIME"
+"__gt__" : "__gt__"
+"replace_errors" : "replace_errors"
+"SC_THREAD_PROCESS_SHARED" : "SC_THREAD_PROCESS_SHARED"
+"__basicsize__" : "__basicsize__"
+"d" : "d"
+"signal" : "signal"
+"ignore" : "ignore"
+"addusersitepackages" : "addusersitepackages"
+"quopri" : "quopri"
+"spawnvpe" : "spawnvpe"
+"names" : "names"
+"func_dict" : "func_dict"
+"tmpfile" : "tmpfile"
+"tb_frame" : "tb_frame"
+"write_dump" : "write_dump"
+"CS_XBS5_LPBIG_OFFBIG_LIBS" : "CS_XBS5_LPBIG_OFFBIG_LIBS"
+"escape_encode" : "escape_encode"
+"altsep" : "altsep"
+"apply" : "apply"
+"ST_APPEND" : "ST_APPEND"
+"pathsep" : "pathsep"
+"1256" : "1256"
+"1257" : "1257"
+"1254" : "1254"
+"Warning" : "Warning"
+"1252" : "1252"
+"ST_GID" : "ST_GID"
+"slash" : "slash"
+"1251" : "1251"
+"newdata" : "newdata"
+"P_WAIT" : "P_WAIT"
+"SC_IOV_MAX" : "SC_IOV_MAX"
+"object" : "object"
+"UserDict" : "UserDict"
+"O" : "O"
+"step" : "step"
+"dircase" : "dircase"
+"optimize" : "optimize"
+"ks_c_5601" : "ks_c_5601"
+"_HEAPTYPE" : "_HEAPTYPE"
+"SC_SHRT_MAX" : "SC_SHRT_MAX"
+"UF_NOUNLINK" : "UF_NOUNLINK"
+"st_blksize" : "st_blksize"
+"range" : "range"
+"exc_info" : "exc_info"
+"min_10_exp" : "min_10_exp"
+"__future__" : "__future__"
+"proto" : "proto"
+"iso2022jp_1" : "iso2022jp_1"
+"iso2022jp_3" : "iso2022jp_3"
+"SEEK_CUR" : "SEEK_CUR"
+"S_IFLNK" : "S_IFLNK"
+"SC_AIO_LISTIO_MAX" : "SC_AIO_LISTIO_MAX"
+"spawnlp" : "spawnlp"
+"__func__" : "__func__"
+"span" : "span"
+"UnicodeError" : "UnicodeError"
+"co_consts" : "co_consts"
+"errno" : "errno"
+"DictionaryType" : "DictionaryType"
+"long" : "long"
+"__enter__" : "__enter__"
+".0" : ".0"
+":" : ":"
+"encodings.__builtin__" : "encodings.__builtin__"
+"utf_16_ex_decode" : "utf_16_ex_decode"
+"mac_greek" : "mac_greek"
+"msg" : "msg"
+"pwd" : "pwd"
+"link" : "link"
+"line" : "line"
+"_module" : "_module"
+"utf" : "utf"
+"hz_gb_2312" : "hz_gb_2312"
+"uu" : "uu"
+"us" : "us"
+"O_NOCTTY" : "O_NOCTTY"
+"dotIndex" : "dotIndex"
+"consumed" : "consumed"
+"857" : "857"
+"f_bsize" : "f_bsize"
+"flush" : "flush"
+"ITIMER_REAL" : "ITIMER_REAL"
+"SC_WORD_BIT" : "SC_WORD_BIT"
+"isdigit" : "isdigit"
+"_buffer_encode" : "_buffer_encode"
+"950" : "950"
+"__format__" : "__format__"
+"__objclass__" : "__objclass__"
+"SIGIO" : "SIGIO"
+"samestat" : "samestat"
+"nice" : "nice"
+"SC_XBS5_ILP32_OFFBIG" : "SC_XBS5_ILP32_OFFBIG"
+"_abc_invalidation_counter" : "_abc_invalidation_counter"
+"escape_decode" : "escape_decode"
+"charbuffer" : "charbuffer"
+"S_ISREG" : "S_ISREG"
+"SC_2_FORT_DEV" : "SC_2_FORT_DEV"
+"eval" : "eval"
+"CodecRegistryError" : "CodecRegistryError"
+"csiso2022jp" : "csiso2022jp"
+"sitecustomize" : "sitecustomize"
+"e" : "e"
+"Sequence" : "Sequence"
+"sjis" : "sjis"
+"iso_8859_3_1988" : "iso_8859_3_1988"
+"normpath" : "normpath"
+"NoneType" : "NoneType"
+"SIGTTOU" : "SIGTTOU"
+"once" : "once"
+"func_closure" : "func_closure"
+"CS_XBS5_LP64_OFF64_CFLAGS" : "CS_XBS5_LP64_OFF64_CFLAGS"
+"code" : "code"
+"SC_PII_OSI" : "SC_PII_OSI"
+"radix" : "radix"
+"urandom" : "urandom"
+"func_code" : "func_code"
+"addsitepackages" : "addsitepackages"
+"base64" : "base64"
+"_aliases" : "_aliases"
+"send" : "send"
+"_unknown" : "_unknown"
+"ks_x_1001" : "ks_x_1001"
+"getline" : "getline"
+"PC_VDISABLE" : "PC_VDISABLE"
+"maxunicode" : "maxunicode"
+"ignore_errors" : "ignore_errors"
+"getstate" : "getstate"
+"f_code" : "f_code"
+"CS_XBS5_LP64_OFF64_LINTFLAGS" : "CS_XBS5_LP64_OFF64_LINTFLAGS"
+"SIGSTOP" : "SIGSTOP"
+"getdefaultlocale" : "getdefaultlocale"
+"EX_OSERR" : "EX_OSERR"
+"ttyname" : "ttyname"
+"getfilesystemencoding" : "getfilesystemencoding"
+"__metaclass__" : "__metaclass__"
+"elist" : "elist"
+"SIGWINCH" : "SIGWINCH"
+"expandtabs" : "expandtabs"
+"__stdin__" : "__stdin__"
+"BOM_UTF16_BE" : "BOM_UTF16_BE"
+"S_ISLNK" : "S_ISLNK"
+"append" : "append"
+"index" : "index"
+"incrementalencoder" : "incrementalencoder"
+"roman8" : "roman8"
+"exc_type" : "exc_type"
+"access" : "access"
+"SIGTRAP" : "SIGTRAP"
+"NGROUPS_MAX" : "NGROUPS_MAX"
+"callstats" : "callstats"
+"joinuser" : "joinuser"
+";" : ";"
+"im_self" : "im_self"
+"Popen" : "Popen"
+"len" : "len"
+"warnpy3k" : "warnpy3k"
+"s_jisx0213" : "s_jisx0213"
+"S_IFREG" : "S_IFREG"
+"SC_GETPW_R_SIZE_MAX" : "SC_GETPW_R_SIZE_MAX"
+"credits" : "credits"
+"cp850" : "cp850"
+"func_defaults" : "func_defaults"
+"is_package" : "is_package"
+"cp855" : "cp855"
+"SC_XBS5_LP64_OFF64" : "SC_XBS5_LP64_OFF64"
+"removedirs" : "removedirs"
+"646" : "646"
+"{" : "{"
+"BOM_UTF32_LE" : "BOM_UTF32_LE"
+"SystemError" : "SystemError"
+"getrefcount" : "getrefcount"
+"SIGSYS" : "SIGSYS"
+"cp_gr" : "cp_gr"
+"divmod" : "divmod"
+"PC_LINK_MAX" : "PC_LINK_MAX"
+"ST_UID" : "ST_UID"
+"HOME" : "HOME"
+"UF_IMMUTABLE" : "UF_IMMUTABLE"
+"setquit" : "setquit"
+"stream" : "stream"
+"zip" : "zip"
+"iso_8859_8" : "iso_8859_8"
+"ST_MANDLOCK" : "ST_MANDLOCK"
+"next" : "next"
+"chr" : "chr"
+"co_argcount" : "co_argcount"
+"iso_8859_5" : "iso_8859_5"
+"sort" : "sort"
+"S_IFIFO" : "S_IFIFO"
+"__stdout__" : "__stdout__"
+"etype" : "etype"
+"ENOENT" : "ENOENT"
+"tm_yday" : "tm_yday"
+"f_locals" : "f_locals"
+"socket" : "socket"
+"iso_ir_127" : "iso_ir_127"
+"iso_ir_126" : "iso_ir_126"
+"chdir" : "chdir"
+"CS_XBS5_ILP32_OFFBIG_LDFLAGS" : "CS_XBS5_ILP32_OFFBIG_LDFLAGS"
+"f" : "f"
+"raw_input" : "raw_input"
+"SC_NGROUPS_MAX" : "SC_NGROUPS_MAX"
+"utf_16_encode" : "utf_16_encode"
+"Library" : "Library"
+"tb_lineno" : "tb_lineno"
+"raw_unicode_escape_encode" : "raw_unicode_escape_encode"
+"f_lineno" : "f_lineno"
+"SC_PII_INTERNET_DGRAM" : "SC_PII_INTERNET_DGRAM"
+"csibm866" : "csibm866"
+"utf_8_decode" : "utf_8_decode"
+"KeyError" : "KeyError"
+"PendingDeprecationWarning" : "PendingDeprecationWarning"
+"iso_8859_2_1987" : "iso_8859_2_1987"
+"raw_unicode_escape_decode" : "raw_unicode_escape_decode"
+"S_IXUSR" : "S_IXUSR"
+"namespace" : "namespace"
+"__pos__" : "__pos__"
+"SC_2_C_BIND" : "SC_2_C_BIND"
+"utf_7_decode" : "utf_7_decode"
+"_getcategory" : "_getcategory"
+"utf_7_encode" : "utf_7_encode"
+"utf_32_be_decode" : "utf_32_be_decode"
+"MutableSequence" : "MutableSequence"
+"SC_INT_MAX" : "SC_INT_MAX"
+"S_IEXEC" : "S_IEXEC"
+"ITIMER_VIRTUAL" : "ITIMER_VIRTUAL"
+"949" : "949"
+"tm_mday" : "tm_mday"
+"lines" : "lines"
+"SC_NL_MSGMAX" : "SC_NL_MSGMAX"
+"_OptionError" : "_OptionError"
+"__subclasshook__" : "__subclasshook__"
+"ComplexType" : "ComplexType"
+"EX_USAGE" : "EX_USAGE"
+"_varprog" : "_varprog"
+"firstline" : "firstline"
+"execle" : "execle"
+"rot_13" : "rot_13"
+"modnames" : "modnames"
+"execlp" : "execlp"
+"1" : "1"
+"exec_prefix" : "exec_prefix"
+"ll" : "ll"
+"ansi_x3_4_1968" : "ansi_x3_4_1968"
+"SC_GETGR_R_SIZE_MAX" : "SC_GETGR_R_SIZE_MAX"
+"Callable" : "Callable"
+"USER_BASE" : "USER_BASE"
+"CS_LFS_LINTFLAGS" : "CS_LFS_LINTFLAGS"
+"ecma_118" : "ecma_118"
+"ecma_114" : "ecma_114"
+"MutableMapping" : "MutableMapping"
+"__getitem__" : "__getitem__"
+"python" : "python"
+"__itemsize__" : "__itemsize__"
+"SC_THREAD_PRIO_INHERIT" : "SC_THREAD_PRIO_INHERIT"
+"TabError" : "TabError"
+"__pow__" : "__pow__"
+"BufferedIncrementalDecoder" : "BufferedIncrementalDecoder"
+"getpwnam" : "getpwnam"
+"_spawnvef" : "_spawnvef"
+"TMP_MAX" : "TMP_MAX"
+"__rxor__" : "__rxor__"
+"iterkeys" : "iterkeys"
+"__delitem__" : "__delitem__"
+"ST_WRITE" : "ST_WRITE"
+"Iterator" : "Iterator"
+"l6" : "l6"
+"l7" : "l7"
+"l4" : "l4"
+"l5" : "l5"
+"l2" : "l2"
+"mode" : "mode"
+"l1" : "l1"
+"Iterable" : "Iterable"
+"l9" : "l9"
+"mkfifo" : "mkfifo"
+"shift_jis_2004" : "shift_jis_2004"
+"encodings" : "encodings"
+"category" : "category"
+"killpg" : "killpg"
+"res" : "res"
+"__excepthook__" : "__excepthook__"
+"cwd" : "cwd"
+"_script" : "_script"
+"csiso58gb231280" : "csiso58gb231280"
+"EllipsisType" : "EllipsisType"
+"_slotnames" : "_slotnames"
+"SC_ARG_MAX" : "SC_ARG_MAX"
+"g" : "g"
+"installExceptionHandler" : "installExceptionHandler"
+"openpty" : "openpty"
+"times" : "times"
+"shift_jis" : "shift_jis"
+"co_nlocals" : "co_nlocals"
+"_record" : "_record"
+"__delete__" : "__delete__"
+"hkscs" : "hkscs"
+"SC_MEMLOCK" : "SC_MEMLOCK"
+"distutils.util" : "distutils.util"
+"ks_c_5601_1987" : "ks_c_5601_1987"
+"strict" : "strict"
+"close_fds" : "close_fds"
+"mkdir" : "mkdir"
+"system" : "system"
+"file_encoding" : "file_encoding"
+"final" : "final"
+"tm_min" : "tm_min"
+"SF_APPEND" : "SF_APPEND"
+"Exception" : "Exception"
+"shell" : "shell"
+"ZipImportError" : "ZipImportError"
+"tuple" : "tuple"
+"__del__" : "__del__"
+"reversed" : "reversed"
+"getdecoder" : "getdecoder"
+"SC_MB_LEN_MAX" : "SC_MB_LEN_MAX"
+"R" : "R"
+"S_ENFMT" : "S_ENFMT"
+"eucjis2004" : "eucjis2004"
+"ArithmeticError" : "ArithmeticError"
+"ibm819" : "ibm819"
+"abstracts" : "abstracts"
+"fromlist" : "fromlist"
+"hz" : "hz"
+"__rtruediv__" : "__rtruediv__"
+"SC_PRIORITIZED_IO" : "SC_PRIORITIZED_IO"
+"f_bavail" : "f_bavail"
+"CodecInfo" : "CodecInfo"
+"_show_warning" : "_show_warning"
+"iso_8859_7_1987" : "iso_8859_7_1987"
+"close" : "close"
+"PATH" : "PATH"
+"st" : "st"
+"im_func" : "im_func"
+"spawnl" : "spawnl"
+"tactis" : "tactis"
+"min" : "min"
+"encodings.codecs" : "encodings.codecs"
+"." : "."
+"__dictoffset__" : "__dictoffset__"
+"korean" : "korean"
+"=" : "="
+"spawnv" : "spawnv"
+"f_flag" : "f_flag"
+"fromhex" : "fromhex"
+"__self_class__" : "__self_class__"
+"callable" : "callable"
+"pt154" : "pt154"
+"lexists" : "lexists"
+"U" : "U"
+"ReferenceError" : "ReferenceError"
+"SIGRTMIN" : "SIGRTMIN"
+"latin4" : "latin4"
+"latin5" : "latin5"
+"latin6" : "latin6"
+"latin7" : "latin7"
+"latin1" : "latin1"
+"latin2" : "latin2"
+"latin3" : "latin3"
+"latin8" : "latin8"
+"latin9" : "latin9"
+"pipe" : "pipe"
+"splitdrive" : "splitdrive"
+"}" : "}"
+"SC_NPROCESSORS_ONLN" : "SC_NPROCESSORS_ONLN"
+"getreader" : "getreader"
+"__setup" : "__setup"
+"text" : "text"
+"readbuffer_encode" : "readbuffer_encode"
+"__rmul__" : "__rmul__"
+"setter" : "setter"
+"pause" : "pause"
+"dllpath" : "dllpath"
+"cache" : "cache"
+"ibm367" : "ibm367"
+"extract_tb" : "extract_tb"
+"bases" : "bases"
+"SC_THREAD_PRIORITY_SCHEDULING" : "SC_THREAD_PRIORITY_SCHEDULING"
+"_abc_" : "_abc_"
+"sjisx0213" : "sjisx0213"
+"_splitext" : "_splitext"
+"bytesencoded" : "bytesencoded"
+"f_ffree" : "f_ffree"
+"getpgrp" : "getpgrp"
+"iteritems" : "iteritems"
+"_make_stat_result" : "_make_stat_result"
+"h" : "h"
+"gbk" : "gbk"
+"PREFIXES" : "PREFIXES"
+"ItemsView" : "ItemsView"
+"ebcdic_cp_wt" : "ebcdic_cp_wt"
+"SC_PII_XTI" : "SC_PII_XTI"
+"_abc_registry" : "_abc_registry"
+"SIGTTIN" : "SIGTTIN"
+"SC_MEMORY_PROTECTION" : "SC_MEMORY_PROTECTION"
+"exists" : "exists"
+"popen4" : "popen4"
+"popen2" : "popen2"
+"popen3" : "popen3"
+"module" : "module"
+"iso_8859_4_1988" : "iso_8859_4_1988"
+"csisolatin1" : "csisolatin1"
+"csisolatin2" : "csisolatin2"
+"csisolatin3" : "csisolatin3"
+"xmlcharrefreplace_errors" : "xmlcharrefreplace_errors"
+"037" : "037"
+"csisolatin6" : "csisolatin6"
+"SC_RE_DUP_MAX" : "SC_RE_DUP_MAX"
+"MemberDescriptorType" : "MemberDescriptorType"
+"userhome" : "userhome"
+"SC_THREAD_ATTR_STACKADDR" : "SC_THREAD_ATTR_STACKADDR"
+"state" : "state"
+"__bases__" : "__bases__"
+"st_size" : "st_size"
+"closed" : "closed"
+"shiftjisx0213" : "shiftjisx0213"
+"limit" : "limit"
+"S_ISGID" : "S_ISGID"
+"api_version" : "api_version"
+"f_globals" : "f_globals"
+"__ifloordiv__" : "__ifloordiv__"
+"ms1361" : "ms1361"
+"CS_PATH" : "CS_PATH"
+"S" : "S"
+"iso8859_2" : "iso8859_2"
+"SIGPIPE" : "SIGPIPE"
+"key" : "key"
+"O_ASYNC" : "O_ASYNC"
+"O_TRUNC" : "O_TRUNC"
+"__ilshift__" : "__ilshift__"
+"SC_XOPEN_CRYPT" : "SC_XOPEN_CRYPT"
+"kwds" : "kwds"
+"SC_SCHAR_MIN" : "SC_SCHAR_MIN"
+"__delattr__" : "__delattr__"
+"P_NOWAIT" : "P_NOWAIT"
+"strftime" : "strftime"
+"ST_NOSUID" : "ST_NOSUID"
+"SF_NOUNLINK" : "SF_NOUNLINK"
+"chmod" : "chmod"
+"walk" : "walk"
+"initial_slashes" : "initial_slashes"
+"defpath" : "defpath"
+"_setoption" : "_setoption"
+"cp" : "cp"
+"BOM_UTF16" : "BOM_UTF16"
+"quit" : "quit"
+"base64_codec" : "base64_codec"
+"setcopyright" : "setcopyright"
+"SC_THREAD_THREADS_MAX" : "SC_THREAD_THREADS_MAX"
+"SIGSEGV" : "SIGSEGV"
+"__set__" : "__set__"
+"WIFEXITED" : "WIFEXITED"
+"getwriter" : "getwriter"
+"int" : "int"
+"py3kwarning" : "py3kwarning"
+"var_name" : "var_name"
+"windows_1258" : "windows_1258"
+"windows_1254" : "windows_1254"
+"windows_1255" : "windows_1255"
+"windows_1256" : "windows_1256"
+"windows_1257" : "windows_1257"
+"windows_1250" : "windows_1250"
+"windows_1251" : "windows_1251"
+"__itruediv__" : "__itruediv__"
+"windows_1253" : "windows_1253"
+"_import_tail" : "_import_tail"
+"fset" : "fset"
+"WSTOPSIG" : "WSTOPSIG"
+"Sized" : "Sized"
+"iso_ir_109" : "iso_ir_109"
+"TupleType" : "TupleType"
+"SC_PII_OSI_M" : "SC_PII_OSI_M"
+"__iadd__" : "__iadd__"
+"utf8_ucs4" : "utf8_ucs4"
+"BOM_UTF32_BE" : "BOM_UTF32_BE"
+"UnicodeType" : "UnicodeType"
+"iso8859_9" : "iso8859_9"
+"iso8859_8" : "iso8859_8"
+"utf8_ucs2" : "utf8_ucs2"
+"__floordiv__" : "__floordiv__"
+"iso8859_5" : "iso8859_5"
+"__sub__" : "__sub__"
+"iso8859_7" : "iso8859_7"
+"getpwuid" : "getpwuid"
+"iso8859_1" : "iso8859_1"
+"func_doc" : "func_doc"
+"iso8859_3" : "iso8859_3"
+"~" : "~"
+"rename" : "rename"
+"l3" : "l3"
+"STDOUT" : "STDOUT"
+"xrange" : "xrange"
+"W_OK" : "W_OK"
+"site" : "site"
+"rfind" : "rfind"
+"arabic" : "arabic"
+"ST_NODEV" : "ST_NODEV"
+"BuiltinFunctionType" : "BuiltinFunctionType"
+"__package__" : "__package__"
+"rot13" : "rot13"
+"parts" : "parts"
+"strict_errors" : "strict_errors"
+"macgreek" : "macgreek"
+"setstate" : "setstate"
+"dedent" : "dedent"
+"listdir" : "listdir"
+"version_info" : "version_info"
+"writelines" : "writelines"
+"gb2312_1980" : "gb2312_1980"
+"csisolatincyrillic" : "csisolatincyrillic"
+"hz_gb" : "hz_gb"
+"ibm775" : "ibm775"
+"byteorder" : "byteorder"
+"center" : "center"
+"SC_DELAYTIMER_MAX" : "SC_DELAYTIMER_MAX"
+"i" : "i"
+"WCONTINUED" : "WCONTINUED"
+"koi8_r" : "koi8_r"
+"SC_TIMERS" : "SC_TIMERS"
+"__mul__" : "__mul__"
+"__displayhook__" : "__displayhook__"
+"readinto" : "readinto"
+"lseek" : "lseek"
+"sameopenfile" : "sameopenfile"
+"LICENSE" : "LICENSE"
+"euc_jp" : "euc_jp"
+"issuperset" : "issuperset"
+"UnicodeDecodeError" : "UnicodeDecodeError"
+"ebcdic_cp_he" : "ebcdic_cp_he"
+"__lt__" : "__lt__"
+"isinstance" : "isinstance"
+"S_IRUSR" : "S_IRUSR"
+"cspcp852" : "cspcp852"
+"gettrace" : "gettrace"
+"uu_codec" : "uu_codec"
+"add" : "add"
+"call_tracing" : "call_tracing"
+"reason" : "reason"
+"IOError" : "IOError"
+"match" : "match"
+"resolved" : "resolved"
+"ibm424" : "ibm424"
+"WIFSTOPPED" : "WIFSTOPPED"
+"EEXIST" : "EEXIST"
+"T" : "T"
+"cp861" : "cp861"
+"intersection" : "intersection"
+"S_IRGRP" : "S_IRGRP"
+"max_10_exp" : "max_10_exp"
+"insert" : "insert"
+"__stderr__" : "__stderr__"
+"cp863" : "cp863"
+"fsync" : "fsync"
+"_copy_reg" : "_copy_reg"
+"globals" : "globals"
+"tm_mon" : "tm_mon"
+"SC_MESSAGE_PASSING" : "SC_MESSAGE_PASSING"
+"SC_VERSION" : "SC_VERSION"
+"\x00\x00\xfe\xff" : "\x00\x00\xfe\xff"
+"SIG_DFL" : "SIG_DFL"
+"iso_8859_9_1989" : "iso_8859_9_1989"
+"daylight" : "daylight"
+"commonprefix" : "commonprefix"
+"PC_PIPE_BUF" : "PC_PIPE_BUF"
+"SC_NL_SETMAX" : "SC_NL_SETMAX"
+"__getnewargs__" : "__getnewargs__"
+"gi_frame" : "gi_frame"
+"BufferError" : "BufferError"
+"_exists" : "_exists"
+"__setattr__" : "__setattr__"
+"_Printer" : "_Printer"
+"__contains__" : "__contains__"
+"__getattr__" : "__getattr__"
+"UF_OPAQUE" : "UF_OPAQUE"
+"f_exc_type" : "f_exc_type"
+"asctime" : "asctime"
+"sitedircase" : "sitedircase"
+"relpath" : "relpath"
+"EOFError" : "EOFError"
+"iso_8859_14_1998" : "iso_8859_14_1998"
+"symlink" : "symlink"
+"SC_CHILD_MAX" : "SC_CHILD_MAX"
+"offset" : "offset"
+"__imul__" : "__imul__"
+"SEEK_END" : "SEEK_END"
+"siginterrupt" : "siginterrupt"
+"utf_16be" : "utf_16be"
+"l8" : "l8"
+"constructor" : "constructor"
+"discard" : "discard"
+"_exit" : "_exit"
+"_get_exports_list" : "_get_exports_list"
+"__builtin__" : "__builtin__"
+"addsitedir" : "addsitedir"
+"LookupError" : "LookupError"
+"f_exc_traceback" : "f_exc_traceback"
+"val" : "val"
+"*" : "*"
+"__closure__" : "__closure__"
+"var" : "var"
+"SIGABRT" : "SIGABRT"
+"streamreader" : "streamreader"
+"make_encoding_map" : "make_encoding_map"
+"hx" : "hx"
+"catch_warnings" : "catch_warnings"
+"getenv" : "getenv"
+"sysconf_names" : "sysconf_names"
+"iso_2022_jp_2004" : "iso_2022_jp_2004"
+"buf" : "buf"
+"count" : "count"
+"j" : "j"
+"record" : "record"
+"hash_randomization" : "hash_randomization"
+"_[1]" : "_[1]"
+"SC_OPEN_MAX" : "SC_OPEN_MAX"
+"ImportError" : "ImportError"
+"_WARNING_DETAILS" : "_WARNING_DETAILS"
+"Writer" : "Writer"
+"pid" : "pid"
+"BOM_UTF16_LE" : "BOM_UTF16_LE"
+"CS_XBS5_ILP32_OFF32_LINTFLAGS" : "CS_XBS5_ILP32_OFF32_LINTFLAGS"
+"mtime" : "mtime"
+"bufsize" : "bufsize"
+"iso8859_15" : "iso8859_15"
+"iso8859_14" : "iso8859_14"
+"BuiltinMethodType" : "BuiltinMethodType"
+"iso8859_11" : "iso8859_11"
+"iso8859_10" : "iso8859_10"
+"iso8859_13" : "iso8859_13"
+"getsize" : "getsize"
+"cp869" : "cp869"
+"other" : "other"
+"lookup" : "lookup"
+"mcls" : "mcls"
+"cp860" : "cp860"
+"cp037" : "cp037"
+"cp862" : "cp862"
+"S_IFCHR" : "S_IFCHR"
+"cp864" : "cp864"
+"cp865" : "cp865"
+"cp866" : "cp866"
+"TracebackType" : "TracebackType"
+"stat" : "stat"
+"getcheckinterval" : "getcheckinterval"
+"__newobj__" : "__newobj__"
+"O_DIRECT" : "O_DIRECT"
+"iterdecode" : "iterdecode"
+"readlink" : "readlink"
+"readline" : "readline"
+"eof" : "eof"
+"_processoptions" : "_processoptions"
+"fpathconf" : "fpathconf"
+"klass" : "klass"
+"get_code" : "get_code"
+"__index__" : "__index__"
+
+131 allocations use 0x7fba0 (523,168) bytes.

@@ -89,7 +89,8 @@ class Directory {
     static constexpr Offset THREAD_CACHED_BIT = USED_BIT >> 1;
     static constexpr Offset WRAPPER_BIT = THREAD_CACHED_BIT >> 1;
     static constexpr Offset WRAPPED_BIT = WRAPPER_BIT >> 1;
-    static constexpr Offset NUM_FINDER_INDEX_BITS = 8;
+    static constexpr Offset NUM_FINDER_INDEX_BITS =
+        (sizeof(Offset) == 8) ? 8 : 2;
     static constexpr Offset LOW_FINDER_INDEX_BIT =
         WRAPPED_BIT >> NUM_FINDER_INDEX_BITS;
     static constexpr Offset SIZE_MASK = LOW_FINDER_INDEX_BIT - 1;

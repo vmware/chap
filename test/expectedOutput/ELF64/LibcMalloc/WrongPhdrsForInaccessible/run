@@ -98,5 +98,21 @@ explain 7f51edb7b010
 # End of that individually mmapped allocation
 describe 7f51edbabfff
 explain 7f51edbabfff
+
+# In passing, test various python-specific patterns just to get coverage on python 2.7 with
+# a mmapped arena without needing another core.
+describe used %PythonArenaStructArray
+count used %SimplePythonObject
+count used %ContainerPythonObject
+count used %PyDictKeysObject
+count used %PythonListItems
+list used %SimplePythonObject
+list used %ContainerPythonObject
+list used %PyDictKeysObject
+list used %PythonListItems
+describe used %SimplePythonObject
+describe used %ContainerPythonObject
+describe used %PyDictKeysObject
+describe used %PythonListItems
 DONE
 bzip2 -q core.python_5_threads

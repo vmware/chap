@@ -19,10 +19,11 @@ class TypeDirectory {
   TypeDirectory(const VirtualAddressMap<Offset>& virtualAddressMap)
       : _virtualAddressMap(virtualAddressMap) {}
 
-  void RegisterType(Offset pythonType, const std::string& suggestedName) {
-    typename std::unordered_map<Offset, std::string>::iterator it =
-        _typeToName.find(pythonType);
-    if (it == _typeToName.end()) {
+  const std::string& RegisterType(Offset pythonType,
+                                  const std::string& suggestedName) {
+    auto iteratorAndInserted = _typeToName.emplace(pythonType, suggestedName);
+    auto& it = iteratorAndInserted.first;
+    if (iteratorAndInserted.second) {
       // The type was not previously known.
       const char* typeImage;
       Offset numBytesFound;
@@ -33,7 +34,6 @@ class TypeDirectory {
         std::cerr << "Warning: Python type at 0x" << std::hex << pythonType
                   << " is not fully mapped in memory.\n";
       }
-      std::string nameFromType;
       Offset nameAddressFromType = ((Offset*)typeImage)[3];
       const char* nameImage;
       numBytesFound = _virtualAddressMap.FindMappedMemoryImage(
@@ -41,13 +41,8 @@ class TypeDirectory {
       if (numBytesFound >= 2) {
         Offset nameLength = strnlen(nameImage, numBytesFound);
         if (nameLength < numBytesFound) {
-          nameFromType.assign(nameImage);
+          it->second.assign(nameImage);
         }
-      }
-      if (nameFromType.empty()) {
-        _typeToName[pythonType] = suggestedName;
-      } else {
-        _typeToName[pythonType] = nameFromType;
       }
     } else {
       // The type was previously known but perhaps the name was not.
@@ -57,6 +52,7 @@ class TypeDirectory {
         }
       }
     }
+    return it->second;
   }
 
   const std::string& GetTypeName(Offset pythonType) const {

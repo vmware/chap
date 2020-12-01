@@ -1,0 +1,136 @@
+Anchored allocation at 55e087c232a0 of size 38
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c24e70 of size 58
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c275d0 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c27960 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c2c340 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c35560 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c37b10 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c4c190 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c59fb0 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c5cd30 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c5da10 of size 38
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c5efd0 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c60af0 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c62d10 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c6ce00 of size 118
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c73860 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c748b0 of size c8
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087c9caf0 of size 58
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087ca10d0 of size 178
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087ca7a30 of size 98
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cb26d0 of size c8
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cb2970 of size 138
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cb2ab0 of size 68
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cb97e0 of size 9f8
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cbacd0 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cbacf0 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cbc9f0 of size 58
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cbdc60 of size b8
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cc3dd0 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087ccb540 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cf15b0 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cf20d0 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cf2750 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cf7c30 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cf8200 of size 108
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cf8310 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087cfe360 of size c8
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d03160 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d04310 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d0d1c0 of size 1b8
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d0d380 of size 28
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d0e5b0 of size 148
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d0ea20 of size 18
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d0f220 of size 48
+This allocation matches pattern PythonListItems.
+
+Anchored allocation at 55e087d14b50 of size 18
+This allocation matches pattern PythonListItems.
+
+45 allocations use 0x1c28 (7,208) bytes.

@@ -18,6 +18,19 @@ describe used %PythonArenaStructArray
 describe used %PythonArenaStructArray \
  /extend %PythonArenaStructArray->%PythonMallocedArena
 
+count used %SimplePythonObject
+count used %ContainerPythonObject
+count used %PyDictKeysObject
+count used %PythonListItems
+list used %SimplePythonObject
+list used %ContainerPythonObject
+list used %PyDictKeysObject
+list used %PythonListItems
+describe used %SimplePythonObject
+describe used %ContainerPythonObject
+describe used %PyDictKeysObject
+describe used %PythonListItems
+
 # The mmapped arenas should be reflected in output of the following:
 describe writable
 

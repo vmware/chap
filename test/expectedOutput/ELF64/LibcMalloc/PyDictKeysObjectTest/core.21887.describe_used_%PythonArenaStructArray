@@ -1,0 +1,6 @@
+Anchored allocation at 55e087c21440 of size 308
+This allocation matches pattern PythonArenaStructArray.
+There are 16 entries of size 0x30 in the array.
+8 entries in the array have corresponding python arenas.
+
+1 allocations use 0x308 (776) bytes.

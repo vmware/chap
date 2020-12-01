@@ -60,6 +60,14 @@ class InfrastructureFinder {
         _dictKeysHaveIndex(false),
         _strType(0),
         _cstringInStr(UNKNOWN_OFFSET),
+        _listType(0),
+        _sizeInList(2 * sizeof(Offset)),
+        _itemsInList(3 * sizeof(Offset)),
+        _tupleType(0),
+        _dequeType(0),
+        _firstBlockInDeque(2 * sizeof(Offset)),
+        _lastBlockInDeque(3 * sizeof(Offset)),
+        _forwardInDequeBlock(62 * sizeof(Offset)),
         _mainInterpreterState(0),
         _builtinsInInterpreterState(UNKNOWN_OFFSET),
         _garbageCollectionHeaderSize(UNKNOWN_OFFSET),
@@ -186,6 +194,14 @@ class InfrastructureFinder {
   Offset DictKeysHeaderSize() const { return _dictKeysHeaderSize; }
   Offset StrType() const { return _strType; }
   Offset CstringInStr() const { return _cstringInStr; }
+  Offset ListType() const { return _listType; }
+  Offset SizeInList() const { return _sizeInList; }
+  Offset ItemsInList() const { return _itemsInList; }
+  Offset TupleType() const { return _tupleType; }
+  Offset DequeType() const { return _dequeType; }
+  Offset FirstBlockInDeque() const { return _firstBlockInDeque; }
+  Offset LastBlockInDeque() const { return _lastBlockInDeque; }
+  Offset ForwardInDequeBlock() const { return _forwardInDequeBlock; }
   const std::vector<Offset> NonEmptyGarbageCollectionLists() const {
     return _nonEmptyGarbageCollectionLists;
   }
@@ -339,6 +355,14 @@ class InfrastructureFinder {
   bool _dictKeysHaveIndex;
   Offset _strType;
   Offset _cstringInStr;
+  Offset _listType;
+  Offset _sizeInList;
+  Offset _itemsInList;
+  Offset _tupleType;
+  Offset _dequeType;
+  Offset _firstBlockInDeque;
+  Offset _lastBlockInDeque;
+  Offset _forwardInDequeBlock;
   Offset _mainInterpreterState;
   Offset _builtinsInInterpreterState;
   std::vector<uint32_t> _activeIndices;
@@ -832,6 +856,20 @@ class InfrastructureFinder {
     }
   }
 
+  void CheckForTupleOrList(Offset pythonType, const std::string& currentName) {
+    if (_listType == 0 && currentName == "list") {
+      _listType = pythonType;
+      return;
+    }
+    if (_tupleType == 0 && currentName == "tuple") {
+      _tupleType = pythonType;
+      return;
+    }
+    if (_dequeType == 0 && currentName == "collections.deque") {
+      _dequeType = pythonType;
+    }
+  }
+
   void FindStaticallyAllocatedTypes(Offset base, Offset limit, Reader& reader) {
     Offset candidateLimit = limit - _typeSize + 1;
     Offset candidate = base;
@@ -845,7 +883,8 @@ class InfrastructureFinder {
               (_typeDirectory.HasType(baseType) ||
                baseTypeReader.ReadOffset(baseType + TYPE_IN_PYOBJECT, 0) ==
                    _typeType)) {
-            _typeDirectory.RegisterType(candidate, "");
+            CheckForTupleOrList(candidate,
+                                _typeDirectory.RegisterType(candidate, ""));
             candidate += _baseInType;
             continue;
           }
@@ -859,7 +898,8 @@ class InfrastructureFinder {
            */
           Offset getSet = reader.ReadOffset(candidate + _getSetInType, 0);
           if (getSet >= base && getSet < limit) {
-            _typeDirectory.RegisterType(candidate, "");
+            CheckForTupleOrList(candidate,
+                                _typeDirectory.RegisterType(candidate, ""));
           }
         }
       }
@@ -905,8 +945,55 @@ class InfrastructureFinder {
       if (reader.ReadOffset(value + TYPE_IN_PYOBJECT, 0) != _typeType) {
         continue;
       }
-      _typeDirectory.RegisterType(value, image + _cstringInStr);
+
+      CheckForTupleOrList(
+          value, _typeDirectory.RegisterType(value, image + _cstringInStr));
     }
+  }
+
+  int CountBuiltinTypesFromDict(Reader& reader, Offset dict) {
+    int typeCount = 0;
+    Offset triples = 0;
+    Offset triplesLimit = 0;
+    GetTriplesAndLimitFromDict(dict, triples, triplesLimit);
+    for (Offset triple = triples; triple < triplesLimit;
+         triple += (3 * sizeof(Offset))) {
+      Offset key = reader.ReadOffset(triple + sizeof(Offset), 0);
+      if (key == 0) {
+        continue;
+      }
+      Offset value = reader.ReadOffset(triple + 2 * sizeof(Offset), 0);
+      if (value == 0) {
+        continue;
+      }
+      const char* image;
+      Offset numBytesFound =
+          _virtualAddressMap.FindMappedMemoryImage(key, &image);
+      if (numBytesFound < _cstringInStr + 2) {
+        continue;
+      }
+      if (*((Offset*)(image + TYPE_IN_PYOBJECT)) != _strType) {
+        continue;
+      }
+      Offset length = *((Offset*)(image + LENGTH_IN_STR));
+      if (numBytesFound < _cstringInStr + length + 1) {
+        continue;
+      }
+      if (reader.ReadOffset(value + TYPE_IN_PYOBJECT, 0) != _typeType) {
+        continue;
+      }
+
+      if (!strcmp(image + _cstringInStr, "type") ||
+          !strcmp(image + _cstringInStr, "dict") || 
+          !strcmp(image + _cstringInStr, "str") ||
+          !strcmp(image + _cstringInStr, "list") ||
+          !strcmp(image + _cstringInStr, "tuple") ||
+          !strcmp(image + _cstringInStr, "int") ||
+          !strcmp(image + _cstringInStr, "float")) {
+        typeCount++;
+      }
+    }
+    return typeCount;
   }
 
   void RegisterImportedTypes(Reader& reader, Offset dictForModule,
@@ -945,7 +1032,7 @@ class InfrastructureFinder {
       }
       std::string unqualifiedName(image + _cstringInStr);
       std::string qualifiedName = modulePrefix + unqualifiedName;
-      _typeDirectory.RegisterType(value, image + _cstringInStr);
+      _typeDirectory.RegisterType(value, qualifiedName);
     }
   }
 
@@ -1004,6 +1091,8 @@ class InfrastructureFinder {
       }
 
       Offset builtinsModule = 0;
+      int bestTypeCount = 0;
+      Offset dictForBuiltinsModule = 0;
       Offset moduleType = 0;
       for (Offset triple = triples; triple < triplesLimit;
            triple += (3 * sizeof(Offset))) {
@@ -1030,9 +1119,8 @@ class InfrastructureFinder {
           if (value == 0) {
             std::cerr << "Error: unable to find module for name"
                       << (keyImage + _cstringInStr) << "\n";
-            return;
+            continue;
           } else {
-            builtinsModule = value;
             moduleType =
                 otherReader.ReadOffset(value + TYPE_IN_PYOBJECT, 0xbad);
             _typeDirectory.RegisterType(moduleType, "module");
@@ -1041,18 +1129,24 @@ class InfrastructureFinder {
             if (otherReader.ReadOffset(dictForModule + TYPE_IN_PYOBJECT, 0) !=
                 _dictType) {
               std::cerr
-                  << "Error: Unexpected type for dict for builtins module\n";
-              return;
+                  << "Error: Unexpected type for dict for builtins module at 0x"
+                  << std::hex << value << "\n";
+              continue;
             }
-            RegisterBuiltinTypesFromDict(otherReader, dictForModule);
+            int typeCount = CountBuiltinTypesFromDict(otherReader, dictForModule);
+            if (typeCount > bestTypeCount) {
+              bestTypeCount = typeCount;
+              builtinsModule = value;
+              dictForBuiltinsModule = dictForModule;
+            }
           }
-          break;
         }
       }
       if (builtinsModule == 0) {
-        // We probaly didn't actually find a real PyInterpreterState.
+        // We probably didn't actually find a real PyInterpreterState.
         continue;
       }
+      RegisterBuiltinTypesFromDict(otherReader, dictForBuiltinsModule);
       _mainInterpreterState = mainInterpreterStateCandidate;
       for (Offset triple = triples; triple < triplesLimit;
            triple += (3 * sizeof(Offset))) {

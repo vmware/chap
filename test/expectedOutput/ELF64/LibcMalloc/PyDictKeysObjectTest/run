@@ -8,7 +8,23 @@ chap=$1
 
 $1 core.21887 << DONE
 redirect on
+enumerate used %PyDictKeysObject
 count used %PyDictKeysObject
 show used %PyDictKeysObject
 describe used %PyDictKeysObject
+
+# In passing check to make sure that other python-specific patterns work, just to avoid
+# having separate cores to have test coverage for these patherns against python 3.5.
+
+describe used %PythonArenaStructArray
+
+count used %SimplePythonObject
+count used %ContainerPythonObject
+count used %PythonListItems
+list used %SimplePythonObject
+list used %ContainerPythonObject
+list used %PythonListItems
+describe used %SimplePythonObject
+describe used %ContainerPythonObject
+describe used %PythonListItems
 DONE

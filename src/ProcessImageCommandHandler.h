@@ -29,6 +29,8 @@
 #include "Python/ArenaDescriber.h"
 #include "Python/ArenaStructArrayDescriber.h"
 #include "Python/ContainerPythonObjectDescriber.h"
+#include "Python/DequeBlockDescriber.h"
+#include "Python/ListItemsDescriber.h"
 #include "Python/MallocedArenaDescriber.h"
 #include "Python/PyDictKeysObjectDescriber.h"
 #include "Python/SimplePythonObjectDescriber.h"
@@ -199,7 +201,9 @@ class ProcessImageCommandHandler {
         _simplePythonObjectDescriber(processImage),
         _containerPythonObjectDescriber(processImage),
         _pythonArenaStructArrayDescriber(processImage),
-        _pythonMallocedArenaDescriber(processImage) {
+        _pythonMallocedArenaDescriber(processImage),
+        _pythonDequeBlockDescriber(processImage),
+        _pythonListItemsDescriber(processImage) {
     _patternDescriberRegistry.Register(_dequeMapDescriber);
     _patternDescriberRegistry.Register(_dequeBlockDescriber);
     _patternDescriberRegistry.Register(_unorderedMapOrSetBucketsDescriber);
@@ -216,6 +220,8 @@ class ProcessImageCommandHandler {
     _patternDescriberRegistry.Register(_containerPythonObjectDescriber);
     _patternDescriberRegistry.Register(_pythonArenaStructArrayDescriber);
     _patternDescriberRegistry.Register(_pythonMallocedArenaDescriber);
+    _patternDescriberRegistry.Register(_pythonDequeBlockDescriber);
+    _patternDescriberRegistry.Register(_pythonListItemsDescriber);
     // Leave it to any derived class to add any describers.
   }
 
@@ -355,6 +361,8 @@ class ProcessImageCommandHandler {
       _containerPythonObjectDescriber;
   Python::ArenaStructArrayDescriber<Offset> _pythonArenaStructArrayDescriber;
   Python::MallocedArenaDescriber<Offset> _pythonMallocedArenaDescriber;
+  Python::DequeBlockDescriber<Offset> _pythonDequeBlockDescriber;
+  Python::ListItemsDescriber<Offset> _pythonListItemsDescriber;
 };
 
 }  // namespace chap

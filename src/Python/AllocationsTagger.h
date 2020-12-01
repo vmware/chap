@@ -40,6 +40,12 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _typeType(infrastructureFinder.TypeType()),
         _dictType(infrastructureFinder.DictType()),
         _keysInDict(infrastructureFinder.KeysInDict()),
+        _listType(infrastructureFinder.ListType()),
+        _itemsInList(infrastructureFinder.ItemsInList()),
+        _dequeType(infrastructureFinder.DequeType()),
+        _firstBlockInDeque(infrastructureFinder.FirstBlockInDeque()),
+        _lastBlockInDeque(infrastructureFinder.LastBlockInDeque()),
+        _forwardInDequeBlock(infrastructureFinder.ForwardInDequeBlock()),
         _nonEmptyGarbageCollectionLists(
             infrastructureFinder.NonEmptyGarbageCollectionLists()),
         _garbageCollectionHeaderSize(
@@ -53,6 +59,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _containerPythonObjectTagIndex(
             _tagHolder.RegisterTag("%ContainerPythonObject")),
         _dictKeysObjectTagIndex(_tagHolder.RegisterTag("%PyDictKeysObject")),
+        _listItemsTagIndex(_tagHolder.RegisterTag("%PythonListItems")),
+        _dequeBlockTagIndex(_tagHolder.RegisterTag("%PythonDequeBlock")),
         _arenaStructArrayTagIndex(
             _tagHolder.RegisterTag("%PythonArenaStructArray")),
         _mallocedArenaTagIndex(_tagHolder.RegisterTag("%PythonMallocedArena")),
@@ -76,7 +84,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
         if (!TagAsArenaStructArray(index, allocation) &&
-            !TagAsUntrackedContainerPythonObject(contiguousImage, index)) {
+            !TagAsUntrackedContainerPythonObject(contiguousImage, index,
+                                                 allocation.Address())) {
           TagAsSimplePythonObject(contiguousImage, index);
         }
         /*
@@ -113,6 +122,12 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   const Offset _typeType;
   const Offset _dictType;
   const Offset _keysInDict;
+  const Offset _listType;
+  const Offset _itemsInList;
+  const Offset _dequeType;
+  const Offset _firstBlockInDeque;
+  const Offset _lastBlockInDeque;
+  const Offset _forwardInDequeBlock;
   const std::vector<Offset> _nonEmptyGarbageCollectionLists;
   const Offset _garbageCollectionHeaderSize;
   const Offset _cachedKeysInHeapTypeObject;
@@ -121,6 +136,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   TagIndex _simplePythonObjectTagIndex;
   TagIndex _containerPythonObjectTagIndex;
   TagIndex _dictKeysObjectTagIndex;
+  TagIndex _listItemsTagIndex;
+  TagIndex _dequeBlockTagIndex;
   TagIndex _arenaStructArrayTagIndex;
   TagIndex _mallocedArenaTagIndex;
   bool _enabled;
@@ -176,6 +193,50 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
+  void TagDequeBlocks(Offset dequeAllocation) {
+    Reader reader(_virtualAddressMap);
+    Offset dequeStart = dequeAllocation + _garbageCollectionHeaderSize;
+    Offset firstDequeBlock =
+        reader.ReadOffset(dequeStart + _firstBlockInDeque, 0xbad);
+    if (firstDequeBlock == 0xbad) {
+      std::cerr
+         << "Warning: unable to get first block address for deque at 0x"
+         << std::hex << dequeAllocation << "\n";
+      return;
+    }
+    Offset lastDequeBlock =
+        reader.ReadOffset(dequeStart + _lastBlockInDeque, 0xbad);
+    if (lastDequeBlock == 0xbad) {
+      std::cerr
+         << "Warning: unable to get last block address for deque at 0x"
+         << std::hex << dequeAllocation << "\n";
+      return;
+    }
+    AllocationIndex dequeBlocksSeen = 0;
+    Offset dequeBlock = firstDequeBlock;
+    while (dequeBlocksSeen++ < _numAllocations) {
+      AllocationIndex dequeBlockIndex =
+          _directory.AllocationIndexOf(dequeBlock);
+      if (dequeBlockIndex == _numAllocations) {
+        break;
+      }
+      _tagHolder.TagAllocation(dequeBlockIndex, _dequeBlockTagIndex);
+      if (dequeBlock == lastDequeBlock) {
+        break;
+      }
+      dequeBlock = reader.ReadOffset(dequeBlock + _forwardInDequeBlock, 0xbad);
+      if (dequeBlock == 0) {
+        break;
+      }
+      if (dequeBlock == 0xbad) {
+        std::cerr
+            << "Warning: unable to access full chain of blocks for deque at 0x"
+            << std::hex << dequeAllocation << "\n";
+        break;
+      }
+    }
+  }
+
   /*
    * Tag all the container python objects that appear on one of the garbage
    * collection lists.  It is necessary to do this eagerly because such
@@ -224,6 +285,16 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
               if (keysIndex != _numAllocations && keysIndex != index) {
                 _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
               }
+            } else if (typeCandidate == _listType) {
+              Offset itemsAddr = reader.ReadOffset(
+                  node + _garbageCollectionHeaderSize + _itemsInList, ~0);
+              AllocationIndex itemsIndex =
+                  _directory.AllocationIndexOf(itemsAddr);
+              if (itemsIndex != _numAllocations && itemsIndex != index) {
+                _tagHolder.TagAllocation(itemsIndex, _listItemsTagIndex);
+              }
+            } else if (typeCandidate == _dequeType) {
+              TagDequeBlocks(node);
             } else if (_infrastructureFinder.IsATypeType(typeCandidate) &&
                        _cachedKeysInHeapTypeObject !=
                            InfrastructureFinder<Offset>::UNKNOWN_OFFSET) {
@@ -276,7 +347,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   */
 
   bool TagAsUntrackedContainerPythonObject(
-      const ContiguousImage& contiguousImage, AllocationIndex index) {
+      const ContiguousImage& contiguousImage, AllocationIndex index,
+      Offset allocationAddress) {
     const char* firstChar = contiguousImage.FirstChar();
     Offset size = contiguousImage.Size();
     if (size >= _garbageCollectionHeaderSize + 2 * sizeof(Offset) &&
@@ -286,19 +358,36 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
       Offset typeCandidate =
           *((Offset*)(firstChar + _garbageCollectionHeaderSize +
                       InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT));
-      if (typeCandidate == _dictType ||
+      if (typeCandidate == _dictType || typeCandidate == _listType ||
+          typeCandidate == _dequeType ||
           (*((Offset*)(firstChar)) == 0 &&
            _infrastructureFinder.HasType(typeCandidate))) {
         _tagHolder.TagAllocation(index, _containerPythonObjectTagIndex);
-        if (typeCandidate == _dictType &&
-            size >=
-                _garbageCollectionHeaderSize + _keysInDict + sizeof(Offset)) {
-          Offset keysAddr = *((
-              Offset*)(firstChar + _garbageCollectionHeaderSize + _keysInDict));
-          AllocationIndex keysIndex = _directory.AllocationIndexOf(keysAddr);
-          if (keysIndex != _numAllocations && keysIndex != index) {
-            _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+        if (typeCandidate == _dictType) {
+          if (size >=
+              _garbageCollectionHeaderSize + _keysInDict + sizeof(Offset)) {
+            Offset keysAddr =
+                *((Offset*)(firstChar + _garbageCollectionHeaderSize +
+                            _keysInDict));
+            AllocationIndex keysIndex = _directory.AllocationIndexOf(keysAddr);
+            if (keysIndex != _numAllocations && keysIndex != index) {
+              _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+            }
           }
+        } else if (typeCandidate == _listType) {
+          if (size >=
+              _garbageCollectionHeaderSize + _itemsInList + sizeof(Offset)) {
+            Offset itemsAddr =
+                *((Offset*)(firstChar + _garbageCollectionHeaderSize +
+                            _itemsInList));
+            AllocationIndex itemsIndex =
+                _directory.AllocationIndexOf(itemsAddr);
+            if (itemsIndex != _numAllocations && itemsIndex != index) {
+              _tagHolder.TagAllocation(itemsIndex, _listItemsTagIndex);
+            }
+          }
+        } else if (typeCandidate == _dequeType) {
+          TagDequeBlocks(allocationAddress);
         }
         return true;
       }
