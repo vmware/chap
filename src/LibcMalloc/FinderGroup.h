@@ -5,6 +5,7 @@
 #include "../Allocations/Directory.h"
 #include "../CompoundDescriber.h"
 #include "../ModuleDirectory.h"
+#include "../ThreadMap.h"
 #include "../UnfilledImages.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
@@ -33,6 +34,7 @@ class FinderGroup {
   FinderGroup(VirtualMemoryPartition<Offset>& virtualMemoryPartition,
               const ModuleDirectory<Offset>& moduleDirectory,
               Allocations::Directory<Offset>& allocationDirectory,
+              const ThreadMap<Offset>& threadMap,
               UnfilledImages<Offset>& unfilledImages)
       : _virtualMemoryPartition(virtualMemoryPartition),
         _virtualAddressMap(virtualMemoryPartition.GetAddressMap()),
@@ -43,7 +45,7 @@ class FinderGroup {
                               unfilledImages),
         _corruptionSkipper(_virtualAddressMap, _infrastructureFinder),
         _fastBinFreeStatusFixer(_virtualAddressMap, _infrastructureFinder,
-                                allocationDirectory),
+                                allocationDirectory, threadMap),
         _doublyLinkedListCorruptionChecker(
             _virtualAddressMap, _infrastructureFinder, allocationDirectory) {
     if (!(_infrastructureFinder.GetArenas().empty())) {
@@ -51,13 +53,14 @@ class FinderGroup {
 
       _mainArenaAllocationFinder.reset(new MainArenaAllocationFinder<Offset>(
           _virtualAddressMap, _infrastructureFinder, _corruptionSkipper,
-          _fastBinFreeStatusFixer, _doublyLinkedListCorruptionChecker));
-      _allocationDirectory.AddFinder(_mainArenaAllocationFinder.get());
+          _fastBinFreeStatusFixer, _doublyLinkedListCorruptionChecker,
+          allocationDirectory));
+
       if (!(_infrastructureFinder.GetHeaps().empty())) {
         _heapAllocationFinder.reset(new HeapAllocationFinder<Offset>(
             _virtualAddressMap, _infrastructureFinder, _corruptionSkipper,
-            _fastBinFreeStatusFixer, _doublyLinkedListCorruptionChecker));
-        _allocationDirectory.AddFinder(_heapAllocationFinder.get());
+            _fastBinFreeStatusFixer, _doublyLinkedListCorruptionChecker,
+            allocationDirectory));
       }
     }
     /*

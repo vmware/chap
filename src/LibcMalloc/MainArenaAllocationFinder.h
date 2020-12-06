@@ -24,7 +24,8 @@ class MainArenaAllocationFinder
       CorruptionSkipper<Offset>& corruptionSkipper,
       FastBinFreeStatusFixer<Offset>& fastBinFreeStatusFixer,
       DoublyLinkedListCorruptionChecker<Offset>&
-          doublyLinkedListCorruptionChecker)
+          doublyLinkedListCorruptionChecker,
+      Allocations::Directory<Offset>& allocationDirectory)
       : _addressMap(addressMap),
         _reader(addressMap),
         _infrastructureFinder(infrastructureFinder),
@@ -40,6 +41,7 @@ class MainArenaAllocationFinder
       StartMainArenaRun();
       Advance();
     }
+    _finderIndex = allocationDirectory.AddFinder(this);
   }
 
   virtual ~MainArenaAllocationFinder() {}
@@ -80,7 +82,8 @@ class MainArenaAllocationFinder
     if (_mainArenaRunsIterator != _mainArenaRuns.end()) {
       while (!AdvanceToNextAllocationOfRun()) {
         if (++_mainArenaRunsIterator == _mainArenaRuns.end()) {
-          _fastBinFreeStatusFixer.MarkFastBinItemsAsFree(_mainArena);
+          _fastBinFreeStatusFixer.MarkFastBinItemsAsFree(_mainArena, true,
+                                                         _finderIndex);
           _doublyLinkedListCorruptionChecker.CheckDoublyLinkedListCorruption(
               _mainArena);
           return;
@@ -121,7 +124,7 @@ class MainArenaAllocationFinder
   CorruptionSkipper<Offset>& _corruptionSkipper;
   FastBinFreeStatusFixer<Offset>& _fastBinFreeStatusFixer;
   DoublyLinkedListCorruptionChecker<Offset>& _doublyLinkedListCorruptionChecker;
-
+  size_t _finderIndex;
   void StartMainArenaRun() {
     _base = _mainArenaRunsIterator->first;
     _size = _mainArenaRunsIterator->second;

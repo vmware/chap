@@ -22,7 +22,8 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
                        CorruptionSkipper<Offset>& corruptionSkipper,
                        FastBinFreeStatusFixer<Offset>& fastBinFreeStatusFixer,
                        DoublyLinkedListCorruptionChecker<Offset>&
-                           doublyLinkedListCorruptionChecker)
+                           doublyLinkedListCorruptionChecker,
+                       Allocations::Directory<Offset>& allocationDirectory)
       : _addressMap(addressMap),
         _reader(addressMap),
         _infrastructureFinder(infrastructureFinder),
@@ -39,6 +40,7 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
       SkipHeaders();
       Advance();
     }
+    _finderIndex = allocationDirectory.AddFinder(this);
   }
 
   virtual ~HeapAllocationFinder() {}
@@ -81,7 +83,8 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
             if (keyAndValue.first != _mainArenaAddress) {
               const typename InfrastructureFinder<Offset>::Arena& arena =
                   keyAndValue.second;
-              _fastBinFreeStatusFixer.MarkFastBinItemsAsFree(arena);
+              _fastBinFreeStatusFixer.MarkFastBinItemsAsFree(arena, false,
+                                                             _finderIndex);
               _doublyLinkedListCorruptionChecker
                   .CheckDoublyLinkedListCorruption(arena);
             }
@@ -126,6 +129,7 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
   CorruptionSkipper<Offset>& _corruptionSkipper;
   FastBinFreeStatusFixer<Offset>& _fastBinFreeStatusFixer;
   DoublyLinkedListCorruptionChecker<Offset>& _doublyLinkedListCorruptionChecker;
+  size_t _finderIndex;
 
   void SkipHeaders() {
     const typename InfrastructureFinder<Offset>::Heap& heap =
@@ -225,7 +229,7 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
           typename VirtualAddressMap<Offset>::const_iterator itMap =
               _addressMap.find(_top);
           Offset endWritableInHeap = itMap.Limit();
-          Offset endHeapRange = _heapMapIterator->first + _maxHeapSize; 
+          Offset endHeapRange = _heapMapIterator->first + _maxHeapSize;
           if (endWritableInHeap > endHeapRange) {
             endWritableInHeap = endHeapRange;
           }

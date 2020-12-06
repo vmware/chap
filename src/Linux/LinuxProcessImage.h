@@ -66,7 +66,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
       _libcMallocFinderGroup.reset(new LibcMalloc::FinderGroup<Offset>(
           Base::_virtualMemoryPartition, Base::_moduleDirectory,
-          Base::_allocationDirectory, Base::_unfilledImages));
+          Base::_allocationDirectory, Base::_threadMap, Base::_unfilledImages));
 
       /*
        * If we haven't yet found the modules, now is a good time to do so

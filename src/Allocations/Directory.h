@@ -155,7 +155,7 @@ class Directory {
         _maxAllocationSize(0) {}
   ~Directory() {}
 
-  void AddFinder(Finder* finder) {
+  size_t AddFinder(Finder* finder) {
     if (_allocationBoundariesResolved) {
       /*
        * This can be done only before the allocation boundaries have been
@@ -179,8 +179,10 @@ class Directory {
       abort();
     }
 
-    _finderToIndex[finder] = _indexToFinder.size();
+    size_t finderIndex = _indexToFinder.size();
+    _finderToIndex[finder] = finderIndex;
     _indexToFinder.push_back(finder);
+    return finderIndex;
   }
 
   void ResolveAllocationBoundaries() {
