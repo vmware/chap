@@ -21,7 +21,9 @@ class Shower {
     Shower* MakeVisitor(Commands::Context& context,
                         const ProcessImage<Offset>& processImage) {
       bool showAscii = false;
-      (void)context.ParseBooleanSwitch("showAscii", showAscii);
+      if (!context.ParseBooleanSwitch("showAscii", showAscii)) {
+        return nullptr;
+      }
       return new Shower(context, processImage.GetSignatureDirectory(),
                         processImage.GetVirtualAddressMap(), showAscii);
     }
