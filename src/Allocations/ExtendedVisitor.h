@@ -409,19 +409,29 @@ class ExtendedVisitor {
             continue;
           }
         } else {
+          // incoming reference, use offset in extension.
+          const char* image;
+          Offset numBytesFound = _addressMap.FindMappedMemoryImage(
+              candidateAllocation->Address() + rule._offsetInExtension, &image);
+          Offset memberAddress = memberAllocation->Address();
+          if (numBytesFound < sizeof(Offset)) {
+            continue;
+          }
+          Offset pointerInCandidate = *((Offset*)(image));
           if (rule._useOffsetInMember) {
-            const char* image;
-            Offset numBytesFound = _addressMap.FindMappedMemoryImage(
-                candidateAllocation->Address() + rule._offsetInExtension,
-                &image);
-            if (numBytesFound < sizeof(Offset) ||
-                *((Offset*)(image)) !=
-                    memberAllocation->Address() + rule._offsetInMember) {
+            if (pointerInCandidate != memberAddress + rule._offsetInMember) {
+              continue;
+            }
+          } else {
+            if ((pointerInCandidate < memberAddress) ||
+                (pointerInCandidate >=
+                 memberAddress + memberAllocation->Size())) {
               continue;
             }
           }
         }
       } else {
+        // Don't use offset in extension.
         if (rule._useOffsetInMember && !rule._referenceIsOutgoing) {
           if (!AllocationHasAlignedPointer(
                   *candidateAllocation,
