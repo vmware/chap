@@ -1318,19 +1318,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         defEnd = plusPos;
         std::string name(line.substr(defStart, defEnd - defStart));
 
-        /*
-         * Convert any, ", " in the demangled signature name to ",", so that
-         * one can use the name in scripts.  The issue is embedded blanks.
-         * There are still some cases, as with "unsigned long" embedded in
-         * a demangled signature that are not resolved this way, but it seems
-         * that stripping the space after a comma still leaves the name
-         * pretty readable.
-         */
-
-        std::string::size_type commaBlankPos;
-        while (std::string::npos != (commaBlankPos = name.rfind(", "))) {
-          name.erase(commaBlankPos + 1, 1);
-        }
         Base::_signatureDirectory.MapSignatureNameAndStatus(
             signature, name,
             isVTable ? SignatureDirectory::VTABLE_WITH_NAME_FROM_SYMDEFS

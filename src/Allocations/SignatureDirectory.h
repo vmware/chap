@@ -42,6 +42,19 @@ class SignatureDirectory {
 
   void MapSignatureNameAndStatus(Offset signature, std::string name,
                                  Status status) {
+    /*
+     * Get rid of any blanks in the unmangled signature name.  In
+     * some cases this will result in such hard to read things
+     * as "unsignedlong", but it is better to have all the signatures
+     * used by chap as without blanks so that they can all be used
+     * in commands.
+     */
+
+    std::string::size_type blankPos;
+    while (std::string::npos != (blankPos = name.rfind(" "))) {
+      name.erase(blankPos, 1);
+    }
+
     SignatureNameAndStatusIterator it = _signatureToName.find(signature);
     if (it != _signatureToName.end()) {
       std::string& knownName = it->second.first;
