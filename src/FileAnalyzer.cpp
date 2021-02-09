@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 extern "C" {
@@ -10,6 +10,7 @@ extern "C" {
 };
 #include <iostream>
 #include <memory>
+#include <regex>
 #include "Commands/Runner.h"
 #include "FileImage.h"
 #include "Linux/ELFCore32FileAnalyzerFactory.h"
@@ -37,6 +38,15 @@ void PrintUsageAndExit(int exitCode,
 
 using namespace chap;
 int main(int argc, char **argv, char ** /* envp */) {
+   try {
+      std::regex mayNotCompile("[^ab]", std::regex::ECMAScript);
+   } catch (const std::regex_error&) {
+     std::cerr << "Your chap binary was compiled using a stale build "
+                  "environment that generates\ninvalid std::regex code.  "
+                  "Upgrade your build environment and remake chap.\n";
+     return 1;
+   }
+
   vector<FileAnalyzerFactory *> factories;
 
   Linux::ELFCore64FileAnalyzerFactory elf64CoreAnalyzerFactory;
