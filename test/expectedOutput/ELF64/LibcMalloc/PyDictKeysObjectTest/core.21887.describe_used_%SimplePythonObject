@@ -21,10 +21,6 @@ This has a string of length 467 starting with
 "super() -> same as super(__class__, <first argument>)
 super(type) -> unbound ".
 
-Anchored allocation at 55e087c2c2b0 of size 88
-This allocation matches pattern SimplePythonObject.
-This has reference count 94422839180360 and python type 0x55e087c9c268 (StreamReader)
-
 Anchored allocation at 55e087c2da80 of size 248
 This allocation matches pattern SimplePythonObject.
 This has reference count 1 and python type 0x7f42b0f55c20 (str)
@@ -54591,4 +54587,4 @@ This has reference count 1 and python type 0x7f42b0f55c20 (str)
 This has a string of length 7 containing
 "_codecs".
 
-10127 allocations use 0xd88a8 (886,952) bytes.
+10126 allocations use 0xd8820 (886,816) bytes.

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -22,6 +22,10 @@ class ContainerPythonObjectDescriber
         _infrastructureFinder(processImage.GetPythonInfrastructureFinder()),
         _garbageCollectionHeaderSize(
             _infrastructureFinder.GarbageCollectionHeaderSize()),
+        _garbageCollectionRefcntShift(
+            _infrastructureFinder.GarbageCollectionRefcntShift()),
+        _refcntInGarbageCollectionHeader(
+            _infrastructureFinder.RefcntInGarbageCollectionHeader()),
         _contiguousImage(processImage.GetVirtualAddressMap(),
                          processImage.GetAllocationDirectory()) {}
 
@@ -36,6 +40,20 @@ class ContainerPythonObjectDescriber
     output << "This allocation matches pattern ContainerPythonObject.\n";
     _contiguousImage.SetIndex(index);
     const char* firstChar = _contiguousImage.FirstChar();
+    long long gcRefcnt =
+        *((long long*)(firstChar + _refcntInGarbageCollectionHeader)) >>
+        _garbageCollectionRefcntShift;
+    if (gcRefcnt == -2) {
+      output << "This allocation is not currently tracked by the garbage "
+                "collector.\n";
+    } else if (gcRefcnt == -3) {
+      output << "The garbage collector considers this allocation to be "
+                "reachable.\n";
+    } else if (gcRefcnt == -4) {
+      output << "The garbage collector considers this allocation to be "
+                "tentatively unreachable.\n";
+    }
+
     Offset referenceCount =
         *((Offset*)(firstChar + _garbageCollectionHeaderSize));
     Offset pythonType =
@@ -61,6 +79,8 @@ class ContainerPythonObjectDescriber
  private:
   const InfrastructureFinder<Offset>& _infrastructureFinder;
   const Offset _garbageCollectionHeaderSize;
+  const Offset _garbageCollectionRefcntShift;
+  const Offset _refcntInGarbageCollectionHeader;
   mutable Allocations::ContiguousImage<Offset> _contiguousImage;
 };
 }  // namespace Python

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -54,6 +54,7 @@ class InfrastructureFinder {
         _getSetInType(UNKNOWN_OFFSET),
         _dictType(0),
         _keysInDict(UNKNOWN_OFFSET),
+        _valuesInDict(UNKNOWN_OFFSET),
         _dictKeysHeaderSize(UNKNOWN_OFFSET),
         _sizeInDictKeys(UNKNOWN_OFFSET),
         _numElementsInDictKeys(UNKNOWN_OFFSET),
@@ -71,6 +72,8 @@ class InfrastructureFinder {
         _mainInterpreterState(0),
         _builtinsInInterpreterState(UNKNOWN_OFFSET),
         _garbageCollectionHeaderSize(UNKNOWN_OFFSET),
+        _garbageCollectionRefcntShift(0),
+        _refcntInGarbageCollectionHeader(2 * sizeof(Offset)),
         _cachedKeysInHeapTypeObject(UNKNOWN_OFFSET) {}
   void Resolve() {
     if (_isResolved) {
@@ -133,6 +136,12 @@ class InfrastructureFinder {
         FindArenaStructArrayAndTypes(itExe->second);
       }
     }
+    _garbageCollectionRefcntShift =
+        (_majorVersion == Version2)
+            ? 0
+            : (_majorVersion == Version3)
+                  ? 1
+                  : (_keysInDict == PYTHON2_KEYS_IN_DICT) ? 0 : 1;
     _isResolved = true;
   }
 
@@ -191,6 +200,7 @@ class InfrastructureFinder {
   Offset DictInType() const { return _dictInType; }
   Offset DictType() const { return _dictType; }
   Offset KeysInDict() const { return _keysInDict; }
+  Offset ValuesInDict() const { return _valuesInDict; }
   Offset DictKeysHeaderSize() const { return _dictKeysHeaderSize; }
   Offset StrType() const { return _strType; }
   Offset CstringInStr() const { return _cstringInStr; }
@@ -207,6 +217,12 @@ class InfrastructureFinder {
   }
   const Offset GarbageCollectionHeaderSize() const {
     return _garbageCollectionHeaderSize;
+  }
+  const Offset GarbageCollectionRefcntShift() const {
+    return _garbageCollectionRefcntShift;
+  }
+  const Offset RefcntInGarbageCollectionHeader() const {
+    return _refcntInGarbageCollectionHeader;
   }
   const Offset CachedKeysInHeapTypeObject() const {
     return _cachedKeysInHeapTypeObject;
@@ -349,6 +365,7 @@ class InfrastructureFinder {
   Offset _getSetInType;
   Offset _dictType;
   Offset _keysInDict;
+  Offset _valuesInDict;
   Offset _dictKeysHeaderSize;
   Offset _sizeInDictKeys;
   Offset _numElementsInDictKeys;
@@ -368,6 +385,8 @@ class InfrastructureFinder {
   std::vector<uint32_t> _activeIndices;
   std::vector<Offset> _nonEmptyGarbageCollectionLists;
   Offset _garbageCollectionHeaderSize;
+  Offset _garbageCollectionRefcntShift;
+  Offset _refcntInGarbageCollectionHeader;
   Offset _cachedKeysInHeapTypeObject;
 
   void FindMajorVersionFromPaths() {}
@@ -984,7 +1003,7 @@ class InfrastructureFinder {
       }
 
       if (!strcmp(image + _cstringInStr, "type") ||
-          !strcmp(image + _cstringInStr, "dict") || 
+          !strcmp(image + _cstringInStr, "dict") ||
           !strcmp(image + _cstringInStr, "str") ||
           !strcmp(image + _cstringInStr, "list") ||
           !strcmp(image + _cstringInStr, "tuple") ||
@@ -1133,7 +1152,8 @@ class InfrastructureFinder {
                   << std::hex << value << "\n";
               continue;
             }
-            int typeCount = CountBuiltinTypesFromDict(otherReader, dictForModule);
+            int typeCount =
+                CountBuiltinTypesFromDict(otherReader, dictForModule);
             if (typeCount > bestTypeCount) {
               bestTypeCount = typeCount;
               builtinsModule = value;
@@ -1215,6 +1235,7 @@ class InfrastructureFinder {
       }
     }
     _keysInDict = PYTHON3_5_KEYS_IN_DICT;
+    _valuesInDict = _keysInDict + sizeof(Offset);
     _dictKeysHeaderSize = PYTHON3_5_DICT_KEYS_HEADER_SIZE;
     _sizeInDictKeys = PYTHON3_SIZE_IN_DICT_KEYS;
     _cstringInStr = PYTHON3_CSTRING_IN_STR;
@@ -1223,6 +1244,7 @@ class InfrastructureFinder {
     }
 
     _keysInDict = PYTHON3_6_KEYS_IN_DICT;
+    _valuesInDict = _keysInDict + sizeof(Offset);
     _dictKeysHeaderSize = PYTHON3_6_DICT_KEYS_HEADER_SIZE;
     _numElementsInDictKeys = PYTHON3_6_NUM_ELEMENTS_IN_DICT_KEYS;
     _dictKeysHaveIndex = true;

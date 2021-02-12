@@ -70,9 +70,6 @@ This allocation matches pattern PythonListItems.
 Anchored allocation at 17b47f0 of size 18
 This allocation matches pattern PythonListItems.
 
-Anchored allocation at 17b8240 of size 28
-This allocation matches pattern PythonListItems.
-
 Anchored allocation at 17be400 of size 18
 This allocation matches pattern PythonListItems.
 
@@ -97,4 +94,4 @@ This allocation matches pattern PythonListItems.
 Anchored allocation at 180fdd0 of size 48
 This allocation matches pattern PythonListItems.
 
-33 allocations use 0xd3f8 (54,264) bytes.
+32 allocations use 0xd3d0 (54,224) bytes.

@@ -20,8 +20,6 @@ Used allocation at 1729a30 of size 288
 
 Used allocation at 172a5a0 of size 218
 
-Used allocation at 172ec30 of size 88
-
 Used allocation at 1730bd0 of size 218
 
 Used allocation at 1732ec0 of size 338
@@ -17406,4 +17404,4 @@ Used allocation at 7f5e7c1a5f70 of size 40
 
 Used allocation at 7f5e7c1a5fb0 of size 40
 
-8704 allocations use 0xb32c8 (733,896) bytes.
+8703 allocations use 0xb3240 (733,760) bytes.

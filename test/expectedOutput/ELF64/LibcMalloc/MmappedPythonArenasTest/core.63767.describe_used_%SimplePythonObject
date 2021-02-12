@@ -82,10 +82,6 @@ This has a string of length 478 starting with
 
     Requires that the metaclass is ".
 
-Anchored allocation at 172ec30 of size 88
-This allocation matches pattern SimplePythonObject.
-This has reference count 0 and python type 0x1762c28 (StreamReader)
-
 Anchored allocation at 1730bd0 of size 218
 This allocation matches pattern SimplePythonObject.
 This has reference count 1 and python type 0x7f5e824cdfe0 (str)
@@ -47932,4 +47928,4 @@ This has reference count 2 and python type 0x7f5e824cdfe0 (str)
 This has a string of length 11 containing
 "SyntaxError".
 
-8704 allocations use 0xb32c8 (733,896) bytes.
+8703 allocations use 0xb3240 (733,760) bytes.

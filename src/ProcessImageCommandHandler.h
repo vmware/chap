@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -33,6 +33,7 @@
 #include "Python/ListItemsDescriber.h"
 #include "Python/MallocedArenaDescriber.h"
 #include "Python/PyDictKeysObjectDescriber.h"
+#include "Python/PyDictValuesArrayDescriber.h"
 #include "Python/SimplePythonObjectDescriber.h"
 #include "SSLDescriber.h"
 #include "SSL_CTXDescriber.h"
@@ -198,6 +199,7 @@ class ProcessImageCommandHandler {
         _SSL_CTXDescriber(processImage),
         _SSLDescriber(processImage),
         _pyDictKeysObjectDescriber(processImage),
+        _pyDictValuesArrayDescriber(processImage),
         _simplePythonObjectDescriber(processImage),
         _containerPythonObjectDescriber(processImage),
         _pythonArenaStructArrayDescriber(processImage),
@@ -216,6 +218,7 @@ class ProcessImageCommandHandler {
     _patternDescriberRegistry.Register(_SSL_CTXDescriber);
     _patternDescriberRegistry.Register(_SSLDescriber);
     _patternDescriberRegistry.Register(_pyDictKeysObjectDescriber);
+    _patternDescriberRegistry.Register(_pyDictValuesArrayDescriber);
     _patternDescriberRegistry.Register(_simplePythonObjectDescriber);
     _patternDescriberRegistry.Register(_containerPythonObjectDescriber);
     _patternDescriberRegistry.Register(_pythonArenaStructArrayDescriber);
@@ -356,6 +359,7 @@ class ProcessImageCommandHandler {
   SSL_CTXDescriber<Offset> _SSL_CTXDescriber;
   SSLDescriber<Offset> _SSLDescriber;
   Python::PyDictKeysObjectDescriber<Offset> _pyDictKeysObjectDescriber;
+  Python::PyDictValuesArrayDescriber<Offset> _pyDictValuesArrayDescriber;
   Python::SimplePythonObjectDescriber<Offset> _simplePythonObjectDescriber;
   Python::ContainerPythonObjectDescriber<Offset>
       _containerPythonObjectDescriber;

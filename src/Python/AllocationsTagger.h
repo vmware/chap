@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -40,6 +40,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _typeType(infrastructureFinder.TypeType()),
         _dictType(infrastructureFinder.DictType()),
         _keysInDict(infrastructureFinder.KeysInDict()),
+        _valuesInDict(infrastructureFinder.ValuesInDict()),
         _listType(infrastructureFinder.ListType()),
         _itemsInList(infrastructureFinder.ItemsInList()),
         _dequeType(infrastructureFinder.DequeType()),
@@ -59,6 +60,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _containerPythonObjectTagIndex(
             _tagHolder.RegisterTag("%ContainerPythonObject")),
         _dictKeysObjectTagIndex(_tagHolder.RegisterTag("%PyDictKeysObject")),
+        _dictValuesArrayTagIndex(_tagHolder.RegisterTag("%PyDictValuesArray")),
         _listItemsTagIndex(_tagHolder.RegisterTag("%PythonListItems")),
         _dequeBlockTagIndex(_tagHolder.RegisterTag("%PythonDequeBlock")),
         _arenaStructArrayTagIndex(
@@ -122,6 +124,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   const Offset _typeType;
   const Offset _dictType;
   const Offset _keysInDict;
+  const Offset _valuesInDict;
   const Offset _listType;
   const Offset _itemsInList;
   const Offset _dequeType;
@@ -136,6 +139,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   TagIndex _simplePythonObjectTagIndex;
   TagIndex _containerPythonObjectTagIndex;
   TagIndex _dictKeysObjectTagIndex;
+  TagIndex _dictValuesArrayTagIndex;
   TagIndex _listItemsTagIndex;
   TagIndex _dequeBlockTagIndex;
   TagIndex _arenaStructArrayTagIndex;
@@ -199,17 +203,15 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     Offset firstDequeBlock =
         reader.ReadOffset(dequeStart + _firstBlockInDeque, 0xbad);
     if (firstDequeBlock == 0xbad) {
-      std::cerr
-         << "Warning: unable to get first block address for deque at 0x"
-         << std::hex << dequeAllocation << "\n";
+      std::cerr << "Warning: unable to get first block address for deque at 0x"
+                << std::hex << dequeAllocation << "\n";
       return;
     }
     Offset lastDequeBlock =
         reader.ReadOffset(dequeStart + _lastBlockInDeque, 0xbad);
     if (lastDequeBlock == 0xbad) {
-      std::cerr
-         << "Warning: unable to get last block address for deque at 0x"
-         << std::hex << dequeAllocation << "\n";
+      std::cerr << "Warning: unable to get last block address for deque at 0x"
+                << std::hex << dequeAllocation << "\n";
       return;
     }
     AllocationIndex dequeBlocksSeen = 0;
@@ -284,6 +286,17 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                   _directory.AllocationIndexOf(keysAddr);
               if (keysIndex != _numAllocations && keysIndex != index) {
                 _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+              }
+              if (_valuesInDict !=
+                  InfrastructureFinder<Offset>::UNKNOWN_OFFSET) {
+                Offset valuesAddr = reader.ReadOffset(
+                    node + _garbageCollectionHeaderSize + _valuesInDict, ~0);
+                AllocationIndex valuesIndex =
+                    _directory.AllocationIndexOf(valuesAddr);
+                if (valuesIndex != _numAllocations && valuesIndex != index) {
+                  _tagHolder.TagAllocation(valuesIndex,
+                                           _dictValuesArrayTagIndex);
+                }
               }
             } else if (typeCandidate == _listType) {
               Offset itemsAddr = reader.ReadOffset(
@@ -372,6 +385,19 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
             AllocationIndex keysIndex = _directory.AllocationIndexOf(keysAddr);
             if (keysIndex != _numAllocations && keysIndex != index) {
               _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+            }
+          }
+          if (_valuesInDict != InfrastructureFinder<Offset>::UNKNOWN_OFFSET) {
+            if (size >=
+                _garbageCollectionHeaderSize + _valuesInDict + sizeof(Offset)) {
+              Offset valuesAddr =
+                  *((Offset*)(firstChar + _garbageCollectionHeaderSize +
+                              _valuesInDict));
+              AllocationIndex valuesIndex =
+                  _directory.AllocationIndexOf(valuesAddr);
+              if (valuesIndex != _numAllocations && valuesIndex != index) {
+                _tagHolder.TagAllocation(valuesIndex, _dictValuesArrayTagIndex);
+              }
             }
           }
         } else if (typeCandidate == _listType) {
