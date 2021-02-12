@@ -45,7 +45,13 @@ This manual describes how to use `chap` which is a tool that looks at process im
 At present this has only been tested on Linux, with the `chap` binary built for 64bit x86-64.
 
 ### Supported Process Image File Formats
-At the time of this writing, the only process image file formats supported by `chap` are little-endian 32 bit ELF cores and little-endian 64 bit ELF cores, both of which are expected to be complete.  Run `chap` without any arguments to get a current list of supported process image file formats.
+At the time of this writing, the only process image file formats supported by `chap` are little-endian 32 bit ELF cores and little-endian 64 bit ELF cores, both of which are expected to be complete.  Run `chap` without any arguments to get a current list of supported process image file formats.  Note that due to recent changes in gdb, which is normally involved in producing the core whether the process crashed or a live core was generated using gcore, it is best to make sure that the coredump filter for the process for which the core is needed is set to 0x37.  So for example for a process with pid 123:
+
+```
+echo 0x37 >/proc/123/coredump_filter
+gcore 123
+```
+
 
 ### Supported Memory Allocators
 At present the only memory allocators for which `chap` will be able to find allocations in the process image are the following:
@@ -240,6 +246,7 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * SSL - SSL type associated with openssl
 * SSL_CTX - SSL_CTX type associated with openssl
 * PyDictKeysObject -PyDictKeysObject associated with python (works for python 3.5 but for python 2.6 or 2.7 it actually refers to just the triples associated with a dict)
+* PyDictValuesArray - buffer used for values for a split python dict but these will appear only in cores using python 3.5 or later
 * PythonArenaStructArray - a singleton array of information about all the python arenas
 * PythonMallocedArena - an allocation made by malloc that contains an arena that in turn contains smaller python objects
 * SimplePythonObject - a python object that does not reference other python objects (e.g. str, int ...)
