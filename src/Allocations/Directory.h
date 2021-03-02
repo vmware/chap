@@ -1,4 +1,4 @@
-// Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -376,7 +376,6 @@ class Directory {
     Offset limit = address + size;
     bool isUsed = finder->NextIsUsed();
     bool isWrapped = false;
-    finder->Advance();
     while (!_limits.empty() && limit > _limits.back().second) {
       if (address < _limits.back().second) {
         std::cerr << "Discarding allocation at [0x" << std::hex << address
@@ -384,6 +383,7 @@ class Directory {
                   << ")\n... due to overlap with allocation at [0x" << std::hex
                   << _allocations[_limits.back().first].Address() << ", 0x"
                   << _limits.back().second << ")\n";
+        finder->Advance();
         return;
       }
       _limits.pop_back();
@@ -429,6 +429,7 @@ class Directory {
     if (_maxAllocationSize < size) {
       _maxAllocationSize = size;
     }
+    finder->Advance();
   }
   void AppendRemainingAllocationsFromFinder(size_t finderIndex) {
     Finder* finder = _indexToFinder[finderIndex];
