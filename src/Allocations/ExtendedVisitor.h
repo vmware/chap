@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -457,7 +457,14 @@ class ExtendedVisitor {
         if (alreadyVisited) {
           _context.GetOutput() << "# Allocation at 0x"
                                << candidateAllocation->Address()
-                               << " was already visited.\n\n";
+                               << " was already visited.\n";
+          if (rule._newState != 0) {
+            _context.GetOutput() << "# Allocation at 0x"
+                                 << candidateAllocation->Address()
+                                 << " would have been extended in state "
+                                 << _stateLabels[rule._newState] << ".\n";
+          }
+          _context.GetOutput() << "\n";
           continue;
         }
         if (rule._newState != 0) {
