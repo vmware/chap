@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -139,8 +139,30 @@ class Subcommand : public Commands::Subcommand {
       }
     }
 
+    Offset geometricSampleBase = 0;
+    size_t numGeometricSampleArguments =
+        context.GetNumArguments("geometricSample");
+    if (numGeometricSampleArguments > 0) {
+      if (numGeometricSampleArguments > 1) {
+        std::cerr << "At most one /geometricSample switch is allowed.\n";
+        switchError = true;
+      }
+      const std::string& geometricSampleBaseString =
+          context.Argument("geometricSample", 0);
+      geometricSampleBase = atoi(geometricSampleBaseString.c_str());
+      if (geometricSampleBase == 0) {
+        if (geometricSampleBaseString[0] != '0' ||
+            geometricSampleBaseString[1] != '\000') {
+          error << "Invalid decimal geometric sample base: "
+                << "\"" << geometricSampleBaseString << "\".\n";
+          switchError = true;
+        }
+      }
+    }
+
     bool assignDefault = false;
     bool subtractFromDefault = false;
+
     size_t numSetOperationArguments = context.GetNumArguments("setOperation");
     if (numSetOperationArguments > 0) {
       if (numSetOperationArguments > 1) {
@@ -247,6 +269,12 @@ class Subcommand : public Commands::Subcommand {
         }
       }
     }
+
+    Offset nextInGeometricSample = 0;
+    if (geometricSampleBase != 0) {
+      nextInGeometricSample = 1;
+    }
+    Offset numSeenInBaseSet = 0;
     visited.Clear();
     for (AllocationIndex index = iterator->Next(); index != numAllocations;
          index = iterator->Next()) {
@@ -272,6 +300,14 @@ class Subcommand : public Commands::Subcommand {
       }
       if (unsatisfiedReferenceConstraint) {
         continue;
+      }
+
+      ++numSeenInBaseSet;
+      if (nextInGeometricSample != 0) {
+        if (numSeenInBaseSet != nextInGeometricSample) {
+          continue;
+        }
+        nextInGeometricSample *= geometricSampleBase;
       }
 
       if (extendedVisitorIsEnabled) {
@@ -304,7 +340,7 @@ class Subcommand : public Commands::Subcommand {
            " switches:\n\n"
            "/minsize <size-in-hex> imposes a minimum size.\n"
            "/maxsize <size-in-hex> imposes a maximum size.\n"
-           "/size <size-in-hex> imposes an exact size requirement.\n"
+           "/size <size-in-hex> imposes an exact size requirement.\n\n"
            "/minincoming [<signature>=]<count> restricts that each member"
            " must have at least\n"
            " the specified number of incoming references, if"
@@ -320,6 +356,8 @@ class Subcommand : public Commands::Subcommand {
            " with the caveat that normally such references are false, so this"
            " switch cannot\n"
            " be used for automated bug detection.\n\n"
+           "/geometricSample <base-in-decimal> causes only entries 1, b, "
+           "b**2, b**3...\n to be visited.\n\n"
            "After restrictions have been applied, the /extend switch can be"
            " used to extend\n"
            " the set to adjacent allocations.  See USERGUIDE.md for details.\n";
@@ -360,8 +398,8 @@ class Subcommand : public Commands::Subcommand {
       size_t count = atoi(countString);
       if (count == 0) {
         if (countString[0] != '0' || countString[1] != '\000') {
-          error << "Invalid count " << std::dec << "\"" << countString
-                << "\".\n";
+          error << "Invalid count "
+                << "\"" << countString << "\".\n";
           switchError = true;
         }
       }
