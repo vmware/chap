@@ -11,16 +11,22 @@
 * [Allocations](#allocations)
     * [Used Allocations](#used-allocations)
     * [Free Allocations](#free-allocations)
-    * [An Example](#an-example-of-used-and-free-allocations)
+    * [An Example of Used and Free Allocations for a C Program](#an-example-of-used-and-free-allocations-for-a-c-program)
 * [References](#references)
     * [Real References](#real-references)
     * [False References](#false-references)
     * [Missing References](#missing-references)
-* [Allocation Signatures](#allocation-signatures)
-    * [Finding Class Names and Struct Names from the Core](#finding-class-names-and-struct-names-from-the-core)
-    * [Finding Class Names and Struct Names from the Core and Binaries](#finding-class-names-and-struct-names-from-the-core-and-binaries)
-    * [Depending on gdb to Convert Addresses to Symbols](#depending-on-gdb-to-Convert-Numbers-to-symbols)
-* [Allocation Patterns](#allocation-patterns)
+* [Identifying the Contents of an Allocation](#identifying-the-contents-of-an-allocation)
+    * [Allocation Signatures](#allocation-signatures)
+        * [An Example from C++ of Vtable Pointer Signatures](#an-example-from-c++-of-vtable-pointer-signatures)
+        * [Ways That `chap` Can Convert Vtable Pointer Signatures to Names](#ways-that-chap-can-convert-vtable-pointer-signatures-to-names)
+            * [Finding Class Names and Struct Names from the Core](#finding-class-names-and-struct-names-from-the-core)
+            * [Finding Class Names and Struct Names from the Core and Binaries](#finding-class-names-and-struct-names-from-the-core-and-binaries)
+            * [Depending on gdb to Convert Addresses to Symbols](#depending-on-gdb-to-Convert-Numbers-to-symbols)
+    * [Allocation Patterns](#allocation-patterns)
+        * [Patterns Related to C++ Containers](#patterns-related-to-c++-containers)
+        * [Patterns Related to OpenSSL](#patterns-related-to-openssl)
+        * [Patterns Related to Python](#patterns-related-to-python)
 * [Allocation Sets](#allocation-sets)
 * [Allocation Set Modifications](#allocation-set-modifications)
     * [Restricting by Signatures or Patterns](#restricting-by-signatures-or-patterns)
@@ -88,55 +94,191 @@ Many of the remaining commands are related to redirection of output (try **help 
 
 ## Allocations
 
-An **allocation**, from the perspective of `chap` is a contiguous region of virtual memory that was made available to the caller by an allocation function or is currently reserved as writable memory by the process for that purpose.  At present the only allocations recognized by chap are those associated with libc malloc, and so made available to the caller by malloc(), calloc() or realloc() and freed by free() or realloc().  At present, regions of memory made available by other means, such as direct use of mmap(), are not considered allocations.
+An **allocation**, from the perspective of `chap` is a contiguous region of virtual memory that was made available to the caller by an allocation function or is currently reserved as writable memory by the process for that purpose.  At present the only allocations found by chap are the following:
+* allocations made via calls into libc malloc, for example to malloc(), possibly called indirectly by new() in C++, calloc() or realloc()
+* allocations made via the allocator in cpython
+
+There are definitely some allocations made directly via mmap() that are not found by chap, including allocations done via allocators used for other languages.
 
 
 ### Used Allocations
-A **used allocation** is an **allocation** that was never given back to the allocator.  From the perspective of `chap`, this explicitly excludes regions of memory that are used for book-keeping about the allocation but does include the region starting from the address returned by the caller and including the full contiguous region that the caller might reasonably modify.  This region may be larger than the size requested at allocation, because the allocation function is always free to return more bytes than were requested.
+
+A **used allocation** is an **allocation** that was at some point returned by an allocator and that not given back to the allocator after that time.  From the perspective of `chap`, this explicitly excludes regions of memory that are used for book-keeping about the allocation but does include the region starting from the address returned by the caller and including the full contiguous region that the caller might reasonably modify.  This region may be larger than the size requested at allocation, because the allocation function is always free to return more bytes than were requested by the caller.
 
 ### Free Allocations
-A **free allocation** is a range of writable memory that can be used to satisfy allocation requests.  It is worthwhile to understand these regions because typically memory is requested from the operating system in multiples of 4K pages, which are subdivided into allocations.  It is more common than not that when an allocation gets freed, it just gets given back to the allocator but the larger region containing that allocation just freed cannot yet be returned to the operating system.
+A **free allocation** is a range of writable memory, readable and writable by the process at the time the core was created, that can was available to satisfy allocation requests.  It is worthwhile to understand these regions because typically memory is requested from the operating system in multiples of 4K pages, which are subdivided into allocations.  It is more common than not that when an allocation gets freed, it just gets given back to the allocator but the larger region containing that allocation just freed cannot yet be returned to the operating system.
 
-### An Example of Used and Free Allocations
+### An Example of Used and Free Allocations for a C Program 
 
-Consider the following nonsense code from [here in the test code](https://github.com/vmware/chap/blob/master/test/generators/generic/singleThreaded/OneAllocated/OneAllocated.c), which allocates an int, sets it to 92, and crashes:
+Consider the following nonsense code which allocates enough space to store 2 int values, sets the first int value in the allocation to 92 and the second to 93, then crashes:
 
 ```
 #include <malloc.h>
 int main(int argc, const char**argv) {
-   int *pI = (int *) (malloc(sizeof(int)));
-   *pI = 92;
+   int *pI = (int *) (malloc(2 * sizeof(int)));
+   pI[0] = 92;
+   pI[1] = 93;
    *((int *) 0) = 92; // crash
    return 0;
 }
 ```
 
-If we look at a 64 bit core compiled from this process, we can understand more about the allocations.  We can see that the one used allocation is a bit larger than requested and that at the time the core was generated the glibc malloc was holding on to a single free allocation of size 0x20fe0.  Any of those commands shown (count, list, show) could have been run with any of those arguments (allocations, used, free) but one probably wouldn't want to show that large free allocation to the screen.
+Suppose we compile this as a 64-bit application, for example, compiling it as follows:
+
 
 ```
--bash-4.1$ chap core.48555
+$ gcc -o example1 example1.c
+```
+
+We can generate a core just by running this application but at some point before we
+do so we need to make sure that the process is allowed to create a core and that
+the coredump_filter is set in a way that the process will have the information we need.
+A value of 0x37 is recommended, for reasons to be explained later.
+
+
+```
+$ ulimit -c unlimited
+$ echo 0x37 >/proc/self/coredump_filter
+```
+
+Now we can run the program with the reasonable expectation that a core will be generated.  There
+are other ways to get a core for a process (e.g. using gcore or gdb).
+
+```
+$ ./example1
+Segmentation fault (core dumped)
+```
+
+Now that the core exists, in this particular case in a file called "core" in the current directory, we can start chap.  That line that starts with "chap>" is the chap prompt and indicates that chap has finished the initial valuation of the core file.  This step may take quite a while for a very large core file but should be fast for a small one.
+
+```
+$ chap core
+chap>
+```
+
+Now that we have reached the chap prompt, we can gather information about allocations, or more particularly sets of allocations.  Most of the important commands in chap apply to various kinds of sets, including sets of allocations.
+
+For example, the **count** command applies to various kinds of sets and generally will provide the number of members in the set as a count in decimal, possibly followed by total size used, in hexadecimal and usually in decimal as well, with the decimal value in parentheses.  For example:
+
+```
 chap> count allocations
-2 allocations use 0x20fe8 (135,144) bytes.
-chap> count used
-1 allocations use 0x18 (24) bytes.
-chap> count free
-1 allocations use 0x20fd0 (135,120) bytes.
-chap> list allocations
-Used allocation at 601010 of size 18
-
-Free allocation at 601030 of size 20fd0
-
-2 allocations use 0x20fe8 (135,144) bytes.
-chap> show used
-Used allocation at 601010 of size 18
-              5c                0                0
-
-1 allocations use 0x18 (24) bytes.
+3 allocations use 0x20fe0 (135,136) bytes.
+chap>
 ```
+
+In the preceding example, **allocations** refers to the set containing every **allocation**, as defined in this section.  We could alternatively use **count used** to provide the same information but just for the set containing every **used allocation** or **count free** to provide the same information for the set containing every **free allocation**.
+
+```
+chap> count used
+2 allocations use 0x2a0 (672) bytes.
+chap> count free
+1 allocations use 0x20d40 (134,464) bytes.
+```
+
+Not surprisingly, if we sum the counts given for **used** and **free** we get the total counts given for **allocations** because any **allocation** is considered by chap to be **used** or **free**.  Generally, **used** is the most interesting set but **free** can be extremely important as an allocation set specifier if the memory used by **free** allocations is large and **allocations** can be important if we want to see all the allocations, for explanatory purposes.
+
+Another thing we can do with sets of things is to **list** them.  Typically **list** provides that same information as **count**, with some small information about each member of the set, including minimally the address and size.  In the case of the simple sets **allocations**, **used** and **free**, the members of the set are listed in increasing order of address.
+
+So, for example, suppose we want to understand why **count allocations** showed that there are 3 allocations, when the above code in **main** only called **malloc()** once.  We already saw from the above use of **count used** and **count free** that there were actually 2 used allocations and one free one, but an alternative would be to list every **allocation**, **used** or **free** as follows:
+
+
+```
+chap> list allocations
+Used allocation at 55d90dacc010 of size 288
+
+Used allocation at 55d90dacc2a0 of size 18
+
+Free allocation at 55d90dacc2c0 of size 20d40
+
+3 allocations use 0x20fe0 (135,136) bytes.
+```
+
+The function **main()** only asked for one allocation, of size 8 (2 * sizeof(int)), but we see 3 allocations and the smallest one has size 0x18.  The above output reinforces a few points made in the first paragraph of this section:
+
+* Typically the allocator asks the operating system for memory in multiples of 4K pages, and splits them up into allocations.  So it appears that in this case libc malloc asked the operating system for 0x21000 bytes and that free allocation at 0x55d90dacc2c0 can be used to satisfy requests for memory.  We might reasonably guess, given the location of the free allocation after the used allocations, that libc malloc, after requesting 0x21000 bytes from the operating system, is initially carving allocations off the front.
+* The allocator may return more than is requested.  That is why the smallest allocation listed above has size 0x18, not 8.
+* An **allocation** as understood by chap, does not include any book-keeping overhead that is owned solely by the allocator.  That is one reason that the 3 allocations shown above actually have a gap between them (0x55d90dacc010 + 0x288 = 0x55d90dacc298) and (0x55d90dacc2a0 + 0x18 = 0x55d90dacc2b8).
+
+
+
+Although it can be helpful to look at all the allocations, as shown above, for some ways of understanding what the allocator is doing behind the scenes, it is more common to focus on **used** allocations, because those are more directly under control of the application.   We can list just those used allocations:
+
+```
+chap> list used
+Used allocation at 55d90dacc010 of size 288
+
+Used allocation at 55d90dacc2a0 of size 18
+
+2 allocations use 0x2a0 (672) bytes.
+```
+
+The above doesn't really tell us how those applications are used but there are other ways of figuring this out.  One can **show** the contents of an entire set, for example by using **show used** to show the contents of all **used** allocations.
+```
+chap> show used
+Used allocation at 55d90dacc010 of size 288
+  0:                0                0                0                0
+ 20:                0                0                0                0
+ 40:                0                0                0                0
+ 60:                0                0                0                0
+ 80:                0                0                0                0
+ a0:                0                0                0                0
+ c0:                0                0                0                0
+ e0:                0                0                0                0
+100:                0                0                0                0
+120:                0                0                0                0
+140:                0                0                0                0
+160:                0                0                0                0
+180:                0                0                0                0
+1a0:                0                0                0                0
+1c0:                0                0                0                0
+1e0:                0                0                0                0
+200:                0                0                0                0
+220:                0                0                0                0
+240:                0                0                0                0
+260:                0                0                0                0
+280:                0 
+
+Used allocation at 55d90dacc2a0 of size 18
+      5d0000005c                0                0 
+
+2 allocations use 0x2a0 (672) bytes.
+
+```
+
+Based on the source code for **main()** shown above, where two non-zero **int** values were set in the allocation, the allocation at 0x55d90dacc2a0 looks like a better fit to be the one allocated in **main()**.
+
+There are a few things needed to understand about the **show** command:
+
+* The output is as if the allocation was filled with pointers.  In this case the example was compiled as a 64 bit allocation, so the allocation is shown in groups of 64 bits (8 bytes).
+* For the case of an allocation too large to be shown in one line, the value at the left before the ":" gives the offset of the first pointer-sized range shown on the line, relative to the start of the allocation.
+* The contents of each pointer-sized range are displayed in hexadecimal, as is common with pointers.
+* The contents of each pointer-sized range are displayed in an order that makes it easy to read as a pointer.  Given that the target platforms supported by chap are little-endian, this means that the bytes within each pointer-sized range appear in the output in the opposite order in which they appear in memory.
+
+To see this we can look at the allocation at 0x55d90dacc2a0 using gdb to see it in byte order:
+
+```
+(gdb) x/24bx 0x55d90dacc2a0
+0x55d90dacc2a0:	0x5c	0x00	0x00	0x00	0x5d	0x00	0x00	0x00
+0x55d90dacc2a8:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+0x55d90dacc2b0:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+```
+
+Given that gdb is much more flexible about which radix is used and how many bytes should be shown in each group, we might also display the allocation as int values in decimal and see that in fact this allocation is a very good fit for the one allocated in **main()**:
+
+```
+(gdb) x/6wd 0x55d90dacc2a0
+0x55d90dacc2a0:	92	93	0	0
+0x55d90dacc2b0:	0	0
+
+```
+
+One might reasonably question why chap is so limited in the formats available to the **show** command and why chap has that particular default of displaying the contents of an allocation as if it were filled with pointers.  The reason for the default is that pointer values in allocations happen to be extremely useful to understanding how those allocations are used.  The reason that the set of formats available to the **show** command is so limited is simply that it is not a high priority to provide other formats.  Anyone who might want to add a new format should see [CONTRIBUTING.md](https://github.com/vmware/chap/blob/master/CONTRIBUTING.md) for information on how to contribute to chap.
+
+Another question might be why that allocation at 0x55d90dacc010 exists.  The contents of that allocation, which are all 0, are not very informative by themselves.  The bottom line is that the techniques shown so far aren't really enough to understand that, except that possibly one might guess based on the fact that the allocation appears near the start of the same 0x21000-byte range that contains the other allocations, and that the allocator appears to be carving off allocations from the remaining unused part of that larger range, that the allocation at 0x55d90dacc010 may have been allocated rather early in the start of the process.
 
 ## References
 
-Aside, from allocations, the most important thing to understand about ```chap``` is what it considers to be a **reference**.  Basically a **reference** is an interpretation of any range of memory or contents of a register as a live address to somewhere in that allocation.  In the most straight-forward case this is just a pointer in the native order (which is little-endian everywhere `chap` has been tested.).
+Aside, from allocations, the most important thing to understand about ```chap``` is what it considers to be a **reference**.  Basically a **reference** is an interpretation of any range of memory or contents of a register as a live address to somewhere in that allocation.  In the most straight-forward case this is just a pointer in the native order (which is little-endian everywhere `chap` has been tested.).  Much of the value of chap is in understanding the nature of such references, because references are key to understanding whether an allocation is leaked and how an allocation is used.
 
 ### Real References
 
@@ -152,46 +294,156 @@ Another case of false references are when the range just happens to look like it
 
 ### Missing References
 
-A missing reference would be a case where a reference exists but `chap` can't detect it.  One example of this might be if the reference was intentionally obscured by some reversible function.  Fortunately, this is extremely rare on Linux.  This is a good thing because, as will be seen below, accurate leak detection depends on not having any missing references.
+A missing reference would be a case where a reference exists but `chap` can't detect it.  One example of this might be if the reference was intentionally obscured by some reversible function.  Fortunately, this is extremely rare on Linux.  This is a good thing because, as will be seen later in this document, accurate leak detection depends on not having any missing references.
 
-## Allocation Signatures
+## Identifying the Contents of an Allocation
 
-A **signature** is a pointer at the very start of an allocation to memory that is not writable.   In the case of 'C++' a **signature** might point to a vtable, which can be used to identify the name of a class or struct associated with the given allocation.  A **signature** might also point to a function or a constant string literal.  Many commands in chap allow one to use a signature, either by name or numeric value to limit the scope of the command.  Anywhere one can use a signature, one can alternatively use **-** to limit the scope to **unsigned** allocations, which are allocations that have no signature. 
+There are are two main ways that chap can help identify the contents of an allocation.  One way, mostly of interest for a subset of C++ classes and structs is to look for a **signature** in the first pointer-sized range of an allocation.  The other way is via the use of a **pattern**, which uses the broader context of the whole allocation and references to and from that allocation.  Both are discussed in more detail below.  Identifying the contents of an allocation can be useful both for looking at that individual allocation and for generating summaries of sets, where, for example that it might be interesting to know that there are a million allocations containing instances of class Foo.
 
-`chap` has several ways to attempt to map signatures to names.  One is that `chap` will always attempt, using just the core, to follow the signature to a vtable to the typeinfo to the mangled type name and unmangle the name.  Another, if the mangled name is not available in the core, is to use a combination of the core and the associated binaries to obtain the mangled type name.  Another is to create requests for gdb, in a file called _core-path_.symreqs, depend on the user to run that as a script from gdb, and read the results from a file called _core-path_.symdefs.  
+### Allocation Signatures
 
-### Finding Class Names and Struct Names from the Core
+A **signature** is a pointer-sized value at the very start of an allocation, that suffices, by itself to identify the allocation.  The motivation behind use of signatures is simply that many structs and classes in C++ have such a pointer at the start, pointing to memory that contains a virtual method table.  See https://en.wikipedia.org/wiki/Virtual_method_table for one discussion of this.  An alternative kind of signature, not specific to C++, is a pointer to read-only memory.  This latter kind of signature might arise, for example, if an allocation starts with a pointer to a callback function or with a pointer to a read-only c-string in memory.
 
-There is no user intervention required here, but finding the name for any given signature solely based on the contents of the core requires all the following to be true:
-* The signature must actually be a vtable pointer (as opposed to a pointer to a function or something else).
-* The .data.ro section for the executable or shared library associated with the vtable must be present in the core.
-* The .data.ro section for the executable or shared library associated with the typeinfo (usually, but not necessarily the same module as for the vtable) must be present in the core.
-* The .rodata section for the executable or shared library associated with the mangled name (expected to be the same module as for the typeinfo) must be present in the core.
+#### An Example from C++ of Vtable Pointer Signatures.
 
-You don't have to bother yourself about those details if you don't want to (particularly as there are two other ways to get the signatures) but if you do, you can look into setting /proc/_process-id_/core_dump filter to control how complete the core is.
+Consider the following C++ example:
 
-If you simply want to know whether the class names and struct names have generally been found in the core you can use "summarize signatures" to get general status or use "summarize used" to see for all the signatures found in the file, which ones have associated names.  For example, here is a what the output of "summarize signatures" looks like when most of the mangled type names were available in the core because it shows that 2086 signatures were vtable pointers from the process image.
+```
+class B {
+public:
+  B() {}
+  virtual ~B(){}
+  virtual int alterBy92(int i) { return i * 92; }
+};
+
+class D1 : public B {
+public:
+  D1(){}
+  virtual int alterBy92(int i) { return i + 92; }
+};
+
+class D2 : public B {
+public:
+  D2(){}
+  virtual int alterBy92(int i) { return i / 92; }
+};
+
+int main(int, char **, char **) {
+  D1 *d1 = new D1();
+  D2 *d2 = new D2();
+  *((int *)(0)) = 92;
+}
+```
+
+Compile it, generate a core, and start chap as in earlier examples:
+
+```
+$ g++ -o example2 example2.c
+$ ulimit -c unlimited
+$ echo 0x37 >/proc/self/coredump_filter
+$ ./example2
+Segmentation fault (core dumped)
+$ chap core
+chap>
+```
+
+This time, when we look at the allocations, chap reports the type of the used allocations that are of type D1 and D2:
+
+```
+chap> list used
+Used allocation at 55b05e545010 of size 288
+
+Used allocation at 55b05e5452a0 of size 11c08
+
+Used allocation at 55b05e556eb0 of size 18
+... with signature 55b05e350d30(D1)
+
+Used allocation at 55b05e556ed0 of size 18
+... with signature 55b05e350d08(D2)
+
+4 allocations use 0x11ec0 (73,408) bytes.
+
+```
+
+The reason signatures are not reported for the other two applications is that they do not start with what appears to chap to be a signature.
+
+One can narrow down any set by limiting it to just allocations that have a particular signature:
+
+```
+chap> list used D1
+Used allocation at 55b05e556eb0 of size 18
+... with signature 55b05e350d30(D1)
+
+1 allocations use 0x18 (24) bytes.
+
+
+```
+
+#### Ways That `chap` Can Convert Vtable Pointer Signatures to Names
+There are several ways that chap, can figure out, given a vtable pointer, what the corresponding class name is.  If you don't really care much about C++ cores, you can reasonably skip this section.
+
+Alternatively, if the C++ vtable pointer signatures matter to you and you just want to see if they are set up properly, you can just use **summarize signatures** to check.  Here is what we see for the above example with classes D1 and D2:
 
 ```
 chap> summarize signatures
-167 signatures are unwritable addresses pending .symdefs file creation.
-2086 signatures are vtable pointers with names from the process image.
-2253 signatures in total were found.
-```   
+2 signatures are vtable pointers with names from the process image.
+2 signatures in total were found.
+```
 
-Note that there were still 167 signatures not found.  Those are signatures that fail one of the requirements.
+This shows us that the 2 names associated with the 2 vtable pointers were both found solely by looking at the process image (which in the existing open source chap code is a core).  This was possible because we made sure to set the coredump_filter for the shell to 0x37, which meant that when we ran example2 that process had a coredump_filter of 0x37, meaning that when the core was generated it had all the information chap needed to figure out the names.
 
-### Finding Class Names and Struct Names from the Core and binaries
+If you see something like the above when you run **summarize signatures**, where all the vtable pointers have names from the process image, you can ignore the following more detailed descriptions of waysthat chap figures out the names, because this information is only really of much interest if names for signatures aren't working.
 
-Unless all the signatures have been resolved from the core alone, `chap` will also attempt to use the binaries associated with the core.  In this case, unless the user is running from the same server as where the core was generated, the user is responsible to make sure that the executable and libraries are present in the correct version at the same path where they resided on the server where the core was generated.  It is fine if the binaries or libraries are stripped because `chap` does not depend on the DWARF information for this approach.  At some point the restrictions will be relaxed a bit to allow an alternative root for locating the binaries.  Note also that at present there are no checks that the binaries present are the right versions.
 
-Finding the name for any given signature solely based on the contents of the core requires all the following to be true (in addition to having the binaries and libraries in the correct place as mentioned above):
-* The signature must actually be a vtable pointer (as opposed to a pointer to a function or something else).
-* The .data.ro section for the executable or shared library associated with the vtable must be present in the core or must be resolved within the corresponding binary.
-* The .data.ro section for the executable or shared library associated with the typeinfo (usually, but not necessarily the same module as for the vtable) must be present in the core or must be resolved within the corresponding binary.
-* The .rodata section for the executable or shared library associated with the mangled name (expected to be the same module as for the typeinfo) must be present in the corresponding binary.
+##### Finding Class Names and Struct Names from the Core
 
-If this approach works you will expect to see that most of the signatures are "vtable pointers with names from libraries or executables"
+By default chap tries to do the following:
+
+First it checks for something like a vtable pointer at the start of the allocation.  We can see, using the following **show** command, that the only allocation of type D1 has something that looks like a pointer at the start.  This value (0x55b05e556eb0) is also shown by chap as the signature.
+
+```
+chap> show used D1
+Used allocation at 55b05e556eb0 of size 18
+... with signature 55b05e350d30(D1)
+    55b05e350d30                0                0 
+
+1 allocations use 0x18 (24) bytes.
+```
+
+Chap then expects that pointer to correspond to an address that is present in the core and is associated with either the main executable or with one of the shared libraries.  The pointer immediately prior to that address must be present as well, because chap uses that pointer to get information about the type.
+
+We can see using the **dump** command, which gives output similar to the **show** command but accepts a single start address and length, that the pointer just before the vtable at (0x55b05e350d30-8=55b05e350d28) is present in the core.  The value of that pointer, 0x55b05e350d88 is the address of the type information structure.
+
+```
+chap> dump 55b05e350d28 8
+    55b05e350d88 
+```
+
+The second pointer in that type information structure points to the mangled type name.  We can see using the **dump** command that in this case the type information structure is present in the core and that the mangled type name, which is referenced by the second pointer is at 0x55b05e34f008:
+```
+chap> dump 55b05e350d88 10
+    7f74e79dac98     55b05e34f008
+```
+
+The mangled type name, by inspection, is present in the core and is "2D1", which corresponds to the fully qualified C++ type "D1":
+
+```
+chap> dump 55b05e34f008 8 /showAscii true
+    423100314432                                                      2D1.1B..
+```
+
+If you prefer to see this in gdb:
+```
+(gdb) printf "%s\n", 0x55b05e34f008
+2D1
+```
+
+##### Finding Class Names and Struct Names from the Core and binaries
+
+Generally the preceding approach works for finding names for all the vtable pointers.  The only normal reason for failure is that the coredump_filter wasn't set properly for the process at the time the core was created.  If the core is actually incomplete, chap will check if the corresponding executables and shared libraries associated with the vtable, typeinfo and mangled type name are present, and if so will extract the needed information from those binaries. It can do this because it has a record in the core of where the executable and various shared libraries got loaded in shared memory, but this is subject to breakage if the needed executable and or shared libraries are not present or are of the wrong version.
+
+If chap has taken this fallback approach, the output of **summarize signatures** will reflect that.  Here is sample output, from a different core, that shows such a case:
+
 ```
 chap> summarize signatures
 54 signatures are unwritable addresses pending .symdefs file creation.
@@ -199,8 +451,10 @@ chap> summarize signatures
 746 signatures in total were found.
 ```
 
+Notice that the above output points out that the names associated with the vtable pointers were obtained from libraries or executables.
 
-### Depending on gdb to Convert Addresses to Symbols
+
+##### Depending on gdb to Convert Addresses to Symbols
 
 In a case where none of the signatures could be found based on the core alone or based on the core and binaries, the output of "summarize signatures" will show a large number of signatures "pending.symdefs file creation" as shown:
 ```
@@ -231,9 +485,11 @@ chap> summarize signatures
 1585 signatures in total were found.
 ```
 
-## Allocation Patterns
+### Allocation Patterns
 
-A **pattern** is a way of narrowing the type of an allocation based on the contents of that allocation or based on incoming or outgoing edges from that allocation.  A pattern can be used anywhere a signature can be used, but with a "%" preceding the pattern.  At present the following patterns are supported:
+A **pattern** is a way of narrowing the type of an allocation based on the contents of that allocation or based on incoming or outgoing edges from that allocation.  A pattern can be used anywhere a signature can be used, but with a "%" preceding the pattern.
+
+#### Patterns Related to C++ Containers
 * LongString - dynamically allocated memory for SSO std::string (for C++11 ABI or later) with >= 16 characters
 * COWStringBody - COW std::string bodies (for ABI prior to C++11)
 * VectorBody - dynamically allocated memory for std::vector
@@ -243,8 +499,12 @@ A **pattern** is a way of narrowing the type of an allocation based on the conte
 * MapOrSetNode - a single entry in a map or set
 * DequeMap - the outer structure used for an std::deque (or for an std::queue that doesn't explicitly specify the underlying container and so uses a deque) which points to the blocks
 * DequeBlock - the inner structure used for a deque (or for an std::queue that is based on one), which holds one or more entries on the deque
-* SSL - SSL type associated with openssl
-* SSL_CTX - SSL_CTX type associated with openssl
+
+#### Patterns Related to OpenSSL
+* SSL - SSL type
+* SSL_CTX - SSL_CTX type
+
+#### Patterns Related to Python
 * PyDictKeysObject -PyDictKeysObject associated with python (works for python 3.5 but for python 2.6 or 2.7 it actually refers to just the triples associated with a dict)
 * PyDictValuesArray - buffer used for values for a split python dict but these will appear only in cores using python 3.5 or later
 * PythonArenaStructArray - a singleton array of information about all the python arenas
