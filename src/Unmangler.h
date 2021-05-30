@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -408,11 +408,19 @@ class Unmangler {
         Append("(");
         pC = UnmangleNItem(pC + 1);
         Append(")");
+      } else if (c == 'i' || c == 'j' || c == 'l' || c == 'm' || c == 'n' ||
+                 c == 'o' || c == 's' || c == 't') {
+        c = *++pC;
+        while (c != 'E') {
+          Append(c);
+          c = *++pC;
+        }
+        break;
       } else if (c >= '0' && c <= '9') {
         Append(c);
         pC++;
       } else {
-        // This is proably some kind of literal that we do not yet support.
+        // This is probably some kind of literal that we do not yet support.
         throw base;
       }
     }
