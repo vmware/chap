@@ -25,6 +25,7 @@
 #include "MapOrSetNodeDescriber.h"
 #include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/ListModules.h"
+#include "PThread/StackOverflowGuardDescriber.h"
 #include "ProcessImage.h"
 #include "Python/ArenaDescriber.h"
 #include "Python/ArenaStructArrayDescriber.h"
@@ -37,11 +38,11 @@
 #include "Python/SimplePythonObjectDescriber.h"
 #include "SSLDescriber.h"
 #include "SSL_CTXDescriber.h"
+#include "StackCommands/CountStacks.h"
+#include "StackCommands/DescribeStacks.h"
+#include "StackCommands/ListStacks.h"
+#include "StackCommands/SummarizeStacks.h"
 #include "StackDescriber.h"
-#include "StackOverflowGuardDescriber.h"
-#include "ThreadMapCommands/CountStacks.h"
-#include "ThreadMapCommands/DescribeStacks.h"
-#include "ThreadMapCommands/ListStacks.h"
 #include "UnorderedMapOrSetBucketsDescriber.h"
 #include "UnorderedMapOrSetNodeDescriber.h"
 #include "VectorBodyDescriber.h"
@@ -74,6 +75,7 @@ class ProcessImageCommandHandler {
         _explainCommand(_compoundDescriber),
         _dumpCommand(processImage.GetVirtualAddressMap()),
         _countStacksSubcommand(processImage),
+        _summarizeStacksSubcommand(processImage),
         _listStacksSubcommand(processImage),
         _describeStacksSubcommand(processImage),
         _listModulesSubcommand(processImage),
@@ -240,6 +242,7 @@ class ProcessImageCommandHandler {
     r.AddCommand(_explainCommand);
     r.AddCommand(_dumpCommand);
     RegisterSubcommand(r, _countStacksSubcommand);
+    RegisterSubcommand(r, _summarizeStacksSubcommand);
     RegisterSubcommand(r, _listStacksSubcommand);
     RegisterSubcommand(r, _describeStacksSubcommand);
     RegisterSubcommand(r, _listModulesSubcommand);
@@ -274,7 +277,7 @@ class ProcessImageCommandHandler {
   KnownAddressDescriber<Offset> _knownAddressDescriber;
   InModuleDescriber<Offset> _inModuleDescriber;
   ModuleAlignmentGapDescriber<Offset> _moduleAlignmentGapDescriber;
-  StackOverflowGuardDescriber<Offset> _stackOverflowGuardDescriber;
+  PThread::StackOverflowGuardDescriber<Offset> _stackOverflowGuardDescriber;
   Allocations::Describer<Offset> _allocationDescriber;
   CompoundDescriber<Offset> _compoundDescriber;
   Commands::CountCommand _countCommand;
@@ -285,9 +288,10 @@ class ProcessImageCommandHandler {
   Commands::DescribeCommand<Offset> _describeCommand;
   Commands::ExplainCommand<Offset> _explainCommand;
   VirtualAddressMapCommands::DumpCommand<Offset> _dumpCommand;
-  ThreadMapCommands::CountStacks<Offset> _countStacksSubcommand;
-  ThreadMapCommands::ListStacks<Offset> _listStacksSubcommand;
-  ThreadMapCommands::DescribeStacks<Offset> _describeStacksSubcommand;
+  StackCommands::CountStacks<Offset> _countStacksSubcommand;
+  StackCommands::SummarizeStacks<Offset> _summarizeStacksSubcommand;
+  StackCommands::ListStacks<Offset> _listStacksSubcommand;
+  StackCommands::DescribeStacks<Offset> _describeStacksSubcommand;
   ModuleCommands::ListModules<Offset> _listModulesSubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countInaccessibleSubcommand;
   VirtualAddressMapCommands::SummarizeRanges<Offset>

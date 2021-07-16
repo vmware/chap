@@ -15,24 +15,28 @@ Region use: libc malloc heap tail reservation
 This is a heap tail for the heap at 0x7f51e0000000.
 
 Range [0x7f51e67fd000, 0x7f51e67fe000) uses 0x1000 bytes.
-Region use: stack overflow guard
-This is a stack overflow guard for the stack for thread 5.
+Region use: pthread stack overflow guard
+This is a pthread stack overflow guard.
+This is used for a used pthread stack, which is currently used by thread 5.
 
 Range [0x7f51e6ffe000, 0x7f51e6fff000) uses 0x1000 bytes.
-Region use: stack overflow guard
-This is a stack overflow guard for the stack for thread 4.
+Region use: pthread stack overflow guard
+This is a pthread stack overflow guard.
+This is used for a used pthread stack, which is currently used by thread 4.
 
 Range [0x7f51e77ff000, 0x7f51e7800000) uses 0x1000 bytes.
-Region use: stack overflow guard
-This is a stack overflow guard for the stack for thread 3.
+Region use: pthread stack overflow guard
+This is a pthread stack overflow guard.
+This is used for a used pthread stack, which is currently used by thread 3.
 
 Range [0x7f51e8021000, 0x7f51ec000000) uses 0x3fdf000 bytes.
 Region use: libc malloc heap tail reservation
 This is a heap tail for the heap at 0x7f51e8000000.
 
 Range [0x7f51ec07b000, 0x7f51ec07c000) uses 0x1000 bytes.
-Region use: stack overflow guard
-This is a stack overflow guard for the stack for thread 2.
+Region use: pthread stack overflow guard
+This is a pthread stack overflow guard.
+This is used for a used pthread stack, which is currently used by thread 2.
 
 Range [0x7f51ece5b000, 0x7f51ece5c000) uses 0x1000 bytes.
 Region use: used by module

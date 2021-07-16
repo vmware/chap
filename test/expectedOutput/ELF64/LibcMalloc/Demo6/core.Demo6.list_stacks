@@ -1,3 +1,7 @@
-Thread 1 uses stack block [0x7ff37cb91000, 7ff37d391000) current sp: 0x7ff37d38fef8
-Thread 2 uses stack block [0x7fffe54f8000, 7fffe551a000) current sp: 0x7fffe55185c8
+Stack region [0x7ff37cb91000, 0x7ff37d391000) is for a used pthread stack
+ with stack top 0x7ff37d38fef8 used by thread 1.
+
+Stack region [0x7fffe54f8000, 0x7fffe551a000) is for a main stack
+ with stack top 0x7fffe55185c8 used by thread 2.
+
 2 stacks use 0x822000 (8,527,872) bytes.

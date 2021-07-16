@@ -3,8 +3,9 @@ Region use: module alignment gap
 This alignment gap is for module /home/tim/Demo6.
 
 Range [0x7ff37cb90000, 0x7ff37cb91000) uses 0x1000 bytes.
-Region use: stack overflow guard
-This is a stack overflow guard for the stack for thread 1.
+Region use: pthread stack overflow guard
+This is a pthread stack overflow guard.
+This is used for a used pthread stack, which is currently used by thread 1.
 
 Range [0x7ff37d499000, 0x7ff37d698000) uses 0x1ff000 bytes.
 Region use: module alignment gap

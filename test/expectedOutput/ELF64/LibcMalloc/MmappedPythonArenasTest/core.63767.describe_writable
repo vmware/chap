@@ -93,7 +93,7 @@ Range [0x7f5e8253e000, 0x7f5e8253f000) uses 0x1000 bytes.
 Region use: unknown
 
 Range [0x7ffe311c9000, 0x7ffe311e4000) uses 0x1b000 bytes.
-Region use: stack
-This stack is used for thread 1.
+Region use: main stack
+This main stack is currently used by thread 1.
 
 25 writable ranges use 0x4ce000 (5,038,080) bytes.

@@ -1,10 +1,11 @@
-// Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../Allocations/Directory.h"
 #include "../CompoundDescriber.h"
 #include "../ModuleDirectory.h"
+#include "../StackRegistry.h"
 #include "../UnfilledImages.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
@@ -18,13 +19,15 @@ class FinderGroup {
   FinderGroup(VirtualMemoryPartition<Offset>& virtualMemoryPartition,
               const ModuleDirectory<Offset>& moduleDirectory,
               Allocations::Directory<Offset>& allocationDirectory,
-              UnfilledImages<Offset>& unfilledImages)
+              UnfilledImages<Offset>& unfilledImages,
+              StackRegistry<Offset>& stackRegistry)
       : _virtualMemoryPartition(virtualMemoryPartition),
         _virtualAddressMap(virtualMemoryPartition.GetAddressMap()),
         _moduleDirectory(moduleDirectory),
         _allocationDirectory(allocationDirectory),
         _unfilledImages(unfilledImages),
-        _infrastructureFinder(moduleDirectory, virtualMemoryPartition) {}
+        _infrastructureFinder(moduleDirectory, virtualMemoryPartition,
+                              stackRegistry) {}
 
   void Resolve() {
     _infrastructureFinder.Resolve();

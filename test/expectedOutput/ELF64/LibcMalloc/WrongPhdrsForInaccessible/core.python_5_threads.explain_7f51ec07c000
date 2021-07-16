@@ -1,1 +1,3 @@
-Address 0x7f51ec07c000 is on the dead part of the stack for thread 2.
+Address 0x7f51ec07c000 is in the dead part of the used pthread stack that
+uses [0x7f51ec07c000, 0x7f51ec87c000).
+Thread 2 is currently using this stack.

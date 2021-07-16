@@ -1,3 +1,4 @@
-Address 0x7f51ec07bfff is at offset 0xfff in stack overflow guard
-[0x7f51ec07b000, 0x7f51ec07c000)
-for the stack for thread 2.
+Address 0x7f51ec07bfff is at offset 0xfff in a pthread stack overflow guard
+[0x7f51ec07b000, 0x7f51ec07c000) for the used pthread stack
+that uses [0x7f51ec07c000, 0x7f51ec87c000).
+Thread 2 is currently using that stack.

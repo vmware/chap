@@ -1,3 +1,5 @@
+Process image does not contain image for main stack that contains address 0x7fffffffe3c0.
+Leak information cannot be trusted without the main stack.
 core.48555.512K is truncated.
 It has size 524288 which is smaller than minimum expected size 2055332.
 Many commands may be disabled or inaccurate as a result.

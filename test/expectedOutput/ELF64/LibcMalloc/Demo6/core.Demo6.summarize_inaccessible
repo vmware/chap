@@ -1,3 +1,3 @@
 6 ranges take 0xbfc000 bytes for use: module alignment gap
-1 ranges take 0x1000 bytes for use: stack overflow guard
+1 ranges take 0x1000 bytes for use: pthread stack overflow guard
 7 inaccessible ranges use 0xbfd000 (12,570,624) bytes.

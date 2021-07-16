@@ -928,63 +928,81 @@ Anchored allocation at 555555576a90 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576a90 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffda70 is on the live part of the stack for thread 1.
+Address 0x7fffffffda70 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffda70 references 0x555555576a90.
 
 Anchored allocation at 555555576ad0 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576ad0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffda60 is on the live part of the stack for thread 1.
+Address 0x7fffffffda60 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffda60 references 0x555555576ad0.
 
 Anchored allocation at 555555576af0 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576af0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdaa8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdaa8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdaa8 references 0x555555576af0.
 
 Anchored allocation at 555555576b30 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576b30 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffda98 is on the live part of the stack for thread 1.
+Address 0x7fffffffda98 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffda98 references 0x555555576b30.
 
 Anchored allocation at 555555576b50 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576b50 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdae0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdae0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdae0 references 0x555555576b50.
 
 Anchored allocation at 555555576b70 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576b70 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdad0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdad0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdad0 references 0x555555576b70.
 
 Anchored allocation at 555555576b90 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576b90 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdb18 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb18 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb18 references 0x555555576b90.
 
 Anchored allocation at 555555576bb0 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576bb0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdb08 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb08 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb08 references 0x555555576bb0.
 
 Anchored allocation at 555555576bd0 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576bd0 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576c30.
-Address 0x7fffffffdb50 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb50 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb50 references anchor point 0x555555576c30
 which references 0x555555576bd0
 
@@ -992,21 +1010,27 @@ Anchored allocation at 555555576c10 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576c10 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdb40 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb40 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb40 references 0x555555576c10.
 
 Anchored allocation at 555555576c30 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576c30 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdb50 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb50 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb50 references 0x555555576c30.
 
 Anchored allocation at 555555576c70 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576c70 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576cd0.
-Address 0x7fffffffdb88 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb88 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb88 references anchor point 0x555555576cd0
 which references 0x555555576c70
 
@@ -1014,21 +1038,27 @@ Anchored allocation at 555555576cb0 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576cb0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdb78 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb78 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb78 references 0x555555576cb0.
 
 Anchored allocation at 555555576cd0 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576cd0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdb88 is on the live part of the stack for thread 1.
+Address 0x7fffffffdb88 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdb88 references 0x555555576cd0.
 
 Anchored allocation at 555555576d10 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576d10 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576d50.
-Address 0x7fffffffdbc0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdbc0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdbc0 references anchor point 0x555555576d50
 which references 0x555555576d10
 
@@ -1036,21 +1066,27 @@ Anchored allocation at 555555576d30 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576d30 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdbb0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdbb0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdbb0 references 0x555555576d30.
 
 Anchored allocation at 555555576d50 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576d50 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdbc0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdbc0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdbc0 references 0x555555576d50.
 
 Anchored allocation at 555555576d70 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576d70 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576db0.
-Address 0x7fffffffdbf8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdbf8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdbf8 references anchor point 0x555555576db0
 which references 0x555555576d70
 
@@ -1058,21 +1094,27 @@ Anchored allocation at 555555576d90 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576d90 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdbe8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdbe8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdbe8 references 0x555555576d90.
 
 Anchored allocation at 555555576db0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576db0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdbf8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdbf8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdbf8 references 0x555555576db0.
 
 Anchored allocation at 555555576dd0 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576dd0 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576e70.
-Address 0x7fffffffdc30 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc30 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc30 references anchor point 0x555555576e70
 which references 0x555555576dd0
 
@@ -1080,7 +1122,9 @@ Anchored allocation at 555555576e10 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576e10 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577010.
-Address 0x7fffffffdca0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdca0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdca0 references anchor point 0x555555577010
 which references 0x555555576e10
 
@@ -1088,7 +1132,9 @@ Anchored allocation at 555555576e30 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576e30 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576e70.
-Address 0x7fffffffdc30 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc30 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc30 references anchor point 0x555555576e70
 which references 0x555555576dd0
 which references 0x555555576e30
@@ -1097,21 +1143,27 @@ Anchored allocation at 555555576e70 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576e70 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdc30 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc30 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc30 references 0x555555576e70.
 
 Anchored allocation at 555555576eb0 of size 28
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576eb0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdc20 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc20 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc20 references 0x555555576eb0.
 
 Anchored allocation at 555555576ee0 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576ee0 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576f60.
-Address 0x7fffffffdc68 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc68 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc68 references anchor point 0x555555576f60
 which references 0x555555576ee0
 
@@ -1119,7 +1171,9 @@ Anchored allocation at 555555576f20 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576f20 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555576f60.
-Address 0x7fffffffdc68 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc68 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc68 references anchor point 0x555555576f60
 which references 0x555555576ee0
 which references 0x555555576f20
@@ -1128,21 +1182,27 @@ Anchored allocation at 555555576f60 of size 38
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576f60 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdc68 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc68 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc68 references 0x555555576f60.
 
 Anchored allocation at 555555576fa0 of size 28
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555576fa0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdc58 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc58 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc58 references 0x555555576fa0.
 
 Anchored allocation at 555555576fd0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576fd0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555770a0.
-Address 0x7fffffffdcd8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdcd8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdcd8 references anchor point 0x5555555770a0
 which references 0x555555576fd0
 
@@ -1150,7 +1210,9 @@ Anchored allocation at 555555576ff0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555576ff0 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577010.
-Address 0x7fffffffdca0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdca0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdca0 references anchor point 0x555555577010
 which references 0x555555576e10
 which references 0x555555576ff0
@@ -1159,21 +1221,27 @@ Anchored allocation at 555555577010 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577010 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdca0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdca0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdca0 references 0x555555577010.
 
 Anchored allocation at 555555577030 of size 28
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555577030 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdc90 is on the live part of the stack for thread 1.
+Address 0x7fffffffdc90 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdc90 references 0x555555577030.
 
 Anchored allocation at 555555577060 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577060 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577060
 
@@ -1181,7 +1249,9 @@ Anchored allocation at 555555577080 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577080 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555770a0.
-Address 0x7fffffffdcd8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdcd8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdcd8 references anchor point 0x5555555770a0
 which references 0x555555576fd0
 which references 0x555555577080
@@ -1190,21 +1260,27 @@ Anchored allocation at 5555555770a0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555770a0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdcd8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdcd8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdcd8 references 0x5555555770a0.
 
 Anchored allocation at 5555555770c0 of size 28
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x5555555770c0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdcc8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdcc8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdcc8 references 0x5555555770c0.
 
 Anchored allocation at 5555555770f0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555770f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x5555555770f0
 
@@ -1212,7 +1288,9 @@ Anchored allocation at 555555577110 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577110 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577110
 
@@ -1220,7 +1298,9 @@ Anchored allocation at 555555577130 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577130 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577130
 
@@ -1228,14 +1308,18 @@ Anchored allocation at 555555577150 of size 28
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555577150 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdd70 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd70 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd70 references 0x555555577150.
 
 Anchored allocation at 555555577180 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577180 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577180
 
@@ -1243,7 +1327,9 @@ Anchored allocation at 5555555771a0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555771a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x5555555771a0
 
@@ -1251,14 +1337,18 @@ Anchored allocation at 5555555771c0 of size 58
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x5555555771c0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdda8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdda8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdda8 references 0x5555555771c0.
 
 Anchored allocation at 555555577220 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577220 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577220
 
@@ -1266,7 +1356,9 @@ Anchored allocation at 555555577240 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577240 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577240
 
@@ -1274,7 +1366,9 @@ Anchored allocation at 555555577260 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577260 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577260
 
@@ -1282,7 +1376,9 @@ Anchored allocation at 555555577280 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577280 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577280
 
@@ -1290,7 +1386,9 @@ Anchored allocation at 5555555772a0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555772a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x555555577280
 which references 0x5555555772a0
@@ -1299,7 +1397,9 @@ Anchored allocation at 5555555772c0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555772c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x5555555772c0
 
@@ -1307,14 +1407,18 @@ Anchored allocation at 5555555772e0 of size b8
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x5555555772e0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references 0x5555555772e0.
 
 Anchored allocation at 5555555773a0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555773a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x5555555773a0
 
@@ -1322,7 +1426,9 @@ Anchored allocation at 5555555773c0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555773c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x5555555773c0
 
@@ -1330,12 +1436,16 @@ Anchored allocation at 5555555773e0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555773e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555772e0.
-Address 0x7fffffffdd00 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd00 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd00 references anchor point 0x5555555772e0
 which references 0x5555555773e0
 The allocation at 0x5555555773e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577400.
-Address 0x7fffffffdd10 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd10 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd10 references anchor point 0x555555577400
 which references 0x5555555773e0
 
@@ -1343,42 +1453,54 @@ Anchored allocation at 555555577400 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577400 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdd10 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd10 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd10 references 0x555555577400.
 
 Anchored allocation at 555555577420 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555577420 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde18 is on the live part of the stack for thread 1.
+Address 0x7fffffffde18 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde18 references 0x555555577420.
 
 Anchored allocation at 555555577440 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555577440 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdd38 is on the live part of the stack for thread 1.
+Address 0x7fffffffdd38 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdd38 references 0x555555577440.
 
 Anchored allocation at 555555577460 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577460 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde60 is on the live part of the stack for thread 1.
+Address 0x7fffffffde60 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde60 references 0x555555577460.
 
 Anchored allocation at 555555577480 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577480 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde98 is on the live part of the stack for thread 1.
+Address 0x7fffffffde98 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde98 references 0x555555577480.
 
 Anchored allocation at 5555555774a0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555774a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555774c0.
-Address 0x7fffffffded0 is on the live part of the stack for thread 1.
+Address 0x7fffffffded0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffded0 references anchor point 0x5555555774c0
 which references 0x5555555774a0
 
@@ -1386,41 +1508,53 @@ Anchored allocation at 5555555774c0 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x5555555774c0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffded0 is on the live part of the stack for thread 1.
+Address 0x7fffffffded0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffded0 references 0x5555555774c0.
 
 Anchored allocation at 5555555774e0 of size 28
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x5555555774e0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdde0 is on the live part of the stack for thread 1.
+Address 0x7fffffffdde0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdde0 references 0x5555555774e0.
 
 Anchored allocation at 555555577510 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577510 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde28 is on the live part of the stack for thread 1.
+Address 0x7fffffffde28 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde28 references 0x555555577510.
 
 Anchored allocation at 555555577530 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577530 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffddf0 is on the live part of the stack for thread 1.
+Address 0x7fffffffddf0 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffddf0 references 0x555555577530.
 
 Anchored allocation at 555555577550 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577550 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577570.
-Address 0x7fffffffdf08 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf08 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf08 references anchor point 0x555555577570
 which references 0x555555577590
 which references 0x555555577550
 The allocation at 0x555555577550 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577610.
-Address 0x7fffffffdef8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdef8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdef8 references anchor point 0x555555577610
 which references 0x555555577590
 which references 0x555555577550
@@ -1429,19 +1563,25 @@ Anchored allocation at 555555577570 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577570 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdf08 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf08 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf08 references 0x555555577570.
 
 Anchored allocation at 555555577590 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577590 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577570.
-Address 0x7fffffffdf08 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf08 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf08 references anchor point 0x555555577570
 which references 0x555555577590
 The allocation at 0x555555577590 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577610.
-Address 0x7fffffffdef8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdef8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdef8 references anchor point 0x555555577610
 which references 0x555555577590
 
@@ -1449,28 +1589,36 @@ Anchored allocation at 5555555775b0 of size 58
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x5555555775b0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde50 is on the live part of the stack for thread 1.
+Address 0x7fffffffde50 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde50 references 0x5555555775b0.
 
 Anchored allocation at 555555577610 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555577610 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdef8 is on the live part of the stack for thread 1.
+Address 0x7fffffffdef8 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdef8 references 0x555555577610.
 
 Anchored allocation at 555555577630 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577630 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdf40 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf40 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf40 references 0x555555577630.
 
 Anchored allocation at 555555577650 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577650 appears to be indirectly anchored from
 at least one stack via anchor point 0x555555577670.
-Address 0x7fffffffdf78 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf78 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf78 references anchor point 0x555555577670
 which references 0x555555577650
 
@@ -1478,14 +1626,18 @@ Anchored allocation at 555555577670 of size 18
 This allocation matches pattern UnorderedMapOrSetNode.
 The allocation at 0x555555577670 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdf78 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf78 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf78 references 0x555555577670.
 
 Anchored allocation at 555555577690 of size 18
 This allocation matches pattern UnorderedMapOrSetBuckets.
 The allocation at 0x555555577690 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffdf68 is on the live part of the stack for thread 1.
+Address 0x7fffffffdf68 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffdf68 references 0x555555577690.
 
 Anchored allocation at 5555555776b0 of size 628
@@ -1494,7 +1646,9 @@ at least one register.
 Register rbx for thread 1 references 0x5555555776b0.
 The allocation at 0x5555555776b0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references 0x5555555776b0.
 
 Anchored allocation at 555555577ce0 of size 38
@@ -1505,7 +1659,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577ce0
 The allocation at 0x555555577ce0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577ce0
 
@@ -1517,7 +1673,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577d20
 The allocation at 0x555555577d20 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577d20
 
@@ -1529,7 +1687,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577d40
 The allocation at 0x555555577d40 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577d40
 
@@ -1541,7 +1701,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577d80
 The allocation at 0x555555577d80 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577d80
 
@@ -1553,7 +1715,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577da0
 The allocation at 0x555555577da0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577da0
 
@@ -1565,7 +1729,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577dc0
 The allocation at 0x555555577dc0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577dc0
 
@@ -1577,7 +1743,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577de0
 The allocation at 0x555555577de0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577de0
 
@@ -1589,7 +1757,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577e00
 The allocation at 0x555555577e00 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577e00
 
@@ -1602,7 +1772,9 @@ which references 0x555555577e80
 which references 0x555555577e20
 The allocation at 0x555555577e20 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577e80
 which references 0x555555577e20
@@ -1615,7 +1787,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577e60
 The allocation at 0x555555577e60 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577e60
 
@@ -1627,7 +1801,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577e80
 The allocation at 0x555555577e80 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577e80
 
@@ -1640,7 +1816,9 @@ which references 0x555555577f20
 which references 0x555555577ec0
 The allocation at 0x555555577ec0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577f20
 which references 0x555555577ec0
@@ -1653,7 +1831,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577f00
 The allocation at 0x555555577f00 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577f00
 
@@ -1665,7 +1845,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577f20
 The allocation at 0x555555577f20 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577f20
 
@@ -1678,7 +1860,9 @@ which references 0x555555577fa0
 which references 0x555555577f60
 The allocation at 0x555555577f60 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577fa0
 which references 0x555555577f60
@@ -1691,7 +1875,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577f80
 The allocation at 0x555555577f80 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577f80
 
@@ -1703,7 +1889,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577fa0
 The allocation at 0x555555577fa0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577fa0
 
@@ -1716,7 +1904,9 @@ which references 0x555555578000
 which references 0x555555577fc0
 The allocation at 0x555555577fc0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578000
 which references 0x555555577fc0
@@ -1729,7 +1919,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555577fe0
 The allocation at 0x555555577fe0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555577fe0
 
@@ -1741,7 +1933,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578000
 The allocation at 0x555555578000 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578000
 
@@ -1754,7 +1948,9 @@ which references 0x5555555780c0
 which references 0x555555578020
 The allocation at 0x555555578020 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555780c0
 which references 0x555555578020
@@ -1768,7 +1964,9 @@ which references 0x555555578260
 which references 0x555555578060
 The allocation at 0x555555578060 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578260
 which references 0x555555578060
@@ -1783,7 +1981,9 @@ which references 0x555555578020
 which references 0x555555578080
 The allocation at 0x555555578080 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555780c0
 which references 0x555555578020
@@ -1797,7 +1997,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555780c0
 The allocation at 0x5555555780c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555780c0
 
@@ -1809,7 +2011,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578100
 The allocation at 0x555555578100 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578100
 
@@ -1822,7 +2026,9 @@ which references 0x5555555781b0
 which references 0x555555578130
 The allocation at 0x555555578130 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555781b0
 which references 0x555555578130
@@ -1837,7 +2043,9 @@ which references 0x555555578130
 which references 0x555555578170
 The allocation at 0x555555578170 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555781b0
 which references 0x555555578130
@@ -1851,7 +2059,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555781b0
 The allocation at 0x5555555781b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555781b0
 
@@ -1863,7 +2073,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555781f0
 The allocation at 0x5555555781f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555781f0
 
@@ -1876,7 +2088,9 @@ which references 0x5555555782f0
 which references 0x555555578220
 The allocation at 0x555555578220 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555782f0
 which references 0x555555578220
@@ -1891,7 +2105,9 @@ which references 0x555555578060
 which references 0x555555578240
 The allocation at 0x555555578240 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578260
 which references 0x555555578060
@@ -1905,7 +2121,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578260
 The allocation at 0x555555578260 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578260
 
@@ -1917,7 +2135,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578280
 The allocation at 0x555555578280 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578280
 
@@ -1930,7 +2150,9 @@ which references 0x555555578530
 which references 0x5555555782b0
 The allocation at 0x5555555782b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555782b0
@@ -1945,7 +2167,9 @@ which references 0x555555578220
 which references 0x5555555782d0
 The allocation at 0x5555555782d0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555782f0
 which references 0x555555578220
@@ -1959,7 +2183,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555782f0
 The allocation at 0x5555555782f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555782f0
 
@@ -1971,7 +2197,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578310
 The allocation at 0x555555578310 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578310
 
@@ -1984,7 +2212,9 @@ which references 0x555555578530
 which references 0x555555578340
 The allocation at 0x555555578340 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578340
@@ -1998,7 +2228,9 @@ which references 0x555555578530
 which references 0x555555578360
 The allocation at 0x555555578360 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578360
@@ -2012,7 +2244,9 @@ which references 0x555555578530
 which references 0x555555578380
 The allocation at 0x555555578380 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578380
@@ -2025,7 +2259,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555783a0
 The allocation at 0x5555555783a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555783a0
 
@@ -2038,7 +2274,9 @@ which references 0x555555578530
 which references 0x5555555783d0
 The allocation at 0x5555555783d0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555783d0
@@ -2052,7 +2290,9 @@ which references 0x555555578530
 which references 0x5555555783f0
 The allocation at 0x5555555783f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555783f0
@@ -2065,7 +2305,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578410
 The allocation at 0x555555578410 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578410
 
@@ -2078,7 +2320,9 @@ which references 0x555555578530
 which references 0x555555578470
 The allocation at 0x555555578470 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578470
@@ -2092,7 +2336,9 @@ which references 0x555555578530
 which references 0x555555578490
 The allocation at 0x555555578490 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578490
@@ -2106,7 +2352,9 @@ which references 0x555555578530
 which references 0x5555555784b0
 The allocation at 0x5555555784b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555784b0
@@ -2120,7 +2368,9 @@ which references 0x555555578530
 which references 0x5555555784d0
 The allocation at 0x5555555784d0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555784d0
@@ -2135,7 +2385,9 @@ which references 0x5555555784d0
 which references 0x5555555784f0
 The allocation at 0x5555555784f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555784d0
@@ -2150,7 +2402,9 @@ which references 0x555555578530
 which references 0x555555578510
 The allocation at 0x555555578510 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578510
@@ -2163,7 +2417,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578530
 The allocation at 0x555555578530 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 
@@ -2176,7 +2432,9 @@ which references 0x555555578530
 which references 0x5555555785f0
 The allocation at 0x5555555785f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x5555555785f0
@@ -2190,7 +2448,9 @@ which references 0x555555578530
 which references 0x555555578610
 The allocation at 0x555555578610 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578610
@@ -2204,7 +2464,9 @@ which references 0x555555578530
 which references 0x555555578630
 The allocation at 0x555555578630 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578530
 which references 0x555555578630
@@ -2217,7 +2479,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578650
 The allocation at 0x555555578650 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578650
 
@@ -2229,7 +2493,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578670
 The allocation at 0x555555578670 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578670
 
@@ -2241,7 +2507,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578690
 The allocation at 0x555555578690 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578690
 
@@ -2253,7 +2521,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555786b0
 The allocation at 0x5555555786b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555786b0
 
@@ -2265,7 +2535,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555786d0
 The allocation at 0x5555555786d0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555786d0
 
@@ -2278,7 +2550,9 @@ which references 0x555555578710
 which references 0x5555555786f0
 The allocation at 0x5555555786f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578710
 which references 0x5555555786f0
@@ -2291,7 +2565,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578710
 The allocation at 0x555555578710 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578710
 
@@ -2303,7 +2579,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578730
 The allocation at 0x555555578730 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578730
 
@@ -2315,7 +2593,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578760
 The allocation at 0x555555578760 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578760
 
@@ -2327,7 +2607,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578780
 The allocation at 0x555555578780 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578780
 
@@ -2341,7 +2623,9 @@ which references 0x5555555787e0
 which references 0x5555555787a0
 The allocation at 0x5555555787a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555787c0
 which references 0x5555555787e0
@@ -2355,7 +2639,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555787c0
 The allocation at 0x5555555787c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555787c0
 
@@ -2368,7 +2654,9 @@ which references 0x5555555787c0
 which references 0x5555555787e0
 The allocation at 0x5555555787e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555787c0
 which references 0x5555555787e0
@@ -2381,7 +2669,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578800
 The allocation at 0x555555578800 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578800
 
@@ -2393,7 +2683,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578860
 The allocation at 0x555555578860 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578860
 
@@ -2405,7 +2697,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x555555578880
 The allocation at 0x555555578880 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x555555578880
 
@@ -2418,7 +2712,9 @@ which references 0x5555555788c0
 which references 0x5555555788a0
 The allocation at 0x5555555788a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555788c0
 which references 0x5555555788a0
@@ -2431,7 +2727,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555788c0
 The allocation at 0x5555555788c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555788c0
 
@@ -2443,7 +2741,9 @@ Register rbx for thread 1 references anchor point 0x5555555776b0
 which references 0x5555555788e0
 The allocation at 0x5555555788e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x5555555776b0.
-Address 0x7fffffffd978 is on the live part of the stack for thread 1.
+Address 0x7fffffffd978 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffd978 references anchor point 0x5555555776b0
 which references 0x5555555788e0
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -397,7 +397,7 @@ class ELFImage {
       typename VirtualAddressMap<Offset>::const_iterator it =
           _virtualAddressMap.find(stackPointer);
       if (it == _virtualAddressMap.end()) {
-        std::cerr << "Thread " << std::dec << threadNum
+        std::cerr << "Warning: Thread " << std::dec << threadNum
                   << " has unmapped stack top " << std::hex << "0x"
                   << stackPointer << "\n";
       } else if (it.GetImage() == (const char *)(0)) {
@@ -413,41 +413,11 @@ class ELFImage {
            * suffice.  We don't expect the stack image to be missing otherwise
            * but might as well try to handle it.
            */
-          std::cerr << "Thread " << std::dec << threadNum
+          std::cerr << "Warning: Thread " << std::dec << threadNum
                     << " has no stack image in the core.\n";
         }
-      } else {
-        /*
-         * The base of the range (which limits the growth
-         * of the stack because the stack pointer becomes smaller as
-         * the stack grows) is pretty reliable on Linux because there
-         * is a guard area of intentionally unreadable memory typically
-         * placed before the base.  However, there is no such guard area
-         * at the other end.  This makes it necessary  to try to guess
-         * the limit.
-         *
-         * The following sequence generally works for pthreads but not,
-         * for example, for the main thread.  When such a self reference
-         * does not appear in the last page of the region that is used for
-         * the stack, we are effectively having to guess the highest address
-         * that is used for the stack.
-         */
-
-        typename VirtualAddressMap<Offset>::Reader reader(_virtualAddressMap);
-        Offset maxLimit = it.Limit();
-        Offset maxSelfRef = maxLimit - 3 * OFFSET_SIZE;
-        Offset limit = maxLimit;
-        for (Offset selfRef = (stackPointer + OFFSET_SIZE) & ~(OFFSET_SIZE - 1);
-             selfRef <= maxSelfRef; selfRef += OFFSET_SIZE) {
-          if ((reader.ReadOffset(selfRef) == selfRef) &&
-              (reader.ReadOffset(selfRef + 2 * OFFSET_SIZE) == selfRef)) {
-            limit = ((selfRef + 0x1000) & ~0xFFF);
-            break;
-          }
-        }
-        _threadMap.AddThread(it.Base(), stackPointer, limit, registers,
-                             threadNum);
       }
+      _threadMap.AddThread(registers, threadNum, stackPointer);
     }
     return false;
   }

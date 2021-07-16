@@ -373,9 +373,13 @@ This allocation belongs to an std::list at 0x7fffffffe200
 that has 1 entry.
 The allocation at 0x6042e0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe200 is on the live part of the stack for thread 1.
+Address 0x7fffffffe200 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe200 references 0x6042e0.
-Address 0x7fffffffe208 is on the live part of the stack for thread 1.
+Address 0x7fffffffe208 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe208 references 0x6042e0.
 
 Anchored allocation at 604300 of size 18
@@ -384,7 +388,9 @@ This allocation belongs to an std::list at 0x7fffffffe1f0
 that has 2 entries.
 The allocation at 0x604300 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1f0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1f0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1f0 references 0x604300.
 
 Anchored allocation at 604320 of size 18
@@ -393,7 +399,9 @@ This allocation belongs to an std::list at 0x7fffffffe1f0
 that has 2 entries.
 The allocation at 0x604320 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1f8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1f8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1f8 references 0x604320.
 
 Anchored allocation at 604340 of size 18
@@ -402,7 +410,9 @@ This allocation belongs to an std::list at 0x7fffffffe1e0
 that has 3 entries.
 The allocation at 0x604340 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1e0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1e0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1e0 references 0x604340.
 
 Anchored allocation at 604360 of size 18
@@ -411,12 +421,16 @@ This allocation belongs to an std::list at 0x7fffffffe1e0
 that has 3 entries.
 The allocation at 0x604360 appears to be indirectly anchored from
 at least one stack via anchor point 0x604340.
-Address 0x7fffffffe1e0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1e0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1e0 references anchor point 0x604340
 which references 0x604360
 The allocation at 0x604360 appears to be indirectly anchored from
 at least one stack via anchor point 0x604380.
-Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1e8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1e8 references anchor point 0x604380
 which references 0x604360
 
@@ -426,7 +440,9 @@ This allocation belongs to an std::list at 0x7fffffffe1e0
 that has 3 entries.
 The allocation at 0x604380 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1e8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1e8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1e8 references 0x604380.
 
 Anchored allocation at 6043e0 of size 18
@@ -435,7 +451,9 @@ This allocation belongs to an std::list at 0x6043a0
 that has 1 entry.
 The allocation at 0x6043e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
-Address 0x7fffffffe258 is on the live part of the stack for thread 1.
+Address 0x7fffffffe258 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x6043e0
 
@@ -445,7 +463,9 @@ This allocation belongs to an std::list at 0x6043b0
 that has 1 entry.
 The allocation at 0x604430 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
-Address 0x7fffffffe258 is on the live part of the stack for thread 1.
+Address 0x7fffffffe258 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604430
 
@@ -455,7 +475,9 @@ This allocation belongs to an std::list at 0x6043c0
 that has 3 entries.
 The allocation at 0x604450 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
-Address 0x7fffffffe258 is on the live part of the stack for thread 1.
+Address 0x7fffffffe258 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604450
 
@@ -465,7 +487,9 @@ This allocation belongs to an std::list at 0x6043c0
 that has 3 entries.
 The allocation at 0x604470 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
-Address 0x7fffffffe258 is on the live part of the stack for thread 1.
+Address 0x7fffffffe258 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604450
 which references 0x604470
@@ -476,7 +500,9 @@ This allocation belongs to an std::list at 0x6043c0
 that has 3 entries.
 The allocation at 0x604490 appears to be indirectly anchored from
 at least one stack via anchor point 0x6043a0.
-Address 0x7fffffffe258 is on the live part of the stack for thread 1.
+Address 0x7fffffffe258 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe258 references anchor point 0x6043a0
 which references 0x604490
 
@@ -486,9 +512,13 @@ This allocation belongs to an std::list at 0x7fffffffe190
 that has 1 entry.
 The allocation at 0x6044b0 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe190 is on the live part of the stack for thread 1.
+Address 0x7fffffffe190 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe190 references 0x6044b0.
-Address 0x7fffffffe198 is on the live part of the stack for thread 1.
+Address 0x7fffffffe198 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe198 references 0x6044b0.
 
 Anchored allocation at 604500 of size 18
@@ -497,9 +527,13 @@ This allocation belongs to an std::list at 0x7fffffffe1a0
 that has 1 entry.
 The allocation at 0x604500 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1a0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1a0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1a0 references 0x604500.
-Address 0x7fffffffe1a8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1a8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1a8 references 0x604500.
 
 Anchored allocation at 604520 of size 18
@@ -508,7 +542,9 @@ This allocation belongs to an std::list at 0x7fffffffe1b0
 that has 3 entries.
 The allocation at 0x604520 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1b0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1b0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1b0 references 0x604520.
 
 Anchored allocation at 604540 of size 18
@@ -517,12 +553,16 @@ This allocation belongs to an std::list at 0x7fffffffe1b0
 that has 3 entries.
 The allocation at 0x604540 appears to be indirectly anchored from
 at least one stack via anchor point 0x604520.
-Address 0x7fffffffe1b0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1b0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1b0 references anchor point 0x604520
 which references 0x604540
 The allocation at 0x604540 appears to be indirectly anchored from
 at least one stack via anchor point 0x604560.
-Address 0x7fffffffe1b8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1b8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1b8 references anchor point 0x604560
 which references 0x604540
 
@@ -532,7 +572,9 @@ This allocation belongs to an std::list at 0x7fffffffe1b0
 that has 3 entries.
 The allocation at 0x604560 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1b8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1b8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1b8 references 0x604560.
 
 Anchored allocation at 604580 of size 18
@@ -541,7 +583,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604580 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references 0x604580.
 
 Anchored allocation at 6045a0 of size 18
@@ -550,7 +594,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6045a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 
@@ -560,7 +606,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6045c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -571,7 +619,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6045e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -583,7 +633,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604600 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -596,7 +648,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604620 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -610,7 +664,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604640 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -625,7 +681,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604660 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -641,7 +699,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604680 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -658,7 +718,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6046a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -676,7 +738,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6046c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -695,7 +759,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6046e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -715,7 +781,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604700 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -736,7 +804,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604720 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -758,7 +828,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604740 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -781,7 +853,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604760 appears to be indirectly anchored from
 at least one stack via anchor point 0x604580.
-Address 0x7fffffffe1c0 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c0 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c0 references anchor point 0x604580
 which references 0x6045a0
 which references 0x6045c0
@@ -805,7 +879,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604780 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -829,7 +905,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6047a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -852,7 +930,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6047c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -874,7 +954,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6047e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -895,7 +977,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604800 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -915,7 +999,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604820 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -934,7 +1020,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604840 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -952,7 +1040,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604860 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -969,7 +1059,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604880 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -985,7 +1077,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6048a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -1000,7 +1094,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6048c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -1014,7 +1110,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x6048e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -1027,7 +1125,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604900 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -1039,7 +1139,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604920 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 which references 0x604920
@@ -1050,7 +1152,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604940 appears to be indirectly anchored from
 at least one stack via anchor point 0x604960.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references anchor point 0x604960
 which references 0x604940
 
@@ -1060,7 +1164,9 @@ This allocation belongs to an std::list at 0x7fffffffe1c0
 that has 32 entries.
 The allocation at 0x604960 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe1c8 is on the live part of the stack for thread 1.
+Address 0x7fffffffe1c8 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe1c8 references 0x604960.
 
 Anchored allocation at 6049a0 of size 18
@@ -1069,7 +1175,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x6049a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x6049a0
 
@@ -1079,7 +1187,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x6049c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x6049a0
 which references 0x6049c0
@@ -1090,7 +1200,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x6049e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x6049a0
 which references 0x6049c0
@@ -1102,7 +1214,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x604a00 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x6049a0
 which references 0x6049c0
@@ -1115,7 +1229,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x604a20 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x604a80
 which references 0x604a60
@@ -1128,7 +1244,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x604a40 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x604a80
 which references 0x604a60
@@ -1140,7 +1258,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x604a60 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x604a80
 which references 0x604a60
@@ -1151,7 +1271,9 @@ This allocation belongs to an std::list at 0x604980
 that has 8 entries.
 The allocation at 0x604a80 appears to be indirectly anchored from
 at least one stack via anchor point 0x604980.
-Address 0x7fffffffe260 is on the live part of the stack for thread 1.
+Address 0x7fffffffe260 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe260 references anchor point 0x604980
 which references 0x604a80
 
@@ -1165,7 +1287,9 @@ Register rcx for thread 1 references 0x604ac0.
 Register rdi for thread 1 references 0x604ac0.
 The allocation at 0x604ac0 appears to be indirectly anchored from
 at least one stack via anchor point 0x604aa0.
-Address 0x7fffffffe268 is on the live part of the stack for thread 1.
+Address 0x7fffffffe268 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe268 references anchor point 0x604aa0
 which references 0x604ac0
 

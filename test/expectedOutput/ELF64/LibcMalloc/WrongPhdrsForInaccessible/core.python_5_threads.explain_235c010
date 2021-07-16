@@ -19,117 +19,211 @@ Register rbx for thread 4 references anchor point 0x240aa00
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x235c0a0.
-Address 0x7fffe22daa08 is on the live part of the stack for thread 1.
+Address 0x7fffe22daa08 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22daa08 references anchor point 0x235c0a0
-Address 0x7fffe22daa60 is on the live part of the stack for thread 1.
+Address 0x7fffe22daa60 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22daa60 references anchor point 0x235c0a0
-Address 0x7fffe22dab00 is on the live part of the stack for thread 1.
+Address 0x7fffe22dab00 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dab00 references anchor point 0x235c0a0
-Address 0x7fffe22dab40 is on the live part of the stack for thread 1.
+Address 0x7fffe22dab40 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dab40 references anchor point 0x235c0a0
-Address 0x7fffe22dabf8 is on the live part of the stack for thread 1.
+Address 0x7fffe22dabf8 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dabf8 references anchor point 0x235c0a0
-Address 0x7fffe22dac70 is on the live part of the stack for thread 1.
+Address 0x7fffe22dac70 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dac70 references anchor point 0x235c0a0
-Address 0x7fffe22dad00 is on the live part of the stack for thread 1.
+Address 0x7fffe22dad00 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dad00 references anchor point 0x235c0a0
-Address 0x7fffe22dadf8 is on the live part of the stack for thread 1.
+Address 0x7fffe22dadf8 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dadf8 references anchor point 0x235c0a0
-Address 0x7fffe22daf00 is on the live part of the stack for thread 1.
+Address 0x7fffe22daf00 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22daf00 references anchor point 0x235c0a0
-Address 0x7fffe22dafc0 is on the live part of the stack for thread 1.
+Address 0x7fffe22dafc0 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22dafc0 references anchor point 0x235c0a0
-Address 0x7fffe22daff8 is on the live part of the stack for thread 1.
+Address 0x7fffe22daff8 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22daff8 references anchor point 0x235c0a0
-Address 0x7fffe22db160 is on the live part of the stack for thread 1.
+Address 0x7fffe22db160 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db160 references anchor point 0x235c0a0
-Address 0x7fffe22db1a8 is on the live part of the stack for thread 1.
+Address 0x7fffe22db1a8 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db1a8 references anchor point 0x235c0a0
-Address 0x7fffe22db200 is on the live part of the stack for thread 1.
+Address 0x7fffe22db200 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db200 references anchor point 0x235c0a0
-Address 0x7fffe22db290 is on the live part of the stack for thread 1.
+Address 0x7fffe22db290 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db290 references anchor point 0x235c0a0
-Address 0x7fffe22db2d0 is on the live part of the stack for thread 1.
+Address 0x7fffe22db2d0 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db2d0 references anchor point 0x235c0a0
-Address 0x7fffe22db350 is on the live part of the stack for thread 1.
+Address 0x7fffe22db350 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db350 references anchor point 0x235c0a0
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x2402a50.
-Address 0x7f51ec87af08 is on the live part of the stack for thread 2.
+Address 0x7f51ec87af08 is in the live part of the used pthread stack that
+uses [0x7f51ec07c000, 0x7f51ec87c000).
+Thread 2 is currently using this stack.
 Stack address 0x7f51ec87af08 references anchor point 0x2402a50
-Address 0x7f51ec87bd48 is on the live part of the stack for thread 2.
+Address 0x7f51ec87bd48 is in the live part of the used pthread stack that
+uses [0x7f51ec07c000, 0x7f51ec87c000).
+Thread 2 is currently using this stack.
 Stack address 0x7f51ec87bd48 references anchor point 0x2402a50
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x240a630.
-Address 0x7f51e7ffef08 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffef08 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffef08 references anchor point 0x240a630
-Address 0x7f51e7fffd48 is on the live part of the stack for thread 3.
+Address 0x7f51e7fffd48 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7fffd48 references anchor point 0x240a630
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x240a9d0.
-Address 0x7f51e77fdf08 is on the live part of the stack for thread 4.
+Address 0x7f51e77fdf08 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fdf08 references anchor point 0x240a9d0
-Address 0x7f51e77fed48 is on the live part of the stack for thread 4.
+Address 0x7f51e77fed48 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fed48 references anchor point 0x240a9d0
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x240aa00.
-Address 0x7f51e77fd7e0 is on the live part of the stack for thread 4.
+Address 0x7f51e77fd7e0 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fd7e0 references anchor point 0x240aa00
-Address 0x7f51e77fd8d0 is on the live part of the stack for thread 4.
+Address 0x7f51e77fd8d0 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fd8d0 references anchor point 0x240aa00
-Address 0x7f51e77fd900 is on the live part of the stack for thread 4.
+Address 0x7f51e77fd900 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fd900 references anchor point 0x240aa00
-Address 0x7f51e77fd9f0 is on the live part of the stack for thread 4.
+Address 0x7f51e77fd9f0 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fd9f0 references anchor point 0x240aa00
-Address 0x7f51e77fda20 is on the live part of the stack for thread 4.
+Address 0x7f51e77fda20 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fda20 references anchor point 0x240aa00
-Address 0x7f51e77fdb18 is on the live part of the stack for thread 4.
+Address 0x7f51e77fdb18 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fdb18 references anchor point 0x240aa00
-Address 0x7f51e77fde58 is on the live part of the stack for thread 4.
+Address 0x7f51e77fde58 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fde58 references anchor point 0x240aa00
-Address 0x7f51e77fded0 is on the live part of the stack for thread 4.
+Address 0x7f51e77fded0 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fded0 references anchor point 0x240aa00
-Address 0x7f51e77fdef8 is on the live part of the stack for thread 4.
+Address 0x7f51e77fdef8 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fdef8 references anchor point 0x240aa00
-Address 0x7f51e77fdf00 is on the live part of the stack for thread 4.
+Address 0x7f51e77fdf00 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fdf00 references anchor point 0x240aa00
-Address 0x7f51e77fdf10 is on the live part of the stack for thread 4.
+Address 0x7f51e77fdf10 is in the live part of the used pthread stack that
+uses [0x7f51e6fff000, 0x7f51e77ff000).
+Thread 4 is currently using this stack.
 Stack address 0x7f51e77fdf10 references anchor point 0x240aa00
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x240af40.
-Address 0x7f51e6ffcf08 is on the live part of the stack for thread 5.
+Address 0x7f51e6ffcf08 is in the live part of the used pthread stack that
+uses [0x7f51e67fe000, 0x7f51e6ffe000).
+Thread 5 is currently using this stack.
 Stack address 0x7f51e6ffcf08 references anchor point 0x240af40
-Address 0x7f51e6ffdd48 is on the live part of the stack for thread 5.
+Address 0x7f51e6ffdd48 is in the live part of the used pthread stack that
+uses [0x7f51e67fe000, 0x7f51e6ffe000).
+Thread 5 is currently using this stack.
 Stack address 0x7f51e6ffdd48 references anchor point 0x240af40
 which references 0x235c010
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one stack via anchor point 0x240b9d0.
-Address 0x7f51e7ffe7e0 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffe7e0 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffe7e0 references anchor point 0x240b9d0
-Address 0x7f51e7ffe8d0 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffe8d0 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffe8d0 references anchor point 0x240b9d0
-Address 0x7f51e7ffe900 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffe900 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffe900 references anchor point 0x240b9d0
-Address 0x7f51e7ffe9f0 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffe9f0 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffe9f0 references anchor point 0x240b9d0
-Address 0x7f51e7ffea20 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffea20 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffea20 references anchor point 0x240b9d0
-Address 0x7f51e7ffeb18 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffeb18 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffeb18 references anchor point 0x240b9d0
-Address 0x7f51e7ffee58 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffee58 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffee58 references anchor point 0x240b9d0
-Address 0x7f51e7ffeed0 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffeed0 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffeed0 references anchor point 0x240b9d0
-Address 0x7f51e7ffeef8 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffeef8 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffeef8 references anchor point 0x240b9d0
-Address 0x7f51e7ffef00 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffef00 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffef00 references anchor point 0x240b9d0
-Address 0x7f51e7ffef10 is on the live part of the stack for thread 3.
+Address 0x7f51e7ffef10 is in the live part of the used pthread stack that
+uses [0x7f51e7800000, 0x7f51e8000000).
+Thread 3 is currently using this stack.
 Stack address 0x7f51e7ffef10 references anchor point 0x240b9d0
 which references 0x235c010
 

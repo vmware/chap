@@ -41,7 +41,9 @@ The string has 0x10 bytes, containing
 "0123456789abcdef".
 The allocation at 0x8050a40 appears to be directly anchored from
 at least one stack.
-Address 0xffffcffc is on the live part of the stack for thread 1.
+Address 0xffffcffc is in the live part of the main stack that
+uses [0xfffdd000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcffc references 0x8050a40.
 
 Anchored allocation at 8050a58 of size 14
@@ -53,7 +55,9 @@ at least one register.
 Register edx for thread 1 references 0x8050a58.
 The allocation at 0x8050a58 appears to be directly anchored from
 at least one stack.
-Address 0xffffd014 is on the live part of the stack for thread 1.
+Address 0xffffd014 is in the live part of the main stack that
+uses [0xfffdd000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd014 references 0x8050a58.
 
 Anchored allocation at 8050a70 of size 2c

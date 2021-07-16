@@ -3673,7 +3673,9 @@ Static address 0x9550d0 references anchor point 0x7f51edc2e148
 which references 0x7f51edb7b010
 The allocation at 0x7f51edb7b010 appears to be indirectly anchored from
 at least one stack via anchor point 0x7f51edc2e148.
-Address 0x7fffe22db310 is on the live part of the stack for thread 1.
+Address 0x7fffe22db310 is in the live part of the main stack that
+uses [0x7fffe22bc000, 0x7fffe22dd000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffe22db310 references anchor point 0x7f51edc2e148
 which references 0x7f51edb7b010
 

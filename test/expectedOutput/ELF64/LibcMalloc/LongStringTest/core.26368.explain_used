@@ -41,7 +41,9 @@ The string has 0x10 bytes, containing
 "0123456789abcdef".
 The allocation at 0x615c70 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde20 is on the live part of the stack for thread 1.
+Address 0x7fffffffde20 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde20 references 0x615c70.
 
 Anchored allocation at 615c90 of size 18
@@ -53,7 +55,9 @@ at least one register.
 Register rdx for thread 1 references 0x615c90.
 The allocation at 0x615c90 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffde40 is on the live part of the stack for thread 1.
+Address 0x7fffffffde40 is in the live part of the main stack that
+uses [0x7ffffffde000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffde40 references 0x615c90.
 
 Anchored allocation at 615cb0 of size 48

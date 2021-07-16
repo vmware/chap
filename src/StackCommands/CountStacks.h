@@ -1,37 +1,39 @@
-// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../Commands/Runner.h"
 #include "../Commands/Subcommand.h"
 #include "../SizedTally.h"
-#include "../ThreadMap.h"
+#include "../StackRegistry.h"
 namespace chap {
-namespace ThreadMapCommands {
+namespace StackCommands {
 template <class Offset>
 class CountStacks : public Commands::Subcommand {
  public:
   CountStacks(const ProcessImage<Offset>& processImage)
       : Commands::Subcommand("count", "stacks"),
         _processImage(processImage),
-        _threadMap(processImage.GetThreadMap()) {}
+        _stackRegistry(processImage.GetStackRegistry()) {}
 
   void ShowHelpMessage(Commands::Context& context) {
     context.GetOutput()
         << "This command provides "
-           "totals of the number of threads and the space they occupy.\n";
+           "totals of the number of stacks and the space they occupy.\n";
   }
 
   void Run(Commands::Context& context) {
     SizedTally<Offset> tally(context, "stacks");
-    for (const auto& threadInfo : _threadMap) {
-      tally.AdjustTally(threadInfo._stackLimit - threadInfo._stackBase);
-    }
+    _stackRegistry.VisitStacks([&tally](Offset regionBase, Offset regionLimit,
+                                        const char*, Offset, Offset, size_t) {
+      tally.AdjustTally(regionLimit - regionBase);
+      return true;  // continue traversal
+    });
   }
 
  private:
   const ProcessImage<Offset>& _processImage;
-  const ThreadMap<Offset>& _threadMap;
+  const StackRegistry<Offset>& _stackRegistry;
 };
-}  // namespace ThreadMapCommands
+}  // namespace StackCommands
 }  // namespace chap

@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -15,9 +15,11 @@
 #include "MapOrSetAllocationsTagger.h"
 #include "ModuleDirectory.h"
 #include "OpenSSLAllocationsTagger.h"
+#include "PThread/InfrastructureFinder.h"
 #include "Python/AllocationsTagger.h"
 #include "Python/FinderGroup.h"
 #include "Python/InfrastructureFinder.h"
+#include "StackRegistry.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
 #include "UnorderedMapOrSetAllocationsTagger.h"
@@ -47,16 +49,10 @@ class ProcessImage {
         _pythonFinderGroup(_virtualMemoryPartition, _moduleDirectory,
                            _allocationDirectory, _unfilledImages),
         _goLangFinderGroup(_virtualMemoryPartition, _moduleDirectory,
-                           _allocationDirectory, _unfilledImages) {
-    for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
-         it != _threadMap.end(); ++it) {
-      if (!_virtualMemoryPartition.ClaimRange(
-              it->_stackBase, it->_stackLimit - it->_stackBase, STACK, false)) {
-        std::cerr << "Warning: overlap found for stack range "
-                  << "for thread " << std::dec << it->_threadNum << ".\n";
-      }
-    }
-  }
+                           _allocationDirectory, _unfilledImages,
+                           _stackRegistry),
+        _pThreadInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition,
+                                     _stackRegistry) {}
 
   virtual ~ProcessImage() {
     if (_allocationGraph != nullptr) {
@@ -74,6 +70,10 @@ class ProcessImage {
   }
 
   const ThreadMap<Offset> &GetThreadMap() const { return _threadMap; }
+
+  const StackRegistry<Offset> &GetStackRegistry() const {
+    return _stackRegistry;
+  }
 
   const ModuleDirectory<Offset> &GetModuleDirectory() const {
     return _moduleDirectory;
@@ -111,6 +111,11 @@ class ProcessImage {
     return _allocationGraph;
   }
 
+  const PThread::InfrastructureFinder<Offset> &GetPThreadInfrastructureFinder()
+      const {
+    return _pThreadInfrastructureFinder;
+  }
+
   const Python::InfrastructureFinder<Offset> &GetPythonInfrastructureFinder()
       const {
     return _pythonFinderGroup.GetInfrastructureFinder();
@@ -127,6 +132,7 @@ class ProcessImage {
   const AddressMap &_virtualAddressMap;
   Allocations::Directory<Offset> _allocationDirectory;
   const ThreadMap<OffsetType> &_threadMap;
+  StackRegistry<Offset> _stackRegistry;
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
   ModuleDirectory<Offset> _moduleDirectory;
   UnfilledImages<Offset> _unfilledImages;
@@ -136,6 +142,7 @@ class ProcessImage {
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
   Python::FinderGroup<Offset> _pythonFinderGroup;
   GoLang::FinderGroup<Offset> _goLangFinderGroup;
+  PThread::InfrastructureFinder<Offset> _pThreadInfrastructureFinder;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end

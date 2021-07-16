@@ -2354,11 +2354,17 @@ and is mapped into the process image.
 Static address 0x80506cc references 0x8055c48.
 The allocation at 0x8055c48 appears to be indirectly anchored from
 at least one stack via anchor point 0x8055ea0.
-Address 0xffffce0c is on the live part of the stack for thread 1.
+Address 0xffffce0c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce0c references anchor point 0x8055ea0
-Address 0xffffce20 is on the live part of the stack for thread 1.
+Address 0xffffce20 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce20 references anchor point 0x8055ea0
-Address 0xffffce30 is on the live part of the stack for thread 1.
+Address 0xffffce30 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce30 references anchor point 0x8055ea0
 which references 0x8055c48
 
@@ -2438,17 +2444,29 @@ Static address 0x805071c references anchor point 0x80560a8
 which references 0x8055c70
 The allocation at 0x8055c70 appears to be directly anchored from
 at least one stack.
-Address 0xffffce14 is on the live part of the stack for thread 1.
+Address 0xffffce14 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce14 references 0x8055c70.
-Address 0xffffce18 is on the live part of the stack for thread 1.
+Address 0xffffce18 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce18 references 0x8055c70.
-Address 0xffffce1c is on the live part of the stack for thread 1.
+Address 0xffffce1c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce1c references 0x8055c70.
-Address 0xffffce24 is on the live part of the stack for thread 1.
+Address 0xffffce24 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce24 references 0x8055c70.
-Address 0xffffce28 is on the live part of the stack for thread 1.
+Address 0xffffce28 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce28 references 0x8055c70.
-Address 0xffffce2c is on the live part of the stack for thread 1.
+Address 0xffffce2c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce2c references 0x8055c70.
 
 Anchored allocation at 8055e78 of size 24
@@ -2528,143 +2546,221 @@ Static address 0x805071c references anchor point 0x80560a8
 which references 0x8055ea0
 The allocation at 0x8055ea0 appears to be directly anchored from
 at least one stack.
-Address 0xffffce0c is on the live part of the stack for thread 1.
+Address 0xffffce0c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce0c references 0x8055ea0.
-Address 0xffffce20 is on the live part of the stack for thread 1.
+Address 0xffffce20 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce20 references 0x8055ea0.
-Address 0xffffce30 is on the live part of the stack for thread 1.
+Address 0xffffce30 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce30 references 0x8055ea0.
 
 Anchored allocation at 8055ec8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055ec8 appears to be directly anchored from
 at least one stack.
-Address 0xffffce34 is on the live part of the stack for thread 1.
+Address 0xffffce34 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce34 references 0x8055ec8.
-Address 0xffffce48 is on the live part of the stack for thread 1.
+Address 0xffffce48 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce48 references 0x8055ec8.
-Address 0xffffce58 is on the live part of the stack for thread 1.
+Address 0xffffce58 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce58 references 0x8055ec8.
 
 Anchored allocation at 8055ef0 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055ef0 appears to be directly anchored from
 at least one stack.
-Address 0xffffce5c is on the live part of the stack for thread 1.
+Address 0xffffce5c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce5c references 0x8055ef0.
-Address 0xffffce70 is on the live part of the stack for thread 1.
+Address 0xffffce70 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce70 references 0x8055ef0.
-Address 0xffffce80 is on the live part of the stack for thread 1.
+Address 0xffffce80 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce80 references 0x8055ef0.
 
 Anchored allocation at 8055f18 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055f18 appears to be directly anchored from
 at least one stack.
-Address 0xffffce84 is on the live part of the stack for thread 1.
+Address 0xffffce84 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce84 references 0x8055f18.
-Address 0xffffce98 is on the live part of the stack for thread 1.
+Address 0xffffce98 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce98 references 0x8055f18.
-Address 0xffffcea8 is on the live part of the stack for thread 1.
+Address 0xffffcea8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcea8 references 0x8055f18.
 
 Anchored allocation at 8055f40 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055f40 appears to be directly anchored from
 at least one stack.
-Address 0xffffceac is on the live part of the stack for thread 1.
+Address 0xffffceac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffceac references 0x8055f40.
-Address 0xffffcec0 is on the live part of the stack for thread 1.
+Address 0xffffcec0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcec0 references 0x8055f40.
-Address 0xffffced0 is on the live part of the stack for thread 1.
+Address 0xffffced0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffced0 references 0x8055f40.
 
 Anchored allocation at 8055f68 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055f68 appears to be directly anchored from
 at least one stack.
-Address 0xffffced4 is on the live part of the stack for thread 1.
+Address 0xffffced4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffced4 references 0x8055f68.
-Address 0xffffcee8 is on the live part of the stack for thread 1.
+Address 0xffffcee8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcee8 references 0x8055f68.
-Address 0xffffcef8 is on the live part of the stack for thread 1.
+Address 0xffffcef8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcef8 references 0x8055f68.
 
 Anchored allocation at 8055f90 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055f90 appears to be directly anchored from
 at least one stack.
-Address 0xffffcefc is on the live part of the stack for thread 1.
+Address 0xffffcefc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcefc references 0x8055f90.
-Address 0xffffcf10 is on the live part of the stack for thread 1.
+Address 0xffffcf10 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf10 references 0x8055f90.
-Address 0xffffcf20 is on the live part of the stack for thread 1.
+Address 0xffffcf20 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf20 references 0x8055f90.
 
 Anchored allocation at 8055fb8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055fb8 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf24 is on the live part of the stack for thread 1.
+Address 0xffffcf24 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf24 references 0x8055fb8.
-Address 0xffffcf38 is on the live part of the stack for thread 1.
+Address 0xffffcf38 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf38 references 0x8055fb8.
-Address 0xffffcf48 is on the live part of the stack for thread 1.
+Address 0xffffcf48 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf48 references 0x8055fb8.
 
 Anchored allocation at 8055fe0 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8055fe0 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf4c is on the live part of the stack for thread 1.
+Address 0xffffcf4c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf4c references 0x8055fe0.
-Address 0xffffcf60 is on the live part of the stack for thread 1.
+Address 0xffffcf60 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf60 references 0x8055fe0.
-Address 0xffffcf70 is on the live part of the stack for thread 1.
+Address 0xffffcf70 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf70 references 0x8055fe0.
 
 Anchored allocation at 8056008 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8056008 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf74 is on the live part of the stack for thread 1.
+Address 0xffffcf74 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf74 references 0x8056008.
-Address 0xffffcf88 is on the live part of the stack for thread 1.
+Address 0xffffcf88 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf88 references 0x8056008.
-Address 0xffffcf98 is on the live part of the stack for thread 1.
+Address 0xffffcf98 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf98 references 0x8056008.
 
 Anchored allocation at 8056030 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8056030 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf9c is on the live part of the stack for thread 1.
+Address 0xffffcf9c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf9c references 0x8056030.
-Address 0xffffcfb0 is on the live part of the stack for thread 1.
+Address 0xffffcfb0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfb0 references 0x8056030.
-Address 0xffffcfc0 is on the live part of the stack for thread 1.
+Address 0xffffcfc0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfc0 references 0x8056030.
 
 Anchored allocation at 8056058 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8056058 appears to be directly anchored from
 at least one stack.
-Address 0xffffcfc4 is on the live part of the stack for thread 1.
+Address 0xffffcfc4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfc4 references 0x8056058.
-Address 0xffffcfd8 is on the live part of the stack for thread 1.
+Address 0xffffcfd8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfd8 references 0x8056058.
-Address 0xffffcfe8 is on the live part of the stack for thread 1.
+Address 0xffffcfe8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfe8 references 0x8056058.
 
 Anchored allocation at 8056080 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8056080 appears to be directly anchored from
 at least one stack.
-Address 0xffffcfec is on the live part of the stack for thread 1.
+Address 0xffffcfec is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfec references 0x8056080.
-Address 0xffffd000 is on the live part of the stack for thread 1.
+Address 0xffffd000 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd000 references 0x8056080.
-Address 0xffffd010 is on the live part of the stack for thread 1.
+Address 0xffffd010 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd010 references 0x8056080.
 
 Anchored allocation at 80560a8 of size 24
@@ -2693,32 +2789,56 @@ and is mapped into the process image.
 Static address 0x805071c references 0x80560a8.
 The allocation at 0x80560a8 appears to be indirectly anchored from
 at least one stack via anchor point 0x8055c70.
-Address 0xffffce14 is on the live part of the stack for thread 1.
+Address 0xffffce14 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce14 references anchor point 0x8055c70
-Address 0xffffce18 is on the live part of the stack for thread 1.
+Address 0xffffce18 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce18 references anchor point 0x8055c70
-Address 0xffffce1c is on the live part of the stack for thread 1.
+Address 0xffffce1c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce1c references anchor point 0x8055c70
-Address 0xffffce24 is on the live part of the stack for thread 1.
+Address 0xffffce24 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce24 references anchor point 0x8055c70
-Address 0xffffce28 is on the live part of the stack for thread 1.
+Address 0xffffce28 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce28 references anchor point 0x8055c70
-Address 0xffffce2c is on the live part of the stack for thread 1.
+Address 0xffffce2c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce2c references anchor point 0x8055c70
 which references 0x80560a8
 The allocation at 0x80560a8 appears to be indirectly anchored from
 at least one stack via anchor point 0x80560d0.
-Address 0xffffce3c is on the live part of the stack for thread 1.
+Address 0xffffce3c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce3c references anchor point 0x80560d0
-Address 0xffffce40 is on the live part of the stack for thread 1.
+Address 0xffffce40 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce40 references anchor point 0x80560d0
-Address 0xffffce44 is on the live part of the stack for thread 1.
+Address 0xffffce44 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce44 references anchor point 0x80560d0
-Address 0xffffce4c is on the live part of the stack for thread 1.
+Address 0xffffce4c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce4c references anchor point 0x80560d0
-Address 0xffffce50 is on the live part of the stack for thread 1.
+Address 0xffffce50 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce50 references anchor point 0x80560d0
-Address 0xffffce54 is on the live part of the stack for thread 1.
+Address 0xffffce54 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce54 references anchor point 0x80560d0
 which references 0x80560a8
 
@@ -2750,17 +2870,29 @@ Static address 0x805071c references anchor point 0x80560a8
 which references 0x80560d0
 The allocation at 0x80560d0 appears to be directly anchored from
 at least one stack.
-Address 0xffffce3c is on the live part of the stack for thread 1.
+Address 0xffffce3c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce3c references 0x80560d0.
-Address 0xffffce40 is on the live part of the stack for thread 1.
+Address 0xffffce40 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce40 references 0x80560d0.
-Address 0xffffce44 is on the live part of the stack for thread 1.
+Address 0xffffce44 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce44 references 0x80560d0.
-Address 0xffffce4c is on the live part of the stack for thread 1.
+Address 0xffffce4c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce4c references 0x80560d0.
-Address 0xffffce50 is on the live part of the stack for thread 1.
+Address 0xffffce50 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce50 references 0x80560d0.
-Address 0xffffce54 is on the live part of the stack for thread 1.
+Address 0xffffce54 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce54 references 0x80560d0.
 
 Anchored allocation at 80562d8 of size 204
@@ -2835,11 +2967,17 @@ and is mapped into the process image.
 Static address 0x8050718 references 0x80564e0.
 The allocation at 0x80564e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x8055ea0.
-Address 0xffffce0c is on the live part of the stack for thread 1.
+Address 0xffffce0c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce0c references anchor point 0x8055ea0
-Address 0xffffce20 is on the live part of the stack for thread 1.
+Address 0xffffce20 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce20 references anchor point 0x8055ea0
-Address 0xffffce30 is on the live part of the stack for thread 1.
+Address 0xffffce30 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce30 references anchor point 0x8055ea0
 which references 0x8055c48
 which references 0x80564e0
@@ -2870,11 +3008,17 @@ and is mapped into the process image.
 Static address 0x80506b8 references 0x80566e8.
 The allocation at 0x80566e8 appears to be indirectly anchored from
 at least one stack via anchor point 0x8055ea0.
-Address 0xffffce0c is on the live part of the stack for thread 1.
+Address 0xffffce0c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce0c references anchor point 0x8055ea0
-Address 0xffffce20 is on the live part of the stack for thread 1.
+Address 0xffffce20 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce20 references anchor point 0x8055ea0
-Address 0xffffce30 is on the live part of the stack for thread 1.
+Address 0xffffce30 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce30 references anchor point 0x8055ea0
 which references 0x8055c48
 which references 0x80566e8
@@ -2905,11 +3049,17 @@ and is mapped into the process image.
 Static address 0x80506c8 references 0x80568f0.
 The allocation at 0x80568f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x8055ea0.
-Address 0xffffce0c is on the live part of the stack for thread 1.
+Address 0xffffce0c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce0c references anchor point 0x8055ea0
-Address 0xffffce20 is on the live part of the stack for thread 1.
+Address 0xffffce20 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce20 references anchor point 0x8055ea0
-Address 0xffffce30 is on the live part of the stack for thread 1.
+Address 0xffffce30 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce30 references anchor point 0x8055ea0
 which references 0x8055c48
 which references 0x80568f0
@@ -2964,751 +3114,1237 @@ Anchored allocation at 8056d00 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8056d00 appears to be directly anchored from
 at least one stack.
-Address 0xffffce64 is on the live part of the stack for thread 1.
+Address 0xffffce64 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce64 references 0x8056d00.
-Address 0xffffce68 is on the live part of the stack for thread 1.
+Address 0xffffce68 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce68 references 0x8056d00.
-Address 0xffffce6c is on the live part of the stack for thread 1.
+Address 0xffffce6c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce6c references 0x8056d00.
-Address 0xffffce74 is on the live part of the stack for thread 1.
+Address 0xffffce74 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce74 references 0x8056d00.
-Address 0xffffce78 is on the live part of the stack for thread 1.
+Address 0xffffce78 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce78 references 0x8056d00.
-Address 0xffffce7c is on the live part of the stack for thread 1.
+Address 0xffffce7c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce7c references 0x8056d00.
 
 Anchored allocation at 8056f08 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8056f08 appears to be directly anchored from
 at least one stack.
-Address 0xffffce8c is on the live part of the stack for thread 1.
+Address 0xffffce8c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce8c references 0x8056f08.
-Address 0xffffce90 is on the live part of the stack for thread 1.
+Address 0xffffce90 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce90 references 0x8056f08.
-Address 0xffffce94 is on the live part of the stack for thread 1.
+Address 0xffffce94 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce94 references 0x8056f08.
-Address 0xffffce9c is on the live part of the stack for thread 1.
+Address 0xffffce9c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffce9c references 0x8056f08.
-Address 0xffffcea0 is on the live part of the stack for thread 1.
+Address 0xffffcea0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcea0 references 0x8056f08.
-Address 0xffffcea4 is on the live part of the stack for thread 1.
+Address 0xffffcea4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcea4 references 0x8056f08.
 
 Anchored allocation at 8057110 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057110 appears to be directly anchored from
 at least one stack.
-Address 0xffffceb4 is on the live part of the stack for thread 1.
+Address 0xffffceb4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffceb4 references 0x8057110.
-Address 0xffffceb8 is on the live part of the stack for thread 1.
+Address 0xffffceb8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffceb8 references 0x8057110.
-Address 0xffffcebc is on the live part of the stack for thread 1.
+Address 0xffffcebc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcebc references 0x8057110.
-Address 0xffffcec4 is on the live part of the stack for thread 1.
+Address 0xffffcec4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcec4 references 0x8057110.
-Address 0xffffcec8 is on the live part of the stack for thread 1.
+Address 0xffffcec8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcec8 references 0x8057110.
-Address 0xffffcecc is on the live part of the stack for thread 1.
+Address 0xffffcecc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcecc references 0x8057110.
 
 Anchored allocation at 8057318 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057318 appears to be directly anchored from
 at least one stack.
-Address 0xffffcedc is on the live part of the stack for thread 1.
+Address 0xffffcedc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcedc references 0x8057318.
-Address 0xffffcee0 is on the live part of the stack for thread 1.
+Address 0xffffcee0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcee0 references 0x8057318.
-Address 0xffffcee4 is on the live part of the stack for thread 1.
+Address 0xffffcee4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcee4 references 0x8057318.
-Address 0xffffceec is on the live part of the stack for thread 1.
+Address 0xffffceec is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffceec references 0x8057318.
-Address 0xffffcef0 is on the live part of the stack for thread 1.
+Address 0xffffcef0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcef0 references 0x8057318.
-Address 0xffffcef4 is on the live part of the stack for thread 1.
+Address 0xffffcef4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcef4 references 0x8057318.
 
 Anchored allocation at 8057520 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057520 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf04 is on the live part of the stack for thread 1.
+Address 0xffffcf04 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf04 references 0x8057520.
-Address 0xffffcf08 is on the live part of the stack for thread 1.
+Address 0xffffcf08 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf08 references 0x8057520.
-Address 0xffffcf0c is on the live part of the stack for thread 1.
+Address 0xffffcf0c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf0c references 0x8057520.
-Address 0xffffcf14 is on the live part of the stack for thread 1.
+Address 0xffffcf14 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf14 references 0x8057520.
-Address 0xffffcf18 is on the live part of the stack for thread 1.
+Address 0xffffcf18 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf18 references 0x8057520.
-Address 0xffffcf1c is on the live part of the stack for thread 1.
+Address 0xffffcf1c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf1c references 0x8057520.
 
 Anchored allocation at 8057728 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057728 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf2c is on the live part of the stack for thread 1.
+Address 0xffffcf2c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf2c references 0x8057728.
-Address 0xffffcf30 is on the live part of the stack for thread 1.
+Address 0xffffcf30 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf30 references 0x8057728.
-Address 0xffffcf34 is on the live part of the stack for thread 1.
+Address 0xffffcf34 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf34 references 0x8057728.
-Address 0xffffcf3c is on the live part of the stack for thread 1.
+Address 0xffffcf3c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf3c references 0x8057728.
-Address 0xffffcf40 is on the live part of the stack for thread 1.
+Address 0xffffcf40 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf40 references 0x8057728.
-Address 0xffffcf44 is on the live part of the stack for thread 1.
+Address 0xffffcf44 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf44 references 0x8057728.
 
 Anchored allocation at 8057930 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057930 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf54 is on the live part of the stack for thread 1.
+Address 0xffffcf54 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf54 references 0x8057930.
-Address 0xffffcf58 is on the live part of the stack for thread 1.
+Address 0xffffcf58 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf58 references 0x8057930.
-Address 0xffffcf5c is on the live part of the stack for thread 1.
+Address 0xffffcf5c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf5c references 0x8057930.
-Address 0xffffcf64 is on the live part of the stack for thread 1.
+Address 0xffffcf64 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf64 references 0x8057930.
-Address 0xffffcf68 is on the live part of the stack for thread 1.
+Address 0xffffcf68 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf68 references 0x8057930.
-Address 0xffffcf6c is on the live part of the stack for thread 1.
+Address 0xffffcf6c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf6c references 0x8057930.
 
 Anchored allocation at 8057b38 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057b38 appears to be directly anchored from
 at least one stack.
-Address 0xffffcf7c is on the live part of the stack for thread 1.
+Address 0xffffcf7c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf7c references 0x8057b38.
-Address 0xffffcf80 is on the live part of the stack for thread 1.
+Address 0xffffcf80 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf80 references 0x8057b38.
-Address 0xffffcf84 is on the live part of the stack for thread 1.
+Address 0xffffcf84 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf84 references 0x8057b38.
-Address 0xffffcf8c is on the live part of the stack for thread 1.
+Address 0xffffcf8c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf8c references 0x8057b38.
-Address 0xffffcf90 is on the live part of the stack for thread 1.
+Address 0xffffcf90 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf90 references 0x8057b38.
-Address 0xffffcf94 is on the live part of the stack for thread 1.
+Address 0xffffcf94 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcf94 references 0x8057b38.
 
 Anchored allocation at 8057d40 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057d40 appears to be directly anchored from
 at least one stack.
-Address 0xffffcfa4 is on the live part of the stack for thread 1.
+Address 0xffffcfa4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfa4 references 0x8057d40.
-Address 0xffffcfa8 is on the live part of the stack for thread 1.
+Address 0xffffcfa8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfa8 references 0x8057d40.
-Address 0xffffcfac is on the live part of the stack for thread 1.
+Address 0xffffcfac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfac references 0x8057d40.
-Address 0xffffcfb4 is on the live part of the stack for thread 1.
+Address 0xffffcfb4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfb4 references 0x8057d40.
-Address 0xffffcfb8 is on the live part of the stack for thread 1.
+Address 0xffffcfb8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfb8 references 0x8057d40.
-Address 0xffffcfbc is on the live part of the stack for thread 1.
+Address 0xffffcfbc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfbc references 0x8057d40.
 
 Anchored allocation at 8057f48 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8057f48 appears to be directly anchored from
 at least one stack.
-Address 0xffffcfcc is on the live part of the stack for thread 1.
+Address 0xffffcfcc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfcc references 0x8057f48.
-Address 0xffffcfd0 is on the live part of the stack for thread 1.
+Address 0xffffcfd0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfd0 references 0x8057f48.
-Address 0xffffcfd4 is on the live part of the stack for thread 1.
+Address 0xffffcfd4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfd4 references 0x8057f48.
-Address 0xffffcfdc is on the live part of the stack for thread 1.
+Address 0xffffcfdc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfdc references 0x8057f48.
-Address 0xffffcfe0 is on the live part of the stack for thread 1.
+Address 0xffffcfe0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfe0 references 0x8057f48.
-Address 0xffffcfe4 is on the live part of the stack for thread 1.
+Address 0xffffcfe4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcfe4 references 0x8057f48.
 
 Anchored allocation at 8058150 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8058150 appears to be directly anchored from
 at least one stack.
-Address 0xffffcff4 is on the live part of the stack for thread 1.
+Address 0xffffcff4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcff4 references 0x8058150.
-Address 0xffffcff8 is on the live part of the stack for thread 1.
+Address 0xffffcff8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcff8 references 0x8058150.
-Address 0xffffcffc is on the live part of the stack for thread 1.
+Address 0xffffcffc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcffc references 0x8058150.
-Address 0xffffd004 is on the live part of the stack for thread 1.
+Address 0xffffd004 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd004 references 0x8058150.
-Address 0xffffd008 is on the live part of the stack for thread 1.
+Address 0xffffd008 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd008 references 0x8058150.
-Address 0xffffd00c is on the live part of the stack for thread 1.
+Address 0xffffd00c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd00c references 0x8058150.
 
 Anchored allocation at 8058358 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058358 appears to be directly anchored from
 at least one stack.
-Address 0xffffd014 is on the live part of the stack for thread 1.
+Address 0xffffd014 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd014 references 0x8058358.
-Address 0xffffd028 is on the live part of the stack for thread 1.
+Address 0xffffd028 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd028 references 0x8058358.
-Address 0xffffd038 is on the live part of the stack for thread 1.
+Address 0xffffd038 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd038 references 0x8058358.
 
 Anchored allocation at 8058380 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8058380 appears to be directly anchored from
 at least one stack.
-Address 0xffffd01c is on the live part of the stack for thread 1.
+Address 0xffffd01c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd01c references 0x8058380.
-Address 0xffffd020 is on the live part of the stack for thread 1.
+Address 0xffffd020 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd020 references 0x8058380.
-Address 0xffffd024 is on the live part of the stack for thread 1.
+Address 0xffffd024 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd024 references 0x8058380.
-Address 0xffffd02c is on the live part of the stack for thread 1.
+Address 0xffffd02c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd02c references 0x8058380.
-Address 0xffffd030 is on the live part of the stack for thread 1.
+Address 0xffffd030 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd030 references 0x8058380.
-Address 0xffffd034 is on the live part of the stack for thread 1.
+Address 0xffffd034 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd034 references 0x8058380.
 
 Anchored allocation at 8058588 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058588 appears to be directly anchored from
 at least one stack.
-Address 0xffffd03c is on the live part of the stack for thread 1.
+Address 0xffffd03c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd03c references 0x8058588.
-Address 0xffffd050 is on the live part of the stack for thread 1.
+Address 0xffffd050 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd050 references 0x8058588.
-Address 0xffffd060 is on the live part of the stack for thread 1.
+Address 0xffffd060 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd060 references 0x8058588.
 
 Anchored allocation at 80585b0 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x80585b0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd044 is on the live part of the stack for thread 1.
+Address 0xffffd044 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd044 references 0x80585b0.
-Address 0xffffd048 is on the live part of the stack for thread 1.
+Address 0xffffd048 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd048 references 0x80585b0.
-Address 0xffffd04c is on the live part of the stack for thread 1.
+Address 0xffffd04c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd04c references 0x80585b0.
-Address 0xffffd054 is on the live part of the stack for thread 1.
+Address 0xffffd054 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd054 references 0x80585b0.
-Address 0xffffd058 is on the live part of the stack for thread 1.
+Address 0xffffd058 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd058 references 0x80585b0.
-Address 0xffffd05c is on the live part of the stack for thread 1.
+Address 0xffffd05c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd05c references 0x80585b0.
 
 Anchored allocation at 80587b8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x80587b8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd064 is on the live part of the stack for thread 1.
+Address 0xffffd064 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd064 references 0x80587b8.
-Address 0xffffd078 is on the live part of the stack for thread 1.
+Address 0xffffd078 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd078 references 0x80587b8.
-Address 0xffffd088 is on the live part of the stack for thread 1.
+Address 0xffffd088 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd088 references 0x80587b8.
 
 Anchored allocation at 80587e0 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x80587e0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd094 is on the live part of the stack for thread 1.
+Address 0xffffd094 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd094 references 0x80587e0.
-Address 0xffffd098 is on the live part of the stack for thread 1.
+Address 0xffffd098 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd098 references 0x80587e0.
-Address 0xffffd09c is on the live part of the stack for thread 1.
+Address 0xffffd09c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd09c references 0x80587e0.
-Address 0xffffd0a4 is on the live part of the stack for thread 1.
+Address 0xffffd0a4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0a4 references 0x80587e0.
-Address 0xffffd0a8 is on the live part of the stack for thread 1.
+Address 0xffffd0a8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0a8 references 0x80587e0.
-Address 0xffffd0ac is on the live part of the stack for thread 1.
+Address 0xffffd0ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0ac references 0x80587e0.
 
 Anchored allocation at 80589e8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x80589e8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd08c is on the live part of the stack for thread 1.
+Address 0xffffd08c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd08c references 0x80589e8.
-Address 0xffffd0a0 is on the live part of the stack for thread 1.
+Address 0xffffd0a0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0a0 references 0x80589e8.
-Address 0xffffd0b0 is on the live part of the stack for thread 1.
+Address 0xffffd0b0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0b0 references 0x80589e8.
 
 Anchored allocation at 8058a10 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8058a10 appears to be directly anchored from
 at least one stack.
-Address 0xffffd0bc is on the live part of the stack for thread 1.
+Address 0xffffd0bc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0bc references 0x8058a10.
-Address 0xffffd0c0 is on the live part of the stack for thread 1.
+Address 0xffffd0c0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0c0 references 0x8058a10.
-Address 0xffffd0c4 is on the live part of the stack for thread 1.
+Address 0xffffd0c4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0c4 references 0x8058a10.
-Address 0xffffd0cc is on the live part of the stack for thread 1.
+Address 0xffffd0cc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0cc references 0x8058a10.
-Address 0xffffd0d0 is on the live part of the stack for thread 1.
+Address 0xffffd0d0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0d0 references 0x8058a10.
-Address 0xffffd0d4 is on the live part of the stack for thread 1.
+Address 0xffffd0d4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0d4 references 0x8058a10.
 
 Anchored allocation at 8058c18 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058c18 appears to be directly anchored from
 at least one stack.
-Address 0xffffd0b4 is on the live part of the stack for thread 1.
+Address 0xffffd0b4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0b4 references 0x8058c18.
-Address 0xffffd0c8 is on the live part of the stack for thread 1.
+Address 0xffffd0c8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0c8 references 0x8058c18.
-Address 0xffffd0d8 is on the live part of the stack for thread 1.
+Address 0xffffd0d8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0d8 references 0x8058c18.
 
 Anchored allocation at 8058c40 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058c40 appears to be directly anchored from
 at least one stack.
-Address 0xffffd0dc is on the live part of the stack for thread 1.
+Address 0xffffd0dc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0dc references 0x8058c40.
-Address 0xffffd0f0 is on the live part of the stack for thread 1.
+Address 0xffffd0f0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0f0 references 0x8058c40.
-Address 0xffffd100 is on the live part of the stack for thread 1.
+Address 0xffffd100 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd100 references 0x8058c40.
 
 Anchored allocation at 8058c68 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058c68 appears to be directly anchored from
 at least one stack.
-Address 0xffffd104 is on the live part of the stack for thread 1.
+Address 0xffffd104 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd104 references 0x8058c68.
-Address 0xffffd118 is on the live part of the stack for thread 1.
+Address 0xffffd118 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd118 references 0x8058c68.
-Address 0xffffd128 is on the live part of the stack for thread 1.
+Address 0xffffd128 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd128 references 0x8058c68.
 
 Anchored allocation at 8058c90 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058c90 appears to be directly anchored from
 at least one stack.
-Address 0xffffd12c is on the live part of the stack for thread 1.
+Address 0xffffd12c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd12c references 0x8058c90.
-Address 0xffffd140 is on the live part of the stack for thread 1.
+Address 0xffffd140 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd140 references 0x8058c90.
-Address 0xffffd150 is on the live part of the stack for thread 1.
+Address 0xffffd150 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd150 references 0x8058c90.
 
 Anchored allocation at 8058cb8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058cb8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd154 is on the live part of the stack for thread 1.
+Address 0xffffd154 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd154 references 0x8058cb8.
-Address 0xffffd168 is on the live part of the stack for thread 1.
+Address 0xffffd168 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd168 references 0x8058cb8.
-Address 0xffffd178 is on the live part of the stack for thread 1.
+Address 0xffffd178 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd178 references 0x8058cb8.
 
 Anchored allocation at 8058ce0 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058ce0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd17c is on the live part of the stack for thread 1.
+Address 0xffffd17c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd17c references 0x8058ce0.
-Address 0xffffd190 is on the live part of the stack for thread 1.
+Address 0xffffd190 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd190 references 0x8058ce0.
-Address 0xffffd1a0 is on the live part of the stack for thread 1.
+Address 0xffffd1a0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1a0 references 0x8058ce0.
 
 Anchored allocation at 8058d08 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058d08 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1a4 is on the live part of the stack for thread 1.
+Address 0xffffd1a4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1a4 references 0x8058d08.
-Address 0xffffd1b8 is on the live part of the stack for thread 1.
+Address 0xffffd1b8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1b8 references 0x8058d08.
-Address 0xffffd1c8 is on the live part of the stack for thread 1.
+Address 0xffffd1c8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1c8 references 0x8058d08.
 
 Anchored allocation at 8058d30 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058d30 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1cc is on the live part of the stack for thread 1.
+Address 0xffffd1cc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1cc references 0x8058d30.
-Address 0xffffd1e0 is on the live part of the stack for thread 1.
+Address 0xffffd1e0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1e0 references 0x8058d30.
-Address 0xffffd1f0 is on the live part of the stack for thread 1.
+Address 0xffffd1f0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1f0 references 0x8058d30.
 
 Anchored allocation at 8058d58 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058d58 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1f4 is on the live part of the stack for thread 1.
+Address 0xffffd1f4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1f4 references 0x8058d58.
-Address 0xffffd208 is on the live part of the stack for thread 1.
+Address 0xffffd208 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd208 references 0x8058d58.
-Address 0xffffd218 is on the live part of the stack for thread 1.
+Address 0xffffd218 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd218 references 0x8058d58.
 
 Anchored allocation at 8058d80 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058d80 appears to be directly anchored from
 at least one stack.
-Address 0xffffd21c is on the live part of the stack for thread 1.
+Address 0xffffd21c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd21c references 0x8058d80.
-Address 0xffffd230 is on the live part of the stack for thread 1.
+Address 0xffffd230 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd230 references 0x8058d80.
-Address 0xffffd240 is on the live part of the stack for thread 1.
+Address 0xffffd240 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd240 references 0x8058d80.
 
 Anchored allocation at 8058da8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058da8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd244 is on the live part of the stack for thread 1.
+Address 0xffffd244 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd244 references 0x8058da8.
-Address 0xffffd258 is on the live part of the stack for thread 1.
+Address 0xffffd258 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd258 references 0x8058da8.
-Address 0xffffd268 is on the live part of the stack for thread 1.
+Address 0xffffd268 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd268 references 0x8058da8.
 
 Anchored allocation at 8058dd0 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058dd0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd26c is on the live part of the stack for thread 1.
+Address 0xffffd26c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd26c references 0x8058dd0.
-Address 0xffffd280 is on the live part of the stack for thread 1.
+Address 0xffffd280 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd280 references 0x8058dd0.
-Address 0xffffd290 is on the live part of the stack for thread 1.
+Address 0xffffd290 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd290 references 0x8058dd0.
 
 Anchored allocation at 8058df8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058df8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd294 is on the live part of the stack for thread 1.
+Address 0xffffd294 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd294 references 0x8058df8.
-Address 0xffffd2a8 is on the live part of the stack for thread 1.
+Address 0xffffd2a8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2a8 references 0x8058df8.
-Address 0xffffd2b8 is on the live part of the stack for thread 1.
+Address 0xffffd2b8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2b8 references 0x8058df8.
 
 Anchored allocation at 8058e20 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x8058e20 appears to be directly anchored from
 at least one stack.
-Address 0xffffd2bc is on the live part of the stack for thread 1.
+Address 0xffffd2bc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2bc references 0x8058e20.
-Address 0xffffd2d0 is on the live part of the stack for thread 1.
+Address 0xffffd2d0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2d0 references 0x8058e20.
-Address 0xffffd2e0 is on the live part of the stack for thread 1.
+Address 0xffffd2e0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2e0 references 0x8058e20.
 
 Anchored allocation at 8058e48 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8058e48 appears to be directly anchored from
 at least one stack.
-Address 0xffffd06c is on the live part of the stack for thread 1.
+Address 0xffffd06c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd06c references 0x8058e48.
-Address 0xffffd070 is on the live part of the stack for thread 1.
+Address 0xffffd070 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd070 references 0x8058e48.
-Address 0xffffd074 is on the live part of the stack for thread 1.
+Address 0xffffd074 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd074 references 0x8058e48.
-Address 0xffffd07c is on the live part of the stack for thread 1.
+Address 0xffffd07c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd07c references 0x8058e48.
-Address 0xffffd080 is on the live part of the stack for thread 1.
+Address 0xffffd080 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd080 references 0x8058e48.
-Address 0xffffd084 is on the live part of the stack for thread 1.
+Address 0xffffd084 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd084 references 0x8058e48.
 
 Anchored allocation at 8059050 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059050 appears to be directly anchored from
 at least one stack.
-Address 0xffffd0e4 is on the live part of the stack for thread 1.
+Address 0xffffd0e4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0e4 references 0x8059050.
-Address 0xffffd0e8 is on the live part of the stack for thread 1.
+Address 0xffffd0e8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0e8 references 0x8059050.
-Address 0xffffd0ec is on the live part of the stack for thread 1.
+Address 0xffffd0ec is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0ec references 0x8059050.
-Address 0xffffd0f4 is on the live part of the stack for thread 1.
+Address 0xffffd0f4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0f4 references 0x8059050.
-Address 0xffffd0f8 is on the live part of the stack for thread 1.
+Address 0xffffd0f8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0f8 references 0x8059050.
-Address 0xffffd0fc is on the live part of the stack for thread 1.
+Address 0xffffd0fc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd0fc references 0x8059050.
 
 Anchored allocation at 8059258 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059258 appears to be directly anchored from
 at least one stack.
-Address 0xffffd10c is on the live part of the stack for thread 1.
+Address 0xffffd10c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd10c references 0x8059258.
-Address 0xffffd110 is on the live part of the stack for thread 1.
+Address 0xffffd110 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd110 references 0x8059258.
-Address 0xffffd114 is on the live part of the stack for thread 1.
+Address 0xffffd114 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd114 references 0x8059258.
-Address 0xffffd11c is on the live part of the stack for thread 1.
+Address 0xffffd11c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd11c references 0x8059258.
-Address 0xffffd120 is on the live part of the stack for thread 1.
+Address 0xffffd120 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd120 references 0x8059258.
-Address 0xffffd124 is on the live part of the stack for thread 1.
+Address 0xffffd124 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd124 references 0x8059258.
 
 Anchored allocation at 8059460 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059460 appears to be directly anchored from
 at least one stack.
-Address 0xffffd134 is on the live part of the stack for thread 1.
+Address 0xffffd134 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd134 references 0x8059460.
-Address 0xffffd138 is on the live part of the stack for thread 1.
+Address 0xffffd138 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd138 references 0x8059460.
-Address 0xffffd13c is on the live part of the stack for thread 1.
+Address 0xffffd13c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd13c references 0x8059460.
-Address 0xffffd144 is on the live part of the stack for thread 1.
+Address 0xffffd144 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd144 references 0x8059460.
-Address 0xffffd148 is on the live part of the stack for thread 1.
+Address 0xffffd148 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd148 references 0x8059460.
-Address 0xffffd14c is on the live part of the stack for thread 1.
+Address 0xffffd14c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd14c references 0x8059460.
 
 Anchored allocation at 8059668 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059668 appears to be directly anchored from
 at least one stack.
-Address 0xffffd15c is on the live part of the stack for thread 1.
+Address 0xffffd15c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd15c references 0x8059668.
-Address 0xffffd160 is on the live part of the stack for thread 1.
+Address 0xffffd160 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd160 references 0x8059668.
-Address 0xffffd164 is on the live part of the stack for thread 1.
+Address 0xffffd164 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd164 references 0x8059668.
-Address 0xffffd16c is on the live part of the stack for thread 1.
+Address 0xffffd16c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd16c references 0x8059668.
-Address 0xffffd170 is on the live part of the stack for thread 1.
+Address 0xffffd170 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd170 references 0x8059668.
-Address 0xffffd174 is on the live part of the stack for thread 1.
+Address 0xffffd174 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd174 references 0x8059668.
 
 Anchored allocation at 8059870 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059870 appears to be directly anchored from
 at least one stack.
-Address 0xffffd184 is on the live part of the stack for thread 1.
+Address 0xffffd184 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd184 references 0x8059870.
-Address 0xffffd188 is on the live part of the stack for thread 1.
+Address 0xffffd188 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd188 references 0x8059870.
-Address 0xffffd18c is on the live part of the stack for thread 1.
+Address 0xffffd18c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd18c references 0x8059870.
-Address 0xffffd194 is on the live part of the stack for thread 1.
+Address 0xffffd194 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd194 references 0x8059870.
-Address 0xffffd198 is on the live part of the stack for thread 1.
+Address 0xffffd198 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd198 references 0x8059870.
-Address 0xffffd19c is on the live part of the stack for thread 1.
+Address 0xffffd19c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd19c references 0x8059870.
 
 Anchored allocation at 8059a78 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059a78 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1ac is on the live part of the stack for thread 1.
+Address 0xffffd1ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1ac references 0x8059a78.
-Address 0xffffd1b0 is on the live part of the stack for thread 1.
+Address 0xffffd1b0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1b0 references 0x8059a78.
-Address 0xffffd1b4 is on the live part of the stack for thread 1.
+Address 0xffffd1b4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1b4 references 0x8059a78.
 
 Anchored allocation at 8059c80 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059c80 appears to be directly anchored from
 at least one stack.
-Address 0xffffd24c is on the live part of the stack for thread 1.
+Address 0xffffd24c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd24c references 0x8059c80.
-Address 0xffffd250 is on the live part of the stack for thread 1.
+Address 0xffffd250 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd250 references 0x8059c80.
-Address 0xffffd254 is on the live part of the stack for thread 1.
+Address 0xffffd254 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd254 references 0x8059c80.
-Address 0xffffd25c is on the live part of the stack for thread 1.
+Address 0xffffd25c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd25c references 0x8059c80.
-Address 0xffffd260 is on the live part of the stack for thread 1.
+Address 0xffffd260 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd260 references 0x8059c80.
-Address 0xffffd264 is on the live part of the stack for thread 1.
+Address 0xffffd264 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd264 references 0x8059c80.
 
 Anchored allocation at 8059e88 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x8059e88 appears to be directly anchored from
 at least one stack.
-Address 0xffffd224 is on the live part of the stack for thread 1.
+Address 0xffffd224 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd224 references 0x8059e88.
-Address 0xffffd228 is on the live part of the stack for thread 1.
+Address 0xffffd228 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd228 references 0x8059e88.
-Address 0xffffd22c is on the live part of the stack for thread 1.
+Address 0xffffd22c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd22c references 0x8059e88.
-Address 0xffffd234 is on the live part of the stack for thread 1.
+Address 0xffffd234 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd234 references 0x8059e88.
-Address 0xffffd238 is on the live part of the stack for thread 1.
+Address 0xffffd238 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd238 references 0x8059e88.
-Address 0xffffd23c is on the live part of the stack for thread 1.
+Address 0xffffd23c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd23c references 0x8059e88.
 
 Anchored allocation at 805a090 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805a090 appears to be directly anchored from
 at least one stack.
-Address 0xffffd29c is on the live part of the stack for thread 1.
+Address 0xffffd29c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd29c references 0x805a090.
-Address 0xffffd2a0 is on the live part of the stack for thread 1.
+Address 0xffffd2a0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2a0 references 0x805a090.
-Address 0xffffd2a4 is on the live part of the stack for thread 1.
+Address 0xffffd2a4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2a4 references 0x805a090.
-Address 0xffffd2ac is on the live part of the stack for thread 1.
+Address 0xffffd2ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2ac references 0x805a090.
-Address 0xffffd2b0 is on the live part of the stack for thread 1.
+Address 0xffffd2b0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2b0 references 0x805a090.
-Address 0xffffd2b4 is on the live part of the stack for thread 1.
+Address 0xffffd2b4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2b4 references 0x805a090.
 
 Anchored allocation at 805a298 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805a298 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1bc is on the live part of the stack for thread 1.
+Address 0xffffd1bc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1bc references 0x805a298.
-Address 0xffffd1c0 is on the live part of the stack for thread 1.
+Address 0xffffd1c0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1c0 references 0x805a298.
-Address 0xffffd1c4 is on the live part of the stack for thread 1.
+Address 0xffffd1c4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1c4 references 0x805a298.
 
 Anchored allocation at 805a4a0 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805a4a0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd274 is on the live part of the stack for thread 1.
+Address 0xffffd274 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd274 references 0x805a4a0.
-Address 0xffffd278 is on the live part of the stack for thread 1.
+Address 0xffffd278 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd278 references 0x805a4a0.
-Address 0xffffd27c is on the live part of the stack for thread 1.
+Address 0xffffd27c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd27c references 0x805a4a0.
-Address 0xffffd284 is on the live part of the stack for thread 1.
+Address 0xffffd284 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd284 references 0x805a4a0.
-Address 0xffffd288 is on the live part of the stack for thread 1.
+Address 0xffffd288 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd288 references 0x805a4a0.
-Address 0xffffd28c is on the live part of the stack for thread 1.
+Address 0xffffd28c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd28c references 0x805a4a0.
 
 Anchored allocation at 805a6a8 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805a6a8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1d4 is on the live part of the stack for thread 1.
+Address 0xffffd1d4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1d4 references 0x805a6a8.
-Address 0xffffd1d8 is on the live part of the stack for thread 1.
+Address 0xffffd1d8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1d8 references 0x805a6a8.
-Address 0xffffd1dc is on the live part of the stack for thread 1.
+Address 0xffffd1dc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1dc references 0x805a6a8.
 
 Anchored allocation at 805a8b0 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805a8b0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1e4 is on the live part of the stack for thread 1.
+Address 0xffffd1e4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1e4 references 0x805a8b0.
-Address 0xffffd1e8 is on the live part of the stack for thread 1.
+Address 0xffffd1e8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1e8 references 0x805a8b0.
-Address 0xffffd1ec is on the live part of the stack for thread 1.
+Address 0xffffd1ec is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1ec references 0x805a8b0.
 
 Anchored allocation at 805aab8 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805aab8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd1fc is on the live part of the stack for thread 1.
+Address 0xffffd1fc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd1fc references 0x805aab8.
-Address 0xffffd200 is on the live part of the stack for thread 1.
+Address 0xffffd200 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd200 references 0x805aab8.
-Address 0xffffd204 is on the live part of the stack for thread 1.
+Address 0xffffd204 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd204 references 0x805aab8.
-Address 0xffffd20c is on the live part of the stack for thread 1.
+Address 0xffffd20c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd20c references 0x805aab8.
-Address 0xffffd210 is on the live part of the stack for thread 1.
+Address 0xffffd210 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd210 references 0x805aab8.
-Address 0xffffd214 is on the live part of the stack for thread 1.
+Address 0xffffd214 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd214 references 0x805aab8.
 
 Anchored allocation at 805acc0 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805acc0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd2c4 is on the live part of the stack for thread 1.
+Address 0xffffd2c4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2c4 references 0x805acc0.
-Address 0xffffd2c8 is on the live part of the stack for thread 1.
+Address 0xffffd2c8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2c8 references 0x805acc0.
-Address 0xffffd2cc is on the live part of the stack for thread 1.
+Address 0xffffd2cc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2cc references 0x805acc0.
-Address 0xffffd2d4 is on the live part of the stack for thread 1.
+Address 0xffffd2d4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2d4 references 0x805acc0.
-Address 0xffffd2d8 is on the live part of the stack for thread 1.
+Address 0xffffd2d8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2d8 references 0x805acc0.
-Address 0xffffd2dc is on the live part of the stack for thread 1.
+Address 0xffffd2dc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2dc references 0x805acc0.
 
 Anchored allocation at 805aec8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x805aec8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd2e4 is on the live part of the stack for thread 1.
+Address 0xffffd2e4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2e4 references 0x805aec8.
-Address 0xffffd2f8 is on the live part of the stack for thread 1.
+Address 0xffffd2f8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2f8 references 0x805aec8.
-Address 0xffffd308 is on the live part of the stack for thread 1.
+Address 0xffffd308 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd308 references 0x805aec8.
 
 Anchored allocation at 805aef0 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805aef0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd2ec is on the live part of the stack for thread 1.
+Address 0xffffd2ec is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2ec references 0x805aef0.
-Address 0xffffd2f0 is on the live part of the stack for thread 1.
+Address 0xffffd2f0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2f0 references 0x805aef0.
-Address 0xffffd2f4 is on the live part of the stack for thread 1.
+Address 0xffffd2f4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2f4 references 0x805aef0.
-Address 0xffffd2fc is on the live part of the stack for thread 1.
+Address 0xffffd2fc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd2fc references 0x805aef0.
-Address 0xffffd300 is on the live part of the stack for thread 1.
+Address 0xffffd300 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd300 references 0x805aef0.
-Address 0xffffd304 is on the live part of the stack for thread 1.
+Address 0xffffd304 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd304 references 0x805aef0.
 
 Anchored allocation at 805b0f8 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x805b0f8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd30c is on the live part of the stack for thread 1.
+Address 0xffffd30c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd30c references 0x805b0f8.
-Address 0xffffd320 is on the live part of the stack for thread 1.
+Address 0xffffd320 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd320 references 0x805b0f8.
-Address 0xffffd330 is on the live part of the stack for thread 1.
+Address 0xffffd330 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd330 references 0x805b0f8.
 
 Anchored allocation at 805b120 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805b120 appears to be directly anchored from
 at least one stack.
-Address 0xffffd314 is on the live part of the stack for thread 1.
+Address 0xffffd314 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd314 references 0x805b120.
-Address 0xffffd318 is on the live part of the stack for thread 1.
+Address 0xffffd318 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd318 references 0x805b120.
-Address 0xffffd31c is on the live part of the stack for thread 1.
+Address 0xffffd31c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd31c references 0x805b120.
 
 Anchored allocation at 805b328 of size 24
@@ -3722,11 +4358,17 @@ which references 0x805b580
 which references 0x805b328
 The allocation at 0x805b328 appears to be directly anchored from
 at least one stack.
-Address 0xffffd334 is on the live part of the stack for thread 1.
+Address 0xffffd334 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd334 references 0x805b328.
-Address 0xffffd348 is on the live part of the stack for thread 1.
+Address 0xffffd348 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd348 references 0x805b328.
-Address 0xffffd358 is on the live part of the stack for thread 1.
+Address 0xffffd358 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd358 references 0x805b328.
 
 Anchored allocation at 805b350 of size 204
@@ -3739,38 +4381,62 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b350
 The allocation at 0x805b350 appears to be indirectly anchored from
 at least one stack via anchor point 0x805b328.
-Address 0xffffd334 is on the live part of the stack for thread 1.
+Address 0xffffd334 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd334 references anchor point 0x805b328
-Address 0xffffd348 is on the live part of the stack for thread 1.
+Address 0xffffd348 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd348 references anchor point 0x805b328
-Address 0xffffd358 is on the live part of the stack for thread 1.
+Address 0xffffd358 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd358 references anchor point 0x805b328
 which references 0x805b350
 The allocation at 0x805b350 appears to be indirectly anchored from
 at least one stack via anchor point 0x805b558.
-Address 0xffffd35c is on the live part of the stack for thread 1.
+Address 0xffffd35c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd35c references anchor point 0x805b558
-Address 0xffffd370 is on the live part of the stack for thread 1.
+Address 0xffffd370 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd370 references anchor point 0x805b558
-Address 0xffffd380 is on the live part of the stack for thread 1.
+Address 0xffffd380 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd380 references anchor point 0x805b558
 which references 0x805b350
 The allocation at 0x805b350 appears to be indirectly anchored from
 at least one stack via anchor point 0x805b788.
-Address 0xffffd384 is on the live part of the stack for thread 1.
+Address 0xffffd384 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd384 references anchor point 0x805b788
-Address 0xffffd398 is on the live part of the stack for thread 1.
+Address 0xffffd398 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd398 references anchor point 0x805b788
-Address 0xffffd3a8 is on the live part of the stack for thread 1.
+Address 0xffffd3a8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3a8 references anchor point 0x805b788
 which references 0x805b350
 The allocation at 0x805b350 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b350
 
@@ -3778,11 +4444,17 @@ Anchored allocation at 805b558 of size 24
 This allocation matches pattern DequeMap.
 The allocation at 0x805b558 appears to be directly anchored from
 at least one stack.
-Address 0xffffd35c is on the live part of the stack for thread 1.
+Address 0xffffd35c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd35c references 0x805b558.
-Address 0xffffd370 is on the live part of the stack for thread 1.
+Address 0xffffd370 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd370 references 0x805b558.
-Address 0xffffd380 is on the live part of the stack for thread 1.
+Address 0xffffd380 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd380 references 0x805b558.
 
 Anchored allocation at 805b580 of size 24
@@ -3795,29 +4467,47 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b580
 The allocation at 0x805b580 appears to be indirectly anchored from
 at least one stack via anchor point 0x805b558.
-Address 0xffffd35c is on the live part of the stack for thread 1.
+Address 0xffffd35c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd35c references anchor point 0x805b558
-Address 0xffffd370 is on the live part of the stack for thread 1.
+Address 0xffffd370 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd370 references anchor point 0x805b558
-Address 0xffffd380 is on the live part of the stack for thread 1.
+Address 0xffffd380 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd380 references anchor point 0x805b558
 which references 0x805b580
 The allocation at 0x805b580 appears to be indirectly anchored from
 at least one stack via anchor point 0x805b788.
-Address 0xffffd384 is on the live part of the stack for thread 1.
+Address 0xffffd384 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd384 references anchor point 0x805b788
-Address 0xffffd398 is on the live part of the stack for thread 1.
+Address 0xffffd398 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd398 references anchor point 0x805b788
-Address 0xffffd3a8 is on the live part of the stack for thread 1.
+Address 0xffffd3a8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3a8 references anchor point 0x805b788
 which references 0x805b580
 The allocation at 0x805b580 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b580
 
@@ -3831,11 +4521,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b5a8
 The allocation at 0x805b5a8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b5a8
 
@@ -3849,11 +4545,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b5d0
 The allocation at 0x805b5d0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b5d0
 
@@ -3867,11 +4569,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b5f8
 The allocation at 0x805b5f8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b5f8
 
@@ -3885,11 +4593,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b620
 The allocation at 0x805b620 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b620
 
@@ -3903,11 +4617,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b648
 The allocation at 0x805b648 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b648
 
@@ -3921,11 +4641,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b670
 The allocation at 0x805b670 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b670
 
@@ -3939,11 +4665,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b698
 The allocation at 0x805b698 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b698
 
@@ -3957,11 +4689,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b6c0
 The allocation at 0x805b6c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b6c0
 
@@ -3975,11 +4713,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b6e8
 The allocation at 0x805b6e8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b6e8
 
@@ -3993,11 +4737,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b710
 The allocation at 0x805b710 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b710
 
@@ -4011,11 +4761,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b738
 The allocation at 0x805b738 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b738
 
@@ -4029,11 +4785,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b760
 The allocation at 0x805b760 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b760
 
@@ -4048,11 +4810,17 @@ which references 0x805b350
 which references 0x805b788
 The allocation at 0x805b788 appears to be directly anchored from
 at least one stack.
-Address 0xffffd384 is on the live part of the stack for thread 1.
+Address 0xffffd384 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd384 references 0x805b788.
-Address 0xffffd398 is on the live part of the stack for thread 1.
+Address 0xffffd398 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd398 references 0x805b788.
-Address 0xffffd3a8 is on the live part of the stack for thread 1.
+Address 0xffffd3a8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3a8 references 0x805b788.
 
 Anchored allocation at 805b7b0 of size 204
@@ -4065,20 +4833,32 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805b7b0
 The allocation at 0x805b7b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805b788.
-Address 0xffffd384 is on the live part of the stack for thread 1.
+Address 0xffffd384 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd384 references anchor point 0x805b788
-Address 0xffffd398 is on the live part of the stack for thread 1.
+Address 0xffffd398 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd398 references anchor point 0x805b788
-Address 0xffffd3a8 is on the live part of the stack for thread 1.
+Address 0xffffd3a8 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3a8 references anchor point 0x805b788
 which references 0x805b7b0
 The allocation at 0x805b7b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805b7b0
 
@@ -4086,11 +4866,17 @@ Anchored allocation at 805b9b8 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805b9b8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd324 is on the live part of the stack for thread 1.
+Address 0xffffd324 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd324 references 0x805b9b8.
-Address 0xffffd328 is on the live part of the stack for thread 1.
+Address 0xffffd328 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd328 references 0x805b9b8.
-Address 0xffffd32c is on the live part of the stack for thread 1.
+Address 0xffffd32c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd32c references 0x805b9b8.
 
 Anchored allocation at 805bbc0 of size 204
@@ -4105,17 +4891,29 @@ which references 0x805b328
 which references 0x805bbc0
 The allocation at 0x805bbc0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd38c is on the live part of the stack for thread 1.
+Address 0xffffd38c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd38c references 0x805bbc0.
-Address 0xffffd390 is on the live part of the stack for thread 1.
+Address 0xffffd390 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd390 references 0x805bbc0.
-Address 0xffffd394 is on the live part of the stack for thread 1.
+Address 0xffffd394 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd394 references 0x805bbc0.
-Address 0xffffd39c is on the live part of the stack for thread 1.
+Address 0xffffd39c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd39c references 0x805bbc0.
-Address 0xffffd3a0 is on the live part of the stack for thread 1.
+Address 0xffffd3a0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3a0 references 0x805bbc0.
-Address 0xffffd3a4 is on the live part of the stack for thread 1.
+Address 0xffffd3a4 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3a4 references 0x805bbc0.
 
 Anchored allocation at 805bdc8 of size 204
@@ -4130,11 +4928,17 @@ which references 0x805b328
 which references 0x805bdc8
 The allocation at 0x805bdc8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd33c is on the live part of the stack for thread 1.
+Address 0xffffd33c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd33c references 0x805bdc8.
-Address 0xffffd340 is on the live part of the stack for thread 1.
+Address 0xffffd340 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd340 references 0x805bdc8.
-Address 0xffffd344 is on the live part of the stack for thread 1.
+Address 0xffffd344 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd344 references 0x805bdc8.
 
 Anchored allocation at 805bfd0 of size 204
@@ -4149,28 +4953,46 @@ which references 0x805b328
 which references 0x805bfd0
 The allocation at 0x805bfd0 appears to be directly anchored from
 at least one stack.
-Address 0xffffd34c is on the live part of the stack for thread 1.
+Address 0xffffd34c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd34c references 0x805bfd0.
-Address 0xffffd350 is on the live part of the stack for thread 1.
+Address 0xffffd350 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd350 references 0x805bfd0.
-Address 0xffffd354 is on the live part of the stack for thread 1.
+Address 0xffffd354 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd354 references 0x805bfd0.
 
 Anchored allocation at 805c1d8 of size 204
 This allocation matches pattern DequeBlock.
 The allocation at 0x805c1d8 appears to be directly anchored from
 at least one stack.
-Address 0xffffd364 is on the live part of the stack for thread 1.
+Address 0xffffd364 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd364 references 0x805c1d8.
-Address 0xffffd368 is on the live part of the stack for thread 1.
+Address 0xffffd368 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd368 references 0x805c1d8.
-Address 0xffffd36c is on the live part of the stack for thread 1.
+Address 0xffffd36c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd36c references 0x805c1d8.
-Address 0xffffd374 is on the live part of the stack for thread 1.
+Address 0xffffd374 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd374 references 0x805c1d8.
-Address 0xffffd378 is on the live part of the stack for thread 1.
+Address 0xffffd378 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd378 references 0x805c1d8.
-Address 0xffffd37c is on the live part of the stack for thread 1.
+Address 0xffffd37c is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd37c references 0x805c1d8.
 
 Anchored allocation at 805c3e0 of size 5a4
@@ -4181,11 +5003,17 @@ Register esi for thread 1 references 0x805c3e0.
 Register edi for thread 1 references 0x805c3e0.
 The allocation at 0x805c3e0 appears to be directly anchored from
 at least one stack.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references 0x805c3e0.
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references 0x805c3e0.
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references 0x805c3e0.
 
 Anchored allocation at 805c988 of size 204
@@ -4198,11 +5026,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805c988
 The allocation at 0x805c988 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805c988
 
@@ -4216,11 +5050,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805cb90
 The allocation at 0x805cb90 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805cb90
 
@@ -4234,11 +5074,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805cd98
 The allocation at 0x805cd98 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805cd98
 
@@ -4252,11 +5098,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805cfa0
 The allocation at 0x805cfa0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805cfa0
 
@@ -4270,11 +5122,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805d1a8
 The allocation at 0x805d1a8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805d1a8
 
@@ -4288,11 +5146,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805d3b0
 The allocation at 0x805d3b0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805d3b0
 
@@ -4306,11 +5170,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805d5b8
 The allocation at 0x805d5b8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805d5b8
 
@@ -4324,11 +5194,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805d7c0
 The allocation at 0x805d7c0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805d7c0
 
@@ -4342,11 +5218,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805d9c8
 The allocation at 0x805d9c8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805d9c8
 
@@ -4360,11 +5242,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805dbd0
 The allocation at 0x805dbd0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805dbd0
 
@@ -4378,11 +5266,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ddd8
 The allocation at 0x805ddd8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ddd8
 
@@ -4396,11 +5290,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805dfe0
 The allocation at 0x805dfe0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805dfe0
 
@@ -4414,11 +5314,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e008
 The allocation at 0x805e008 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e008
 
@@ -4432,11 +5338,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e210
 The allocation at 0x805e210 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e210
 
@@ -4450,11 +5362,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e238
 The allocation at 0x805e238 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e238
 
@@ -4468,11 +5386,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e440
 The allocation at 0x805e440 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e440
 
@@ -4486,11 +5410,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e468
 The allocation at 0x805e468 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e468
 
@@ -4504,11 +5434,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e670
 The allocation at 0x805e670 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e670
 
@@ -4522,11 +5458,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e698
 The allocation at 0x805e698 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e698
 
@@ -4540,11 +5482,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e8a0
 The allocation at 0x805e8a0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e8a0
 
@@ -4558,11 +5506,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e8c8
 The allocation at 0x805e8c8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e8c8
 
@@ -4576,11 +5530,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e8f0
 The allocation at 0x805e8f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e8f0
 
@@ -4594,11 +5554,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e918
 The allocation at 0x805e918 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e918
 
@@ -4612,11 +5578,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e940
 The allocation at 0x805e940 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e940
 
@@ -4630,11 +5602,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e968
 The allocation at 0x805e968 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e968
 
@@ -4648,11 +5626,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e990
 The allocation at 0x805e990 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e990
 
@@ -4666,11 +5650,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e9b8
 The allocation at 0x805e9b8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e9b8
 
@@ -4684,11 +5674,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805e9e0
 The allocation at 0x805e9e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805e9e0
 
@@ -4702,11 +5698,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ea08
 The allocation at 0x805ea08 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ea08
 
@@ -4720,11 +5722,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ea30
 The allocation at 0x805ea30 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ea30
 
@@ -4738,11 +5746,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ea58
 The allocation at 0x805ea58 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ea58
 
@@ -4756,11 +5770,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ea80
 The allocation at 0x805ea80 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ea80
 
@@ -4774,11 +5794,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805eaa8
 The allocation at 0x805eaa8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805eaa8
 
@@ -4792,11 +5818,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ead0
 The allocation at 0x805ead0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ead0
 
@@ -4810,11 +5842,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ecd8
 The allocation at 0x805ecd8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ecd8
 
@@ -4828,11 +5866,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805eee0
 The allocation at 0x805eee0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805eee0
 
@@ -4846,11 +5890,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805f0e8
 The allocation at 0x805f0e8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805f0e8
 
@@ -4864,11 +5914,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805f2f0
 The allocation at 0x805f2f0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805f2f0
 
@@ -4882,11 +5938,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805f4f8
 The allocation at 0x805f4f8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805f4f8
 
@@ -4900,11 +5962,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805f700
 The allocation at 0x805f700 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805f700
 
@@ -4918,11 +5986,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805f908
 The allocation at 0x805f908 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805f908
 
@@ -4936,11 +6010,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805fb10
 The allocation at 0x805fb10 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805fb10
 
@@ -4954,11 +6034,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805fd18
 The allocation at 0x805fd18 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805fd18
 
@@ -4972,11 +6058,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x805ff20
 The allocation at 0x805ff20 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x805ff20
 
@@ -4990,11 +6082,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060128
 The allocation at 0x8060128 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060128
 
@@ -5008,11 +6106,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060330
 The allocation at 0x8060330 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060330
 
@@ -5026,11 +6130,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060538
 The allocation at 0x8060538 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060538
 
@@ -5044,11 +6154,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060740
 The allocation at 0x8060740 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060740
 
@@ -5062,11 +6178,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060948
 The allocation at 0x8060948 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060948
 
@@ -5080,11 +6202,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060b50
 The allocation at 0x8060b50 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060b50
 
@@ -5098,11 +6226,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060b78
 The allocation at 0x8060b78 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060b78
 
@@ -5116,11 +6250,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060d80
 The allocation at 0x8060d80 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060d80
 
@@ -5134,11 +6274,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060da8
 The allocation at 0x8060da8 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060da8
 
@@ -5152,11 +6298,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8060fb0
 The allocation at 0x8060fb0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8060fb0
 
@@ -5170,11 +6322,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x80611e0
 The allocation at 0x80611e0 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x80611e0
 
@@ -5188,11 +6346,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8061410
 The allocation at 0x8061410 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8061410
 
@@ -5206,11 +6370,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8061640
 The allocation at 0x8061640 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8061640
 
@@ -5221,11 +6391,17 @@ at least one register.
 Register edx for thread 1 references 0x8061848.
 The allocation at 0x8061848 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8061848
 
@@ -5239,11 +6415,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8061a50
 The allocation at 0x8061a50 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8061a50
 
@@ -5257,11 +6439,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8061c58
 The allocation at 0x8061c58 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8061c58
 
@@ -5275,11 +6463,17 @@ Register edi for thread 1 references anchor point 0x805c3e0
 which references 0x8061e60
 The allocation at 0x8061e60 appears to be indirectly anchored from
 at least one stack via anchor point 0x805c3e0.
-Address 0xffffcde0 is on the live part of the stack for thread 1.
+Address 0xffffcde0 is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcde0 references anchor point 0x805c3e0
-Address 0xffffcdfc is on the live part of the stack for thread 1.
+Address 0xffffcdfc is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffcdfc references anchor point 0x805c3e0
-Address 0xffffd3ac is on the live part of the stack for thread 1.
+Address 0xffffd3ac is in the live part of the main stack that
+uses [0xfffe9000, 0xffffe000).
+Thread 1 is currently using this stack.
 Stack address 0xffffd3ac references anchor point 0x805c3e0
 which references 0x8061e60
 

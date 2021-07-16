@@ -26,7 +26,9 @@ which references 0x604040
 which references 0x604010
 The allocation at 0x604010 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe310 is on the live part of the stack for thread 1.
+Address 0x7fffffffe310 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe310 references 0x604010.
 
 Anchored allocation at 604040 of size 38
@@ -73,7 +75,9 @@ Register rsi for thread 1 references anchor point 0x6040c0
 which references 0x604080
 The allocation at 0x604080 appears to be directly anchored from
 at least one stack.
-Address 0x7fffffffe320 is on the live part of the stack for thread 1.
+Address 0x7fffffffe320 is in the live part of the main stack that
+uses [0x7ffffffea000, 0x7ffffffff000).
+Thread 1 is currently using this stack.
 Stack address 0x7fffffffe320 references 0x604080.
 
 Anchored allocation at 6040c0 of size 38

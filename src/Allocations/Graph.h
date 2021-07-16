@@ -1,9 +1,10 @@
-// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020,2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <algorithm>
 #include <deque>
+#include "../StackRegistry.h"
 #include "../ThreadMap.h"
 #include "../VirtualAddressMap.h"
 #include "ContiguousImage.h"
@@ -41,12 +42,14 @@ class Graph {
 
   Graph(const VirtualAddressMap<Offset> &addressMap,
         const Directory<Offset> &directory, const ThreadMap<Offset> &threadMap,
+        const StackRegistry<Offset> &stackRegistry,
         const std::map<Offset, Offset> &staticAnchorLimits,
         const ExternalAnchorPointChecker<Offset> *externalAnchorPointChecker,
         const ObscuredReferenceChecker<Offset> *obscuredReferenceChecker)
       : _directory(directory),
         _addressMap(addressMap),
         _threadMap(threadMap),
+        _stackRegistry(stackRegistry),
         _externalAnchorPointChecker(externalAnchorPointChecker),
         _obscuredReferenceChecker(obscuredReferenceChecker),
         _numAllocations(directory.NumAllocations()),
@@ -57,7 +60,8 @@ class Graph {
         _externalAnchorDistances(_numAllocations) {
     FindEdges();
     FindStaticAnchorPoints(staticAnchorLimits);
-    FindStackAndRegisterAnchorPoints(threadMap);
+    FindStackAnchorPoints();
+    FindRegisterAnchorPoints();
     FindExternalAnchorPoints();
     MarkLeakedChunks();
   }
@@ -482,6 +486,7 @@ class Graph {
   const Directory<Offset> &_directory;
   const AddressMap &_addressMap;
   const ThreadMap<Offset> &_threadMap;
+  const StackRegistry<Offset> &_stackRegistry;
   const ExternalAnchorPointChecker<Offset> *_externalAnchorPointChecker;
   const ObscuredReferenceChecker<Offset> *_obscuredReferenceChecker;
   Index _numAllocations;
@@ -746,13 +751,33 @@ class Graph {
     }
   }
 
-  void FindStackAndRegisterAnchorPoints(const ThreadMap<Offset> &threadMap) {
-    size_t numRegisters = threadMap.GetNumRegisters();
+  void FindStackAnchorPoints() {
+    // TODO: Fix this for the case of cached stacks, which should mostly be
+    // not considered to have static anchors, with the exception of left
+    // over thread locals.
+    // TODO: Fix this for the case of a pthread stack where the associated
+    //       thread has switched to a different kind of stack, such as
+    //       a goroutine.
+    // TODO: When stack base (as opposed to region base) becomes available,
+    //       use it, but this presupposes a new category of thread-local
+    //       anchor.
+    _stackRegistry.VisitStacks([&](Offset regionBase, Offset regionLimit,
+                                   const char *, Offset stackTop, Offset,
+                                   size_t) {
+      FindAnchorPoints((stackTop != StackRegistry<Offset>::STACK_TOP_UNKNOWN)
+                           ? stackTop
+                           : regionBase,
+                       regionLimit, _stackAnchorPoints);
+      return true;
+    });
+  }
 
-    typename ThreadMap<Offset>::const_iterator itEnd = threadMap.end();
-    for (typename ThreadMap<Offset>::const_iterator it = threadMap.begin();
+  void FindRegisterAnchorPoints() {
+    size_t numRegisters = _threadMap.GetNumRegisters();
+
+    typename ThreadMap<Offset>::const_iterator itEnd = _threadMap.end();
+    for (typename ThreadMap<Offset>::const_iterator it = _threadMap.begin();
          it != itEnd; ++it) {
-      FindAnchorPoints(it->_stackPointer, it->_stackLimit, _stackAnchorPoints);
       Offset *registers = it->_registers;
       for (size_t i = 0; i < numRegisters; ++i) {
         Offset candidateTarget = registers[i];

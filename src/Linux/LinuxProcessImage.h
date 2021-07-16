@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -51,11 +51,18 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * things, such as the structures used by libc malloc.
          */
         Base::_pythonFinderGroup.Resolve();
+
         /*
          * As soon as the modules have been found it is pretty easy to find
          * the large regions used by GoLang.
          */
         Base::_goLangFinderGroup.Resolve();
+
+        /*
+         * Finding structures associated with pthreads depends on finding
+         * the modules first.
+         */
+        Base::_pThreadInfrastructureFinder.Resolve();
       }
 
       /*
@@ -88,6 +95,55 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * first.
          */
         Base::_goLangFinderGroup.Resolve();
+        /*
+         * Finding structures associated with pthreads depends on finding
+         * the modules first.
+         */
+        Base::_pThreadInfrastructureFinder.Resolve();
+      }
+
+      /*
+       * At this point we should have identified all the stacks except the one
+       * used for the main thread.  This means we can look through the thread
+       * map and associated any threads with stacks by identifying the stack
+       * that uses the stack pointer for each thread.  The stack pointer that
+       * is not associated with any stack that has been found yet must belong
+       * to the main thread, unless the core contains stacks of some kind not
+       * yet recognized.
+       */
+      std::vector<std::pair<Offset, size_t> > mainStackCandidates;
+      mainStackCandidates.reserve(3);
+      for (typename ThreadMap<Offset>::const_iterator it =
+               Base::_threadMap.begin();
+           it != Base::_threadMap.end(); ++it) {
+        if (!Base::_stackRegistry.AddThreadNumber(it->_stackPointer,
+                                                  it->_threadNum)) {
+          mainStackCandidates.emplace_back(it->_stackPointer, it->_threadNum);
+        }
+      }
+      size_t numMainStackCandidates = mainStackCandidates.size();
+      if (numMainStackCandidates == 1) {
+        const auto mainStackPointerAndThread = mainStackCandidates[0];
+        if (!RegisterMainStack(mainStackPointerAndThread.first,
+                               mainStackPointerAndThread.second)) {
+          std::cerr
+              << "Leak information cannot be trusted without the main stack.\n";
+        }
+      } else {
+        if (numMainStackCandidates == 0) {
+          if (!elfImage.IsTruncated()) {
+            std::cerr << "Warning: No thread appears to be using the original "
+                         "stack for the main thread.\n";
+          }
+        } else {
+          std::cerr << "Warning: There are multiple candidates to be the main "
+                       "stack,\nincluding the following:\n";
+          for (const auto& spAndThread : mainStackCandidates) {
+            std::cerr << "Stack with stack pointer 0x" << std::hex
+                      << spAndThread.first << " used by thread " << std::dec
+                      << spAndThread.second << "\n";
+          }
+        }
       }
 
       /*
@@ -112,7 +168,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
       Base::_allocationGraph = new Allocations::Graph<Offset>(
           Base::_virtualAddressMap, Base::_allocationDirectory,
-          Base::_threadMap, _staticAnchorLimits, nullptr, nullptr);
+          Base::_threadMap, Base::_stackRegistry, _staticAnchorLimits, nullptr,
+          nullptr);
 
       /*
        * In Linux processes the current approach is to wait until the
@@ -127,8 +184,6 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
       FindSignatureNamesFromBinaries();
 
       WriteSymreqsFileIfNeeded();
-
-      UpdateStacksAndStackGuards();
 
       /*
        * Once this constructor as finished, any classification of ranges is
@@ -172,148 +227,48 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
              " and that the permissions were marked wrong in the core.\n";
     }
   }
-  /*
-   * Stacks that are associated with threads have already been registered at
-   * this point, but stack guards for those stacks, which are identified in
-   * a somewhat Linux-specific way, as well as idle stacks and their guards,
-   * still need to be found.
-   */
-  void UpdateStacksAndStackGuards() {
-    Reader reader(Base::_virtualAddressMap);
-    typename AddressMap::const_iterator itMapEnd =
-        Base::_virtualAddressMap.end();
-    for (typename ThreadMap<Offset>::const_iterator it =
-             Base::_threadMap.begin();
-         it != Base::_threadMap.end(); ++it) {
-      Offset base = it->_stackBase;
-      Offset limit = it->_stackLimit;
-      Offset lastPageBase = limit - 0x1000;
-      Offset guardBase = base - 0x1000;
-      Offset sizeWithGuard = limit - guardBase;
-      for (Offset check = limit - 3 * sizeof(Offset); check >= lastPageBase;
-           check -= sizeof(Offset)) {
-        if (reader.ReadOffset(check) == guardBase &&
-            reader.ReadOffset(check + sizeof(Offset)) == sizeWithGuard &&
-            reader.ReadOffset(check + 2 * sizeof(Offset)) == 0x1000) {
-          typename AddressMap::const_iterator itMap =
-              Base::_virtualAddressMap.find(guardBase);
-          if (itMap != itMapEnd) {
-            int permissions =
-                (itMap.Flags() & RangeAttributes::PERMISSIONS_MASK);
-            if ((permissions & (RangeAttributes::PERMISSIONS_MASK ^
-                                RangeAttributes::IS_READABLE)) !=
-                RangeAttributes::HAS_KNOWN_PERMISSIONS) {
-              std::cerr << "Warning: unexpected permissions found for "
-                           "overflow guard "
-                        << "for thread " << std::dec << it->_threadNum << ".\n";
-              break;
-            }
-            if ((permissions & RangeAttributes::IS_READABLE) != 0) {
-              /*
-               * This has been seen in some cores where the guard region
-               * has been improperly marked as read-only, even after having
-               * been verified as inaccessible at the time the process was
-               * running.  We'll grudgingly accept the core's version of the
-               * facts here.
-               */
-              WarnIfFirstReadableStackGuardFound();
-              if (!Base::_virtualMemoryPartition.ClaimRange(
-                      guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
-                std::cerr
-                    << "Warning: unexpected overlap found for overflow guard "
-                    << "for thread " << std::dec << it->_threadNum << ".\n";
-              }
-              break;
-            }
-          }
-          /*
-           * If we reach here, the range was mentioned in the core as
-           * inaccessible or not mentioned at all.  The expected thing
-           * to do when the core is created is to record the inaccessible
-           * guard region in a Phdr, but not to bother providing an image.
-           * Unfortunately, some versions of gdb stray from this and either
-           * don't have a Phdr or waste core space on an image.
-           */
-          if (!Base::_virtualMemoryPartition.ClaimRange(
-                  guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
-            std::cerr << "Warning: unexpected overlap found for overflow guard "
-                      << "for thread " << std::dec << it->_threadNum << ".\n";
-          }
-          break;
-        }
-      }
-    }
-    /*
-     * Now that we have figured out the ranges associated with stacks and
-     * guards for threads, and figured out the ranges for pretty much anything
-     * that chap knows how to figure out for Linux, figure out any stacks
-     * associated with pthreads that have finished.
-     */
 
-    std::vector<std::pair<Offset, Offset> > basesAndLengths;
-    for (const auto& range :
-         Base::_virtualMemoryPartition.GetUnclaimedWritableRangesWithImages()) {
-      if (range._size < 0x2000) {
-        continue;
-      }
-      Offset base = range._base;
-      Offset limit = range._limit;
-      Offset secondPageBase = base + 0x1000;
-      Offset guardBase = base - 0x1000;
-      Offset sizeWithGuard = limit - guardBase;
-      typename AddressMap::const_iterator itMap =
-          Base::_virtualAddressMap.find(guardBase);
-      bool guardMappedReadOnly = false;
-      if (itMap != itMapEnd) {
-        int permissions = (itMap.Flags() & RangeAttributes::PERMISSIONS_MASK);
-        if ((permissions & (RangeAttributes::PERMISSIONS_MASK ^
-                            RangeAttributes::IS_READABLE)) !=
-            RangeAttributes::HAS_KNOWN_PERMISSIONS) {
-          continue;
-        }
-        if ((permissions & RangeAttributes::IS_READABLE) != 0) {
-          guardMappedReadOnly = true;
-        }
-      }
-      for (Offset check = limit - 3 * sizeof(Offset); check >= secondPageBase;
-           check -= sizeof(Offset)) {
-        if (reader.ReadOffset(check, 0) == guardBase &&
-            reader.ReadOffset(check + sizeof(Offset), 0) == sizeWithGuard &&
-            reader.ReadOffset(check + 2 * sizeof(Offset), 0) == 0x1000) {
-          if (guardMappedReadOnly) {
-            /*
-             * There are some cores where the guard region
-             * has been improperly marked as read-only, even after having
-             * been verified as inaccessible at the time the process was
-             * running.  We'll grudgingly accept the core's version of the
-             * facts but still mark it as a guard.
-             */
-            WarnIfFirstReadableStackGuardFound();
-          }
-          if (!Base::_virtualMemoryPartition.ClaimRange(
-                  guardBase, 0x1000, Base::STACK_OVERFLOW_GUARD, false)) {
-            std::cerr << "Warning: unexpected overlap found for overflow "
-                         "guard at 0x"
-                      << std::hex << guardBase << " for unused stack.\n";
-            break;
-          }
-          Offset length =
-              ((check + 3 * sizeof(Offset) + 0xfff) & ~0xfff) - base;
-          basesAndLengths.emplace_back(base, length);
-          break;
-        }
-      }
+  bool RegisterMainStack(Offset stackPointer, size_t threadNumber) {
+    const char* stackType = "main stack";
+    typename VirtualAddressMap<Offset>::const_iterator it =
+        Base::_virtualAddressMap.find(stackPointer);
+    if (it == Base::_virtualAddressMap.end()) {
+      std::cerr << "Process image does not contain mapping for " << stackType
+                << " that contains address 0x" << std::hex << stackPointer
+                << ".\n";
+      return false;
     }
-    for (const auto& baseAndLength : basesAndLengths) {
-      Offset base = baseAndLength.first;
-      Offset length = baseAndLength.second;
-      if (!Base::_virtualMemoryPartition.ClaimRange(base, length, Base::STACK,
-                                                    false)) {
-        std::cerr << "Warning: unexpected overlap found for idle stack at [0x"
-                  << std::hex << base << ", " << (base + length) << ")\n";
-      }
+    if (it.GetImage() == (const char*)(0)) {
+      std::cerr << "Process image does not contain image for " << stackType
+                << " that contains address 0x" << std::hex << stackPointer
+                << ".\n";
+      return false;
     }
+    Offset base = it.Base();
+    Offset limit = it.Limit();
+    /*
+     * TODO: Derive end of main stack rather than guessing the limits.
+     */
+    if (!Base::_virtualMemoryPartition.ClaimRange(base, limit - base, stackType,
+                                                  false)) {
+      std::cerr << "Warning: Failed to claim " << stackType << " [" << std::hex
+                << base << ", " << limit << ") due to overlap.\n";
+      return false;
+    }
+    if (!Base::_stackRegistry.RegisterStack(base, limit, stackType)) {
+      std::cerr << "Warning: Failed to register " << stackType << " ["
+                << std::hex << base << ", " << limit
+                << ") due to overlap with other stack.\n";
+      return false;
+    }
+    if (!Base::_stackRegistry.AddThreadNumber(stackPointer, threadNumber)) {
+      std::cerr
+          << "Warning: Can't associate main stack with main thread number.\n";
+      return false;
+    }
+    return true;
   }
+
   bool CheckChainMember(Offset candidate,
                         typename VirtualAddressMap<Offset>::Reader& reader) {
     Offset BAD = 0xbadbad;

@@ -7,8 +7,8 @@ Region use: libc malloc main arena pages
 This is a run of pages used for allocations for the main arena.
 
 Range [0x7ff37cb91000, 0x7ff37d391000) uses 0x800000 bytes.
-Region use: stack
-This stack is used for thread 1.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 1.
 
 Range [0x7ff37d699000, 0x7ff37d69a000) uses 0x1000 bytes.
 Region use: used by module
@@ -41,7 +41,7 @@ Region use: used by module
 This is for module /lib/x86_64-linux-gnu/ld-2.23.so.
 
 Range [0x7fffe54f8000, 0x7fffe551a000) uses 0x22000 bytes.
-Region use: stack
-This stack is used for thread 2.
+Region use: main stack
+This main stack is currently used by thread 2.
 
 12 writable ranges use 0x872000 (8,855,552) bytes.

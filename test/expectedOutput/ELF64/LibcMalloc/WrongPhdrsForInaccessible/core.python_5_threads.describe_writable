@@ -22,24 +22,24 @@ Region use: libc malloc heap
 This is a libc malloc heap of current size 0x21000 and maximum size reached so far 0x21000.
 
 Range [0x7f51e67fe000, 0x7f51e6ffe000) uses 0x800000 bytes.
-Region use: stack
-This stack is used for thread 5.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 5.
 
 Range [0x7f51e6fff000, 0x7f51e77ff000) uses 0x800000 bytes.
-Region use: stack
-This stack is used for thread 4.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 4.
 
 Range [0x7f51e7800000, 0x7f51e8000000) uses 0x800000 bytes.
-Region use: stack
-This stack is used for thread 3.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 3.
 
 Range [0x7f51e8000000, 0x7f51e8021000) uses 0x21000 bytes.
 Region use: libc malloc heap
 This is a libc malloc heap of current size 0x21000 and maximum size reached so far 0x21000.
 
 Range [0x7f51ec07c000, 0x7f51ec87c000) uses 0x800000 bytes.
-Region use: stack
-This stack is used for thread 2.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 2.
 
 Range [0x7f51ece5c000, 0x7f51ece5d000) uses 0x1000 bytes.
 Region use: used by module
@@ -107,7 +107,7 @@ Region use: used by module
 This is for module /lib/x86_64-linux-gnu/ld-2.23.so.
 
 Range [0x7fffe22bc000, 0x7fffe22dd000) uses 0x21000 bytes.
-Region use: stack
-This stack is used for thread 1.
+Region use: main stack
+This main stack is currently used by thread 1.
 
 29 writable ranges use 0x23e7000 (37,646,336) bytes.

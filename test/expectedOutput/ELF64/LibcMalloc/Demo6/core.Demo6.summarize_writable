@@ -1,5 +1,6 @@
-2 ranges take 0x822000 bytes for use: stack
+1 ranges take 0x800000 bytes for use: used pthread stack
 1 ranges take 0x32000 bytes for use: libc malloc main arena pages
+1 ranges take 0x22000 bytes for use: main stack
 7 ranges take 0x16000 bytes for use: used by module
 2 ranges take 0x8000 bytes for use: unknown
 12 writable ranges use 0x872000 (8,855,552) bytes.
