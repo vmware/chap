@@ -208,7 +208,7 @@ class InfrastructureFinder {
           if (usedListLast == usedListHeader) {
             continue;
           }
-          if ((usedListFirst & 0xfff) != (usedListLast & 0xfff)) {
+          if ((usedListFirst & 0xff) != (usedListLast & 0xff)) {
             continue;
           }
         } else {
@@ -220,11 +220,11 @@ class InfrastructureFinder {
           if (cachedListLast == cachedListHeader) {
             continue;
           }
-          if ((cachedListFirst & 0xfff) != (cachedListLast & 0xfff)) {
+          if ((cachedListFirst & 0xff) != (cachedListLast & 0xff)) {
             continue;
           }
           if (usedListFirst != usedListHeader &&
-              (usedListFirst & 0xfff) != (cachedListFirst & 0xfff)) {
+              (usedListFirst & 0xff) != (cachedListFirst & 0xff)) {
             continue;
           }
         } else {
