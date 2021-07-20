@@ -36,7 +36,7 @@ class StackDescriber : public Describer<Offset> {
             output << "the " << stackType << " that\nuses [0x" << std::hex
                    << regionBase << ", 0x" << regionLimit << ").\n";
             if (threadNum != StackRegistry<Offset>::THREAD_NUMBER_UNKNOWN) {
-              output << "Thread " << threadNum
+              output << "Thread " << std::dec << threadNum
                      << " is currently using this stack.\n";
             }
             if (explain) {
