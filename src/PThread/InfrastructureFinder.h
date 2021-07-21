@@ -244,7 +244,7 @@ class InfrastructureFinder {
         }
         if (cachedListFirst != cachedListHeader) {
           if (!RegisterStacks(reader, cachedListHeader, cachedListFirst,
-                              USED_PTHREAD_STACK)) {
+                              CACHED_PTHREAD_STACK)) {
             if (!RegisterStacksBackwards(reader, cachedListHeader,
                                          cachedListFirst,
                                          CACHED_PTHREAD_STACK)) {
