@@ -33,9 +33,10 @@ class InfrastructureFinder {
   void Resolve() {
     // TODO: Immediately after the double links for each PThread, the LWP is
     // found.
-    // TODO: Consider using 0x700, 0x710 to strengthen the check.
-    // TODO: Consider useing 0x708 for more precise information about redirected
-    // pthreads.
+    // TODO: Consider using 0x700/0x710 or 0xb40/0xb48 to strengthen the check.
+    // TODO: Consider useing 0x708 or 0xb44 for more precise information about
+    // redirected pthreads.
+    // TODO: Support pthread with externally supplied stack.
     if (_isResolved) {
       abort();
     }
@@ -180,74 +181,97 @@ class InfrastructureFinder {
 
       for (Offset moduleAddr = base; moduleAddr < limit;
            moduleAddr += sizeof(Offset)) {
-        Offset usedListHeader = moduleAddr;
-        Offset cachedListHeader = moduleAddr + 2 * sizeof(Offset);
-        Offset usedListFirst = moduleReader.ReadOffset(usedListHeader, 0xbad);
-        if (usedListFirst == 0 ||
-            ((usedListFirst & (sizeof(Offset) - 1)) != 0)) {
+        Offset list0Header = moduleAddr;
+        Offset list1Header = moduleAddr + 2 * sizeof(Offset);
+        Offset list0First = moduleReader.ReadOffset(list0Header, 0xbad);
+        if (list0First == 0 ||
+            ((list0First & (sizeof(Offset) - 1)) != 0)) {
           continue;
         }
-        Offset usedListLast =
-            moduleReader.ReadOffset(usedListHeader + sizeof(Offset), 0xbad);
-        if (usedListLast == 0 || ((usedListLast & (sizeof(Offset) - 1)) != 0)) {
+        Offset list0Last =
+            moduleReader.ReadOffset(list0Header + sizeof(Offset), 0xbad);
+        if (list0Last == 0 || ((list0Last & (sizeof(Offset) - 1)) != 0)) {
           continue;
         }
-        Offset cachedListFirst =
-            moduleReader.ReadOffset(cachedListHeader, 0xbad);
-        if (cachedListFirst == 0 ||
-            ((cachedListFirst & (sizeof(Offset) - 1)) != 0)) {
+        Offset list1First =
+            moduleReader.ReadOffset(list1Header, 0xbad);
+        if (list1First == 0 ||
+            ((list1First & (sizeof(Offset) - 1)) != 0)) {
           continue;
         }
-        Offset cachedListLast =
-            moduleReader.ReadOffset(cachedListHeader + sizeof(Offset), 0xbad);
-        if (cachedListLast == 0 ||
-            ((cachedListLast & (sizeof(Offset) - 1)) != 0)) {
+        Offset list1Last =
+            moduleReader.ReadOffset(list1Header + sizeof(Offset), 0xbad);
+        if (list1Last == 0 ||
+            ((list1Last & (sizeof(Offset) - 1)) != 0)) {
           continue;
         }
-        if (usedListFirst != usedListHeader) {
-          if (usedListLast == usedListHeader) {
+        if (list0First != list0Header) {
+          if (list0Last == list0Header) {
             continue;
           }
-          if ((usedListFirst & 0xff) != (usedListLast & 0xff)) {
+          if ((list0First & 0xff) != (list0Last & 0xff)) {
+            continue;
+          }
+          if (reader.ReadOffset(list0Last, 0xbad) != list0Header) {
+            continue;
+          }
+          if (reader.ReadOffset(list0First + sizeof(Offset), 0xbad) !=
+              list0Header) {
             continue;
           }
         } else {
-          if (usedListLast != usedListHeader) {
+          if (list0Last != list0Header) {
             continue;
           }
         }
-        if (cachedListFirst != cachedListHeader) {
-          if (cachedListLast == cachedListHeader) {
+        if (list1First != list1Header) {
+          if (list1Last == list1Header) {
             continue;
           }
-          if ((cachedListFirst & 0xff) != (cachedListLast & 0xff)) {
+          if ((list1First & 0xff) != (list1Last & 0xff)) {
             continue;
           }
-          if (usedListFirst != usedListHeader &&
-              (usedListFirst & 0xff) != (cachedListFirst & 0xff)) {
+          if (list0First != list0Header &&
+              (list0First & 0xff) != (list1First & 0xff)) {
+            continue;
+          }
+          if (reader.ReadOffset(list1Last, 0xbad) != list1Header) {
+            continue;
+          }
+          if (reader.ReadOffset(list1First + sizeof(Offset), 0xbad) !=
+              list1Header) {
             continue;
           }
         } else {
-          if (cachedListLast != cachedListHeader) {
+          if (list1Last != list1Header) {
             continue;
           }
         }
+
         // TODO: Add more rigorous check if both lists are empty.
         _stacksFound = true;
-        if (usedListFirst != usedListHeader) {
-          if (!RegisterStacks(reader, usedListHeader, usedListFirst,
-                              USED_PTHREAD_STACK)) {
-            if (!RegisterStacksBackwards(reader, usedListHeader, usedListFirst,
-                                         USED_PTHREAD_STACK)) {
+        if (list0First != list0Header) {
+          const char* stackType =
+              (reader.Read32(list0First + 2 * sizeof(Offset), 0) > 0)
+                  ? USED_PTHREAD_STACK
+                  : CACHED_PTHREAD_STACK;
+          if (!RegisterStacks(reader, list0Header, list0First,
+                              stackType)) {
+            if (!RegisterStacksBackwards(reader, list0Header, list0First,
+                                         stackType)) {
             }
           }
         }
-        if (cachedListFirst != cachedListHeader) {
-          if (!RegisterStacks(reader, cachedListHeader, cachedListFirst,
-                              CACHED_PTHREAD_STACK)) {
-            if (!RegisterStacksBackwards(reader, cachedListHeader,
-                                         cachedListFirst,
-                                         CACHED_PTHREAD_STACK)) {
+        if (list1First != list1Header) {
+          const char* stackType =
+              (reader.Read32(list1First + 2 * sizeof(Offset), 0) > 0)
+                  ? USED_PTHREAD_STACK
+                  : CACHED_PTHREAD_STACK;
+          if (!RegisterStacks(reader, list1Header, list1First,
+                              stackType)) {
+            if (!RegisterStacksBackwards(reader, list1Header,
+                                         list1First,
+                                         stackType)) {
             }
           }
         }

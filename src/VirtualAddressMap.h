@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019,2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -270,6 +270,35 @@ class VirtualAddressMap {
         }
       }
       return *((uint32_t *)(_image + (address - _base)));
+    }
+    /*
+     * This form should be used whenever there is a significant chance that
+     * the specified address will not be mapped.
+     */
+    int32_t Read32(Offset address, int32_t defaultValue) {
+      Offset readLimit = address + sizeof(int32_t);
+      if (readLimit < address) {  // wrap
+        return defaultValue;
+      }
+      if (_base > address || _limit < readLimit) {
+        _image = (char *)0;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator != _endIterator) {
+          _image = _iterator.GetImage();
+          if (_image != (char *)0) {
+            _base = _iterator.Base();
+            _limit = _iterator.Limit();
+          } else {
+            return defaultValue;
+          }
+        }
+        if (readLimit > _limit) {
+          return defaultValue;
+        }
+      }
+      return *((int32_t *)(_image + (address - _base)));
     }
     /*
      * This form, which throws an exception if the address is not mapped,
