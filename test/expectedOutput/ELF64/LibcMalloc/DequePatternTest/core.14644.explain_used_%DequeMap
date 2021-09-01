@@ -1,5 +1,7 @@
 Anchored allocation at 60a010 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a028, 0x60a030) is considered live.
+The deque is at address 0x6092a0 in statically allocated memory.
 The allocation at 0x60a010 appears to be directly statically anchored.
 Address 0x6092a0 is at offset 0x2a0 in range
 [0x609000, 60a000)
@@ -25,6 +27,8 @@ Static address 0x6092e8 references 0x60a010.
 
 Anchored allocation at 60a270 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a288, 0x60a290) is considered live.
+The deque is at address 0x6092f0 in statically allocated memory.
 The allocation at 0x60a270 appears to be directly statically anchored.
 Address 0x6092f0 is at offset 0x2f0 in range
 [0x609000, 60a000)
@@ -50,6 +54,8 @@ Static address 0x609338 references 0x60a270.
 
 Anchored allocation at 60a4d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a4e8, 0x60a4f0) is considered live.
+The deque is at address 0x609340 in statically allocated memory.
 The allocation at 0x60a4d0 appears to be directly statically anchored.
 Address 0x609340 is at offset 0x340 in range
 [0x609000, 60a000)
@@ -75,6 +81,8 @@ Static address 0x609388 references 0x60a4d0.
 
 Anchored allocation at 60a730 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a748, 0x60a750) is considered live.
+The deque is at address 0x609390 in statically allocated memory.
 The allocation at 0x60a730 appears to be directly statically anchored.
 Address 0x609390 is at offset 0x390 in range
 [0x609000, 60a000)
@@ -100,6 +108,8 @@ Static address 0x6093d8 references 0x60a730.
 
 Anchored allocation at 60a990 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a9a8, 0x60a9b0) is considered live.
+The deque is at address 0x6093e0 in statically allocated memory.
 The allocation at 0x60a990 appears to be directly statically anchored.
 Address 0x6093e0 is at offset 0x3e0 in range
 [0x609000, 60a000)
@@ -125,6 +135,8 @@ Static address 0x609428 references 0x60a990.
 
 Anchored allocation at 60abf0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ac08, 0x60ac10) is considered live.
+The deque is at address 0x609430 in statically allocated memory.
 The allocation at 0x60abf0 appears to be directly statically anchored.
 Address 0x609430 is at offset 0x430 in range
 [0x609000, 60a000)
@@ -150,6 +162,8 @@ Static address 0x609478 references 0x60abf0.
 
 Anchored allocation at 60ae50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ae68, 0x60ae70) is considered live.
+The deque is at address 0x609480 in statically allocated memory.
 The allocation at 0x60ae50 appears to be directly statically anchored.
 Address 0x609480 is at offset 0x480 in range
 [0x609000, 60a000)
@@ -175,6 +189,8 @@ Static address 0x6094c8 references 0x60ae50.
 
 Anchored allocation at 60b0b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b0c8, 0x60b0d0) is considered live.
+The deque is at address 0x6094d0 in statically allocated memory.
 The allocation at 0x60b0b0 appears to be directly statically anchored.
 Address 0x6094d0 is at offset 0x4d0 in range
 [0x609000, 60a000)
@@ -200,6 +216,8 @@ Static address 0x609518 references 0x60b0b0.
 
 Anchored allocation at 60b310 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b328, 0x60b330) is considered live.
+The deque is at address 0x609520 in statically allocated memory.
 The allocation at 0x60b310 appears to be directly statically anchored.
 Address 0x609520 is at offset 0x520 in range
 [0x609000, 60a000)
@@ -225,6 +243,8 @@ Static address 0x609568 references 0x60b310.
 
 Anchored allocation at 60b570 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b588, 0x60b590) is considered live.
+The deque is at address 0x609570 in statically allocated memory.
 The allocation at 0x60b570 appears to be directly statically anchored.
 Address 0x609570 is at offset 0x570 in range
 [0x609000, 60a000)
@@ -250,6 +270,8 @@ Static address 0x6095b8 references 0x60b570.
 
 Anchored allocation at 60b7d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b7e8, 0x60b7f0) is considered live.
+The deque is at address 0x6095c0 in statically allocated memory.
 The allocation at 0x60b7d0 appears to be directly statically anchored.
 Address 0x6095c0 is at offset 0x5c0 in range
 [0x609000, 60a000)
@@ -275,6 +297,8 @@ Static address 0x609608 references 0x60b7d0.
 
 Anchored allocation at 60ba30 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ba48, 0x60ba50) is considered live.
+The deque is at address 0x609610 in statically allocated memory.
 The allocation at 0x60ba30 appears to be directly statically anchored.
 Address 0x609610 is at offset 0x610 in range
 [0x609000, 60a000)
@@ -300,6 +324,8 @@ Static address 0x609658 references 0x60ba30.
 
 Anchored allocation at 60bc90 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60bca8, 0x60bcb0) is considered live.
+The deque is at address 0x609660 in statically allocated memory.
 The allocation at 0x60bc90 appears to be directly statically anchored.
 Address 0x609660 is at offset 0x660 in range
 [0x609000, 60a000)
@@ -325,6 +351,8 @@ Static address 0x6096a8 references 0x60bc90.
 
 Anchored allocation at 60bef0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60bf08, 0x60bf10) is considered live.
+The deque is at address 0x6096b0 in statically allocated memory.
 The allocation at 0x60bef0 appears to be directly statically anchored.
 Address 0x6096b0 is at offset 0x6b0 in range
 [0x609000, 60a000)
@@ -350,6 +378,8 @@ Static address 0x6096f8 references 0x60bef0.
 
 Anchored allocation at 60c150 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c168, 0x60c170) is considered live.
+The deque is at address 0x609700 in statically allocated memory.
 The allocation at 0x60c150 appears to be directly statically anchored.
 Address 0x609700 is at offset 0x700 in range
 [0x609000, 60a000)
@@ -375,6 +405,8 @@ Static address 0x609748 references 0x60c150.
 
 Anchored allocation at 60c3b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c3d0, 0x60c3d8) is considered live.
+The deque is at address 0x609750 in statically allocated memory.
 The allocation at 0x60c3b0 appears to be directly statically anchored.
 Address 0x609750 is at offset 0x750 in range
 [0x609000, 60a000)
@@ -400,6 +432,8 @@ Static address 0x609798 references 0x60c3b0.
 
 Anchored allocation at 60c610 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c630, 0x60c638) is considered live.
+The deque is at address 0x6097a0 in statically allocated memory.
 The allocation at 0x60c610 appears to be directly statically anchored.
 Address 0x6097a0 is at offset 0x7a0 in range
 [0x609000, 60a000)
@@ -425,6 +459,8 @@ Static address 0x6097e8 references 0x60c610.
 
 Anchored allocation at 60c870 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c890, 0x60c898) is considered live.
+The deque is at address 0x6097f0 in statically allocated memory.
 The allocation at 0x60c870 appears to be directly statically anchored.
 Address 0x6097f0 is at offset 0x7f0 in range
 [0x609000, 60a000)
@@ -450,6 +486,8 @@ Static address 0x609838 references 0x60c870.
 
 Anchored allocation at 60c8c0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c8d8, 0x60c8e0) is considered live.
+The deque is at address 0x609840 in statically allocated memory.
 The allocation at 0x60c8c0 appears to be directly statically anchored.
 Address 0x609840 is at offset 0x840 in range
 [0x609000, 60a000)
@@ -475,6 +513,8 @@ Static address 0x609888 references 0x60c8c0.
 
 Anchored allocation at 60c910 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c928, 0x60c930) is considered live.
+The deque is at address 0x609890 in statically allocated memory.
 The allocation at 0x60c910 appears to be directly statically anchored.
 Address 0x609890 is at offset 0x890 in range
 [0x609000, 60a000)
@@ -500,6 +540,8 @@ Static address 0x6098d8 references 0x60c910.
 
 Anchored allocation at 60c960 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c978, 0x60c980) is considered live.
+The deque is at address 0x6098e0 in statically allocated memory.
 The allocation at 0x60c960 appears to be directly statically anchored.
 Address 0x6098e0 is at offset 0x8e0 in range
 [0x609000, 60a000)
@@ -525,6 +567,8 @@ Static address 0x609928 references 0x60c960.
 
 Anchored allocation at 60c9b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c9c8, 0x60c9d8) is considered live.
+The deque is at address 0x609930 in statically allocated memory.
 The allocation at 0x60c9b0 appears to be directly statically anchored.
 Address 0x609930 is at offset 0x930 in range
 [0x609000, 60a000)
@@ -550,6 +594,8 @@ Static address 0x609978 references 0x60c9b0.
 
 Anchored allocation at 60ca00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ca20, 0x60ca28) is considered live.
+The deque is at address 0x609980 in statically allocated memory.
 The allocation at 0x60ca00 appears to be directly statically anchored.
 Address 0x609980 is at offset 0x980 in range
 [0x609000, 60a000)
@@ -575,6 +621,8 @@ Static address 0x6099c8 references 0x60ca00.
 
 Anchored allocation at 60ca50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ca68, 0x60ca80) is considered live.
+The deque is at address 0x6099d0 in statically allocated memory.
 The allocation at 0x60ca50 appears to be directly statically anchored.
 Address 0x6099d0 is at offset 0x9d0 in range
 [0x609000, 60a000)
@@ -600,6 +648,8 @@ Static address 0x609a18 references 0x60ca50.
 
 Anchored allocation at 60d940 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60d958, 0x60d960) is considered live.
+The deque is at address 0x609b60 in statically allocated memory.
 The allocation at 0x60d940 appears to be directly statically anchored.
 Address 0x609b60 is at offset 0xb60 in range
 [0x609000, 60a000)
@@ -625,6 +675,8 @@ Static address 0x609ba8 references 0x60d940.
 
 Anchored allocation at 60dba0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dbb8, 0x60dbc0) is considered live.
+The deque is at address 0x609b10 in statically allocated memory.
 The allocation at 0x60dba0 appears to be directly statically anchored.
 Address 0x609b10 is at offset 0xb10 in range
 [0x609000, 60a000)
@@ -650,6 +702,8 @@ Static address 0x609b58 references 0x60dba0.
 
 Anchored allocation at 60dbf0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dc08, 0x60dc10) is considered live.
+The deque is at address 0x609bb0 in statically allocated memory.
 The allocation at 0x60dbf0 appears to be directly statically anchored.
 Address 0x609bb0 is at offset 0xbb0 in range
 [0x609000, 60a000)
@@ -675,6 +729,8 @@ Static address 0x609bf8 references 0x60dbf0.
 
 Anchored allocation at 60dc40 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dc58, 0x60dc68) is considered live.
+The deque is at address 0x609c00 in statically allocated memory.
 The allocation at 0x60dc40 appears to be directly statically anchored.
 Address 0x609c00 is at offset 0xc00 in range
 [0x609000, 60a000)
@@ -700,6 +756,8 @@ Static address 0x609c48 references 0x60dc40.
 
 Anchored allocation at 60dc90 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dca8, 0x60dcc0) is considered live.
+The deque is at address 0x609ca0 in statically allocated memory.
 The allocation at 0x60dc90 appears to be directly statically anchored.
 Address 0x609ca0 is at offset 0xca0 in range
 [0x609000, 60a000)
@@ -740,6 +798,8 @@ which references 0x60dc90
 
 Anchored allocation at 60dce0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dcf8, 0x60dd00) is considered live.
+The deque is at address 0x7fffffffd750 on the stack.
 The allocation at 0x60dce0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd750 is in the live part of the main stack that
@@ -757,6 +817,8 @@ Stack address 0x7fffffffd798 references 0x60dce0.
 
 Anchored allocation at 60dd30 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dd48, 0x60dd50) is considered live.
+The deque is at address 0x7fffffffd700 on the stack.
 The allocation at 0x60dd30 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd700 is in the live part of the main stack that
@@ -774,6 +836,8 @@ Stack address 0x7fffffffd748 references 0x60dd30.
 
 Anchored allocation at 60dd80 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ddb0, 0x60ddb8) is considered live.
+The deque is at address 0x609d90 in statically allocated memory.
 The allocation at 0x60dd80 appears to be directly statically anchored.
 Address 0x609d90 is at offset 0xd90 in range
 [0x609000, 60a000)
@@ -799,6 +863,8 @@ Static address 0x609dd8 references 0x60dd80.
 
 Anchored allocation at 60de00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60de30, 0x60de38) is considered live.
+The deque is at address 0x609ac0 in statically allocated memory.
 The allocation at 0x60de00 appears to be directly statically anchored.
 Address 0x609ac0 is at offset 0xac0 in range
 [0x609000, 60a000)
@@ -824,6 +890,8 @@ Static address 0x609b08 references 0x60de00.
 
 Anchored allocation at 60eab0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ead0, 0x60ead8) is considered live.
+The deque is at address 0x609c50 in statically allocated memory.
 The allocation at 0x60eab0 appears to be directly statically anchored.
 Address 0x609c50 is at offset 0xc50 in range
 [0x609000, 60a000)
@@ -849,6 +917,8 @@ Static address 0x609c98 references 0x60eab0.
 
 Anchored allocation at 60eb00 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60eb50, 0x60eb70) is considered live.
+The deque is at address 0x609cf0 in statically allocated memory.
 The allocation at 0x60eb00 appears to be directly statically anchored.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
@@ -874,6 +944,8 @@ Static address 0x609d38 references 0x60eb00.
 
 Anchored allocation at 60eba0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60ec00, 0x60ec08) is considered live.
+The deque is at address 0x609d40 in statically allocated memory.
 The allocation at 0x60eba0 appears to be directly statically anchored.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
@@ -899,6 +971,8 @@ Static address 0x609d88 references 0x60eba0.
 
 Anchored allocation at 60ec40 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ec58, 0x60ec60) is considered live.
+The deque is at address 0x7fffffffd890 on the stack.
 The allocation at 0x60ec40 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd890 is in the live part of the main stack that
@@ -916,6 +990,8 @@ Stack address 0x7fffffffd8d8 references 0x60ec40.
 
 Anchored allocation at 60eed0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60ef20, 0x60ef40) is considered live.
+The deque is at address 0x609a20 in statically allocated memory.
 The allocation at 0x60eed0 appears to be directly statically anchored.
 Address 0x609a20 is at offset 0xa20 in range
 [0x609000, 60a000)
@@ -941,6 +1017,8 @@ Static address 0x609a68 references 0x60eed0.
 
 Anchored allocation at 60f5a0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60f600, 0x60f608) is considered live.
+The deque is at address 0x609a70 in statically allocated memory.
 The allocation at 0x60f5a0 appears to be directly statically anchored.
 Address 0x609a70 is at offset 0xa70 in range
 [0x609000, 60a000)
@@ -966,6 +1044,8 @@ Static address 0x609ab8 references 0x60f5a0.
 
 Anchored allocation at 610090 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6100a8, 0x6100b0) is considered live.
+The deque is at address 0x7fffffffd7f0 on the stack.
 The allocation at 0x610090 appears to be indirectly statically anchored
 via anchor point 0x60dd80.
 Address 0x609d90 is at offset 0xd90 in range
@@ -1031,6 +1111,8 @@ Stack address 0x7fffffffd838 references 0x610090.
 
 Anchored allocation at 6102f0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610308, 0x610310) is considered live.
+The deque is at address 0x7fffffffd840 on the stack.
 The allocation at 0x6102f0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd840 is in the live part of the main stack that
@@ -1048,6 +1130,8 @@ Stack address 0x7fffffffd888 references 0x6102f0.
 
 Anchored allocation at 610340 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610358, 0x610360) is considered live.
+The deque is at address 0x7fffffffd8e0 on the stack.
 The allocation at 0x610340 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd8e0 is in the live part of the main stack that
@@ -1065,6 +1149,8 @@ Stack address 0x7fffffffd928 references 0x610340.
 
 Anchored allocation at 610390 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6103a8, 0x6103b0) is considered live.
+The deque is at address 0x7fffffffd930 on the stack.
 The allocation at 0x610390 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd930 is in the live part of the main stack that
@@ -1082,6 +1168,8 @@ Stack address 0x7fffffffd978 references 0x610390.
 
 Anchored allocation at 6103e0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6103f8, 0x610400) is considered live.
+The deque is at address 0x7fffffffd980 on the stack.
 The allocation at 0x6103e0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd980 is in the live part of the main stack that
@@ -1099,6 +1187,8 @@ Stack address 0x7fffffffd9c8 references 0x6103e0.
 
 Anchored allocation at 610430 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610448, 0x610450) is considered live.
+The deque is at address 0x7fffffffd9d0 on the stack.
 The allocation at 0x610430 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffd9d0 is in the live part of the main stack that
@@ -1116,6 +1206,8 @@ Stack address 0x7fffffffda18 references 0x610430.
 
 Anchored allocation at 610f00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610f18, 0x610f20) is considered live.
+The deque is at address 0x7fffffffd7a0 on the stack.
 The allocation at 0x610f00 appears to be indirectly statically anchored
 via anchor point 0x60eb00.
 Address 0x609cf0 is at offset 0xcf0 in range
@@ -1181,6 +1273,8 @@ Stack address 0x7fffffffd7e8 references 0x610f00.
 
 Anchored allocation at 610f50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610f68, 0x610f70) is considered live.
+The deque is at address 0x7fffffffda20 on the stack.
 The allocation at 0x610f50 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffda20 is in the live part of the main stack that
@@ -1198,6 +1292,8 @@ Stack address 0x7fffffffda68 references 0x610f50.
 
 Anchored allocation at 610fa0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610fb8, 0x610fc0) is considered live.
+The deque is at address 0x7fffffffda70 on the stack.
 The allocation at 0x610fa0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffda70 is in the live part of the main stack that
@@ -1215,6 +1311,8 @@ Stack address 0x7fffffffdab8 references 0x610fa0.
 
 Anchored allocation at 610ff0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x611008, 0x611010) is considered live.
+The deque is at address 0x7fffffffdac0 on the stack.
 The allocation at 0x610ff0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdac0 is in the live part of the main stack that
@@ -1232,6 +1330,8 @@ Stack address 0x7fffffffdb08 references 0x610ff0.
 
 Anchored allocation at 611040 of size 48
 This allocation matches pattern DequeMap.
+Only [0x611058, 0x611060) is considered live.
+The deque is at address 0x7fffffffdb10 on the stack.
 The allocation at 0x611040 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdb10 is in the live part of the main stack that
@@ -1249,6 +1349,8 @@ Stack address 0x7fffffffdb58 references 0x611040.
 
 Anchored allocation at 611090 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6110a8, 0x6110b0) is considered live.
+The deque is at address 0x7fffffffdb60 on the stack.
 The allocation at 0x611090 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdb60 is in the live part of the main stack that
@@ -1266,6 +1368,8 @@ Stack address 0x7fffffffdba8 references 0x611090.
 
 Anchored allocation at 613420 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613440, 0x613448) is considered live.
+The deque is at address 0x7fffffffdbb0 on the stack.
 The allocation at 0x613420 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdbb0 is in the live part of the main stack that
@@ -1283,6 +1387,8 @@ Stack address 0x7fffffffdbf8 references 0x613420.
 
 Anchored allocation at 613680 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6136a0, 0x6136a8) is considered live.
+The deque is at address 0x7fffffffdc00 on the stack.
 The allocation at 0x613680 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdc00 is in the live part of the main stack that
@@ -1300,6 +1406,8 @@ Stack address 0x7fffffffdc48 references 0x613680.
 
 Anchored allocation at 6138e0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613900, 0x613908) is considered live.
+The deque is at address 0x7fffffffdc50 on the stack.
 The allocation at 0x6138e0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdc50 is in the live part of the main stack that
@@ -1317,6 +1425,8 @@ Stack address 0x7fffffffdc98 references 0x6138e0.
 
 Anchored allocation at 613930 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613948, 0x613950) is considered live.
+The deque is at address 0x7fffffffdca0 on the stack.
 The allocation at 0x613930 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdca0 is in the live part of the main stack that
@@ -1334,6 +1444,8 @@ Stack address 0x7fffffffdce8 references 0x613930.
 
 Anchored allocation at 613980 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613998, 0x6139a0) is considered live.
+The deque is at address 0x7fffffffdcf0 on the stack.
 The allocation at 0x613980 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdcf0 is in the live part of the main stack that
@@ -1351,6 +1463,8 @@ Stack address 0x7fffffffdd38 references 0x613980.
 
 Anchored allocation at 6139d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6139e8, 0x6139f0) is considered live.
+The deque is at address 0x7fffffffdd40 on the stack.
 The allocation at 0x6139d0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdd40 is in the live part of the main stack that
@@ -1368,6 +1482,8 @@ Stack address 0x7fffffffdd88 references 0x6139d0.
 
 Anchored allocation at 613a20 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613a38, 0x613a48) is considered live.
+The deque is at address 0x7fffffffdd90 on the stack.
 The allocation at 0x613a20 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdd90 is in the live part of the main stack that
@@ -1385,6 +1501,8 @@ Stack address 0x7fffffffddd8 references 0x613a20.
 
 Anchored allocation at 613a70 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613a90, 0x613a98) is considered live.
+The deque is at address 0x7fffffffdde0 on the stack.
 The allocation at 0x613a70 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdde0 is in the live part of the main stack that
@@ -1402,6 +1520,8 @@ Stack address 0x7fffffffde28 references 0x613a70.
 
 Anchored allocation at 613ac0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613ad8, 0x613af0) is considered live.
+The deque is at address 0x7fffffffde30 on the stack.
 The allocation at 0x613ac0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffde30 is in the live part of the main stack that
@@ -1419,6 +1539,8 @@ Stack address 0x7fffffffde78 references 0x613ac0.
 
 Anchored allocation at 6149b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6149c8, 0x6149d0) is considered live.
+The deque is at address 0x7fffffffdfc0 on the stack.
 The allocation at 0x6149b0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdfc0 is in the live part of the main stack that
@@ -1436,6 +1558,8 @@ Stack address 0x7fffffffe008 references 0x6149b0.
 
 Anchored allocation at 614c10 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614c28, 0x614c30) is considered live.
+The deque is at address 0x7fffffffdf70 on the stack.
 The allocation at 0x614c10 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdf70 is in the live part of the main stack that
@@ -1453,6 +1577,8 @@ Stack address 0x7fffffffdfb8 references 0x614c10.
 
 Anchored allocation at 614c60 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614c78, 0x614c80) is considered live.
+The deque is at address 0x7fffffffe010 on the stack.
 The allocation at 0x614c60 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe010 is in the live part of the main stack that
@@ -1470,6 +1596,8 @@ Stack address 0x7fffffffe058 references 0x614c60.
 
 Anchored allocation at 614cb0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614cc8, 0x614cd8) is considered live.
+The deque is at address 0x7fffffffe060 on the stack.
 The allocation at 0x614cb0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe060 is in the live part of the main stack that
@@ -1487,6 +1615,8 @@ Stack address 0x7fffffffe0a8 references 0x614cb0.
 
 Anchored allocation at 614d00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614d18, 0x614d30) is considered live.
+The deque is at address 0x7fffffffe100 on the stack.
 The allocation at 0x614d00 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe100 is in the live part of the main stack that
@@ -1504,6 +1634,8 @@ Stack address 0x7fffffffe148 references 0x614d00.
 
 Anchored allocation at 614d50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614d68, 0x614d70) is considered live.
+The deque is at offset 0x50 in the allocation at 0x618de0.
 The allocation at 0x614d50 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1519,6 +1651,8 @@ which references 0x614d50
 
 Anchored allocation at 614da0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614db8, 0x614dc0) is considered live.
+The deque is at offset 0xa0 in the allocation at 0x618de0.
 The allocation at 0x614da0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1534,6 +1668,8 @@ which references 0x614da0
 
 Anchored allocation at 614df0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614e20, 0x614e28) is considered live.
+The deque is at address 0x7fffffffe1f0 on the stack.
 The allocation at 0x614df0 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1f0 is in the live part of the main stack that
@@ -1551,6 +1687,8 @@ Stack address 0x7fffffffe238 references 0x614df0.
 
 Anchored allocation at 614e70 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614ea0, 0x614ea8) is considered live.
+The deque is at address 0x7fffffffdf20 on the stack.
 The allocation at 0x614e70 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffdf20 is in the live part of the main stack that
@@ -1568,6 +1706,8 @@ Stack address 0x7fffffffdf68 references 0x614e70.
 
 Anchored allocation at 615b20 of size 48
 This allocation matches pattern DequeMap.
+Only [0x615b40, 0x615b48) is considered live.
+The deque is at address 0x7fffffffe0b0 on the stack.
 The allocation at 0x615b20 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe0b0 is in the live part of the main stack that
@@ -1585,6 +1725,8 @@ Stack address 0x7fffffffe0f8 references 0x615b20.
 
 Anchored allocation at 615b70 of size 98
 This allocation matches pattern DequeMap.
+Only [0x615bc0, 0x615be0) is considered live.
+The deque is at address 0x7fffffffe150 on the stack.
 The allocation at 0x615b70 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe150 is in the live part of the main stack that
@@ -1602,6 +1744,8 @@ Stack address 0x7fffffffe198 references 0x615b70.
 
 Anchored allocation at 615c10 of size 98
 This allocation matches pattern DequeMap.
+Only [0x615c70, 0x615c78) is considered live.
+The deque is at address 0x7fffffffe1a0 on the stack.
 The allocation at 0x615c10 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffe1a0 is in the live part of the main stack that
@@ -1619,6 +1763,8 @@ Stack address 0x7fffffffe1e8 references 0x615c10.
 
 Anchored allocation at 615cb0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x615cc8, 0x615cd0) is considered live.
+The deque is at offset 0x0 in the allocation at 0x618de0.
 The allocation at 0x615cb0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1634,6 +1780,8 @@ which references 0x615cb0
 
 Anchored allocation at 615f40 of size 98
 This allocation matches pattern DequeMap.
+Only [0x615f90, 0x615fb0) is considered live.
+The deque is at address 0x7fffffffde80 on the stack.
 The allocation at 0x615f40 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffde80 is in the live part of the main stack that
@@ -1651,6 +1799,8 @@ Stack address 0x7fffffffdec8 references 0x615f40.
 
 Anchored allocation at 616610 of size 98
 This allocation matches pattern DequeMap.
+Only [0x616670, 0x616678) is considered live.
+The deque is at address 0x7fffffffded0 on the stack.
 The allocation at 0x616610 appears to be directly anchored from
 at least one stack.
 Address 0x7fffffffded0 is in the live part of the main stack that
@@ -1668,6 +1818,8 @@ Stack address 0x7fffffffdf18 references 0x616610.
 
 Anchored allocation at 616ef0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x616f08, 0x616f10) is considered live.
+The deque is at offset 0xf0 in the allocation at 0x618de0.
 The allocation at 0x616ef0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1728,6 +1880,8 @@ which references 0x616ef0
 
 Anchored allocation at 617150 of size 48
 This allocation matches pattern DequeMap.
+Only [0x617168, 0x617170) is considered live.
+The deque is at offset 0x140 in the allocation at 0x618de0.
 The allocation at 0x617150 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1743,6 +1897,8 @@ which references 0x617150
 
 Anchored allocation at 6173b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6173c8, 0x6173d0) is considered live.
+The deque is at offset 0x190 in the allocation at 0x618de0.
 The allocation at 0x6173b0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1758,6 +1914,8 @@ which references 0x6173b0
 
 Anchored allocation at 617400 of size 48
 This allocation matches pattern DequeMap.
+Only [0x617418, 0x617420) is considered live.
+The deque is at offset 0x1e0 in the allocation at 0x618de0.
 The allocation at 0x617400 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1773,6 +1931,8 @@ which references 0x617400
 
 Anchored allocation at 617450 of size 48
 This allocation matches pattern DequeMap.
+Only [0x617468, 0x617470) is considered live.
+The deque is at offset 0x230 in the allocation at 0x618de0.
 The allocation at 0x617450 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1788,6 +1948,8 @@ which references 0x617450
 
 Anchored allocation at 6174a0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6174b8, 0x6174c0) is considered live.
+The deque is at offset 0x280 in the allocation at 0x618de0.
 The allocation at 0x6174a0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1803,6 +1965,8 @@ which references 0x6174a0
 
 Anchored allocation at 61a170 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a188, 0x61a190) is considered live.
+The deque is at offset 0x2d0 in the allocation at 0x618de0.
 The allocation at 0x61a170 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1818,6 +1982,8 @@ which references 0x61a170
 
 Anchored allocation at 61a3d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a3e8, 0x61a3f0) is considered live.
+The deque is at offset 0x320 in the allocation at 0x618de0.
 The allocation at 0x61a3d0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1833,6 +1999,8 @@ which references 0x61a3d0
 
 Anchored allocation at 61a630 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a648, 0x61a650) is considered live.
+The deque is at offset 0x370 in the allocation at 0x618de0.
 The allocation at 0x61a630 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1848,6 +2016,8 @@ which references 0x61a630
 
 Anchored allocation at 61a890 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a8a8, 0x61a8b0) is considered live.
+The deque is at offset 0x3c0 in the allocation at 0x618de0.
 The allocation at 0x61a890 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1863,6 +2033,8 @@ which references 0x61a890
 
 Anchored allocation at 61aaf0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61ab08, 0x61ab10) is considered live.
+The deque is at offset 0x410 in the allocation at 0x618de0.
 The allocation at 0x61aaf0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1878,6 +2050,8 @@ which references 0x61aaf0
 
 Anchored allocation at 61ad50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61ad68, 0x61ad70) is considered live.
+The deque is at offset 0x460 in the allocation at 0x618de0.
 The allocation at 0x61ad50 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1893,6 +2067,8 @@ which references 0x61ad50
 
 Anchored allocation at 61afb0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61afd0, 0x61afd8) is considered live.
+The deque is at offset 0x4b0 in the allocation at 0x618de0.
 The allocation at 0x61afb0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1908,6 +2084,8 @@ which references 0x61afb0
 
 Anchored allocation at 61b210 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b230, 0x61b238) is considered live.
+The deque is at offset 0x500 in the allocation at 0x618de0.
 The allocation at 0x61b210 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1923,6 +2101,8 @@ which references 0x61b210
 
 Anchored allocation at 61b470 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b490, 0x61b498) is considered live.
+The deque is at offset 0x550 in the allocation at 0x618de0.
 The allocation at 0x61b470 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1938,6 +2118,8 @@ which references 0x61b470
 
 Anchored allocation at 61b4c0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b4d8, 0x61b4e0) is considered live.
+The deque is at offset 0x5a0 in the allocation at 0x618de0.
 The allocation at 0x61b4c0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1953,6 +2135,8 @@ which references 0x61b4c0
 
 Anchored allocation at 61b510 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b528, 0x61b530) is considered live.
+The deque is at offset 0x5f0 in the allocation at 0x618de0.
 The allocation at 0x61b510 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1968,6 +2152,8 @@ which references 0x61b510
 
 Anchored allocation at 61b560 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b578, 0x61b580) is considered live.
+The deque is at offset 0x640 in the allocation at 0x618de0.
 The allocation at 0x61b560 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1983,6 +2169,8 @@ which references 0x61b560
 
 Anchored allocation at 61b5b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b5c8, 0x61b5d8) is considered live.
+The deque is at offset 0x690 in the allocation at 0x618de0.
 The allocation at 0x61b5b0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -1998,6 +2186,8 @@ which references 0x61b5b0
 
 Anchored allocation at 61b600 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b620, 0x61b628) is considered live.
+The deque is at offset 0x6e0 in the allocation at 0x618de0.
 The allocation at 0x61b600 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2013,6 +2203,8 @@ which references 0x61b600
 
 Anchored allocation at 61b650 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b668, 0x61b680) is considered live.
+The deque is at offset 0x730 in the allocation at 0x618de0.
 The allocation at 0x61b650 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2028,6 +2220,8 @@ which references 0x61b650
 
 Anchored allocation at 61c540 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c558, 0x61c560) is considered live.
+The deque is at offset 0x8c0 in the allocation at 0x618de0.
 The allocation at 0x61c540 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2043,6 +2237,8 @@ which references 0x61c540
 
 Anchored allocation at 61c7a0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c7b8, 0x61c7c0) is considered live.
+The deque is at offset 0x870 in the allocation at 0x618de0.
 The allocation at 0x61c7a0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2058,6 +2254,8 @@ which references 0x61c7a0
 
 Anchored allocation at 61c7f0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c808, 0x61c810) is considered live.
+The deque is at offset 0x910 in the allocation at 0x618de0.
 The allocation at 0x61c7f0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2073,6 +2271,8 @@ which references 0x61c7f0
 
 Anchored allocation at 61c840 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c858, 0x61c868) is considered live.
+The deque is at offset 0x960 in the allocation at 0x618de0.
 The allocation at 0x61c840 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2088,6 +2288,8 @@ which references 0x61c840
 
 Anchored allocation at 61c890 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c8a8, 0x61c8c0) is considered live.
+The deque is at offset 0xa00 in the allocation at 0x618de0.
 The allocation at 0x61c890 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2103,6 +2305,8 @@ which references 0x61c890
 
 Anchored allocation at 61c980 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c9b0, 0x61c9b8) is considered live.
+The deque is at offset 0xaf0 in the allocation at 0x618de0.
 The allocation at 0x61c980 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2118,6 +2322,8 @@ which references 0x61c980
 
 Anchored allocation at 61ca00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61ca30, 0x61ca38) is considered live.
+The deque is at offset 0x820 in the allocation at 0x618de0.
 The allocation at 0x61ca00 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2133,6 +2339,8 @@ which references 0x61ca00
 
 Anchored allocation at 61d6b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61d6d0, 0x61d6d8) is considered live.
+The deque is at offset 0x9b0 in the allocation at 0x618de0.
 The allocation at 0x61d6b0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2148,6 +2356,8 @@ which references 0x61d6b0
 
 Anchored allocation at 61d700 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61d750, 0x61d770) is considered live.
+The deque is at offset 0xa50 in the allocation at 0x618de0.
 The allocation at 0x61d700 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2163,6 +2373,8 @@ which references 0x61d700
 
 Anchored allocation at 61d7a0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61d800, 0x61d808) is considered live.
+The deque is at offset 0xaa0 in the allocation at 0x618de0.
 The allocation at 0x61d7a0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2178,6 +2390,8 @@ which references 0x61d7a0
 
 Anchored allocation at 61dad0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61db20, 0x61db40) is considered live.
+The deque is at offset 0x780 in the allocation at 0x618de0.
 The allocation at 0x61dad0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0
@@ -2193,6 +2407,8 @@ which references 0x61dad0
 
 Anchored allocation at 61e1a0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61e200, 0x61e208) is considered live.
+The deque is at offset 0x7d0 in the allocation at 0x618de0.
 The allocation at 0x61e1a0 appears to be indirectly anchored from
 at least one register via anchor point 0x618de0.
 Register rbx for thread 1 references anchor point 0x618de0

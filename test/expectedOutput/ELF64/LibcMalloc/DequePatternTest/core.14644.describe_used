@@ -1,125 +1,149 @@
 Anchored allocation at 60a010 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a028, 0x60a030) is considered live.
 
 Anchored allocation at 60a060 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60a270 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a288, 0x60a290) is considered live.
 
 Anchored allocation at 60a2c0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60a4d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a4e8, 0x60a4f0) is considered live.
 
 Anchored allocation at 60a520 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60a730 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a748, 0x60a750) is considered live.
 
 Anchored allocation at 60a780 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60a990 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60a9a8, 0x60a9b0) is considered live.
 
 Anchored allocation at 60a9e0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60abf0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ac08, 0x60ac10) is considered live.
 
 Anchored allocation at 60ac40 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60ae50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ae68, 0x60ae70) is considered live.
 
 Anchored allocation at 60aea0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60b0b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b0c8, 0x60b0d0) is considered live.
 
 Anchored allocation at 60b100 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60b310 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b328, 0x60b330) is considered live.
 
 Anchored allocation at 60b360 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60b570 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b588, 0x60b590) is considered live.
 
 Anchored allocation at 60b5c0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60b7d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60b7e8, 0x60b7f0) is considered live.
 
 Anchored allocation at 60b820 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60ba30 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ba48, 0x60ba50) is considered live.
 
 Anchored allocation at 60ba80 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60bc90 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60bca8, 0x60bcb0) is considered live.
 
 Anchored allocation at 60bce0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60bef0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60bf08, 0x60bf10) is considered live.
 
 Anchored allocation at 60bf40 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60c150 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c168, 0x60c170) is considered live.
 
 Anchored allocation at 60c1a0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60c3b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c3d0, 0x60c3d8) is considered live.
 
 Anchored allocation at 60c400 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60c610 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c630, 0x60c638) is considered live.
 
 Anchored allocation at 60c660 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60c870 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c890, 0x60c898) is considered live.
 
 Anchored allocation at 60c8c0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c8d8, 0x60c8e0) is considered live.
 
 Anchored allocation at 60c910 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c928, 0x60c930) is considered live.
 
 Anchored allocation at 60c960 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c978, 0x60c980) is considered live.
 
 Anchored allocation at 60c9b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60c9c8, 0x60c9d8) is considered live.
 
 Anchored allocation at 60ca00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ca20, 0x60ca28) is considered live.
 
 Anchored allocation at 60ca50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ca68, 0x60ca80) is considered live.
 
 Anchored allocation at 60cad0 of size 208
 This allocation matches pattern DequeBlock.
@@ -144,33 +168,42 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60d940 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60d958, 0x60d960) is considered live.
 
 Anchored allocation at 60d990 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60dba0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dbb8, 0x60dbc0) is considered live.
 
 Anchored allocation at 60dbf0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dc08, 0x60dc10) is considered live.
 
 Anchored allocation at 60dc40 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dc58, 0x60dc68) is considered live.
 
 Anchored allocation at 60dc90 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dca8, 0x60dcc0) is considered live.
 
 Anchored allocation at 60dce0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dcf8, 0x60dd00) is considered live.
 
 Anchored allocation at 60dd30 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60dd48, 0x60dd50) is considered live.
 
 Anchored allocation at 60dd80 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ddb0, 0x60ddb8) is considered live.
 
 Anchored allocation at 60de00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60de30, 0x60de38) is considered live.
 
 Anchored allocation at 60de50 of size 208
 This allocation matches pattern DequeBlock.
@@ -192,21 +225,26 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60eab0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ead0, 0x60ead8) is considered live.
 
 Anchored allocation at 60eb00 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60eb50, 0x60eb70) is considered live.
 
 Anchored allocation at 60eba0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60ec00, 0x60ec08) is considered live.
 
 Anchored allocation at 60ec40 of size 48
 This allocation matches pattern DequeMap.
+Only [0x60ec58, 0x60ec60) is considered live.
 
 Anchored allocation at 60ecc0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60eed0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60ef20, 0x60ef40) is considered live.
 
 Anchored allocation at 60ef70 of size 208
 This allocation matches pattern DequeBlock.
@@ -219,6 +257,7 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 60f5a0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x60f600, 0x60f608) is considered live.
 
 Anchored allocation at 60f640 of size 208
 This allocation matches pattern DequeBlock.
@@ -237,24 +276,30 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 610090 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6100a8, 0x6100b0) is considered live.
 
 Anchored allocation at 6100e0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 6102f0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610308, 0x610310) is considered live.
 
 Anchored allocation at 610340 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610358, 0x610360) is considered live.
 
 Anchored allocation at 610390 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6103a8, 0x6103b0) is considered live.
 
 Anchored allocation at 6103e0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6103f8, 0x610400) is considered live.
 
 Anchored allocation at 610430 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610448, 0x610450) is considered live.
 
 Anchored allocation at 6104b0 of size 208
 This allocation matches pattern DequeBlock.
@@ -273,21 +318,27 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 610f00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610f18, 0x610f20) is considered live.
 
 Anchored allocation at 610f50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610f68, 0x610f70) is considered live.
 
 Anchored allocation at 610fa0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x610fb8, 0x610fc0) is considered live.
 
 Anchored allocation at 610ff0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x611008, 0x611010) is considered live.
 
 Anchored allocation at 611040 of size 48
 This allocation matches pattern DequeMap.
+Only [0x611058, 0x611060) is considered live.
 
 Anchored allocation at 611090 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6110a8, 0x6110b0) is considered live.
 
 Anchored allocation at 611110 of size 208
 This allocation matches pattern DequeBlock.
@@ -342,36 +393,45 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 613420 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613440, 0x613448) is considered live.
 
 Anchored allocation at 613470 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 613680 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6136a0, 0x6136a8) is considered live.
 
 Anchored allocation at 6136d0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 6138e0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613900, 0x613908) is considered live.
 
 Anchored allocation at 613930 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613948, 0x613950) is considered live.
 
 Anchored allocation at 613980 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613998, 0x6139a0) is considered live.
 
 Anchored allocation at 6139d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6139e8, 0x6139f0) is considered live.
 
 Anchored allocation at 613a20 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613a38, 0x613a48) is considered live.
 
 Anchored allocation at 613a70 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613a90, 0x613a98) is considered live.
 
 Anchored allocation at 613ac0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x613ad8, 0x613af0) is considered live.
 
 Anchored allocation at 613b40 of size 208
 This allocation matches pattern DequeBlock.
@@ -396,33 +456,42 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 6149b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6149c8, 0x6149d0) is considered live.
 
 Anchored allocation at 614a00 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 614c10 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614c28, 0x614c30) is considered live.
 
 Anchored allocation at 614c60 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614c78, 0x614c80) is considered live.
 
 Anchored allocation at 614cb0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614cc8, 0x614cd8) is considered live.
 
 Anchored allocation at 614d00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614d18, 0x614d30) is considered live.
 
 Anchored allocation at 614d50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614d68, 0x614d70) is considered live.
 
 Anchored allocation at 614da0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614db8, 0x614dc0) is considered live.
 
 Anchored allocation at 614df0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614e20, 0x614e28) is considered live.
 
 Anchored allocation at 614e70 of size 48
 This allocation matches pattern DequeMap.
+Only [0x614ea0, 0x614ea8) is considered live.
 
 Anchored allocation at 614ec0 of size 208
 This allocation matches pattern DequeBlock.
@@ -444,21 +513,26 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 615b20 of size 48
 This allocation matches pattern DequeMap.
+Only [0x615b40, 0x615b48) is considered live.
 
 Anchored allocation at 615b70 of size 98
 This allocation matches pattern DequeMap.
+Only [0x615bc0, 0x615be0) is considered live.
 
 Anchored allocation at 615c10 of size 98
 This allocation matches pattern DequeMap.
+Only [0x615c70, 0x615c78) is considered live.
 
 Anchored allocation at 615cb0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x615cc8, 0x615cd0) is considered live.
 
 Anchored allocation at 615d30 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 615f40 of size 98
 This allocation matches pattern DequeMap.
+Only [0x615f90, 0x615fb0) is considered live.
 
 Anchored allocation at 615fe0 of size 208
 This allocation matches pattern DequeBlock.
@@ -471,6 +545,7 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 616610 of size 98
 This allocation matches pattern DequeMap.
+Only [0x616670, 0x616678) is considered live.
 
 Anchored allocation at 6166b0 of size 208
 This allocation matches pattern DequeBlock.
@@ -486,27 +561,33 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 616ef0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x616f08, 0x616f10) is considered live.
 
 Anchored allocation at 616f40 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 617150 of size 48
 This allocation matches pattern DequeMap.
+Only [0x617168, 0x617170) is considered live.
 
 Anchored allocation at 6171a0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 6173b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6173c8, 0x6173d0) is considered live.
 
 Anchored allocation at 617400 of size 48
 This allocation matches pattern DequeMap.
+Only [0x617418, 0x617420) is considered live.
 
 Anchored allocation at 617450 of size 48
 This allocation matches pattern DequeMap.
+Only [0x617468, 0x617470) is considered live.
 
 Anchored allocation at 6174a0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x6174b8, 0x6174c0) is considered live.
 
 Anchored allocation at 617520 of size 208
 This allocation matches pattern DequeBlock.
@@ -560,72 +641,87 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61a170 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a188, 0x61a190) is considered live.
 
 Anchored allocation at 61a1c0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61a3d0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a3e8, 0x61a3f0) is considered live.
 
 Anchored allocation at 61a420 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61a630 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a648, 0x61a650) is considered live.
 
 Anchored allocation at 61a680 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61a890 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61a8a8, 0x61a8b0) is considered live.
 
 Anchored allocation at 61a8e0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61aaf0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61ab08, 0x61ab10) is considered live.
 
 Anchored allocation at 61ab40 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61ad50 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61ad68, 0x61ad70) is considered live.
 
 Anchored allocation at 61ada0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61afb0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61afd0, 0x61afd8) is considered live.
 
 Anchored allocation at 61b000 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61b210 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b230, 0x61b238) is considered live.
 
 Anchored allocation at 61b260 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61b470 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b490, 0x61b498) is considered live.
 
 Anchored allocation at 61b4c0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b4d8, 0x61b4e0) is considered live.
 
 Anchored allocation at 61b510 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b528, 0x61b530) is considered live.
 
 Anchored allocation at 61b560 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b578, 0x61b580) is considered live.
 
 Anchored allocation at 61b5b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b5c8, 0x61b5d8) is considered live.
 
 Anchored allocation at 61b600 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b620, 0x61b628) is considered live.
 
 Anchored allocation at 61b650 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61b668, 0x61b680) is considered live.
 
 Anchored allocation at 61b6d0 of size 208
 This allocation matches pattern DequeBlock.
@@ -650,27 +746,34 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61c540 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c558, 0x61c560) is considered live.
 
 Anchored allocation at 61c590 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61c7a0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c7b8, 0x61c7c0) is considered live.
 
 Anchored allocation at 61c7f0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c808, 0x61c810) is considered live.
 
 Anchored allocation at 61c840 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c858, 0x61c868) is considered live.
 
 Anchored allocation at 61c890 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c8a8, 0x61c8c0) is considered live.
 
 Anchored allocation at 61c980 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61c9b0, 0x61c9b8) is considered live.
 
 Anchored allocation at 61ca00 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61ca30, 0x61ca38) is considered live.
 
 Anchored allocation at 61ca50 of size 208
 This allocation matches pattern DequeBlock.
@@ -692,18 +795,22 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61d6b0 of size 48
 This allocation matches pattern DequeMap.
+Only [0x61d6d0, 0x61d6d8) is considered live.
 
 Anchored allocation at 61d700 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61d750, 0x61d770) is considered live.
 
 Anchored allocation at 61d7a0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61d800, 0x61d808) is considered live.
 
 Anchored allocation at 61d8c0 of size 208
 This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61dad0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61db20, 0x61db40) is considered live.
 
 Anchored allocation at 61db70 of size 208
 This allocation matches pattern DequeBlock.
@@ -716,6 +823,7 @@ This allocation matches pattern DequeBlock.
 
 Anchored allocation at 61e1a0 of size 98
 This allocation matches pattern DequeMap.
+Only [0x61e200, 0x61e208) is considered live.
 
 Anchored allocation at 61e240 of size 208
 This allocation matches pattern DequeBlock.
