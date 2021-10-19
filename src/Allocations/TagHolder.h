@@ -1,10 +1,11 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <set>
 #include <unordered_map>
 #include "Directory.h"
+#include "EdgePredicate.h"
 
 namespace chap {
 namespace Allocations {
@@ -21,15 +22,18 @@ class TagHolder {
    */
   typedef std::set<TagIndex> TagIndices;
 
-  TagHolder(const AllocationIndex numAllocations)
-      : _numAllocations(numAllocations) {
+  TagHolder(const AllocationIndex numAllocations,
+            EdgePredicate<Offset>& edgeIsFavored)
+      : _numAllocations(numAllocations), _edgeIsFavored(edgeIsFavored) {
     _tags.reserve(numAllocations);
     _tags.resize(numAllocations, 0);
     _indexToName.push_back("");
     _tagIsStrong.push_back(false);
+    _tagSupportsFavoredReferences.push_back(false);
   }
 
-  TagIndex RegisterTag(const char* name, bool tagIsStrong = true) {
+  TagIndex RegisterTag(const char* name, bool tagIsStrong,
+                       bool tagSupportsFavoredReferences) {
     TagIndex newIndex = _indexToName.size();
     if (_indexToName.size() == 0x255) {
       std::cerr
@@ -38,6 +42,7 @@ class TagHolder {
     }
     _indexToName.push_back(name);
     _tagIsStrong.push_back(tagIsStrong);
+    _tagSupportsFavoredReferences.push_back(tagSupportsFavoredReferences);
     _nameToTagIndices[name].insert(newIndex);
     return newIndex;
   }
@@ -53,6 +58,15 @@ class TagHolder {
     }
     TagIndex oldTag = _tags[allocationIndex];
     if (oldTag == 0 || (_tagIsStrong[tagIndex] && !_tagIsStrong[oldTag])) {
+      if (_tagSupportsFavoredReferences[oldTag]) {
+        /*
+         * The allocation was already tagged with a different tag (0 tag
+         * does not support favored references) and the old tag supports
+         * favored references.  Any references already favored based on
+         * the old tag information are no longer considered favored.
+         */
+        _edgeIsFavored.SetAllIncoming(allocationIndex, false);
+      }
       _tags[allocationIndex] = tagIndex;
       return true;
     }
@@ -83,6 +97,11 @@ class TagHolder {
 
   size_t GetNumTags() const { return _indexToName.size(); }
 
+  bool SupportsFavoredReferences(AllocationIndex allocationIndex) const {
+    return (allocationIndex < _numAllocations &&
+            _tagSupportsFavoredReferences[_tags[allocationIndex]]);
+  }
+
   bool IsStronglyTagged(AllocationIndex allocationIndex) const {
     return (allocationIndex < _numAllocations &&
             _tagIsStrong[_tags[allocationIndex]]);
@@ -90,9 +109,11 @@ class TagHolder {
 
  private:
   const AllocationIndex _numAllocations;
+  EdgePredicate<Offset>& _edgeIsFavored;
   std::vector<TagIndex> _tags;
   std::vector<std::string> _indexToName;
   std::vector<bool> _tagIsStrong;
+  std::vector<bool> _tagSupportsFavoredReferences;
   std::unordered_map<std::string, TagIndices> _nameToTagIndices;
 };
 }  // namespace Allocations

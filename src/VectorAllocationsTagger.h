@@ -1,8 +1,9 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -21,17 +22,21 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
   VectorAllocationsTagger(
-      Graph& graph, TagHolder& tagHolder,
+      Graph& graph, TagHolder& tagHolder, EdgePredicate& edgeIsTainted,
+      EdgePredicate& edgeIsFavored,
       const Allocations::SignatureDirectory<Offset>& signatureDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _signatureDirectory(signatureDirectory),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
-        _tagIndex(_tagHolder.RegisterTag("%VectorBody", false)) {}
+        _tagIndex(_tagHolder.RegisterTag("%VectorBody", false, true)) {}
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,
@@ -44,8 +49,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
           /*
            * This was already tagged as something other than a vector body.
            */
-          return true;  // We are finished looking at this allocation for this
-                        // pass.
+          return true;
         }
         if (!isUnsigned) {
           /*
@@ -85,6 +89,12 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
          * phase on the corresponding allocation.
          */
 
+        if (_tagHolder.GetTagIndex(index) != 0) {
+          /*
+           * This was already tagged as something other than a vector body.
+           */
+          return true;
+        }
         if (!CheckVectorBodyAnchorIn(index, allocation,
                                      _graph.GetStaticAnchors(index))) {
           CheckVectorBodyAnchorIn(index, allocation,
@@ -97,7 +107,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
   }
 
   bool TagFromReferenced(const ContiguousImage& contiguousImage,
-                         Reader& /* reader */, AllocationIndex /* index */,
+                         Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
                          const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
@@ -119,7 +129,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
          * phase on the corresponding allocation.
          */
 
-        CheckEmbeddedVectors(contiguousImage, unresolvedOutgoing);
+        CheckEmbeddedVectors(index, contiguousImage, unresolvedOutgoing);
         break;
     }
     return false;
@@ -130,6 +140,8 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const Allocations::SignatureDirectory<Offset>& _signatureDirectory;
   const Directory& _directory;
   AllocationIndex _numAllocations;
@@ -171,6 +183,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
         }
 
         _tagHolder.TagAllocation(bodyIndex, _tagIndex);
+        MarkTaintedOutgoingEdges(bodyIndex, bodyAddress, useLimit);
 
         return true;
       }
@@ -178,7 +191,27 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void CheckEmbeddedVectors(const ContiguousImage& contiguousImage,
+  void MarkTaintedOutgoingEdges(AllocationIndex bodyIndex, Offset bodyAddress,
+                                Offset useLimit) {
+    _edgeIsTainted.SetAllOutgoing(bodyIndex, true);
+    useLimit = useLimit & ~(sizeof(Offset) - 1);
+    Reader reader(_addressMap);
+    for (Offset addrInBody = bodyAddress; addrInBody < useLimit;
+         addrInBody += sizeof(Offset)) {
+      Offset candidate = reader.ReadOffset(addrInBody, 0);
+      if (candidate == 0) {
+        continue;
+      }
+      AllocationIndex target =
+          _graph.TargetAllocationIndex(bodyIndex, candidate);
+      if (target != _numAllocations) {
+        _edgeIsTainted.Set(bodyIndex, target, false);
+      }
+    }
+  }
+
+  void CheckEmbeddedVectors(const AllocationIndex index,
+                            const ContiguousImage& contiguousImage,
                             const AllocationIndex* unresolvedOutgoing) {
     Reader bodyReader(_addressMap);
 
@@ -237,6 +270,8 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
        * malloc we do not yet have this problem.
        */
       _tagHolder.TagAllocation(bodyIndex, _tagIndex);
+      MarkTaintedOutgoingEdges(bodyIndex, address, useLimit);
+      _edgeIsFavored.Set(index, bodyIndex, true);
       check += 2;
     }
   }

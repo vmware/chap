@@ -4,6 +4,7 @@
 #pragma once
 #include "Allocations/AnchorDirectory.h"
 #include "Allocations/Directory.h"
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
 #include "Allocations/TagHolder.h"
@@ -111,6 +112,14 @@ class ProcessImage {
     return _allocationGraph;
   }
 
+  const Allocations::EdgePredicate<Offset> *GetEdgeIsTainted() const {
+    return _edgeIsTainted;
+  }
+
+  const Allocations::EdgePredicate<Offset> *GetEdgeIsFavored() const {
+    return _edgeIsFavored;
+  }
+
   const PThread::InfrastructureFinder<Offset> &GetPThreadInfrastructureFinder()
       const {
     return _pThreadInfrastructureFinder;
@@ -137,6 +146,8 @@ class ProcessImage {
   ModuleDirectory<Offset> _moduleDirectory;
   UnfilledImages<Offset> _unfilledImages;
   Allocations::TagHolder<Offset> *_allocationTagHolder;
+  Allocations::EdgePredicate<Offset> *_edgeIsTainted;
+  Allocations::EdgePredicate<Offset> *_edgeIsFavored;
   Allocations::Graph<Offset> *_allocationGraph;
   Allocations::SignatureDirectory<Offset> _signatureDirectory;
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
@@ -149,39 +160,55 @@ class ProcessImage {
    * of the constructor for the derived class.
    */
   void TagAllocations() {
+    _edgeIsTainted =
+        new Allocations::EdgePredicate<Offset>(*_allocationGraph, false);
+
+    _edgeIsFavored =
+        new Allocations::EdgePredicate<Offset>(*_allocationGraph, false);
+
     _allocationTagHolder = new Allocations::TagHolder<Offset>(
-        _allocationDirectory.NumAllocations());
+        _allocationDirectory.NumAllocations(), *_edgeIsFavored);
 
     Allocations::TaggerRunner<Offset> runner(
-        *_allocationGraph, *_allocationTagHolder, _signatureDirectory);
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        _signatureDirectory);
 
     runner.RegisterTagger(new UnorderedMapOrSetAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder)));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored));
 
     runner.RegisterTagger(new MapOrSetAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder)));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored));
 
     runner.RegisterTagger(new DequeAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder)));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored));
 
     runner.RegisterTagger(new ListAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder)));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored));
 
     runner.RegisterTagger(new LongStringAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored, _moduleDirectory));
 
     runner.RegisterTagger(new VectorAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder), _signatureDirectory));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored, _signatureDirectory));
 
     runner.RegisterTagger(new COWStringAllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder), _moduleDirectory));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored, _moduleDirectory));
 
     runner.RegisterTagger(new OpenSSLAllocationsTagger<Offset>(
-        *(_allocationTagHolder), _moduleDirectory, _virtualAddressMap));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsFavored,
+        _moduleDirectory, _virtualAddressMap));
 
     runner.RegisterTagger(new Python::AllocationsTagger<Offset>(
-        *(_allocationGraph), *(_allocationTagHolder),
-        _pythonFinderGroup.GetInfrastructureFinder(), _virtualAddressMap));
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored, _pythonFinderGroup.GetInfrastructureFinder(),
+        _virtualAddressMap));
 
     runner.ResolveAllAllocationTags();
   }

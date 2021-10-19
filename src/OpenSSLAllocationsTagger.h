@@ -1,8 +1,9 @@
-// Copyright (c) 2019,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -13,6 +14,8 @@ namespace chap {
 template <typename Offset>
 class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
+  typedef typename Allocations::Graph<Offset> Graph;
+  typedef typename Graph::EdgeIndex EdgeIndex;
   typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Tagger::Phase Phase;
@@ -23,12 +26,18 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename TagHolder::TagIndex TagIndex;
-  OpenSSLAllocationsTagger(TagHolder& tagHolder,
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
+  OpenSSLAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                           EdgePredicate& edgeIsFavored,
                            const ModuleDirectory<Offset>& moduleDirectory,
                            const VirtualAddressMap<Offset>& addressMap)
-      : _tagHolder(tagHolder),
-        _SSLTagIndex(_tagHolder.RegisterTag("%SSL")),
-        _SSL_CTXTagIndex(_tagHolder.RegisterTag("%SSL_CTX")),
+      : _graph(graph),
+        _tagHolder(tagHolder),
+        _edgeIsFavored(edgeIsFavored),
+        _directory(graph.GetAllocationDirectory()),
+        _numAllocations(_directory.NumAllocations()),
+        _SSLTagIndex(_tagHolder.RegisterTag("%SSL", true, true)),
+        _SSL_CTXTagIndex(_tagHolder.RegisterTag("%SSL_CTX", true, true)),
         _rangeToFlags(nullptr),
         _candidateBase(0),
         _candidateLimit(0),
@@ -118,12 +127,38 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
+  void MarkFavoredReferences(const ContiguousImage& contiguousImage,
+                             Reader& /* reader */, AllocationIndex index,
+                             const Allocation& /* allocation */,
+                             const EdgeIndex* outgoingEdgeIndices) {
+    const Offset* checkLimit = contiguousImage.OffsetLimit();
+    const Offset* firstCheck = contiguousImage.FirstOffset();
+
+    for (const Offset* check = firstCheck; check < checkLimit; check++) {
+      EdgeIndex edgeIndex = outgoingEdgeIndices[check - firstCheck];
+      AllocationIndex targetIndex = _graph.GetTargetForOutgoing(edgeIndex);
+      if (targetIndex == _numAllocations) {
+        continue;
+      }
+      TagIndex tagIndex = _tagHolder.GetTagIndex(targetIndex);
+      if (tagIndex != _SSLTagIndex && tagIndex != _SSL_CTXTagIndex) {
+        continue;
+      }
+      if (_directory.AllocationAt(targetIndex)->Address() == *check) {
+        _edgeIsFavored.Set(index, targetIndex, true);
+      }
+    }
+  }
+
   TagIndex GetSSLTagIndex() const { return _SSLTagIndex; }
   TagIndex GetSSL_CTXTagIndex() const { return _SSL_CTXTagIndex; }
 
  private:
+  Graph& _graph;
   TagHolder& _tagHolder;
-  // const VirtualAddressMap<Offset>& _addressMap;
+  EdgePredicate& _edgeIsFavored;
+  const Directory& _directory;
+  AllocationIndex _numAllocations;
   TagIndex _SSLTagIndex;
   TagIndex _SSL_CTXTagIndex;
   const typename ModuleDirectory<Offset>::RangeToFlags* _rangeToFlags;

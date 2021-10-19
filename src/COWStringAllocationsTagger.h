@@ -1,8 +1,9 @@
-// Copyright (c) 2019,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -14,6 +15,7 @@ template <typename Offset>
 class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
   typedef typename Allocations::Graph<Offset> Graph;
+  typedef typename Graph::EdgeIndex EdgeIndex;
   typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
@@ -23,10 +25,15 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   COWStringAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                             EdgePredicate& edgeIsTainted,
+                             EdgePredicate& edgeIsFavored,
                              const ModuleDirectory<Offset>& moduleDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
@@ -34,7 +41,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _enabled(true),
-        _tagIndex(_tagHolder.RegisterTag("%COWStringBody")) {
+        _tagIndex(_tagHolder.RegisterTag("%COWStringBody", true, true)) {
     _votesNeeded.resize(_numAllocations, 0xff);
     bool foundCheckableLibrary = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
@@ -131,11 +138,36 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
                                    unresolvedOutgoing);
   }
 
+  void MarkFavoredReferences(const ContiguousImage& contiguousImage,
+                             Reader& /* reader */, AllocationIndex index,
+                             const Allocation& /* allocation */,
+                             const EdgeIndex* outgoingEdgeIndices) {
+    const Offset* checkLimit = contiguousImage.OffsetLimit();
+    const Offset* firstCheck = contiguousImage.FirstOffset();
+
+    for (const Offset* check = firstCheck; check < checkLimit; check++) {
+      EdgeIndex edgeIndex = outgoingEdgeIndices[check - firstCheck];
+      AllocationIndex charsIndex = _graph.GetTargetForOutgoing(edgeIndex);
+      if (charsIndex == _numAllocations) {
+        continue;
+      }
+      if (_tagHolder.GetTagIndex(charsIndex) != _tagIndex) {
+        continue;
+      }
+      if ((_directory.AllocationAt(charsIndex)->Address() +
+           3 * sizeof(Offset)) == *check) {
+        _edgeIsFavored.Set(index, charsIndex, true);
+      }
+    }
+  }
+
   TagIndex GetTagIndex() const { return _tagIndex; }
 
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -261,6 +293,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
         if (anchorReader.ReadOffset(anchor, 0xbad) == charsAddress) {
           if (--(_votesNeeded[bodyIndex]) == 0) {
             _tagHolder.TagAllocation(bodyIndex, _tagIndex);
+            _edgeIsTainted.SetAllOutgoing(bodyIndex, true);
             return true;
           }
         }
@@ -321,6 +354,7 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
            3 * sizeof(Offset)) == charsAddress) {
         if (--(_votesNeeded[charsIndex]) == 0) {
           _tagHolder.TagAllocation(charsIndex, _tagIndex);
+          _edgeIsTainted.SetAllOutgoing(charsIndex, true);
         }
       }
     }

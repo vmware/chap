@@ -1,8 +1,9 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -22,11 +23,16 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
   LongStringAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                              EdgePredicate& edgeIsTainted,
+                              EdgePredicate& edgeIsFavored,
                               const ModuleDirectory<Offset>& moduleDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
@@ -34,7 +40,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _enabled(true),
-        _tagIndex(_tagHolder.RegisterTag("%LongString")) {
+        _tagIndex(_tagHolder.RegisterTag("%LongString", true, true)) {
     bool foundCheckableLibrary = false;
     for (typename ModuleDirectory<Offset>::const_iterator it =
              moduleDirectory.begin();
@@ -106,14 +112,14 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   }
 
   bool TagFromReferenced(const ContiguousImage& contiguousImage,
-                         Reader& /* reader */, AllocationIndex /* index */,
+                         Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
                          const AllocationIndex* unresolvedOutgoing) {
     if (!_enabled) {
       // The C++11 ABI doesn't appear to have been used in the process.
       return true;
     }
-    return TagFromContainedStrings(contiguousImage, phase, allocation,
+    return TagFromContainedStrings(index, contiguousImage, phase, allocation,
                                    unresolvedOutgoing);
   }
 
@@ -122,6 +128,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -225,6 +233,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         }
 
         _tagHolder.TagAllocation(charsIndex, _tagIndex);
+        _edgeIsTainted.SetAllOutgoing(charsIndex, true);
+
         return true;
       }
     }
@@ -237,7 +247,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
    * strings that are sufficiently long to use external buffers, tag the
    * external buffers.
    */
-  bool TagFromContainedStrings(const ContiguousImage& contiguousImage,
+  bool TagFromContainedStrings(AllocationIndex index,
+                               const ContiguousImage& contiguousImage,
                                Phase phase, const Allocation& allocation,
                                const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
@@ -249,7 +260,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        CheckEmbeddedStrings(contiguousImage, unresolvedOutgoing);
+        CheckEmbeddedStrings(index, contiguousImage, unresolvedOutgoing);
         return true;
         break;
       case Tagger::WEAK_CHECK:
@@ -261,7 +272,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void CheckEmbeddedStrings(const ContiguousImage& contiguousImage,
+  void CheckEmbeddedStrings(AllocationIndex index,
+                            const ContiguousImage& contiguousImage,
                             const AllocationIndex* unresolvedOutgoing) {
     Reader charsReader(_addressMap);
     const Offset* checkLimit = contiguousImage.OffsetLimit() - 3;
@@ -323,6 +335,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
 
       if (stringLength == (Offset)(strlen(chars))) {
         _tagHolder.TagAllocation(charsIndex, _tagIndex);
+        _edgeIsTainted.SetAllOutgoing(charsIndex, true);
+        _edgeIsFavored.Set(index, charsIndex, true);
         check += 3;
       }
     }

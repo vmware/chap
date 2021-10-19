@@ -15,6 +15,9 @@
 * [References](#references)
     * [Real References](#real-references)
     * [False References](#false-references)
+    * [Tainted References](#tainted-references)
+    * [Favored References](#favored-references)
+    * [Unfavored References](#unfavored-references)
     * [Missing References](#missing-references)
 * [Identifying the Contents of an Allocation](#identifying-the-contents-of-an-allocation)
     * [Allocation Signatures](#allocation-signatures)
@@ -292,6 +295,18 @@ Another cause of false references is that some part of the allocation, even in t
 
 Another case of false references are when the range just happens to look like it contains a reference but in fact contains one or more smaller values.
 
+### Tainted References
+
+A tainted reference is one that chap is suggesting is likely a false reference, typically based on some information that chap has derived about an allocation that contains the reference.  For example, the part of the allocation that contains the reference might not be considered live.  For example, in a std::vector, the allocation used to hold the contents often is not fully used.
+
+### Favored References
+
+A favored reference is a reference to an allocation for which chap has determined something about the type of that allocation that allows it to determine which references to that allocation are most interesting in understanding why the allocation is used, and chap has determined that this reference is one of those interesting ones.  For example, if an allocation contains an std::vector, the reference from that allocation to the corresponding vector body is considered favored, or if an allocation contains an std::map, the reference from that allocation to the root of the map is considered favored.  See the later section on [allocation patterns](#allocation-patterns) for more details on this.
+
+### Unfavored References
+
+An unfavored reference is a reference to an allocation for which chap has determined something about the type of that allocation that allows it to determine which references to that allocation are most interesting in understanding why the allocation is used, and chap has determined that this reference is not particularly of interest.   Note that for many object types, chap does not currently have enough information to determine whether references to that allocation are favored or not, in which case the references to that allocation are considered neither favored nor unfavored.
+
 ### Missing References
 
 A missing reference would be a case where a reference exists but `chap` can't detect it.  One example of this might be if the reference was intentionally obscured by some reversible function.  Fortunately, this is extremely rare on Linux.  This is a good thing because, as will be seen later in this document, accurate leak detection depends on not having any missing references.
@@ -490,27 +505,97 @@ chap> summarize signatures
 A **pattern** is a way of narrowing the type of an allocation based on the contents of that allocation or based on incoming or outgoing edges from that allocation.  A pattern can be used anywhere a signature can be used, but with a "%" preceding the pattern.
 
 #### Patterns Related to C++ Containers
-* LongString - dynamically allocated memory for SSO std::string (for C++11 ABI or later) with >= 16 characters
-* COWStringBody - COW std::string bodies (for ABI prior to C++11)
-* VectorBody - dynamically allocated memory for std::vector
-* ListNode - one node in a doubly linked list, as would be used for std::list, with the next and prev link fields at the start of the allocation
-* UnorderedMapOrSetBuckets - the buckets array for an unordered map or unordered set
-* UnorderedMapOrSetNode - a single entry in an unordered map or unordered set
-* MapOrSetNode - a single entry in a map or set
-* DequeMap - the outer structure used for an std::deque (or for an std::queue that doesn't explicitly specify the underlying container and so uses a deque) which points to the blocks
-* DequeBlock - the inner structure used for a deque (or for an std::queue that is based on one), which holds one or more entries on the deque
+
+##### %LongString
+An allocation matches the %LongString pattern in the case that the C++11 ABI or later is used and the allocation is used to store the c-string for an std::string that requires 16 or more characters.
+
+All references from that allocation are considered to be [tainted](#tainted-references).
+
+If the corresponding std::string is in an allocation, as opposed to statically allocated or on the stack, the reference from the allocation containing the std::string to the allocation containing the %LongString is [favored](#favored-references).
+
+##### %COWStringBody
+An allocation matches the %COWStringBody pattern in the case that an ABI prior to C++11 is used and strings are copy-on-write and the given allocation is used to store the reference counted string body.
+
+All references from that allocation are considered to be [tainted](#tainted-references).
+
+Any reference from an allocation to the start of the c-string in the allocation is [favored](#favored-references).
+
+##### %VectorBody
+An allocation matches the %VectorBody in the case that it is apparently used to store the contents of an std::vector.  This pattern is considered to be somewhat weak in that it depends primarily on looking elsewhere in memory for things that look like std::vector, rather than the contents of the allocation itself, but it is provided because use of std::vector is rather common.
+
+Any references from a %Vector body that occur only outside the part of that allocation that is considered, based on the pointers in the std::vector, to be in use, are considered to be [tainted](#tainted-references).
+
+If the corresponding std::vector is in an allocation, the reference from the allocation containing the std::vector to the %VectorBody is [favored](#favored-references).
+
+##### %ListNode
+An allocation matches the %ListNode pattern if it appears to be in a doubly linked list, with the link fields at the start of the allocation, that looks like it could be used for an std::list.
+
+If it appears that the std::list is in an allocation, the link from the allocation with the std::list to the first %ListNode in the list is [favored](#favored-references) as are any references from a %ListNode to the next %ListNode in the list.
+
+##### %UnorderedMapOrSetBuckets
+An allocation matches the %UnorderedMapOrSetBuckets pattern if it appears to contain the buckets array for an std::unordered_map or std::unordered_set.
+
+If the corresponding std::unordered_map or std::unordered_set is in an allocation, the reference from the allocation containing the unordered_map or unordered_set to the %UnorderedMapOrSetBuckets is [favored](#favored-references).
+
+##### %UnorderedMapOrSetNode
+An allocation matches the %UnorderedMapOrSetNode pattern if it appears to be used to store one entry for an std::unordered_map or std::unordered_set.
+
+If the corresponding std::unordered_map or std::unordered_set is in an allocation, the reference from the allocation containing the unordered_map or unordered_set to the first %UnorderedMapOrSetNode in the underlying singly-linked list is [favored](#favored-references) as is the reference from any %UnorderedMapOrSetNode to the successor in that underlying list.
+
+##### %MapOrSetNode
+
+An allocation matches the %MapOrSetNode pattern if it appears to be used to store one entry for an std::map or std::set.
+
+If the corresponding std::map or std::set is in an allocation, the reference from the allocation containing the map or set to the allocation containing the root %MapOrSetNode is [favored](#favored-references) as is any reference from a %MapOrSetNode to its left child or right child.
+
+##### %DequeMap
+An allocation matches the %DequeMap pattern if it appears to be used to store the outer object used for an std::deque (or an std::queue that doesn't explicitly specify the underlying container and so uses a deque) which points to the blocks for the deque.
+
+References from the %DequeMap that are in the part that is not currently considered live are considered to be [tainted](#tainted-references).  This is important because these structures are initialized lazily and often contain stale values at both the start and the end.
+
+If the corresponding std::deque is in an allocation, the reference from the allocation containing the std::deque to the %DequeMap is considered to be favored.
+
+##### %DequeBlock
+An allocation matches the %DequeBlock pattern if it appears to hold a block for an std::deque (which may hold 0 or more entries for the deque).
+
+Any reference that is present only in the non-live part of a %DequeBlock is considered to be [tainted](#tainted-references).
+
+Any reference from the live part of a %DequeMap to a %DequeBlock is [favored](#favored-references).
 
 #### Patterns Related to OpenSSL
-* SSL - SSL type
-* SSL_CTX - SSL_CTX type
+##### %SSL
+An allocation matches the %SSL pattern if it is considered to hold an SSL structure.
+
+At least for now, any untainted reference to the start of an %SSL allocation is [favored](#favored-references).
+
+##### %SSL_CTX
+An allocation matches the %SSL_CTX pattern if it is considered to hold an SSL_CTX structure.
+
+Any untainted reference is to the start of an %SSL_CTX allocation is [favored](#favored-references).
 
 #### Patterns Related to Python
-* PyDictKeysObject -PyDictKeysObject associated with python (works for python 3.5 but for python 2.6 or 2.7 it actually refers to just the triples associated with a dict)
-* PyDictValuesArray - buffer used for values for a split python dict but these will appear only in cores using python 3.5 or later
-* PythonArenaStructArray - a singleton array of information about all the python arenas
-* PythonMallocedArena - an allocation made by malloc that contains an arena that in turn contains smaller python objects
-* SimplePythonObject - a python object that does not reference other python objects (e.g. str, int ...)
-* ContainerPythonObject - a python object that references other python objects (e.g. tuple, list, dict ...)
+
+##### %PyDictKeysObject
+A %PyDictKeysObject is used to store an allocation of type PyDictKeys object (for python 3.5 and later) but for earlier python releases it just holds the triples associated with a dict object.
+
+##### %PyDictValuesArray
+A %PyDictValuesArray holds the buffer used for the values for a split python dict.  This is applicable only to cores using python 3.5 or later.
+
+##### %PythonArenaStructArray
+A %PythonArenaStructArray holds the singleton array of information about all the python arenas.
+
+##### %PythonMallocedArena
+A %PythonMallocedArena holds an allocation made by malloc that contains an arena that in turn contains smaller python objects.
+
+##### %SimplePythonObject
+A %SimplePythonObject holds a python object that cannot participate in reference cyles, such as an instance of the python *str*, *int*, *float* or *bytes* type.
+
+Any reference to the start of a %SimplePythonObject is [favored](#favored-references).
+
+##### %ContainerPythonObject
+A %ContainerPythonObject holds a python object that can participate in references cycles and is therefor subject to garbage collection to resolve such cycles.
+
+Any reference to just after the garbage collection header in a %ContainerPythonObject is [favored](#favored-references).
 
 Anywhere one can provide a pattern name preceded by '%', one can use **?** to narrow the scope to unsigned allocations that do not match any pattern.
 

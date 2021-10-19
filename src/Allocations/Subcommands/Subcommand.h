@@ -8,11 +8,13 @@
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
+#include "../EdgePredicate.h"
 #include "../ExtendedVisitor.h"
 #include "../PatternDescriberRegistry.h"
 #include "../ReferenceConstraint.h"
 #include "../SetCache.h"
 #include "../SignatureChecker.h"
+#include "../TagHolder.h"
 namespace chap {
 namespace Allocations {
 namespace Subcommands {
@@ -67,6 +69,18 @@ class Subcommand : public Commands::Subcommand {
         return;
       }
       signatureString = context.Positional(signaturePositional);
+    }
+
+    bool skipTaintedReferences = false;
+    if (!context.ParseBooleanSwitch("skipTaintedReferences",
+                                    skipTaintedReferences)) {
+      return;
+    }
+
+    bool skipUnfavoredReferences = false;
+    if (!context.ParseBooleanSwitch("skipUnfavoredReferences",
+                                    skipUnfavoredReferences)) {
+      return;
     }
 
     bool signatureOrPatternError = false;
@@ -183,7 +197,13 @@ class Subcommand : public Commands::Subcommand {
     Set<Offset>& visited = _setCache.GetVisited();
 
     std::vector<ReferenceConstraint<Offset> > referenceConstraints;
-    const Graph<Offset>* graph = 0;
+    const Graph<Offset>* graph = _processImage.GetAllocationGraph();
+    const EdgePredicate<Offset>* edgeIsTainted =
+        _processImage.GetEdgeIsTainted();
+    const EdgePredicate<Offset>* edgeIsFavored =
+        _processImage.GetEdgeIsFavored();
+    const TagHolder<Offset>* tagHolder = _processImage.GetAllocationTagHolder();
+
     size_t numMinIncoming = context.GetNumArguments("minincoming");
     size_t numMaxIncoming = context.GetNumArguments("maxincoming");
     size_t numMinOutgoing = context.GetNumArguments("minoutgoing");
@@ -194,8 +214,6 @@ class Subcommand : public Commands::Subcommand {
                                      numMinFreeOutgoing;
     if (numReferenceConstraints > 0) {
       referenceConstraints.reserve(numReferenceConstraints);
-      // This is done lazily because it is an expensive calculation.
-      graph = _processImage.GetAllocationGraph();
       if (graph == 0) {
         std::cerr
             << "Constraints were placed on incoming or outgoing references\n"
@@ -209,35 +227,40 @@ class Subcommand : public Commands::Subcommand {
               context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, directory, *graph,
               signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures);
+              allowMissingSignatures, *tagHolder, skipTaintedReferences,
+              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, directory, *graph,
               signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures);
+              allowMissingSignatures, *tagHolder, skipTaintedReferences,
+              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, directory, *graph,
               signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures);
+              allowMissingSignatures, *tagHolder, skipTaintedReferences,
+              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, directory, *graph,
               signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures);
+              allowMissingSignatures, *tagHolder, skipTaintedReferences,
+              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minfreeoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, false, directory, *graph,
               signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures);
+              allowMissingSignatures, *tagHolder, skipTaintedReferences,
+              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
     }
 
     ExtendedVisitor<Offset, Visitor> extendedVisitor(
@@ -379,7 +402,10 @@ class Subcommand : public Commands::Subcommand {
       const SignatureDirectory<Offset>& signatureDirectory,
       const VirtualAddressMap<Offset>& addressMap,
       std::vector<ReferenceConstraint<Offset> >& constraints,
-      bool allowMissingSignatures) {
+      bool allowMissingSignatures, const TagHolder<Offset>& tagHolder,
+      bool skipTaintedReferences, const EdgePredicate<Offset>& edgeIsTainted,
+      bool skipUnfavoredReferences,
+      const EdgePredicate<Offset>& edgeIsFavored) {
     bool switchError = false;
     size_t numSwitches = context.GetNumArguments(switchName);
     Commands::Error& error = context.GetError();
@@ -405,7 +431,9 @@ class Subcommand : public Commands::Subcommand {
       }
       constraints.emplace_back(signatureDirectory, _patternDescriberRegistry,
                                addressMap, signature, count, wantUsed,
-                               boundaryType, referenceType, directory, graph);
+                               boundaryType, referenceType, directory, graph,
+                               tagHolder, skipTaintedReferences, edgeIsTainted,
+                               skipUnfavoredReferences, edgeIsFavored);
       if (constraints.back().UnrecognizedSignature()) {
         if (!allowMissingSignatures) {
           error << "Signature \"" << signature << "\" is not recognized.\n";

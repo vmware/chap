@@ -1,0 +1,4 @@
+Anchored allocation at 61e450 of size 208
+This allocation matches pattern DequeBlock.
+
+1 allocations use 0x208 (520) bytes.

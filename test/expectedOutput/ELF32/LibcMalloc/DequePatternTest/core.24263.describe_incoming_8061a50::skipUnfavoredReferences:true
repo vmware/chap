@@ -1,0 +1,5 @@
+Anchored allocation at 8060fb0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8060fc4, 0x8060fcc) is considered live.
+
+1 allocations use 0x24 (36) bytes.

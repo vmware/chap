@@ -1,0 +1,3 @@
+Pattern %DequeBlock has 144 instances taking 0x12480(74,880) bytes.
+   Matches of size 0x208 have 144 instances taking 0x12480(74,880) bytes.
+144 allocations use 0x12480 (74,880) bytes.

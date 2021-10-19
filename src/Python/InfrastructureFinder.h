@@ -65,6 +65,9 @@ class InfrastructureFinder {
         _sizeInList(2 * sizeof(Offset)),
         _itemsInList(3 * sizeof(Offset)),
         _tupleType(0),
+        _intType(0),
+        _bytesType(0),
+        _floatType(0),
         _dequeType(0),
         _firstBlockInDeque(2 * sizeof(Offset)),
         _lastBlockInDeque(3 * sizeof(Offset)),
@@ -208,6 +211,9 @@ class InfrastructureFinder {
   Offset SizeInList() const { return _sizeInList; }
   Offset ItemsInList() const { return _itemsInList; }
   Offset TupleType() const { return _tupleType; }
+  Offset IntType() const { return _intType; }
+  Offset BytesType() const { return _bytesType; }
+  Offset FloatType() const { return _floatType; }
   Offset DequeType() const { return _dequeType; }
   Offset FirstBlockInDeque() const { return _firstBlockInDeque; }
   Offset LastBlockInDeque() const { return _lastBlockInDeque; }
@@ -376,6 +382,9 @@ class InfrastructureFinder {
   Offset _sizeInList;
   Offset _itemsInList;
   Offset _tupleType;
+  Offset _intType;
+  Offset _bytesType;
+  Offset _floatType;
   Offset _dequeType;
   Offset _firstBlockInDeque;
   Offset _lastBlockInDeque;
@@ -875,13 +884,26 @@ class InfrastructureFinder {
     }
   }
 
-  void CheckForTupleOrList(Offset pythonType, const std::string& currentName) {
+  void CheckForSpecialBuiltins(Offset pythonType,
+                               const std::string& currentName) {
     if (_listType == 0 && currentName == "list") {
       _listType = pythonType;
       return;
     }
     if (_tupleType == 0 && currentName == "tuple") {
       _tupleType = pythonType;
+      return;
+    }
+    if (_intType == 0 && currentName == "int") {
+      _intType = pythonType;
+      return;
+    }
+    if (_bytesType == 0 && currentName == "bytes") {
+      _bytesType = pythonType;
+      return;
+    }
+    if (_floatType == 0 && currentName == "float") {
+      _floatType = pythonType;
       return;
     }
     if (_dequeType == 0 && currentName == "collections.deque") {
@@ -902,8 +924,8 @@ class InfrastructureFinder {
               (_typeDirectory.HasType(baseType) ||
                baseTypeReader.ReadOffset(baseType + TYPE_IN_PYOBJECT, 0) ==
                    _typeType)) {
-            CheckForTupleOrList(candidate,
-                                _typeDirectory.RegisterType(candidate, ""));
+            CheckForSpecialBuiltins(candidate,
+                                    _typeDirectory.RegisterType(candidate, ""));
             candidate += _baseInType;
             continue;
           }
@@ -917,8 +939,8 @@ class InfrastructureFinder {
            */
           Offset getSet = reader.ReadOffset(candidate + _getSetInType, 0);
           if (getSet >= base && getSet < limit) {
-            CheckForTupleOrList(candidate,
-                                _typeDirectory.RegisterType(candidate, ""));
+            CheckForSpecialBuiltins(candidate,
+                                    _typeDirectory.RegisterType(candidate, ""));
           }
         }
       }
@@ -965,7 +987,7 @@ class InfrastructureFinder {
         continue;
       }
 
-      CheckForTupleOrList(
+      CheckForSpecialBuiltins(
           value, _typeDirectory.RegisterType(value, image + _cstringInStr));
     }
   }

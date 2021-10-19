@@ -1,9 +1,10 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "ContiguousImage.h"
 #include "Directory.h"
+#include "Graph.h"
 
 namespace chap {
 namespace Allocations {
@@ -22,6 +23,7 @@ class Tagger {
  public:
   typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Directory<Offset>::Allocation Allocation;
+  typedef typename Graph<Offset>::EdgeIndex EdgeIndex;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
 
   /*
@@ -66,6 +68,16 @@ class Tagger {
       const AllocationIndex* /* unresolvedOutgoing */) {
     return true;
   }
+
+  /*
+   * If any targets of the given allocation still need to be marked as
+   * favored, do so.
+   */
+  virtual void MarkFavoredReferences(
+      const ContiguousImage<Offset>& /* contiguousImage */,
+      Reader& /* reader */, AllocationIndex /* index */,
+      const Allocation& /* allocation */,
+      const EdgeIndex* /* outgoingEdgeIndices */) {}
 };
 }  // namespace Allocations
 }  // namespace chap

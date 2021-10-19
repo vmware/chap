@@ -3,6 +3,7 @@
 
 #pragma once
 #include <string.h>
+#include "../Allocations/EdgePredicate.h"
 #include "../Allocations/Graph.h"
 #include "../Allocations/TagHolder.h"
 #include "../Allocations/Tagger.h"
@@ -15,6 +16,7 @@ namespace Python {
 template <typename Offset>
 class AllocationsTagger : public Allocations::Tagger<Offset> {
  public:
+  typedef typename Allocations::Graph<Offset>::EdgeIndex EdgeIndex;
   typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
   typedef typename Tagger::Phase Phase;
@@ -25,14 +27,18 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::ContiguousImage<Offset> ContiguousImage;
   typedef typename TagHolder::TagIndex TagIndex;
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   AllocationsTagger(const Allocations::Graph<Offset>& graph,
-                    TagHolder& tagHolder,
+                    TagHolder& tagHolder, EdgePredicate& edgeIsTainted,
+                    EdgePredicate& edgeIsFavored,
                     const InfrastructureFinder<Offset>& infrastructureFinder,
                     const VirtualAddressMap<Offset>& virtualAddressMap)
       : _graph(graph),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _infrastructureFinder(infrastructureFinder),
         _arenaStructArray(infrastructureFinder.ArenaStructArray()),
         _arenaSize(infrastructureFinder.ArenaSize()),
@@ -43,6 +49,10 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _valuesInDict(infrastructureFinder.ValuesInDict()),
         _listType(infrastructureFinder.ListType()),
         _itemsInList(infrastructureFinder.ItemsInList()),
+        _strType(infrastructureFinder.StrType()),
+        _intType(infrastructureFinder.IntType()),
+        _bytesType(infrastructureFinder.BytesType()),
+        _floatType(infrastructureFinder.FloatType()),
         _dequeType(infrastructureFinder.DequeType()),
         _firstBlockInDeque(infrastructureFinder.FirstBlockInDeque()),
         _lastBlockInDeque(infrastructureFinder.LastBlockInDeque()),
@@ -56,16 +66,21 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _virtualAddressMap(virtualAddressMap),
         _reader(_virtualAddressMap),
         _simplePythonObjectTagIndex(
-            _tagHolder.RegisterTag("%SimplePythonObject")),
+            _tagHolder.RegisterTag("%SimplePythonObject", true, true)),
         _containerPythonObjectTagIndex(
-            _tagHolder.RegisterTag("%ContainerPythonObject")),
-        _dictKeysObjectTagIndex(_tagHolder.RegisterTag("%PyDictKeysObject")),
-        _dictValuesArrayTagIndex(_tagHolder.RegisterTag("%PyDictValuesArray")),
-        _listItemsTagIndex(_tagHolder.RegisterTag("%PythonListItems")),
-        _dequeBlockTagIndex(_tagHolder.RegisterTag("%PythonDequeBlock")),
+            _tagHolder.RegisterTag("%ContainerPythonObject", true, true)),
+        _dictKeysObjectTagIndex(
+            _tagHolder.RegisterTag("%PyDictKeysObject", true, true)),
+        _dictValuesArrayTagIndex(
+            _tagHolder.RegisterTag("%PyDictValuesArray", true, true)),
+        _listItemsTagIndex(
+            _tagHolder.RegisterTag("%PythonListItems", true, true)),
+        _dequeBlockTagIndex(
+            _tagHolder.RegisterTag("%PythonDequeBlock", true, true)),
         _arenaStructArrayTagIndex(
-            _tagHolder.RegisterTag("%PythonArenaStructArray")),
-        _mallocedArenaTagIndex(_tagHolder.RegisterTag("%PythonMallocedArena")),
+            _tagHolder.RegisterTag("%PythonArenaStructArray", true, false)),
+        _mallocedArenaTagIndex(
+            _tagHolder.RegisterTag("%PythonMallocedArena", true, true)),
         _enabled(_arenaStructArray != 0) {
     TagListedContainerPythonObjects();
   }
@@ -112,11 +127,37 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
+  void MarkFavoredReferences(const ContiguousImage& contiguousImage,
+                             Reader& /* reader */, AllocationIndex index,
+                             const Allocation& /* allocation */,
+                             const EdgeIndex* outgoingEdgeIndices) {
+    const Offset* checkLimit = contiguousImage.OffsetLimit();
+    const Offset* firstCheck = contiguousImage.FirstOffset();
+
+    for (const Offset* check = firstCheck; check < checkLimit; check++) {
+      EdgeIndex edgeIndex = outgoingEdgeIndices[check - firstCheck];
+      AllocationIndex targetIndex = _graph.GetTargetForOutgoing(edgeIndex);
+      if (targetIndex == _numAllocations) {
+        continue;
+      }
+      TagIndex tagIndex = _tagHolder.GetTagIndex(targetIndex);
+      Offset targetAddress = _directory.AllocationAt(targetIndex)->Address();
+      if ((tagIndex == _simplePythonObjectTagIndex &&
+           targetAddress == *check) ||
+          (tagIndex == _containerPythonObjectTagIndex &&
+           (targetAddress + _garbageCollectionHeaderSize) == *check)) {
+        _edgeIsFavored.Set(index, targetIndex, true);
+      }
+    }
+  }
+
  private:
   const Allocations::Graph<Offset>& _graph;
   const Allocations::Directory<Offset>& _directory;
   const AllocationIndex _numAllocations;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const InfrastructureFinder<Offset> _infrastructureFinder;
   const Offset _arenaStructArray;
   const Offset _arenaSize;
@@ -127,6 +168,10 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   const Offset _valuesInDict;
   const Offset _listType;
   const Offset _itemsInList;
+  const Offset _strType;
+  const Offset _intType;
+  const Offset _bytesType;
+  const Offset _floatType;
   const Offset _dequeType;
   const Offset _firstBlockInDeque;
   const Offset _lastBlockInDeque;
@@ -189,6 +234,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
           if (_infrastructureFinder.ArenaStructFor(arenaCandidate) != 0) {
             _tagHolder.TagAllocation(arenaCandidateIndex,
                                      _mallocedArenaTagIndex);
+            _edgeIsFavored.Set(index, arenaCandidateIndex, true);
           }
         }
       }
@@ -197,7 +243,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void TagDequeBlocks(Offset dequeAllocation) {
+  void TagDequeBlocks(AllocationIndex dequeIndex, Offset dequeAllocation) {
     Reader reader(_virtualAddressMap);
     Offset dequeStart = dequeAllocation + _garbageCollectionHeaderSize;
     Offset firstDequeBlock =
@@ -216,6 +262,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     }
     AllocationIndex dequeBlocksSeen = 0;
     Offset dequeBlock = firstDequeBlock;
+    AllocationIndex prevIndex = dequeIndex;
     while (dequeBlocksSeen++ < _numAllocations) {
       AllocationIndex dequeBlockIndex =
           _directory.AllocationIndexOf(dequeBlock);
@@ -223,6 +270,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         break;
       }
       _tagHolder.TagAllocation(dequeBlockIndex, _dequeBlockTagIndex);
+      _edgeIsFavored.Set(prevIndex, dequeBlockIndex, true);
+      prevIndex = dequeBlockIndex;
       if (dequeBlock == lastDequeBlock) {
         break;
       }
@@ -286,6 +335,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                   _directory.AllocationIndexOf(keysAddr);
               if (keysIndex != _numAllocations && keysIndex != index) {
                 _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+                _edgeIsFavored.Set(index, keysIndex, true);
               }
               if (_valuesInDict !=
                   InfrastructureFinder<Offset>::UNKNOWN_OFFSET) {
@@ -296,6 +346,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                 if (valuesIndex != _numAllocations && valuesIndex != index) {
                   _tagHolder.TagAllocation(valuesIndex,
                                            _dictValuesArrayTagIndex);
+                  _edgeIsFavored.Set(index, valuesIndex, true);
                 }
               }
             } else if (typeCandidate == _listType) {
@@ -305,9 +356,10 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                   _directory.AllocationIndexOf(itemsAddr);
               if (itemsIndex != _numAllocations && itemsIndex != index) {
                 _tagHolder.TagAllocation(itemsIndex, _listItemsTagIndex);
+                _edgeIsFavored.Set(index, itemsIndex, true);
               }
             } else if (typeCandidate == _dequeType) {
-              TagDequeBlocks(node);
+              TagDequeBlocks(index, node);
             } else if (_infrastructureFinder.IsATypeType(typeCandidate) &&
                        _cachedKeysInHeapTypeObject !=
                            InfrastructureFinder<Offset>::UNKNOWN_OFFSET) {
@@ -319,6 +371,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                   _directory.AllocationIndexOf(keysAddr);
               if (keysIndex != _numAllocations && keysIndex != index) {
                 _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+                _edgeIsFavored.Set(index, keysIndex, true);
               }
             }
           }
@@ -343,12 +396,19 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     const Offset* offsetLimit = contiguousImage.OffsetLimit();
     const Offset* offsets = contiguousImage.FirstOffset();
 
-    if (_typeType != 0 && offsetLimit - offsets >= 2 &&
-        _reader.ReadOffset(
-            offsets[1] + InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT, ~0) ==
-            _typeType) {
-      _tagHolder.TagAllocation(index, _simplePythonObjectTagIndex);
-      return true;
+    if (_typeType != 0 && offsetLimit - offsets >= 2) {
+      Offset typeCandidate = offsets[1];
+      if (typeCandidate != 0 &&
+          _reader.ReadOffset(
+              typeCandidate + InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT,
+              ~0) == _typeType) {
+        _tagHolder.TagAllocation(index, _simplePythonObjectTagIndex);
+        if (typeCandidate == _intType || typeCandidate == _floatType ||
+            typeCandidate == _bytesType || typeCandidate == _strType) {
+          _edgeIsTainted.SetAllOutgoing(index, true);
+        }
+        return true;
+      }
     }
     return false;
   }
@@ -385,6 +445,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
             AllocationIndex keysIndex = _directory.AllocationIndexOf(keysAddr);
             if (keysIndex != _numAllocations && keysIndex != index) {
               _tagHolder.TagAllocation(keysIndex, _dictKeysObjectTagIndex);
+              _edgeIsFavored.Set(index, keysIndex, true);
             }
           }
           if (_valuesInDict != InfrastructureFinder<Offset>::UNKNOWN_OFFSET) {
@@ -397,6 +458,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                   _directory.AllocationIndexOf(valuesAddr);
               if (valuesIndex != _numAllocations && valuesIndex != index) {
                 _tagHolder.TagAllocation(valuesIndex, _dictValuesArrayTagIndex);
+                _edgeIsFavored.Set(index, valuesIndex, true);
               }
             }
           }
@@ -410,10 +472,11 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                 _directory.AllocationIndexOf(itemsAddr);
             if (itemsIndex != _numAllocations && itemsIndex != index) {
               _tagHolder.TagAllocation(itemsIndex, _listItemsTagIndex);
+              _edgeIsFavored.Set(index, itemsIndex, true);
             }
           }
         } else if (typeCandidate == _dequeType) {
-          TagDequeBlocks(allocationAddress);
+          TagDequeBlocks(index, allocationAddress);
         }
         return true;
       }

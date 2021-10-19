@@ -1,4 +1,4 @@
-// Copyright (c) 2017,2020,2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -70,6 +70,8 @@ class Graph {
 
   const VirtualAddressMap<Offset> &GetAddressMap() const { return _addressMap; }
 
+  EdgeIndex TotalEdges() const { return _totalEdges; }
+
   void GetIncoming(Index target, const Index **pFirstIncoming,
                    const Index **pPastIncoming) const {
     if (target < _numAllocations) {
@@ -79,6 +81,66 @@ class Graph {
       *pFirstIncoming = (const Index *)(0);
       *pPastIncoming = (const Index *)(0);
     }
+  }
+
+  void GetIncoming(Index target, EdgeIndex &firstIncoming,
+                   EdgeIndex &pastIncoming) const {
+    if (target < _numAllocations) {
+      firstIncoming = _firstIncoming[target];
+      pastIncoming = _firstIncoming[target + 1];
+    } else {
+      firstIncoming = _totalEdges;
+      pastIncoming = _totalEdges;
+    }
+  }
+
+  EdgeIndex GetIncomingEdgeIndex(Index source, Index target) const {
+    if (source >= _numAllocations || target >= _numAllocations) {
+      return _totalEdges;
+    }
+    EdgeIndex base = _firstIncoming[target];
+    EdgeIndex limit = _firstIncoming[target + 1];
+
+    while (base < limit) {
+      size_t mid = (base + limit) / 2;
+      Index edgeSource = _incoming[mid];
+      if (source >= edgeSource) {
+        if (source == edgeSource) {
+          return mid;
+        } else {
+          base = mid + 1;
+        }
+      } else {
+        limit = mid;
+      }
+    }
+    return _totalEdges;
+  }
+
+  Index GetSourceForIncoming(EdgeIndex incoming) const {
+    return (incoming < _totalEdges) ? _incoming[incoming] : _numAllocations;
+  }
+
+  Index SourceAllocationIndex(Index target, Offset addr) const {
+    if (target < _numAllocations) {
+      EdgeIndex base = _firstIncoming[target];
+      EdgeIndex limit = _firstIncoming[target + 1];
+      while (base < limit) {
+        size_t mid = (base + limit) / 2;
+        Index source = _incoming[mid];
+        const Allocation &allocation = *(_directory.AllocationAt(source));
+        if (addr >= allocation.Address()) {
+          if (addr < allocation.Address() + allocation.Size()) {
+            return source;
+          } else {
+            base = mid + 1;
+          }
+        } else {
+          limit = mid;
+        }
+      }
+    }
+    return _numAllocations;
   }
 
   void GetOutgoing(Index source, const Index **pFirstOutgoing,
@@ -92,7 +154,45 @@ class Graph {
     }
   }
 
-  bool HasNoOutgoing(Index source) {
+  void GetOutgoing(Index source, EdgeIndex &firstOutgoing,
+                   EdgeIndex &pastOutgoing) const {
+    if (source < _numAllocations) {
+      firstOutgoing = _firstOutgoing[source];
+      pastOutgoing = _firstOutgoing[source + 1];
+    } else {
+      firstOutgoing = _totalEdges;
+      pastOutgoing = _totalEdges;
+    }
+  }
+
+  EdgeIndex GetOutgoingEdgeIndex(Index source, Index target) const {
+    if (source >= _numAllocations || target >= _numAllocations) {
+      return _totalEdges;
+    }
+    EdgeIndex base = _firstOutgoing[source];
+    EdgeIndex limit = _firstOutgoing[source + 1];
+
+    while (base < limit) {
+      size_t mid = (base + limit) / 2;
+      Index edgeTarget = _outgoing[mid];
+      if (target >= edgeTarget) {
+        if (target == edgeTarget) {
+          return mid;
+        } else {
+          base = mid + 1;
+        }
+      } else {
+        limit = mid;
+      }
+    }
+    return _totalEdges;
+  }
+
+  Index GetTargetForOutgoing(EdgeIndex outgoing) const {
+    return (outgoing < _totalEdges) ? _outgoing[outgoing] : _numAllocations;
+  }
+
+  bool HasNoOutgoing(Index source) const {
     return (source >= _numAllocations) ||
            (_firstOutgoing[source] == _firstOutgoing[source + 1]);
   }
@@ -117,6 +217,28 @@ class Graph {
       }
     }
     return _numAllocations;
+  }
+
+  Index TargetEdgeIndex(Index source, Offset addr) const {
+    if (source < _numAllocations) {
+      EdgeIndex base = _firstOutgoing[source];
+      EdgeIndex limit = _firstOutgoing[source + 1];
+      while (base < limit) {
+        size_t mid = (base + limit) / 2;
+        Index target = _outgoing[mid];
+        const Allocation &allocation = *(_directory.AllocationAt(target));
+        if (addr >= allocation.Address()) {
+          if (addr < allocation.Address() + allocation.Size()) {
+            return mid;
+          } else {
+            base = mid + 1;
+          }
+        } else {
+          limit = mid;
+        }
+      }
+    }
+    return _totalEdges;
   }
 
   bool IsLeaked(Index index) const {

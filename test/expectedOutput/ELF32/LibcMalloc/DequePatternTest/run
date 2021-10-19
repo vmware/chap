@@ -15,4 +15,25 @@ describe used %DequeBlock
 explain used
 explain used %DequeMap
 explain used %DequeBlock
+count used %DequeMap
+count used %DequeMap /minoutgoing %DequeBlock=1 /skipTaintedReferences true
+count used %DequeMap /maxoutgoing %DequeBlock=0 /skipTaintedReferences true
+count used %DequeMap /minfreeoutgoing %DequeBlock=1 /skipTaintedReferences true
+count used %DequeMap /maxfreeoutgoing %DequeBlock=0 /skipTaintedReferences true
+summarize used %DequeMap /extend %DequeMap->%DequeBlock /skipTaintedReferences true
+describe used %DequeMap /extend %DequeMap->%DequeBlock /skipTaintedReferences true
+describe freeoutgoing 8060fb0
+describe freeoutgoing 8060fb0 /skipTaintedReferences true
+describe outgoing 8060fb0
+describe outgoing 8060fb0 /skipTaintedReferences true
+summarize used %DequeBlock /extend %DequeBlock-> /skipTaintedReferences true
+
+count used %DequeBlock
+count used %DequeBlock /maxincoming %DequeMap=0 /skipUnfavoredReferences true
+count used %DequeBlock /minincoming %DequeMap=2 /skipUnfavoredReferences true
+count used %DequeBlock /minincoming %DequeMap=1 /skipUnfavoredReferences true
+count used %DequeBlock /maxincoming %DequeMap=1 /skipUnfavoredReferences true
+summarize used %DequeBlock /extend %DequeBlock<- /skipUnfavoredReferences true
+describe incoming 8061a50 /skipUnfavoredReferences true
+describe exactincoming 8061a50 /skipUnfavoredReferences true
 DONE

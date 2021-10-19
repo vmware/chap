@@ -1,8 +1,9 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -22,9 +23,14 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
-  UnorderedMapOrSetAllocationsTagger(Graph& graph, TagHolder& tagHolder)
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
+  UnorderedMapOrSetAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                                     EdgePredicate& edgeIsTainted,
+                                     EdgePredicate& edgeIsFavored)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
@@ -32,8 +38,10 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         _stackAnchorReader(_addressMap),
         _nodeReader(_addressMap),
         _bucketsReader(_addressMap),
-        _bucketsTagIndex(_tagHolder.RegisterTag("%UnorderedMapOrSetBuckets")),
-        _nodeTagIndex(_tagHolder.RegisterTag("%UnorderedMapOrSetNode")) {}
+        _bucketsTagIndex(
+            _tagHolder.RegisterTag("%UnorderedMapOrSetBuckets", true, true)),
+        _nodeTagIndex(
+            _tagHolder.RegisterTag("%UnorderedMapOrSetNode", true, true)) {}
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage, Reader& reader,
                          AllocationIndex index, Phase phase,
@@ -154,6 +162,8 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -165,7 +175,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   TagIndex _nodeTagIndex;
 
   bool CheckUnorderedMapOrSet(Offset unorderedMapOrSet,
-                              AllocationIndex unorderedMapOrSetIndex,
+                              AllocationIndex unorderedMapOrSetHolderIndex,
                               Reader& unorderedMapOrSetReader,
                               AllocationIndex bucketsIndex,
                               Reader& bucketsReader, Offset bucketsAddress,
@@ -241,10 +251,10 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         return false;
       }
 
-      firstNodeIndex =
-          (unorderedMapOrSetIndex == _numAllocations)
-              ? _directory.AllocationIndexOf(firstNode)
-              : _graph.TargetAllocationIndex(unorderedMapOrSetIndex, firstNode);
+      firstNodeIndex = (unorderedMapOrSetHolderIndex == _numAllocations)
+                           ? _directory.AllocationIndexOf(firstNode)
+                           : _graph.TargetAllocationIndex(
+                                 unorderedMapOrSetHolderIndex, firstNode);
       node = firstNode;
       AllocationIndex nodeIndex = firstNodeIndex;
       while (node != 0) {
@@ -285,17 +295,25 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         }
       }
       _tagHolder.TagAllocation(bucketsIndex, _bucketsTagIndex);
+      if (unorderedMapOrSetHolderIndex != _numAllocations) {
+        _edgeIsFavored.Set(unorderedMapOrSetHolderIndex, bucketsIndex, true);
+      }
     }
 
     Offset node = firstNode;
     AllocationIndex nodeIndex = firstNodeIndex;
+    AllocationIndex refIndex = unorderedMapOrSetHolderIndex;
     while (node != 0) {
+      if (refIndex != _numAllocations) {
+        _edgeIsFavored.Set(refIndex, nodeIndex, true);
+      }
       if (!_tagHolder.TagAllocation(nodeIndex, _nodeTagIndex)) {
         std::cerr << "Warning: failed to tag allocation at 0x" << std::hex
                   << node << " as %UnorderedMapOrSetNode."
                              "It was already tagged as "
                   << _tagHolder.GetTagName(nodeIndex) << "\n";
       }
+      refIndex = nodeIndex;
       node = _nodeReader.ReadOffset(node, 0);
       nodeIndex = _graph.TargetAllocationIndex(nodeIndex, node);
     }
@@ -304,7 +322,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
 
   void CheckEmbeddedUnorderedMapsOrSets(
       const ContiguousImage& contiguousImage, Reader& reader,
-      AllocationIndex unorderedMapOrSetIndex, Offset address,
+      AllocationIndex unorderedMapOrSetHolderIndex, Offset address,
       const AllocationIndex* unresolvedOutgoing) {
     const Offset* checkLimit = contiguousImage.OffsetLimit() - 6;
     const Offset* firstCheck = contiguousImage.FirstOffset();
@@ -393,10 +411,10 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
       }
-      if (CheckUnorderedMapOrSet(dequeAddress, unorderedMapOrSetIndex, reader,
-                                 bucketsIndex, _bucketsReader, bucketsAddress,
-                                 firstNodeAddress, minBuckets, maxBuckets,
-                                 firstNodeAddress == 0)) {
+      if (CheckUnorderedMapOrSet(dequeAddress, unorderedMapOrSetHolderIndex,
+                                 reader, bucketsIndex, _bucketsReader,
+                                 bucketsAddress, firstNodeAddress, minBuckets,
+                                 maxBuckets, firstNodeAddress == 0)) {
         check += 6;
       }
     }

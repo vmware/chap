@@ -15,4 +15,26 @@ describe used %DequeBlock
 explain used
 explain used %DequeMap
 explain used %DequeBlock
+count used %DequeMap
+count used %DequeMap /minoutgoing %DequeBlock=1 /skipTaintedReferences true
+count used %DequeMap /maxoutgoing %DequeBlock=0 /skipTaintedReferences true
+count used %DequeMap /minfreeoutgoing %DequeBlock=1 /skipTaintedReferences true
+count used %DequeMap /maxfreeoutgoing %DequeBlock=0 /skipTaintedReferences true
+summarize used %DequeMap /extend %DequeMap->%DequeBlock /skipTaintedReferences true
+describe used %DequeMap /extend %DequeMap->%DequeBlock /skipTaintedReferences true
+describe freeoutgoing 61c980
+describe freeoutgoing 61c980 /skipTaintedReferences true
+describe allocation 61e1a0 /showUpTo 100
+describe outgoing 61e1a0
+describe outgoing 61e1a0 /skipTaintedReferences true
+summarize used %DequeBlock /extend %DequeBlock-> /skipTaintedReferences true
+
+count used %DequeBlock
+count used %DequeBlock /maxincoming %DequeMap=0 /skipUnfavoredReferences true
+count used %DequeBlock /minincoming %DequeMap=2 /skipUnfavoredReferences true
+count used %DequeBlock /minincoming %DequeMap=1 /skipUnfavoredReferences true
+count used %DequeBlock /maxincoming %DequeMap=1 /skipUnfavoredReferences true
+summarize used %DequeBlock /extend %DequeBlock<- /skipUnfavoredReferences true
+describe incoming 61e450 /skipUnfavoredReferences true
+describe exactincoming 61e450 /skipUnfavoredReferences true
 DONE

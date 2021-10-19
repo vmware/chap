@@ -1,0 +1,24 @@
+Anchored allocation at 61c590 of size 208
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 61c7f0 of size 48
+This allocation matches pattern DequeMap.
+Only [0x61c808, 0x61c810) is considered live.
+
+Anchored allocation at 61d290 of size 208
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 61d4a0 of size 208
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 61d6b0 of size 48
+This allocation matches pattern DequeMap.
+Only [0x61d6d0, 0x61d6d8) is considered live.
+
+Anchored allocation at 61e240 of size 208
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 61e450 of size 208
+This allocation matches pattern DequeBlock.
+
+7 allocations use 0xab8 (2,744) bytes.

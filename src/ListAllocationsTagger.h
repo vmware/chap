@@ -1,8 +1,9 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -22,15 +23,21 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename TagHolder::TagIndex TagIndex;
-  ListAllocationsTagger(Graph& graph, TagHolder& tagHolder)
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
+  ListAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                        EdgePredicate& edgeIsTainted,
+                        EdgePredicate& edgeIsFavored)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
         _nodeReader(_addressMap),
-        _nodeTagIndex(_tagHolder.RegisterTag("%ListNode")),
-        _unknownHeadNodeTagIndex(_tagHolder.RegisterTag("%ListNode")) {}
+        _nodeTagIndex(_tagHolder.RegisterTag("%ListNode", true, true)),
+        _unknownHeadNodeTagIndex(
+            _tagHolder.RegisterTag("%ListNode", false, false)) {}
 
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,
@@ -50,6 +57,8 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -72,7 +81,8 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
       case Tagger::QUICK_INITIAL_CHECK:
         if (_tagHolder.IsStronglyTagged(index)) {
           /*
-           * This was already strongly tagged, generally as a result of following
+           * This was already strongly tagged, generally as a result of
+           * following
            * outgoing references from an allocation already being tagged.
            * From this we conclude that the given allocation is not a list node
            * or that it was already tagged as such.
@@ -191,26 +201,38 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
     TagNodesWithKnownHead(index, listHead);
   }
 
-  void TagAllExceptStartNode(AllocationIndex index, TagIndex tagIndex) {
+  void TagAllExceptStartNode(AllocationIndex index, TagIndex tagIndex,
+                             bool markFavoredReferences) {
     AllocationIndex sourceIndex = index;
     for (Offset node = _next; node != _address;
          node = _nodeReader.ReadOffset(node, 0xbad)) {
       AllocationIndex nodeIndex =
           _graph.TargetAllocationIndex(sourceIndex, node);
       _tagHolder.TagAllocation(nodeIndex, tagIndex);
+      if (markFavoredReferences) {
+        _edgeIsFavored.Set(sourceIndex, nodeIndex, true);
+      }
       sourceIndex = nodeIndex;
     }
   }
 
   void TagAllAsHavingUnknownHead(AllocationIndex index) {
     _tagHolder.TagAllocation(index, _unknownHeadNodeTagIndex);
-    TagAllExceptStartNode(index, _unknownHeadNodeTagIndex);
+    TagAllExceptStartNode(index, _unknownHeadNodeTagIndex, false);
   }
 
   void TagNodesWithKnownHead(AllocationIndex index, Offset listHead) {
     if (listHead == _address) {
-      TagAllExceptStartNode(index, _nodeTagIndex);
+      /*
+       * The allocation corresponding to the index contains the header
+       * of the list.
+       */
+      TagAllExceptStartNode(index, _nodeTagIndex, true);
     } else {
+      /*
+       * The allocation corresponding to the index contains a node
+       * in the list.
+       */
       _tagHolder.TagAllocation(index, _nodeTagIndex);
       Offset node = _next;
       Offset sourceIndex = index;
@@ -218,17 +240,28 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
         AllocationIndex nodeIndex =
             _graph.TargetAllocationIndex(sourceIndex, node);
         _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
+        _edgeIsFavored.Set(sourceIndex, nodeIndex, true);
         sourceIndex = nodeIndex;
         node = _nodeReader.ReadOffset(node, 0xbad);
       }
       node = _prev;
-      sourceIndex = index;
+      Offset targetIndex = index;
+      /*
+       * Walk back references to reach the list header, but
+       * favor the forward references.
+       */
       while (node != listHead) {
         AllocationIndex nodeIndex =
-            _graph.TargetAllocationIndex(sourceIndex, node);
+            _graph.SourceAllocationIndex(targetIndex, node);
         _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
-        sourceIndex = nodeIndex;
+        _edgeIsFavored.Set(nodeIndex, targetIndex, true);
+        targetIndex = nodeIndex;
         node = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
+      }
+      AllocationIndex listHeadIndex =
+          _graph.SourceAllocationIndex(targetIndex, listHead);
+      if (listHeadIndex != _numAllocations) {
+        _edgeIsFavored.Set(listHeadIndex, targetIndex, true);
       }
     }
   }

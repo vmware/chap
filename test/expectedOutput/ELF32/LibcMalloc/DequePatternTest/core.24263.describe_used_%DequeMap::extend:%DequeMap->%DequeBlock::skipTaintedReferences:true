@@ -1,0 +1,793 @@
+Anchored allocation at 8051008 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8051014, 0x8051018) is considered live.
+
+Anchored allocation at 8051030 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8051238 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8051244, 0x8051248) is considered live.
+
+Anchored allocation at 8051260 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8051468 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8051474, 0x8051478) is considered live.
+
+Anchored allocation at 8051490 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8051698 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80516a4, 0x80516a8) is considered live.
+
+Anchored allocation at 80516c0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80518c8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80518d4, 0x80518d8) is considered live.
+
+Anchored allocation at 80518f0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8051af8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8051b04, 0x8051b08) is considered live.
+
+Anchored allocation at 8051b20 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8051d28 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8051d34, 0x8051d38) is considered live.
+
+Anchored allocation at 8051d50 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8051f58 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8051f64, 0x8051f68) is considered live.
+
+Anchored allocation at 8051f80 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8052188 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8052194, 0x8052198) is considered live.
+
+Anchored allocation at 80521b0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80523b8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80523c4, 0x80523c8) is considered live.
+
+Anchored allocation at 80523e0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80525e8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80525f4, 0x80525f8) is considered live.
+
+Anchored allocation at 8052610 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8052818 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8052824, 0x8052828) is considered live.
+
+Anchored allocation at 8052840 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8052a48 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8052a54, 0x8052a58) is considered live.
+
+Anchored allocation at 8052a70 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8052c78 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8052c84, 0x8052c88) is considered live.
+
+Anchored allocation at 8052ca0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8052ea8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8052eb4, 0x8052eb8) is considered live.
+
+Anchored allocation at 8052ed0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80530d8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80530e8, 0x80530ec) is considered live.
+
+Anchored allocation at 8053768 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053308 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053318, 0x805331c) is considered live.
+
+Anchored allocation at 8053100 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053538 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053548, 0x805354c) is considered live.
+
+Anchored allocation at 8053330 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053560 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805356c, 0x8053570) is considered live.
+
+Anchored allocation at 8053970 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053588 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053594, 0x8053598) is considered live.
+
+Anchored allocation at 8053b78 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80535b0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80535bc, 0x80535c0) is considered live.
+
+Anchored allocation at 8053d80 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80535d8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80535e4, 0x80535e8) is considered live.
+
+Anchored allocation at 8053f88 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053600 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805360c, 0x8053610) is considered live.
+
+Anchored allocation at 8054190 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053628 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053634, 0x805363c) is considered live.
+
+Anchored allocation at 8054398 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8054bb8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053650 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053664, 0x805366c) is considered live.
+
+Anchored allocation at 8054fc8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80551d0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053678 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053690, 0x8053694) is considered live.
+
+Anchored allocation at 80553d8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80536a0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80536b8, 0x80536bc) is considered live.
+
+Anchored allocation at 80547a8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80536c8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80536d4, 0x80536d8) is considered live.
+
+Anchored allocation at 80545a0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80536f0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80536fc, 0x8053700) is considered live.
+
+Anchored allocation at 8054dc0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053718 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8053724, 0x8053728) is considered live.
+
+Anchored allocation at 80549b0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8053740 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805374c, 0x8053750) is considered live.
+
+Anchored allocation at 80555e0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80557e8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80557f4, 0x80557f8) is considered live.
+
+Anchored allocation at 8055810 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055a18 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055a24, 0x8055a2c) is considered live.
+
+Anchored allocation at 8055a40 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80562d8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055c48 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055c5c, 0x8055c64) is considered live.
+
+Anchored allocation at 80566e8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80568f0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055e78 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055e90, 0x8055e94) is considered live.
+
+Anchored allocation at 8056af8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055ea0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055eac, 0x8055eb0) is considered live.
+
+Anchored allocation at 8055c70 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055ec8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055ed4, 0x8055ed8) is considered live.
+
+Anchored allocation at 80560d0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055ef0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055efc, 0x8055f00) is considered live.
+
+Anchored allocation at 8056d00 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055f18 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055f24, 0x8055f28) is considered live.
+
+Anchored allocation at 8056f08 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055f40 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055f4c, 0x8055f50) is considered live.
+
+Anchored allocation at 8057110 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055f68 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055f74, 0x8055f78) is considered live.
+
+Anchored allocation at 8057318 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055f90 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055f9c, 0x8055fa0) is considered live.
+
+Anchored allocation at 8057520 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055fb8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055fc4, 0x8055fc8) is considered live.
+
+Anchored allocation at 8057728 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8055fe0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8055fec, 0x8055ff0) is considered live.
+
+Anchored allocation at 8057930 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8056008 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8056014, 0x8056018) is considered live.
+
+Anchored allocation at 8057b38 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8056030 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805603c, 0x8056040) is considered live.
+
+Anchored allocation at 8057d40 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8056058 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8056064, 0x8056068) is considered live.
+
+Anchored allocation at 8057f48 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8056080 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805608c, 0x8056090) is considered live.
+
+Anchored allocation at 8058150 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80560a8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80560c0, 0x80560c4) is considered live.
+
+Anchored allocation at 80564e0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058358 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058364, 0x8058368) is considered live.
+
+Anchored allocation at 8058380 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058588 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058594, 0x8058598) is considered live.
+
+Anchored allocation at 80585b0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80587b8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80587c8, 0x80587cc) is considered live.
+
+Anchored allocation at 8058e48 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80589e8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80589f8, 0x80589fc) is considered live.
+
+Anchored allocation at 80587e0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058c18 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058c28, 0x8058c2c) is considered live.
+
+Anchored allocation at 8058a10 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058c40 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058c4c, 0x8058c50) is considered live.
+
+Anchored allocation at 8059050 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058c68 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058c74, 0x8058c78) is considered live.
+
+Anchored allocation at 8059258 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058c90 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058c9c, 0x8058ca0) is considered live.
+
+Anchored allocation at 8059460 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058cb8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058cc4, 0x8058cc8) is considered live.
+
+Anchored allocation at 8059668 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058ce0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058cec, 0x8058cf0) is considered live.
+
+Anchored allocation at 8059870 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058d08 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058d14, 0x8058d1c) is considered live.
+
+Anchored allocation at 8059a78 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805a298 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058d30 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058d44, 0x8058d4c) is considered live.
+
+Anchored allocation at 805a6a8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805a8b0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058d58 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058d70, 0x8058d74) is considered live.
+
+Anchored allocation at 805aab8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058d80 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058d98, 0x8058d9c) is considered live.
+
+Anchored allocation at 8059e88 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058da8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058db4, 0x8058db8) is considered live.
+
+Anchored allocation at 8059c80 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058dd0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058ddc, 0x8058de0) is considered live.
+
+Anchored allocation at 805a4a0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058df8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058e04, 0x8058e08) is considered live.
+
+Anchored allocation at 805a090 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8058e20 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8058e2c, 0x8058e30) is considered live.
+
+Anchored allocation at 805acc0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805aec8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805aed4, 0x805aed8) is considered live.
+
+Anchored allocation at 805aef0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b0f8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b104, 0x805b10c) is considered live.
+
+Anchored allocation at 805b120 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b9b8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b328 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b33c, 0x805b344) is considered live.
+
+Anchored allocation at 805bdc8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805bfd0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b558 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b570, 0x805b574) is considered live.
+
+Anchored allocation at 805c1d8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b580 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b58c, 0x805b590) is considered live.
+
+Anchored allocation at 805b350 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b5a8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b5b4, 0x805b5b8) is considered live.
+
+Anchored allocation at 805b7b0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b5d0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b5dc, 0x805b5e0) is considered live.
+
+Anchored allocation at 805c988 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b5f8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b604, 0x805b608) is considered live.
+
+Anchored allocation at 805cb90 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b620 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b62c, 0x805b630) is considered live.
+
+Anchored allocation at 805cd98 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b648 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b654, 0x805b658) is considered live.
+
+Anchored allocation at 805cfa0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b670 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b67c, 0x805b680) is considered live.
+
+Anchored allocation at 805d1a8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b698 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b6a4, 0x805b6a8) is considered live.
+
+Anchored allocation at 805d3b0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b6c0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b6cc, 0x805b6d0) is considered live.
+
+Anchored allocation at 805d5b8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b6e8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b6f4, 0x805b6f8) is considered live.
+
+Anchored allocation at 805d7c0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b710 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b71c, 0x805b720) is considered live.
+
+Anchored allocation at 805d9c8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b738 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b744, 0x805b748) is considered live.
+
+Anchored allocation at 805dbd0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b760 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b76c, 0x805b770) is considered live.
+
+Anchored allocation at 805ddd8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805b788 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805b7a0, 0x805b7a4) is considered live.
+
+Anchored allocation at 805bbc0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805dfe0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805dfec, 0x805dff0) is considered live.
+
+Anchored allocation at 805e008 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e210 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e21c, 0x805e220) is considered live.
+
+Anchored allocation at 805e238 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e440 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e450, 0x805e454) is considered live.
+
+Anchored allocation at 805ead0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e670 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e680, 0x805e684) is considered live.
+
+Anchored allocation at 805e468 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e8a0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e8b0, 0x805e8b4) is considered live.
+
+Anchored allocation at 805e698 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e8c8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e8d4, 0x805e8d8) is considered live.
+
+Anchored allocation at 805ecd8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e8f0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e8fc, 0x805e900) is considered live.
+
+Anchored allocation at 805eee0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e918 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e924, 0x805e928) is considered live.
+
+Anchored allocation at 805f0e8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e940 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e94c, 0x805e950) is considered live.
+
+Anchored allocation at 805f2f0 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e968 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e974, 0x805e978) is considered live.
+
+Anchored allocation at 805f4f8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e990 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e99c, 0x805e9a4) is considered live.
+
+Anchored allocation at 805f700 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805ff20 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e9b8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e9cc, 0x805e9d4) is considered live.
+
+Anchored allocation at 8060330 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8060538 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805e9e0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805e9f8, 0x805e9fc) is considered live.
+
+Anchored allocation at 8060740 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805ea08 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805ea20, 0x805ea24) is considered live.
+
+Anchored allocation at 805fb10 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805ea30 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805ea3c, 0x805ea40) is considered live.
+
+Anchored allocation at 805f908 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805ea58 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805ea64, 0x805ea68) is considered live.
+
+Anchored allocation at 8060128 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805ea80 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805ea8c, 0x805ea90) is considered live.
+
+Anchored allocation at 805fd18 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 805eaa8 of size 24
+This allocation matches pattern DequeMap.
+Only [0x805eab4, 0x805eab8) is considered live.
+
+Anchored allocation at 8060948 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8060b50 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8060b5c, 0x8060b60) is considered live.
+
+Anchored allocation at 8060b78 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8060d80 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8060d8c, 0x8060d94) is considered live.
+
+Anchored allocation at 8060da8 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8061640 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8060fb0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8060fc4, 0x8060fcc) is considered live.
+
+Anchored allocation at 8061a50 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8061c58 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 80611e0 of size 24
+This allocation matches pattern DequeMap.
+Only [0x80611f8, 0x80611fc) is considered live.
+
+Anchored allocation at 8061e60 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8061410 of size 24
+This allocation matches pattern DequeMap.
+Only [0x8061428, 0x806142c) is considered live.
+
+Anchored allocation at 8061848 of size 204
+This allocation matches pattern DequeBlock.
+
+228 allocations use 0x10110 (65,808) bytes.

@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -25,10 +25,12 @@ class TaggerRunner {
  public:
   typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Directory<Offset>::Allocation Allocation;
+  typedef typename Graph<Offset>::EdgeIndex EdgeIndex;
   typedef typename Tagger<Offset>::Phase Phase;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
 
   TaggerRunner(const Graph<Offset>& graph, const TagHolder<Offset>& tagHolder,
+               const EdgePredicate<Offset>& edgeIsTainted,
                const SignatureDirectory<Offset>& signatureDirectory)
       : _addressMap(graph.GetAddressMap()),
         _graph(graph),
@@ -36,6 +38,7 @@ class TaggerRunner {
         _contiguousImage(_addressMap, _directory),
         _numAllocations(_directory.NumAllocations()),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
         _signatureDirectory(signatureDirectory) {}
 
   ~TaggerRunner() {
@@ -51,6 +54,7 @@ class TaggerRunner {
     _finishedWithPass.resize(_numTaggers, false);
     TagFromAllocations();
     TagFromReferenced();
+    MarkFavoredReferences();
   }
 
  private:
@@ -60,6 +64,7 @@ class TaggerRunner {
   ContiguousImage<Offset> _contiguousImage;
   const AllocationIndex _numAllocations;
   const TagHolder<Offset>& _tagHolder;
+  const EdgePredicate<Offset>& _edgeIsTainted;
   const SignatureDirectory<Offset>& _signatureDirectory;
   std::vector<Tagger<Offset>*> _taggers;
   size_t _numTaggers;
@@ -197,6 +202,55 @@ class TaggerRunner {
       ++resolvedIndex;
     }
     return false;
+  }
+
+  void MarkFavoredReferences() {
+    Reader reader(_addressMap);
+    std::vector<EdgeIndex> outgoingEdgeIndices;
+    EdgeIndex totalEdges = _graph.TotalEdges();
+    outgoingEdgeIndices.reserve(_directory.MaxAllocationSize());
+    for (AllocationIndex i = 0; i < _numAllocations; i++) {
+      const Allocation* allocation = _directory.AllocationAt(i);
+      if (!allocation->IsUsed()) {
+        continue;
+      }
+      bool hasMarkableOutgoing = false;
+      EdgeIndex nextOutgoing;
+      EdgeIndex pastOutgoing;
+
+      for (_graph.GetOutgoing(i, nextOutgoing, pastOutgoing);
+           !hasMarkableOutgoing && (nextOutgoing < pastOutgoing);
+           ++nextOutgoing) {
+        if (!_edgeIsTainted.ForOutgoing(nextOutgoing) &&
+            _tagHolder.SupportsFavoredReferences(
+                _graph.GetTargetForOutgoing(nextOutgoing))) {
+          hasMarkableOutgoing = true;
+          break;
+        }
+      }
+      if (!hasMarkableOutgoing) {
+        continue;
+      }
+      _contiguousImage.SetIndex(i);
+      outgoingEdgeIndices.clear();
+      const Offset* offsetLimit = _contiguousImage.OffsetLimit();
+      for (const Offset* check = _contiguousImage.FirstOffset();
+           check < offsetLimit; check++) {
+        EdgeIndex edgeIndex = _graph.TargetEdgeIndex(i, *check);
+        if (edgeIndex != totalEdges) {
+          if (_edgeIsTainted.ForOutgoing(edgeIndex) ||
+              !_tagHolder.SupportsFavoredReferences(
+                  _graph.GetTargetForOutgoing(edgeIndex))) {
+            edgeIndex = totalEdges;
+          }
+        }
+        outgoingEdgeIndices.push_back(edgeIndex);
+      }
+      for (auto tagger : _taggers) {
+        tagger->MarkFavoredReferences(_contiguousImage, reader, i, *allocation,
+                                      &(outgoingEdgeIndices[0]));
+      }
+    }
   }
 };
 }  // namespace Allocations

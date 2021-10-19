@@ -8,11 +8,13 @@
 #include "../Commands/Runner.h"
 #include "../ProcessImage.h"
 #include "Directory.h"
+#include "EdgePredicate.h"
 #include "Graph.h"
 #include "PatternDescriberRegistry.h"
 #include "Set.h"
 #include "SignatureChecker.h"
 #include "SignatureDirectory.h"
+#include "TagHolder.h"
 
 /*
  * This keeps mappings from signature to name and name to set of signatures.
@@ -38,15 +40,30 @@ class ExtendedVisitor {
         _graph(0),
         _directory(processImage.GetAllocationDirectory()),
         _addressMap(processImage.GetVirtualAddressMap()),
+        _tagHolder(processImage.GetAllocationTagHolder()),
+        _edgeIsTainted(processImage.GetEdgeIsTainted()),
+        _edgeIsFavored(processImage.GetEdgeIsFavored()),
         _numAllocations(_directory.NumAllocations()),
         _visited(visited),
-        _commentExtensions(false) {
+        _commentExtensions(false),
+        _skipTaintedReferences(false),
+        _skipUnfavoredReferences(false) {
     Commands::Error& error = context.GetError();
     size_t numExtensionArguments = context.GetNumArguments("extend");
     if (numExtensionArguments == 0) {
       return;
     }
     if (!context.ParseBooleanSwitch("commentExtensions", _commentExtensions)) {
+      _hasErrors = true;
+    }
+    if (_edgeIsTainted != nullptr &&
+        !context.ParseBooleanSwitch("skipTaintedReferences",
+                                    _skipTaintedReferences)) {
+      _hasErrors = true;
+    }
+    if (_edgeIsFavored != nullptr &&
+        !context.ParseBooleanSwitch("skipUnfavoredReferences",
+                                    _skipUnfavoredReferences)) {
       _hasErrors = true;
     }
 
@@ -339,6 +356,7 @@ class ExtendedVisitor {
               continue;
             }
             Offset target = *((Offset*)(image));
+
             candidateIndex = _directory.AllocationIndexOf(target);
             if (candidateIndex == _numAllocations) {
               continue;
@@ -441,6 +459,20 @@ class ExtendedVisitor {
         }
       }
 
+      if (_skipTaintedReferences &&
+          (rule._referenceIsOutgoing
+               ? _edgeIsTainted->For(memberIndex, candidateIndex)
+               : _edgeIsTainted->For(candidateIndex, memberIndex))) {
+        continue;
+      }
+      if (_skipUnfavoredReferences &&
+          (rule._referenceIsOutgoing
+               ? (_tagHolder->SupportsFavoredReferences(candidateIndex) &&
+                  !_edgeIsFavored->For(memberIndex, candidateIndex))
+               : (_tagHolder->SupportsFavoredReferences(memberIndex) &&
+                  !_edgeIsFavored->For(candidateIndex, memberIndex)))) {
+        continue;
+      }
       if (_commentExtensions) {
         _context.GetOutput() << std::hex;
         if (rule._referenceIsOutgoing) {
@@ -589,11 +621,16 @@ class ExtendedVisitor {
   const Graph<Offset>* _graph;
   const Directory<Offset>& _directory;
   const VirtualAddressMap<Offset>& _addressMap;
+  const TagHolder<Offset>* _tagHolder;
+  const EdgePredicate<Offset>* _edgeIsTainted;
+  const EdgePredicate<Offset>* _edgeIsFavored;
   AllocationIndex _numAllocations;
   Set<Offset>& _visited;
   std::vector<Rule> _rules;
   std::vector<size_t> _stateToBase;
   bool _commentExtensions;
+  bool _skipTaintedReferences;
+  bool _skipUnfavoredReferences;
   std::vector<std::string> _stateLabels;
 };
 }  // namespace Allocations

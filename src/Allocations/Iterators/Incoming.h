@@ -1,10 +1,11 @@
-// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
+#include "../EdgePredicate.h"
 #include "../Graph.h"
 #include "../SetCache.h"
 namespace chap {
@@ -20,34 +21,61 @@ class Incoming {
                            const ProcessImage<Offset>& processImage,
                            const Directory<Offset>& directory,
                            const SetCache<Offset>&) {
-      Incoming* iterator = 0;
       AllocationIndex numAllocations = directory.NumAllocations();
-      size_t numPositionals = context.GetNumPositionals();
       Commands::Error& error = context.GetError();
+
+      size_t numPositionals = context.GetNumPositionals();
       if (numPositionals < 3) {
         error << "No address was specified for the target allocation.\n";
-      } else {
-        Offset address;
-        if (!context.ParsePositional(2, address)) {
-          error << context.Positional(2) << " is not a valid address.\n";
-        } else {
-          AllocationIndex index = directory.AllocationIndexOf(address);
-          if (index == numAllocations) {
-            error << context.Positional(2)
-                  << " is not part of an allocation.\n";
-          } else {
-            const Graph<Offset>* allocationGraph =
-                processImage.GetAllocationGraph();
-            if (allocationGraph != 0) {
-              iterator = new Incoming(directory, *allocationGraph, index,
-                                      numAllocations);
-            }
-          }
-        }
+        return nullptr;
       }
-      return iterator;
+
+      Offset address;
+      if (!context.ParsePositional(2, address)) {
+        error << context.Positional(2) << " is not a valid address.\n";
+        return nullptr;
+      }
+
+      AllocationIndex index = directory.AllocationIndexOf(address);
+      if (index == numAllocations) {
+        error << context.Positional(2) << " is not part of an allocation.\n";
+        return nullptr;
+      }
+
+      const Graph<Offset>* allocationGraph = processImage.GetAllocationGraph();
+      if (allocationGraph == 0) {
+        error << "Allocation graph is not available.\n";
+        return nullptr;
+      }
+
+      bool skipTaintedReferences = false;
+      if (!context.ParseBooleanSwitch("skipTaintedReferences",
+                                      skipTaintedReferences)) {
+        return nullptr;
+      }
+
+      bool skipUnfavoredReferences = false;
+      if (!context.ParseBooleanSwitch("skipUnfavoredReferences",
+                                      skipUnfavoredReferences)) {
+        return nullptr;
+      }
+
+      /*
+       * If the target allocation does not support favored references, we can
+       * just treat skipUnreferences as false because the target cannot
+       * possible have any unfavored references.
+       */
+      if (!processImage.GetAllocationTagHolder()->SupportsFavoredReferences(
+              index)) {
+        skipUnfavoredReferences = false;
+      }
+
+      return new Incoming(
+          directory, *allocationGraph, index, numAllocations,
+          processImage.GetEdgeIsTainted(), skipTaintedReferences,
+          processImage.GetEdgeIsFavored(), skipUnfavoredReferences);
     }
-    // TODO: allow adding taints
+
     const std::string& GetSetName() const { return _setName; }
     size_t GetNumArguments() { return 1; }
     const std::vector<std::string>& GetTaints() const { return _taints; }
@@ -65,23 +93,44 @@ class Incoming {
   };
   typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Directory<Offset>::Allocation Allocation;
+  typedef typename Graph<Offset>::EdgeIndex EdgeIndex;
 
   Incoming(const Directory<Offset>& directory, const Graph<Offset>& graph,
-           AllocationIndex index, AllocationIndex numAllocations)
+           AllocationIndex index, AllocationIndex numAllocations,
+           const EdgePredicate<Offset>* edgeIsTainted,
+           bool skipTaintedReferences,
+           const EdgePredicate<Offset>* edgeIsFavored,
+           bool skipUnfavoredReferences)
       : _directory(directory),
         _graph(graph),
         _index(index),
-        _numAllocations(numAllocations) {
-    _graph.GetIncoming(index, &_pNextIncoming, &_pPastIncoming);
+        _numAllocations(numAllocations),
+        _edgeIsTainted(*edgeIsTainted),
+        _skipTaintedReferences(skipTaintedReferences),
+        _edgeIsFavored(*edgeIsFavored),
+        _skipUnfavoredReferences(skipUnfavoredReferences) {
+    _graph.GetIncoming(index, _nextIncoming, _pastIncoming);
   }
   AllocationIndex Next() {
-    while (_pNextIncoming != _pPastIncoming) {
-      AllocationIndex index = *(_pNextIncoming++);
+    for (; _nextIncoming != _pastIncoming; _nextIncoming++) {
+      if (_skipTaintedReferences && _edgeIsTainted.ForIncoming(_nextIncoming)) {
+        continue;
+      }
+      /*
+       * _skipUnfavoredReferences will be clear if the target has been
+       * determined not to support favored references.
+       */
+      if (_skipUnfavoredReferences &&
+          !_edgeIsFavored.ForIncoming(_nextIncoming)) {
+        continue;
+      }
+      AllocationIndex index = _graph.GetSourceForIncoming(_nextIncoming);
       const Allocation* allocation = _directory.AllocationAt(index);
-      if (allocation == ((Allocation*)(0))) {
+      if (allocation == nullptr) {
         abort();
       }
       if (allocation->IsUsed()) {
+        _nextIncoming++;
         return index;
       }
     }
@@ -93,8 +142,12 @@ class Incoming {
   const Graph<Offset>& _graph;
   AllocationIndex _index;
   AllocationIndex _numAllocations;
-  const AllocationIndex* _pNextIncoming;
-  const AllocationIndex* _pPastIncoming;
+  const EdgePredicate<Offset>& _edgeIsTainted;
+  bool _skipTaintedReferences;
+  const EdgePredicate<Offset>& _edgeIsFavored;
+  bool _skipUnfavoredReferences;
+  EdgeIndex _nextIncoming;
+  EdgeIndex _pastIncoming;
 };
 }  // namespace Iterators
 }  // namespace Allocations

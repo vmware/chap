@@ -1,0 +1,7 @@
+Anchored allocation at 8061a50 of size 204
+This allocation matches pattern DequeBlock.
+
+Anchored allocation at 8061c58 of size 204
+This allocation matches pattern DequeBlock.
+
+2 allocations use 0x408 (1,032) bytes.

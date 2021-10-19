@@ -1,0 +1,5 @@
+Anchored allocation at 61e1a0 of size 98
+This allocation matches pattern DequeMap.
+Only [0x61e200, 0x61e208) is considered live.
+
+1 allocations use 0x98 (152) bytes.

@@ -1,8 +1,9 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+#include "Allocations/EdgePredicate.h"
 #include "Allocations/Graph.h"
 #include "Allocations/TagHolder.h"
 #include "Allocations/Tagger.h"
@@ -21,18 +22,23 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Directory::Allocation Allocation;
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename Allocations::TagHolder<Offset> TagHolder;
+  typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
-  DequeAllocationsTagger(Graph& graph, TagHolder& tagHolder)
+  DequeAllocationsTagger(Graph& graph, TagHolder& tagHolder,
+                         EdgePredicate& edgeIsTainted,
+                         EdgePredicate& edgeIsFavored)
       : _graph(graph),
         _tagHolder(tagHolder),
+        _edgeIsTainted(edgeIsTainted),
+        _edgeIsFavored(edgeIsFavored),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
         _mapReader(_addressMap),
         _endIterator(_addressMap.end()),
         _anchorIterator(_addressMap.end()),
-        _mapTagIndex(_tagHolder.RegisterTag("%DequeMap")),
-        _blockTagIndex(_tagHolder.RegisterTag("%DequeBlock")) {}
+        _mapTagIndex(_tagHolder.RegisterTag("%DequeMap", true, true)),
+        _blockTagIndex(_tagHolder.RegisterTag("%DequeBlock", true, true)) {}
 
   bool TagFromAllocation(const ContiguousImage& /* contiguousImage */,
                          Reader& reader, AllocationIndex index, Phase phase,
@@ -50,10 +56,10 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
   }
 
   bool TagFromReferenced(const ContiguousImage& contiguousImage,
-                         Reader& /* reader */, AllocationIndex /* index */,
+                         Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
                          const AllocationIndex* unresolvedOutgoing) {
-    return TagFromContainedDeques(contiguousImage, phase, allocation,
+    return TagFromContainedDeques(index, contiguousImage, phase, allocation,
                                   unresolvedOutgoing);
   }
 
@@ -63,6 +69,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
  private:
   Graph& _graph;
   TagHolder& _tagHolder;
+  EdgePredicate& _edgeIsTainted;
+  EdgePredicate& _edgeIsFavored;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -156,7 +164,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
            * that it could be the start of a deque, in which case the
            * anchor point allocation would be a map.
            */
-          if (TagAllocationsIfDeque(asOffsets, reader, index, allocation)) {
+          if (TagAllocationsIfDeque(_numAllocations, asOffsets, reader, index,
+                                    allocation)) {
             return true;
           }
         }
@@ -205,14 +214,14 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
           if (anchor + 7 * sizeof(Offset) > limit) {
             continue;
           }
-          if (TagAllocationsIfDeque(asOffsets - 3, _mapReader, mapIndex,
-                                    *mapAllocation)) {
+          if (TagAllocationsIfDeque(_numAllocations, asOffsets - 3, _mapReader,
+                                    mapIndex, *mapAllocation)) {
             return true;
           }
         } else if (anchor - 7 * sizeof(Offset) >= base) {
           if (asOffsets[-7] == bucketsAddress) {
-            if (TagAllocationsIfDeque(asOffsets - 7, _mapReader, mapIndex,
-                                      *mapAllocation)) {
+            if (TagAllocationsIfDeque(_numAllocations, asOffsets - 7,
+                                      _mapReader, mapIndex, *mapAllocation)) {
               return true;
             }
           }
@@ -222,7 +231,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  bool TagAllocationsIfDeque(const Offset* dequeImage, Reader& mapReader,
+  bool TagAllocationsIfDeque(AllocationIndex dequeHolderIndex,
+                             const Offset* dequeImage, Reader& mapReader,
                              AllocationIndex mapIndex,
                              const Allocation& mapAllocation) {
     Offset mapAddress = dequeImage[0];
@@ -326,12 +336,53 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         return false;
       }
     }
+    typename VirtualAddressMap<Offset>::Reader blockReader(_addressMap);
     _tagHolder.TagAllocation(mapIndex, _mapTagIndex);
+    _edgeIsTainted.SetAllOutgoing(mapIndex, true);
+
+    /*
+     * The only incoming reference to a deque map that is considered favored
+     * is from the allocation, if any, that holds the deque.
+     */
+
+    if (dequeHolderIndex != _numAllocations) {
+      _edgeIsFavored.Set(dequeHolderIndex, mapIndex, true);
+    }
+    Offset blockSize = startLast - startFirst;
     for (Offset mNode = startMNode; mNode <= finishMNode;
          mNode += sizeof(Offset)) {
-      _tagHolder.TagAllocation(_graph.TargetAllocationIndex(
-                                   mapIndex, mapReader.ReadOffset(mNode, 0)),
-                               _blockTagIndex);
+      Offset blockAddr = mapReader.ReadOffset(mNode, 0);
+      AllocationIndex blockIndex =
+          _graph.TargetAllocationIndex(mapIndex, blockAddr);
+      _edgeIsTainted.Set(mapIndex, blockIndex, false);
+      _tagHolder.TagAllocation(blockIndex, _blockTagIndex);
+
+      /*
+       * The live reference from the deque map to the deque block
+       * is considered favored.
+       */
+
+      _edgeIsFavored.Set(mapIndex, blockIndex, true);
+
+      /*
+       * Outgoing references from each deque block are considered tainted
+       * unless they are in the live part of the deque block.
+       */
+
+      _edgeIsTainted.SetAllOutgoing(blockIndex, true);
+      Offset liveStart = (mNode == startMNode) ? startCur : blockAddr;
+      Offset liveLimit =
+          ((mNode == finishMNode) ? finishCur : (blockAddr + blockSize)) &
+          ~(sizeof(Offset) - 1);
+      for (Offset liveAddr = liveStart; liveAddr < liveLimit;
+           liveAddr += sizeof(Offset)) {
+        Offset targetAddr = blockReader.ReadOffset(liveAddr, 0);
+        AllocationIndex targetIndex =
+            _graph.TargetAllocationIndex(blockIndex, targetAddr);
+        if (targetIndex != _numAllocations) {
+          _edgeIsTainted.Set(blockIndex, targetIndex, false);
+        }
+      }
     }
     return true;
   }
@@ -340,7 +391,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
    * Check whether the specified allocation contains any deques.  If so,
    * tag the associated deque maps and any associated deque blocks.
    */
-  bool TagFromContainedDeques(const ContiguousImage& contiguousImage,
+  bool TagFromContainedDeques(AllocationIndex index,
+                              const ContiguousImage& contiguousImage,
                               Phase phase, const Allocation& allocation,
                               const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
@@ -352,7 +404,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         break;
       case Tagger::SLOW_CHECK:
         // May be expensive, match must be solid
-        CheckEmbeddedDeques(contiguousImage, unresolvedOutgoing);
+        CheckEmbeddedDeques(index, contiguousImage, unresolvedOutgoing);
         break;
       case Tagger::WEAK_CHECK:
         // May be expensive, weak results OK
@@ -363,7 +415,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 
-  void CheckEmbeddedDeques(const ContiguousImage& contiguousImage,
+  void CheckEmbeddedDeques(AllocationIndex index,
+                           const ContiguousImage& contiguousImage,
                            const AllocationIndex* unresolvedOutgoing) {
     Reader mapReader(_addressMap);
 
@@ -380,7 +433,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
         continue;
       }
 
-      if (TagAllocationsIfDeque(check, mapReader, mapIndex,
+      if (TagAllocationsIfDeque(index, check, mapReader, mapIndex,
                                 *(_directory.AllocationAt(mapIndex)))) {
         check += 9;
       }
