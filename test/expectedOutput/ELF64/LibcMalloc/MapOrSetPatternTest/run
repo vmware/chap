@@ -17,4 +17,8 @@ explain used %MapOrSetNode
 list used /minoutgoing %MapOrSetNode=1
 show used /minoutgoing %MapOrSetNode=1 \
  /extend ->%MapOrSetNode=>StopHere
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 \
+ /extend %MapOrSetNode->%MapOrSetNode \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
 DONE

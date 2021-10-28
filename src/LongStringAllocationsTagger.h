@@ -25,6 +25,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
+  static constexpr int NUM_OFFSETS_IN_HEADER = 4;
   LongStringAllocationsTagger(Graph& graph, TagHolder& tagHolder,
                               EdgePredicate& edgeIsTainted,
                               EdgePredicate& edgeIsFavored,
@@ -253,7 +254,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
                                const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
-        return allocation.Size() < 4 * sizeof(Offset);
+        return allocation.Size() < NUM_OFFSETS_IN_HEADER * sizeof(Offset);
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
@@ -337,7 +338,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _tagHolder.TagAllocation(charsIndex, _tagIndex);
         _edgeIsTainted.SetAllOutgoing(charsIndex, true);
         _edgeIsFavored.Set(index, charsIndex, true);
-        check += 3;
+        check += (NUM_OFFSETS_IN_HEADER - 1);
       }
     }
   }

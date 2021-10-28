@@ -24,6 +24,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
+  static constexpr int NUM_OFFSETS_IN_HEADER = 10;
   DequeAllocationsTagger(Graph& graph, TagHolder& tagHolder,
                          EdgePredicate& edgeIsTainted,
                          EdgePredicate& edgeIsFavored)
@@ -158,7 +159,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
 
-        if (anchor + 10 * sizeof(Offset) <= limit) {
+        if (anchor + NUM_OFFSETS_IN_HEADER * sizeof(Offset) <= limit) {
           /*
            * We have enough contiguous space from the start of the anchor
            * that it could be the start of a deque, in which case the
@@ -397,7 +398,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
                               const AllocationIndex* unresolvedOutgoing) {
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
-        return allocation.Size() < 10 * sizeof(Offset);
+        return allocation.Size() < NUM_OFFSETS_IN_HEADER * sizeof(Offset);
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
@@ -420,7 +421,8 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
                            const AllocationIndex* unresolvedOutgoing) {
     Reader mapReader(_addressMap);
 
-    const Offset* offsetLimit = contiguousImage.OffsetLimit() - 9;
+    const Offset* offsetLimit =
+        contiguousImage.OffsetLimit() - (NUM_OFFSETS_IN_HEADER - 1);
     const Offset* firstOffset = contiguousImage.FirstOffset();
 
     for (const Offset* check = firstOffset; check < offsetLimit; check++) {
@@ -435,7 +437,7 @@ class DequeAllocationsTagger : public Allocations::Tagger<Offset> {
 
       if (TagAllocationsIfDeque(index, check, mapReader, mapIndex,
                                 *(_directory.AllocationAt(mapIndex)))) {
-        check += 9;
+        check += (NUM_OFFSETS_IN_HEADER - 1);
       }
     }
   }

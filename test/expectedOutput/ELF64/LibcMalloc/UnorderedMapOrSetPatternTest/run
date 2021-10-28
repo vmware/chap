@@ -24,4 +24,8 @@ show used /minoutgoing %UnorderedMapOrSetNode=1 \
  /extend ->%UnorderedMapOrSetNode=>StopHere
 show used /minoutgoing %UnorderedMapOrSetBuckets=1 \
  /extend ->%UnorderedMapOrSetBuckets=>StopHere
+describe used %UnorderedMapOrSetNode /maxincoming %UnorderedMapOrSetNode=0 \
+ /extend %UnorderedMapOrSetNode->%UnorderedMapOrSetNode \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
 DONE

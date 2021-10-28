@@ -24,6 +24,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::TagHolder<Offset> TagHolder;
   typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
+  static constexpr int NUM_OFFSETS_IN_HEADER = 3;
   VectorAllocationsTagger(
       Graph& graph, TagHolder& tagHolder, EdgePredicate& edgeIsTainted,
       EdgePredicate& edgeIsFavored,
@@ -272,7 +273,7 @@ class VectorAllocationsTagger : public Allocations::Tagger<Offset> {
       _tagHolder.TagAllocation(bodyIndex, _tagIndex);
       MarkTaintedOutgoingEdges(bodyIndex, address, useLimit);
       _edgeIsFavored.Set(index, bodyIndex, true);
-      check += 2;
+      check += (NUM_OFFSETS_IN_HEADER - 1);
     }
   }
 };

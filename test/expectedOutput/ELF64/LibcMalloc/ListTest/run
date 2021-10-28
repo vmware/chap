@@ -12,4 +12,8 @@ show used
 show used %ListNode
 describe used %ListNode
 explain used %ListNode
+describe used %ListNode /maxincoming %ListNode=0 \
+ /extend %ListNode->%ListNode \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
 DONE

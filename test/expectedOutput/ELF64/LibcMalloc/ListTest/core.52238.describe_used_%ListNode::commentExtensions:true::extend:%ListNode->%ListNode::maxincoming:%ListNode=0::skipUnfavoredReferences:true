@@ -1,0 +1,297 @@
+Anchored allocation at 604010 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604060 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604080 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604080 references allocation at 0x6040a0.
+Anchored allocation at 6040a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6040a0 references allocation at 0x6040c0.
+Anchored allocation at 6040c0 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 6040e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6040e0 references allocation at 0x604100.
+Anchored allocation at 604100 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604100 references allocation at 0x604120.
+Anchored allocation at 604120 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604120 references allocation at 0x604140.
+Anchored allocation at 604140 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604140 references allocation at 0x604160.
+Anchored allocation at 604160 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604160 references allocation at 0x604180.
+Anchored allocation at 604180 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604180 references allocation at 0x6041a0.
+Anchored allocation at 6041a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6041a0 references allocation at 0x6041c0.
+Anchored allocation at 6041c0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6041c0 references allocation at 0x6041e0.
+Anchored allocation at 6041e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6041e0 references allocation at 0x604200.
+Anchored allocation at 604200 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604200 references allocation at 0x604220.
+Anchored allocation at 604220 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604220 references allocation at 0x604240.
+Anchored allocation at 604240 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604240 references allocation at 0x604260.
+Anchored allocation at 604260 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604260 references allocation at 0x604280.
+Anchored allocation at 604280 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604280 references allocation at 0x6042a0.
+Anchored allocation at 6042a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6042a0 references allocation at 0x6042c0.
+Anchored allocation at 6042c0 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 6042e0 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604300 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604300 references allocation at 0x604320.
+Anchored allocation at 604320 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604340 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604340 references allocation at 0x604360.
+Anchored allocation at 604360 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604360 references allocation at 0x604380.
+Anchored allocation at 604380 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 6043e0 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604430 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604450 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604450 references allocation at 0x604470.
+Anchored allocation at 604470 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604470 references allocation at 0x604490.
+Anchored allocation at 604490 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 6044b0 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604500 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604520 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604520 references allocation at 0x604540.
+Anchored allocation at 604540 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604540 references allocation at 0x604560.
+Anchored allocation at 604560 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604580 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604580 references allocation at 0x6045a0.
+Anchored allocation at 6045a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6045a0 references allocation at 0x6045c0.
+Anchored allocation at 6045c0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6045c0 references allocation at 0x6045e0.
+Anchored allocation at 6045e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6045e0 references allocation at 0x604600.
+Anchored allocation at 604600 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604600 references allocation at 0x604620.
+Anchored allocation at 604620 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604620 references allocation at 0x604640.
+Anchored allocation at 604640 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604640 references allocation at 0x604660.
+Anchored allocation at 604660 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604660 references allocation at 0x604680.
+Anchored allocation at 604680 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604680 references allocation at 0x6046a0.
+Anchored allocation at 6046a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6046a0 references allocation at 0x6046c0.
+Anchored allocation at 6046c0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6046c0 references allocation at 0x6046e0.
+Anchored allocation at 6046e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6046e0 references allocation at 0x604700.
+Anchored allocation at 604700 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604700 references allocation at 0x604720.
+Anchored allocation at 604720 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604720 references allocation at 0x604740.
+Anchored allocation at 604740 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604740 references allocation at 0x604760.
+Anchored allocation at 604760 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604760 references allocation at 0x604780.
+Anchored allocation at 604780 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604780 references allocation at 0x6047a0.
+Anchored allocation at 6047a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6047a0 references allocation at 0x6047c0.
+Anchored allocation at 6047c0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6047c0 references allocation at 0x6047e0.
+Anchored allocation at 6047e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6047e0 references allocation at 0x604800.
+Anchored allocation at 604800 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604800 references allocation at 0x604820.
+Anchored allocation at 604820 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604820 references allocation at 0x604840.
+Anchored allocation at 604840 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604840 references allocation at 0x604860.
+Anchored allocation at 604860 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604860 references allocation at 0x604880.
+Anchored allocation at 604880 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604880 references allocation at 0x6048a0.
+Anchored allocation at 6048a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6048a0 references allocation at 0x6048c0.
+Anchored allocation at 6048c0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6048c0 references allocation at 0x6048e0.
+Anchored allocation at 6048e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6048e0 references allocation at 0x604900.
+Anchored allocation at 604900 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604900 references allocation at 0x604920.
+Anchored allocation at 604920 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604920 references allocation at 0x604940.
+Anchored allocation at 604940 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604940 references allocation at 0x604960.
+Anchored allocation at 604960 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 6049a0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6049a0 references allocation at 0x6049c0.
+Anchored allocation at 6049c0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6049c0 references allocation at 0x6049e0.
+Anchored allocation at 6049e0 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x6049e0 references allocation at 0x604a00.
+Anchored allocation at 604a00 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604a00 references allocation at 0x604a20.
+Anchored allocation at 604a20 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604a20 references allocation at 0x604a40.
+Anchored allocation at 604a40 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604a40 references allocation at 0x604a60.
+Anchored allocation at 604a60 of size 18
+This allocation matches pattern ListNode.
+
+# Allocation at 0x604a60 references allocation at 0x604a80.
+Anchored allocation at 604a80 of size 18
+This allocation matches pattern ListNode.
+
+Anchored allocation at 604ac0 of size 18
+This allocation matches pattern ListNode.
+
+78 allocations use 0x750 (1,872) bytes.

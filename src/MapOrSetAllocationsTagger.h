@@ -53,6 +53,23 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   TagIndex GetNodeTagIndex() const { return _nodeTagIndex; }
 
  private:
+  static constexpr int MIN_NODE_SIZE_IN_OFFSETS = 5;
+  static constexpr int MIN_NODE_SIZE =
+      MIN_NODE_SIZE_IN_OFFSETS * sizeof(Offset);
+  static constexpr int NUM_OFFSETS_BEFORE_PARENT = 1;
+  static constexpr Offset PARENT_IN_NODE =
+      NUM_OFFSETS_BEFORE_PARENT * sizeof(Offset);
+  static constexpr int NUM_OFFSETS_BEFORE_LEFT_CHILD = 2;
+  static constexpr Offset LEFT_CHILD_IN_NODE =
+      NUM_OFFSETS_BEFORE_LEFT_CHILD * sizeof(Offset);
+  static constexpr int NUM_OFFSETS_BEFORE_RIGHT_CHILD = 3;
+  static constexpr Offset RIGHT_CHILD_IN_NODE =
+      NUM_OFFSETS_BEFORE_RIGHT_CHILD * sizeof(Offset);
+  static constexpr Offset ROOT_IN_PSEUDONODE = sizeof(Offset);
+  static constexpr Offset FIRST_NODE_IN_PSEUDONODE = 2 * sizeof(Offset);
+  static constexpr Offset LAST_NODE_IN_PSEUDONODE = 3 * sizeof(Offset);
+  static constexpr Offset SIZE_IN_PSEUDONODE = 4 * sizeof(Offset);
+
   Graph& _graph;
   TagHolder& _tagHolder;
   EdgePredicate& _edgeIsTainted;
@@ -62,12 +79,14 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
   const VirtualAddressMap<Offset>& _addressMap;
   Reader _nodeReader;
   TagIndex _nodeTagIndex;
-  Offset _parent;
-  AllocationIndex _parentIndex;
+  Offset _pseudoNode;
+  AllocationIndex _pseudoNodeIndex;
   Offset _leftChild;
   Offset _rightChild;
   Offset _firstNode;
   Offset _lastNode;
+  bool _firstNodeVisited;
+  bool _lastNodeVisited;
   Offset _mapOrSetSize;
 
   bool TagFromRootNode(const ContiguousImage& contiguousImage,
@@ -90,39 +109,42 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         {
           const Offset* offsetLimit = contiguousImage.OffsetLimit();
           const Offset* firstOffset = contiguousImage.FirstOffset();
-          if (((offsetLimit - firstOffset) < 5) ||
+          if (((offsetLimit - firstOffset) < MIN_NODE_SIZE_IN_OFFSETS) ||
               ((firstOffset[0] & 0xfe) != 0)) {
             return true;
           }
-          _parent = firstOffset[1];
-          if (_parent == 0 || (_parent & (sizeof(Offset) - 1)) != 0) {
+          _pseudoNode = firstOffset[NUM_OFFSETS_BEFORE_PARENT];
+          if (_pseudoNode == 0 || (_pseudoNode & (sizeof(Offset) - 1)) != 0) {
             return true;
           }
-          _leftChild = firstOffset[2];
+          _leftChild = firstOffset[NUM_OFFSETS_BEFORE_LEFT_CHILD];
           if ((_leftChild & (sizeof(Offset) - 1)) != 0) {
             return true;
           }
-          _rightChild = firstOffset[3];
+          _rightChild = firstOffset[NUM_OFFSETS_BEFORE_RIGHT_CHILD];
           if ((_rightChild & (sizeof(Offset) - 1)) != 0) {
             return true;
           }
         }
-        if ((_nodeReader.ReadOffset(_parent, 0xbad) & 0xfe) != 0) {
+        if ((_nodeReader.ReadOffset(_pseudoNode, 0xbad) & 0xfe) != 0) {
           return true;
         }
         if (address !=
-            _nodeReader.ReadOffset(_parent + sizeof(Offset), 0xbad)) {
+            _nodeReader.ReadOffset(_pseudoNode + ROOT_IN_PSEUDONODE, 0xbad)) {
           return true;
         }
-        _firstNode =
-            _nodeReader.ReadOffset(_parent + 2 * sizeof(Offset), 0xbad);
+        _firstNode = _nodeReader.ReadOffset(
+            _pseudoNode + FIRST_NODE_IN_PSEUDONODE, 0xbad);
         if (_firstNode == 0 || (_firstNode & (sizeof(Offset) - 1)) != 0) {
           return true;
         }
-        _lastNode = _nodeReader.ReadOffset(_parent + 3 * sizeof(Offset), 0xbad);
+        _firstNodeVisited = false;
+        _lastNode = _nodeReader.ReadOffset(
+            _pseudoNode + LAST_NODE_IN_PSEUDONODE, 0xbad);
         if (_lastNode == 0 || (_lastNode & (sizeof(Offset) - 1)) != 0) {
           return true;
         }
+        _lastNodeVisited = false;
         if ((_leftChild == 0) != (_firstNode == address)) {
           return true;
         }
@@ -130,25 +152,25 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           return true;
         }
         _mapOrSetSize =
-            _nodeReader.ReadOffset(_parent + 4 * sizeof(Offset), 0xbad);
+            _nodeReader.ReadOffset(_pseudoNode + SIZE_IN_PSEUDONODE, 0xbad);
         if (_mapOrSetSize == 0) {
           return true;
         }
-        if (_nodeReader.ReadOffset(_firstNode + 2 * sizeof(Offset), 0xbad) !=
+        if (_nodeReader.ReadOffset(_firstNode + LEFT_CHILD_IN_NODE, 0xbad) !=
             0) {
           return true;
         }
-        if (_nodeReader.ReadOffset(_lastNode + 3 * sizeof(Offset), 0xbad) !=
+        if (_nodeReader.ReadOffset(_lastNode + RIGHT_CHILD_IN_NODE, 0xbad) !=
             0) {
           return true;
         }
-        _parentIndex = _graph.SourceAllocationIndex(index, _parent);
+        _pseudoNodeIndex = _graph.SourceAllocationIndex(index, _pseudoNode);
         if (_mapOrSetSize == 1) {
           if (_leftChild == 0 && _rightChild == 0) {
             // This is a trivial map or set of size 1.
             _tagHolder.TagAllocation(index, _nodeTagIndex);
-            if (_parentIndex != _numAllocations) {
-              _edgeIsFavored.Set(_parentIndex, index, true);
+            if (_pseudoNodeIndex != _numAllocations) {
+              _edgeIsFavored.Set(_pseudoNodeIndex, index, true);
             }
           }
           return true;
@@ -174,142 +196,87 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     }
     return false;
   }
+
+  bool CheckChildAndDescendants(Offset node, AllocationIndex nodeIndex,
+                                Offset child, Offset& numVisited, int depth) {
+    if (child == 0) {
+      return true;
+    }
+    if ((child & (sizeof(Offset) - 1)) != 0) {
+      return false;
+    }
+    AllocationIndex childIndex = _graph.TargetAllocationIndex(nodeIndex, child);
+    if (childIndex == _numAllocations) {
+      return false;
+    }
+    return CheckNodeAndDescendants(child, childIndex, node, numVisited, depth);
+  }
+
+  bool CheckNodeAndDescendants(Offset node, AllocationIndex nodeIndex,
+                               Offset parent, Offset& numVisited, int depth) {
+    if (node == _firstNode) {
+      _firstNodeVisited = true;
+    }
+    if (node == _lastNode) {
+      _lastNodeVisited = true;
+    }
+    if (depth == sizeof(Offset) * 16) {
+      return false;
+    }
+    if (++numVisited > _mapOrSetSize) {
+      return false;
+    }
+    const Allocation* allocation = _directory.AllocationAt(nodeIndex);
+    if (allocation == nullptr) {
+      return false;
+    }
+    if (allocation->Size() < MIN_NODE_SIZE) {
+      return false;
+    }
+    if (allocation->Address() != node) {
+      return false;
+    }
+    if (_nodeReader.ReadOffset(node + PARENT_IN_NODE, 0xbad) != parent) {
+      return false;
+    }
+    if ((_nodeReader.ReadOffset(node, 0xbad) & 0xfe) != 0) {
+      return false;
+    }
+    return CheckChildAndDescendants(
+               node, nodeIndex,
+               _nodeReader.ReadOffset(node + LEFT_CHILD_IN_NODE, 0xbad),
+               numVisited, depth + 1) &&
+           CheckChildAndDescendants(
+               node, nodeIndex,
+               _nodeReader.ReadOffset(node + RIGHT_CHILD_IN_NODE, 0xbad),
+               numVisited, depth + 1);
+  }
+
+  void TagNodeAndDescendants(Offset node, AllocationIndex nodeIndex,
+                             AllocationIndex parentIndex) {
+    _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
+    if (parentIndex != _numAllocations) {
+      _edgeIsFavored.Set(parentIndex, nodeIndex, true);
+    }
+    Offset leftChild = _nodeReader.ReadOffset(node + LEFT_CHILD_IN_NODE, 0);
+    if (leftChild != 0) {
+      TagNodeAndDescendants(leftChild,
+                            _graph.TargetAllocationIndex(nodeIndex, leftChild),
+                            nodeIndex);
+    }
+    Offset rightChild = _nodeReader.ReadOffset(node + RIGHT_CHILD_IN_NODE, 0);
+    if (rightChild != 0) {
+      TagNodeAndDescendants(rightChild,
+                            _graph.TargetAllocationIndex(nodeIndex, rightChild),
+                            nodeIndex);
+    }
+  }
+
   void CheckAllMapOrSetNodes(Offset root, AllocationIndex rootIndex) {
     Offset numVisited = 0;
-    Offset node = _firstNode;
-    AllocationIndex firstNodeIndex =
-        (node == root) ? rootIndex
-                       : (_parentIndex == _numAllocations)
-                             ? _directory.AllocationIndexOf(node)
-                             : _graph.TargetAllocationIndex(_parentIndex, node);
-    if (firstNodeIndex == _numAllocations) {
-      return;
-    }
-    AllocationIndex nodeIndex = firstNodeIndex;
-    Offset numLeftEdgesTraversed = 0;
-    Offset numParentEdgesTraversed = 0;
-    while (numVisited < _mapOrSetSize && node != _parent) {
-      if ((_nodeReader.ReadOffset(node, 0xbad) & 0xfe) != 0) {
-        return;
-      }
-      const Allocation* allocation = _directory.AllocationAt(nodeIndex);
-      if (allocation == nullptr) {
-        return;
-      }
-      if (allocation->Size() < 5 * sizeof(Offset)) {
-        return;
-      }
-      if (allocation->Address() != node) {
-        return;
-      }
-
-      ++numVisited;
-
-      Offset rightChild =
-          _nodeReader.ReadOffset(node + 3 * sizeof(Offset), 0xbad);
-      if (rightChild != 0) {
-        if ((rightChild & (sizeof(Offset) - 1)) != 0) {
-          return;
-        }
-        AllocationIndex rightChildIndex =
-            _graph.TargetAllocationIndex(nodeIndex, rightChild);
-        if (rightChildIndex == _numAllocations) {
-          return;
-        }
-        node = rightChild;
-        nodeIndex = rightChildIndex;
-        Offset leftChild =
-            _nodeReader.ReadOffset(node + 2 * sizeof(Offset), 0xbad);
-        ++numLeftEdgesTraversed;
-        while (leftChild != 0) {
-          AllocationIndex leftChildIndex =
-              _graph.TargetAllocationIndex(nodeIndex, leftChild);
-          if (leftChildIndex == _numAllocations) {
-            return;
-          }
-          node = leftChild;
-          nodeIndex = leftChildIndex;
-          leftChild = _nodeReader.ReadOffset(node + 2 * sizeof(Offset), 0xbad);
-          if (++numLeftEdgesTraversed > _mapOrSetSize) {
-            return;
-          }
-        }
-      } else {
-        Offset parent = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
-        ++numParentEdgesTraversed;
-        while (parent != _parent &&
-               _nodeReader.ReadOffset(parent + 3 * sizeof(Offset), 0xbad) ==
-                   node) {
-          AllocationIndex parentIndex =
-              _graph.SourceAllocationIndex(nodeIndex, parent);
-          node = parent;
-          nodeIndex = parentIndex;
-          parent = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
-          if (++numParentEdgesTraversed > _mapOrSetSize) {
-            return;
-          }
-        }
-        AllocationIndex parentIndex = _numAllocations;
-        if (parent != _parent) {
-          if (_nodeReader.ReadOffset(parent + 2 * sizeof(Offset), 0xbad) !=
-              node) {
-            return;
-          }
-          parentIndex = _graph.SourceAllocationIndex(nodeIndex, parent);
-          if (parentIndex == _numAllocations) {
-            return;
-          }
-        }
-
-        node = parent;
-        nodeIndex = parentIndex;
-      }
-    }
-    if (numVisited != _mapOrSetSize || node != _parent) {
-      return;
-    }
-
-    node = _firstNode;
-    nodeIndex = firstNodeIndex;
-    while (node != _parent) {
-      _tagHolder.TagAllocation(_directory.AllocationIndexOf(node),
-                               _nodeTagIndex);
-
-      Offset rightChild =
-          _nodeReader.ReadOffset(node + 3 * sizeof(Offset), 0xbad);
-      if (rightChild != 0) {
-        AllocationIndex rightChildIndex =
-            _graph.TargetAllocationIndex(nodeIndex, rightChild);
-        _edgeIsFavored.Set(nodeIndex, rightChildIndex, true);
-        node = rightChild;
-        nodeIndex = rightChildIndex;
-        Offset leftChild =
-            _nodeReader.ReadOffset(node + 2 * sizeof(Offset), 0xbad);
-        while (leftChild != 0) {
-          AllocationIndex leftChildIndex =
-              _graph.TargetAllocationIndex(nodeIndex, leftChild);
-          node = leftChild;
-          nodeIndex = leftChildIndex;
-          leftChild = _nodeReader.ReadOffset(node + 2 * sizeof(Offset), 0xbad);
-        }
-      } else {
-        Offset parent = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
-        AllocationIndex parentIndex =
-            _graph.SourceAllocationIndex(nodeIndex, parent);
-        while ((parent != _parent) &&
-               (_nodeReader.ReadOffset(parent + 3 * sizeof(Offset), 0xbad) ==
-                node)) {
-          node = parent;
-          nodeIndex = parentIndex;
-          parent = _nodeReader.ReadOffset(node + sizeof(Offset), 0xbad);
-          parentIndex = _graph.SourceAllocationIndex(nodeIndex, parent);
-        }
-        if (parentIndex != _numAllocations) {
-          _edgeIsFavored.Set(parentIndex, nodeIndex, true);
-        }
-        node = parent;
-        nodeIndex = parentIndex;
-      }
+    if (CheckNodeAndDescendants(root, rootIndex, _pseudoNode, numVisited, 0) &&
+        numVisited == _mapOrSetSize && _firstNodeVisited && _lastNodeVisited) {
+      TagNodeAndDescendants(root, rootIndex, _pseudoNode);
     }
   }
 };

@@ -13,6 +13,14 @@ namespace chap {
 template <typename Offset>
 class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
+  /*
+   * This is used to allow skipping forward a bit for the case where we
+   * just found an embedded unordered map or set header and don't want
+   * to scan.  It doesn't have to be accurate, as long as it is not too
+   * large.  Some builds have space at the end of the header for the a
+   * single bucket in case that is all that is needed.
+   */
+  static constexpr int MIN_OFFSETS_IN_HEADER = 6;
   typedef typename Allocations::Graph<Offset> Graph;
   typedef typename Allocations::Directory<Offset> Directory;
   typedef typename Allocations::Tagger<Offset> Tagger;
@@ -304,14 +312,14 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     AllocationIndex nodeIndex = firstNodeIndex;
     AllocationIndex refIndex = unorderedMapOrSetHolderIndex;
     while (node != 0) {
-      if (refIndex != _numAllocations) {
-        _edgeIsFavored.Set(refIndex, nodeIndex, true);
-      }
       if (!_tagHolder.TagAllocation(nodeIndex, _nodeTagIndex)) {
         std::cerr << "Warning: failed to tag allocation at 0x" << std::hex
                   << node << " as %UnorderedMapOrSetNode."
                              "It was already tagged as "
                   << _tagHolder.GetTagName(nodeIndex) << "\n";
+      }
+      if (refIndex != _numAllocations) {
+        _edgeIsFavored.Set(refIndex, nodeIndex, true);
       }
       refIndex = nodeIndex;
       node = _nodeReader.ReadOffset(node, 0);
@@ -340,13 +348,14 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
          */
         continue;
       }
-      Offset dequeAddress = address + ((check - firstCheck) * sizeof(Offset));
+      Offset unorderedMapOrSetAddress =
+          address + ((check - firstCheck) * sizeof(Offset));
       Offset bucketsAddress = check[0];
       Offset numBuckets = check[1];
       Offset firstNodeAddress = check[2];
       Offset numMembers = check[3];
       bool internalBuckets =
-          (bucketsAddress == dequeAddress + 6 * sizeof(Offset));
+          (bucketsAddress == unorderedMapOrSetAddress + 6 * sizeof(Offset));
       AllocationIndex bucketsIndex = _numAllocations;
       Offset minBuckets = 1;
       Offset maxBuckets = 1;
@@ -354,7 +363,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
         if (numBuckets != 1) {
           continue;
         }
-        if (check[6] != dequeAddress + 2 * sizeof(Offset)) {
+        if (check[6] != unorderedMapOrSetAddress + 2 * sizeof(Offset)) {
           continue;
         }
       } else {
@@ -411,11 +420,11 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
       }
-      if (CheckUnorderedMapOrSet(dequeAddress, unorderedMapOrSetHolderIndex,
-                                 reader, bucketsIndex, _bucketsReader,
-                                 bucketsAddress, firstNodeAddress, minBuckets,
-                                 maxBuckets, firstNodeAddress == 0)) {
-        check += 6;
+      if (CheckUnorderedMapOrSet(
+              unorderedMapOrSetAddress, unorderedMapOrSetHolderIndex, reader,
+              bucketsIndex, _bucketsReader, bucketsAddress, firstNodeAddress,
+              minBuckets, maxBuckets, firstNodeAddress == 0)) {
+        check += (MIN_OFFSETS_IN_HEADER - 1);
       }
     }
   }

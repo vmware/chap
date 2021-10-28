@@ -297,7 +297,7 @@ Another case of false references are when the range just happens to look like it
 
 ### Tainted References
 
-A tainted reference is one that chap is suggesting is likely a false reference, typically based on some information that chap has derived about an allocation that contains the reference.  For example, the part of the allocation that contains the reference might not be considered live.  For example, in a std::vector, the allocation used to hold the contents often is not fully used.
+A tainted reference is one that chap is suggesting is likely a false reference, typically based on some information that chap has derived about an allocation that contains the reference.  For example, the part of the allocation that contains the reference might not be considered live.  For example, in a std::vector, the allocation used to hold the contents often is not fully used.  For most `chap` commands related to allocations, one can add **/skipTaintedReferences true** to avoid using references that chap considered to be tainted.  The tradeoff is that this generally reduces following false references but can in some cases miss real references if the tainting is calculated incorrectly.
 
 ### Favored References
 
@@ -305,7 +305,7 @@ A favored reference is a reference to an allocation for which chap has determine
 
 ### Unfavored References
 
-An unfavored reference is a reference to an allocation for which chap has determined something about the type of that allocation that allows it to determine which references to that allocation are most interesting in understanding why the allocation is used, and chap has determined that this reference is not particularly of interest.   Note that for many object types, chap does not currently have enough information to determine whether references to that allocation are favored or not, in which case the references to that allocation are considered neither favored nor unfavored.
+An unfavored reference is a reference to an allocation for which chap has determined something about the type of that allocation that allows it to determine which references to that allocation are most interesting in understanding why the allocation is used, and chap has determined that this reference is not particularly of interest.   Note that for many object types, chap does not currently have enough information to determine whether references to that allocation are favored or not, in which case the references to that allocation are considered neither favored nor unfavored.  For most `chap` commands related to allocations, one can add **/skipUnfavoredReferences true** to avoid using references that chap considered to be unfavored.  
 
 ### Missing References
 
