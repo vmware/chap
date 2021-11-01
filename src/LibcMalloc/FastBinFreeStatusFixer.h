@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,6 +14,9 @@ template <class Offset>
 class FastBinFreeStatusFixer {
  public:
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
+  typedef
+      typename Allocations::Directory<Offset>::AllocationIndex AllocationIndex;
+  typedef typename InfrastructureFinder<Offset>::Arena Arena;
 
   FastBinFreeStatusFixer(
       const VirtualAddressMap<Offset>& addressMap,
@@ -28,23 +31,27 @@ class FastBinFreeStatusFixer {
         _allocationDirectory(allocationDirectory),
         _threadMap(threadMap) {}
 
-  void MarkFastBinItemsAsFree(
-      const typename InfrastructureFinder<Offset>::Arena& arena,
-      bool isMainArena, const size_t finderIndex) {
+  void MarkFastBinItemsAsFree(const Arena& arena, bool isMainArena,
+                              const size_t finderIndex) {
     bool corruptionReported = false;
     Offset arenaAddress = arena._address;
     Offset fastBinStart = arenaAddress + _fastBinStartOffset;
     Offset fastBinLimit = arenaAddress + _fastBinLimitOffset;
-    typename VirtualAddressMap<Offset>::Reader reader(_addressMap);
-    typename Allocations::Directory<Offset>::AllocationIndex numAllocations =
-        _allocationDirectory.NumAllocations();
+    Reader reader(_addressMap);
+    AllocationIndex numAllocations = _allocationDirectory.NumAllocations();
     for (Offset fastBinCheck = fastBinStart; fastBinCheck < fastBinLimit;
          fastBinCheck += sizeof(Offset)) {
       try {
+        AllocationIndex numIndicesVisited = 0;
         for (Offset nextNode = reader.ReadOffset(fastBinCheck); nextNode != 0;
              nextNode = reader.ReadOffset(nextNode + sizeof(Offset) * 2)) {
+          if (++numIndicesVisited > numAllocations) {
+            ReportFastBinCycle(arena, fastBinCheck, corruptionReported,
+                               numAllocations);
+            break;
+          }
           Offset allocation = nextNode + sizeof(Offset) * 2;
-          typename Allocations::Directory<Offset>::AllocationIndex index =
+          AllocationIndex index =
               _allocationDirectory.AllocationIndexOf(allocation);
           if (index == numAllocations ||
               _allocationDirectory.AllocationAt(index)->Address() !=
@@ -143,7 +150,7 @@ class FastBinFreeStatusFixer {
             }
           }
           Offset allocationAddress = regValue + 2 * sizeof(Offset);
-          typename Allocations::Directory<Offset>::AllocationIndex index =
+          AllocationIndex index =
               _allocationDirectory.AllocationIndexOf(allocationAddress);
           if (index == numAllocations) {
             continue;
@@ -217,10 +224,9 @@ class FastBinFreeStatusFixer {
   const Offset _fastBinLimitOffset;
   Allocations::Directory<Offset>& _allocationDirectory;
   const ThreadMap<Offset>& _threadMap;
-  void ReportFastBinCorruption(
-      const typename InfrastructureFinder<Offset>::Arena& arena,
-      Offset fastBinHeader, Offset node, const char* specificError,
-      bool& corruptionReported) {
+  void ReportFastBinCorruption(const Arena& arena, Offset fastBinHeader,
+                               Offset node, const char* specificError,
+                               bool& corruptionReported) {
     if (!corruptionReported) {
       corruptionReported = true;
       std::cerr << "Fast bin corruption was found for the arena"
@@ -232,6 +238,28 @@ class FastBinFreeStatusFixer {
     }
     std::cerr << "  The fast bin list headed at 0x" << std::hex << fastBinHeader
               << " has a node\n  0x" << node << " " << specificError << ".\n";
+  }
+
+  void ReportFastBinCycle(const Arena& arena, Offset fastBinHeader,
+                          bool& corruptionReported,
+                          AllocationIndex numAllocations) {
+    Reader reader(_addressMap);
+    std::vector<bool> alreadySeen;
+    alreadySeen.resize(numAllocations, false);
+    for (Offset nextNode = reader.ReadOffset(fastBinHeader); nextNode != 0;
+         nextNode = reader.ReadOffset(nextNode + sizeof(Offset) * 2)) {
+      Offset allocation = nextNode + sizeof(Offset) * 2;
+      AllocationIndex index =
+          _allocationDirectory.AllocationIndexOf(allocation);
+      if (alreadySeen[index]) {
+        ReportFastBinCorruption(
+            arena, fastBinHeader, nextNode,
+            "involved in a cycle, probably due to a double free",
+            corruptionReported);
+        break;
+      }
+      alreadySeen[index] = true;
+    }
   }
 };
 
