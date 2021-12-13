@@ -10,6 +10,7 @@
 #include "Allocations/TagHolder.h"
 #include "COWStringAllocationsTagger.h"
 #include "DequeAllocationsTagger.h"
+#include "FollyFibers/InfrastructureFinder.h"
 #include "GoLang/FinderGroup.h"
 #include "ListAllocationsTagger.h"
 #include "LongStringAllocationsTagger.h"
@@ -53,7 +54,9 @@ class ProcessImage {
                            _allocationDirectory, _unfilledImages,
                            _stackRegistry),
         _pThreadInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition,
-                                     _stackRegistry) {}
+                                     _stackRegistry),
+        _follyFibersInfrastructureFinder(
+            _moduleDirectory, _virtualMemoryPartition, _stackRegistry) {}
 
   virtual ~ProcessImage() {
     if (_allocationGraph != nullptr) {
@@ -125,6 +128,11 @@ class ProcessImage {
     return _pThreadInfrastructureFinder;
   }
 
+  const FollyFibers::InfrastructureFinder<Offset>
+      &FollyFibersInfrastructureFinder() const {
+    return _follyFibersInfrastructureFinder;
+  }
+
   const Python::InfrastructureFinder<Offset> &GetPythonInfrastructureFinder()
       const {
     return _pythonFinderGroup.GetInfrastructureFinder();
@@ -154,6 +162,7 @@ class ProcessImage {
   Python::FinderGroup<Offset> _pythonFinderGroup;
   GoLang::FinderGroup<Offset> _goLangFinderGroup;
   PThread::InfrastructureFinder<Offset> _pThreadInfrastructureFinder;
+  FollyFibers::InfrastructureFinder<Offset> _follyFibersInfrastructureFinder;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end

@@ -100,6 +100,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * the modules first.
          */
         Base::_pThreadInfrastructureFinder.Resolve();
+        /*
+         * Finding stacks for folly fibers depends on finding the modules
+         * first.
+         */
+        Base::_follyFibersInfrastructureFinder.Resolve();
       }
 
       /*
