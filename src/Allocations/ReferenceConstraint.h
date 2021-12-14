@@ -99,7 +99,7 @@ class ReferenceConstraint {
             !_edgeIsFavored.ForOutgoing(nextOutgoing)) {
           continue;
         }
-        const Allocation& allocation = *(_directory.AllocationAt(index));
+        const Allocation& allocation = *(_directory.AllocationAt(targetIndex));
         if ((allocation.IsUsed() == _wantUsed) &&
             (_signatureChecker.Check(targetIndex, allocation))) {
           numMatchingEdges++;
