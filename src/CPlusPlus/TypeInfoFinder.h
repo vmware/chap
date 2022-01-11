@@ -271,54 +271,6 @@ class TypeInfoFinder {
     }
   }
 
-  /*
-    Ugly: the SignatureDirectory may not know the signature or name of a base
-    class because there may be no allocations signed in that way.  This
-    means that we must recognize names on the type_info side as well, so that
-    we can map from a name to possible signatures for that name.  So maybe
-    we should be calculating _nameToSignatures.  First we can fill
-    local typeInfoToDirectlyUsedSignatures then member
-    _typeInfoToRelevantSignatures
-    and _nameToTypeInfos and finally _nameToSignatures.
-    How do we want to represent inheritance?
-    Do we want to follow inheritance by default?
-    How do we enable/disable following inheritance?
-    Should we report differences in inheritance for similarly named typeinfo?
-    Should we check type_info names where available?
-    Should we check differences in identically named type_info?
-    We may modify signature checker to not put error if type_info or vtable is
-    known but has no instances.
-    Use case is signature match, in SignatureChecker.h.
-       We set up _signatures differently if inheritance is allowed.
-       We have to decide on inheritance for numeric signatures.
-       Without inheritance, we are using SignatureDirectory to map from name to
-          signature set and having a single entry in the case of numeric
-    signatures.
-       With inheritance, perhaps we can go from the base set of numeric
-    signatures to the
-          corresponding type_info structures to any type_info structures that
-          inherit from them to the corresponding numeric signatures.
-       Can map from vtable -> type_info if present in core (and possibly if in
-    binary)
-       type_info -> {type_info}
-       Can map from type_info to referencing vtables
-          SignatureDirectory, in current state, cannot do this, but perhaps the
-    SignatureDirectory should
-             know about TypeInfo.  At the very least, the SignatureChecker
-    should know about TypeInfo, if
-             only indirectly via SignatureDirectory, to be able to handle
-    inheritance.
-          One could do this based on allocations (a to vtp to type_info then
-    flip to type_info to vps).
-             Do we want TypeInfoFinder to know about allocations?  This doesn't
-    seem particularly
-             bad
-          One could do this based on SignatureDirectory
-             This is slightly cheaper due to fact that not all vtables are used
-    but it is not
-                 clear that we want this sort of dependency.
-
-   */
   void FindRemainingTypeInfoInstances() {
     typename ModuleDirectory<Offset>::const_iterator itEnd =
         _moduleDirectory.end();
