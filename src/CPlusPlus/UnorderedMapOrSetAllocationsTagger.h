@@ -1,15 +1,16 @@
-// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Allocations/EdgePredicate.h"
-#include "Allocations/Graph.h"
-#include "Allocations/TagHolder.h"
-#include "Allocations/Tagger.h"
-#include "VirtualAddressMap.h"
+#include "../Allocations/EdgePredicate.h"
+#include "../Allocations/Graph.h"
+#include "../Allocations/TagHolder.h"
+#include "../Allocations/Tagger.h"
+#include "../VirtualAddressMap.h"
 
 namespace chap {
+namespace CPlusPlus {
 template <typename Offset>
 class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
@@ -472,4 +473,5 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     return false;
   }
 };
+}  // namespace CPlusPlus
 }  // namespace chap

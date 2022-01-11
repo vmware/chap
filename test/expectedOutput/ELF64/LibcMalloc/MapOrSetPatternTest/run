@@ -17,7 +17,72 @@ explain used %MapOrSetNode
 list used /minoutgoing %MapOrSetNode=1
 show used /minoutgoing %MapOrSetNode=1 \
  /extend ->%MapOrSetNode=>StopHere
+# All MapOrSetNode instances for root nodes.
 describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances, following from root nodes to
+# descendants.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 \
+ /extend %MapOrSetNode->%MapOrSetNode \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes, extending to
+# the anchoring allocations, if any.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 \
+ /extend %MapOrSetNode<- \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or sets
+# anchored by allocations.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 /minincoming 1 \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or sets
+# not anchored by allocations.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 /maxincoming 0 \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or sets
+# not anchored by allocations with a useless consistency check
+# of following the parent pointer, which should go nowhere, making this
+# equivalent to the previous command even if one would not normally
+# do this.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 /maxincoming 0 \
+ /extend %MapOrSetNode@8-> \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or sets
+# not anchored by allocations, calculated more simply.
+describe used %MapOrSetNode /maxincoming 0 \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or set
+# anchored by allocations, extending to the anchoring allocations.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 /minincoming 1 \
+ /extend %MapOrSetNode<- \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or set
+# anchored by allocations, extending to the anchoring allocations, but
+# in this case, following the "parent" of the root, which is less 
+# favored over the above form because it hard codes the offset of the
+# parent.  Note that the output of this command will be different
+# than that of the previous command, but solely with respect to the
+# comments.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 /minincoming 1 \
+ /extend %MapOrSetNode@8-> \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or set
+# anchored by allocations, extending to descendants.
+describe used %MapOrSetNode /maxincoming %MapOrSetNode=0 /minincoming 1 \
+ /extend %MapOrSetNode->%MapOrSetNode \
+ /skipUnfavoredReferences true \
+ /commentExtensions true
+# All MapOrSetNode instances for root nodes of maps or set
+# not anchored by allocations, extending to descendants.
+describe used %MapOrSetNode /maxincoming 0 \
  /extend %MapOrSetNode->%MapOrSetNode \
  /skipUnfavoredReferences true \
  /commentExtensions true

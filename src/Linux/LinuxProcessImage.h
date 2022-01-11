@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -6,10 +6,10 @@
 #include <map>
 #include <regex>
 #include "../Allocations/TaggerRunner.h"
+#include "../CPlusPlus/Unmangler.h"
 #include "../LibcMalloc/FinderGroup.h"
 #include "../ProcessImage.h"
 #include "../RangeMapper.h"
-#include "../Unmangler.h"
 #include "ELFImage.h"
 
 namespace chap {
@@ -63,6 +63,16 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * the modules first.
          */
         Base::_pThreadInfrastructureFinder.Resolve();
+        /*
+         * Finding stacks for folly fibers depends on finding the modules
+         * first.
+         */
+        Base::_follyFibersInfrastructureFinder.Resolve();
+        /*
+         * Finding statically declared type_info structures depends on
+         * finding the modules first.
+         */
+        Base::_typeInfoFinder.Resolve();
       }
 
       /*
@@ -105,6 +115,11 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
          * first.
          */
         Base::_follyFibersInfrastructureFinder.Resolve();
+        /*
+         * Finding statically declared type_info structures depends on
+         * finding the modules first.
+         */
+        Base::_typeInfoFinder.Resolve();
       }
 
       /*
@@ -1185,7 +1200,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         }
         memcpy(buffer, image + (mangledNameAddr - it.Base()), numToCopy);
 
-        Unmangler<Offset> unmangler(buffer, false);
+        CPlusPlus::Unmangler<Offset> unmangler(buffer, false);
         unmangledName = unmangler.Unmangled();
       }
     }

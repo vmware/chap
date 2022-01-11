@@ -1,13 +1,14 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020,2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Allocations/ContiguousImage.h"
-#include "Allocations/PatternDescriber.h"
-#include "ProcessImage.h"
+#include "../Allocations/ContiguousImage.h"
+#include "../Allocations/PatternDescriber.h"
+#include "../ProcessImage.h"
 
 namespace chap {
+namespace CPlusPlus {
 template <typename Offset>
 class COWStringBodyDescriber : public Allocations::PatternDescriber<Offset> {
  public:
@@ -61,4 +62,5 @@ class COWStringBodyDescriber : public Allocations::PatternDescriber<Offset> {
  private:
   mutable Allocations::ContiguousImage<Offset> _contiguousImage;
 };
+}  // namespace CPlusPlus
 }  // namespace chap

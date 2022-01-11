@@ -1,12 +1,13 @@
-// Copyright (c) 2019,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019,2020,2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Allocations/PatternDescriber.h"
-#include "ProcessImage.h"
+#include "../Allocations/PatternDescriber.h"
+#include "../ProcessImage.h"
 
 namespace chap {
+namespace CPlusPlus {
 template <typename Offset>
 class DequeBlockDescriber : public Allocations::PatternDescriber<Offset> {
  public:
@@ -31,8 +32,12 @@ class DequeBlockDescriber : public Allocations::PatternDescriber<Offset> {
        * back to the referencing map and from there to the deque itself.
        * Note that the map always is in an allocation but the deque itself
        * may also be statically allocated or on the stack.
+       * Use a favored reference to reach the map and an again to reach the
+       * deque, if it is part of an allocation.
+       * TODO: maybe the notion of a favored anchor would be of value.
        */
     }
   }
 };
+}  // namespace CPlusPlus
 }  // namespace chap

@@ -1,13 +1,14 @@
-// Copyright (c) 2018-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2020,2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Allocations/PatternDescriber.h"
-#include "ProcessImage.h"
+#include "../Allocations/PatternDescriber.h"
+#include "../ProcessImage.h"
 #include "VectorAllocationsTagger.h"
 
 namespace chap {
+namespace CPlusPlus {
 template <typename Offset>
 class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
  public:
@@ -146,4 +147,5 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
     }
   }
 };
+}  // namespace CPlusPlus
 }  // namespace chap

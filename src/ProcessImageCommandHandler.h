@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -6,7 +6,15 @@
 #include "Allocations/PatternDescriberRegistry.h"
 #include "Allocations/Subcommands/DefaultSubcommands.h"
 #include "Allocations/Subcommands/SummarizeSignatures.h"
-#include "COWStringBodyDescriber.h"
+#include "CPlusPlus/COWStringBodyDescriber.h"
+#include "CPlusPlus/DequeBlockDescriber.h"
+#include "CPlusPlus/DequeMapDescriber.h"
+#include "CPlusPlus/ListNodeDescriber.h"
+#include "CPlusPlus/LongStringDescriber.h"
+#include "CPlusPlus/MapOrSetNodeDescriber.h"
+#include "CPlusPlus/UnorderedMapOrSetBucketsDescriber.h"
+#include "CPlusPlus/UnorderedMapOrSetNodeDescriber.h"
+#include "CPlusPlus/VectorBodyDescriber.h"
 #include "Commands/CountCommand.h"
 #include "Commands/DescribeCommand.h"
 #include "Commands/EnumerateCommand.h"
@@ -16,13 +24,8 @@
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
 #include "CompoundDescriber.h"
-#include "DequeBlockDescriber.h"
-#include "DequeMapDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
-#include "ListNodeDescriber.h"
-#include "LongStringDescriber.h"
-#include "MapOrSetNodeDescriber.h"
 #include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/ListModules.h"
 #include "PThread/StackOverflowGuardDescriber.h"
@@ -43,9 +46,6 @@
 #include "StackCommands/ListStacks.h"
 #include "StackCommands/SummarizeStacks.h"
 #include "StackDescriber.h"
-#include "UnorderedMapOrSetBucketsDescriber.h"
-#include "UnorderedMapOrSetNodeDescriber.h"
-#include "VectorBodyDescriber.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribePointers.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
@@ -351,15 +351,17 @@ class ProcessImageCommandHandler {
   /*
    * The following are pattern describers.
    */
-  DequeMapDescriber<Offset> _dequeMapDescriber;
-  DequeBlockDescriber<Offset> _dequeBlockDescriber;
-  UnorderedMapOrSetBucketsDescriber<Offset> _unorderedMapOrSetBucketsDescriber;
-  UnorderedMapOrSetNodeDescriber<Offset> _unorderedMapOrSetNodeDescriber;
-  MapOrSetNodeDescriber<Offset> _mapOrSetNodeDescriber;
-  VectorBodyDescriber<Offset> _vectorBodyDescriber;
-  ListNodeDescriber<Offset> _listNodeDescriber;
-  LongStringDescriber<Offset> _longStringDescriber;
-  COWStringBodyDescriber<Offset> _COWStringBodyDescriber;
+  CPlusPlus::DequeMapDescriber<Offset> _dequeMapDescriber;
+  CPlusPlus::DequeBlockDescriber<Offset> _dequeBlockDescriber;
+  CPlusPlus::UnorderedMapOrSetBucketsDescriber<Offset>
+      _unorderedMapOrSetBucketsDescriber;
+  CPlusPlus::UnorderedMapOrSetNodeDescriber<Offset>
+      _unorderedMapOrSetNodeDescriber;
+  CPlusPlus::MapOrSetNodeDescriber<Offset> _mapOrSetNodeDescriber;
+  CPlusPlus::VectorBodyDescriber<Offset> _vectorBodyDescriber;
+  CPlusPlus::ListNodeDescriber<Offset> _listNodeDescriber;
+  CPlusPlus::LongStringDescriber<Offset> _longStringDescriber;
+  CPlusPlus::COWStringBodyDescriber<Offset> _COWStringBodyDescriber;
   SSL_CTXDescriber<Offset> _SSL_CTXDescriber;
   SSLDescriber<Offset> _SSLDescriber;
   Python::PyDictKeysObjectDescriber<Offset> _pyDictKeysObjectDescriber;

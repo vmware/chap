@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -8,13 +8,16 @@
 #include "Allocations/Graph.h"
 #include "Allocations/SignatureDirectory.h"
 #include "Allocations/TagHolder.h"
-#include "COWStringAllocationsTagger.h"
-#include "DequeAllocationsTagger.h"
+#include "CPlusPlus/COWStringAllocationsTagger.h"
+#include "CPlusPlus/DequeAllocationsTagger.h"
+#include "CPlusPlus/ListAllocationsTagger.h"
+#include "CPlusPlus/LongStringAllocationsTagger.h"
+#include "CPlusPlus/MapOrSetAllocationsTagger.h"
+#include "CPlusPlus/TypeInfoFinder.h"
+#include "CPlusPlus/UnorderedMapOrSetAllocationsTagger.h"
+#include "CPlusPlus/VectorAllocationsTagger.h"
 #include "FollyFibers/InfrastructureFinder.h"
 #include "GoLang/FinderGroup.h"
-#include "ListAllocationsTagger.h"
-#include "LongStringAllocationsTagger.h"
-#include "MapOrSetAllocationsTagger.h"
 #include "ModuleDirectory.h"
 #include "OpenSSLAllocationsTagger.h"
 #include "PThread/InfrastructureFinder.h"
@@ -24,8 +27,6 @@
 #include "StackRegistry.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
-#include "UnorderedMapOrSetAllocationsTagger.h"
-#include "VectorAllocationsTagger.h"
 #include "VirtualAddressMap.h"
 #include "VirtualMemoryPartition.h"
 namespace chap {
@@ -56,7 +57,8 @@ class ProcessImage {
         _pThreadInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition,
                                      _stackRegistry),
         _follyFibersInfrastructureFinder(
-            _moduleDirectory, _virtualMemoryPartition, _stackRegistry) {}
+            _moduleDirectory, _virtualMemoryPartition, _stackRegistry),
+        _typeInfoFinder(_moduleDirectory, _virtualAddressMap) {}
 
   virtual ~ProcessImage() {
     if (_allocationGraph != nullptr) {
@@ -163,6 +165,7 @@ class ProcessImage {
   GoLang::FinderGroup<Offset> _goLangFinderGroup;
   PThread::InfrastructureFinder<Offset> _pThreadInfrastructureFinder;
   FollyFibers::InfrastructureFinder<Offset> _follyFibersInfrastructureFinder;
+  CPlusPlus::TypeInfoFinder<Offset> _typeInfoFinder;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end
@@ -182,31 +185,32 @@ class ProcessImage {
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         _signatureDirectory);
 
-    runner.RegisterTagger(new UnorderedMapOrSetAllocationsTagger<Offset>(
+    runner.RegisterTagger(
+        new CPlusPlus::UnorderedMapOrSetAllocationsTagger<Offset>(
+            *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+            *_edgeIsFavored));
+
+    runner.RegisterTagger(new CPlusPlus::MapOrSetAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored));
 
-    runner.RegisterTagger(new MapOrSetAllocationsTagger<Offset>(
+    runner.RegisterTagger(new CPlusPlus::DequeAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored));
 
-    runner.RegisterTagger(new DequeAllocationsTagger<Offset>(
+    runner.RegisterTagger(new CPlusPlus::ListAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored));
 
-    runner.RegisterTagger(new ListAllocationsTagger<Offset>(
-        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
-        *_edgeIsFavored));
-
-    runner.RegisterTagger(new LongStringAllocationsTagger<Offset>(
+    runner.RegisterTagger(new CPlusPlus::LongStringAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored, _moduleDirectory));
 
-    runner.RegisterTagger(new VectorAllocationsTagger<Offset>(
+    runner.RegisterTagger(new CPlusPlus::VectorAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored, _signatureDirectory));
 
-    runner.RegisterTagger(new COWStringAllocationsTagger<Offset>(
+    runner.RegisterTagger(new CPlusPlus::COWStringAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored, _moduleDirectory));
 

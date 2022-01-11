@@ -1,0 +1,91 @@
+Anchored allocation at 609040 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6090b0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609190 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609220 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609280 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609380 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6094c0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609580 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609610 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609700 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 6099a0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609a10 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609af0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609b80 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609be0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609ce0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609e20 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609ee0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 609f70 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a060 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a4f0 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a560 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a640 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a6d0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a730 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a830 of size 38
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60a970 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aa30 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60aac0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+Anchored allocation at 60abb0 of size 28
+This allocation matches pattern MapOrSetNode.
+
+30 allocations use 0x540 (1,344) bytes.

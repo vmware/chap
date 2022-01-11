@@ -1,15 +1,16 @@
-// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include "Allocations/EdgePredicate.h"
-#include "Allocations/Graph.h"
-#include "Allocations/TagHolder.h"
-#include "Allocations/Tagger.h"
-#include "VirtualAddressMap.h"
+#include "../Allocations/EdgePredicate.h"
+#include "../Allocations/Graph.h"
+#include "../Allocations/TagHolder.h"
+#include "../Allocations/Tagger.h"
+#include "../VirtualAddressMap.h"
 
 namespace chap {
+namespace CPlusPlus {
 template <typename Offset>
 class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
  public:
@@ -276,8 +277,9 @@ class MapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
     Offset numVisited = 0;
     if (CheckNodeAndDescendants(root, rootIndex, _pseudoNode, numVisited, 0) &&
         numVisited == _mapOrSetSize && _firstNodeVisited && _lastNodeVisited) {
-      TagNodeAndDescendants(root, rootIndex, _pseudoNode);
+      TagNodeAndDescendants(root, rootIndex, _pseudoNodeIndex);
     }
   }
 };
+}  // namespace CPlusPlus
 }  // namespace chap

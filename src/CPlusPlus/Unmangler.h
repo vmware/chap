@@ -1,10 +1,11 @@
-// Copyright (c) 2017,2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <vector>
 
 namespace chap {
+namespace CPlusPlus {
 template <typename Offset>
 class Unmangler {
  public:
@@ -440,4 +441,5 @@ class Unmangler {
     return pC + length;
   }
 };
+}  // namespace CPlusPlus
 }  // namespace chap
