@@ -179,7 +179,8 @@ class ProcessImage {
         new Allocations::EdgePredicate<Offset>(*_allocationGraph, false);
 
     _allocationTagHolder = new Allocations::TagHolder<Offset>(
-        _allocationDirectory.NumAllocations(), *_edgeIsFavored);
+        _allocationDirectory.NumAllocations(), *_edgeIsFavored,
+        *_edgeIsTainted);
 
     Allocations::TaggerRunner<Offset> runner(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,

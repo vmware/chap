@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -23,8 +23,11 @@ class TagHolder {
   typedef std::set<TagIndex> TagIndices;
 
   TagHolder(const AllocationIndex numAllocations,
-            EdgePredicate<Offset>& edgeIsFavored)
-      : _numAllocations(numAllocations), _edgeIsFavored(edgeIsFavored) {
+            EdgePredicate<Offset>& edgeIsFavored,
+            EdgePredicate<Offset>& edgeIsTainted)
+      : _numAllocations(numAllocations),
+        _edgeIsFavored(edgeIsFavored),
+        _edgeIsTainted(edgeIsTainted) {
     _tags.reserve(numAllocations);
     _tags.resize(numAllocations, 0);
     _indexToName.push_back("");
@@ -58,14 +61,17 @@ class TagHolder {
     }
     TagIndex oldTag = _tags[allocationIndex];
     if (oldTag == 0 || (_tagIsStrong[tagIndex] && !_tagIsStrong[oldTag])) {
-      if (_tagSupportsFavoredReferences[oldTag]) {
-        /*
-         * The allocation was already tagged with a different tag (0 tag
-         * does not support favored references) and the old tag supports
-         * favored references.  Any references already favored based on
-         * the old tag information are no longer considered favored.
-         */
-        _edgeIsFavored.SetAllIncoming(allocationIndex, false);
+      if (oldTag != 0) {
+        if (_tagSupportsFavoredReferences[oldTag]) {
+          /*
+           * The allocation was already tagged with a different tag (0 tag
+           * does not support favored references) and the old tag supports
+           * favored references.  Any references already favored based on
+           * the old tag information are no longer considered favored.
+           */
+          _edgeIsFavored.SetAllIncoming(allocationIndex, false);
+        }
+        _edgeIsTainted.SetAllOutgoing(allocationIndex, false);
       }
       _tags[allocationIndex] = tagIndex;
       return true;
@@ -110,6 +116,7 @@ class TagHolder {
  private:
   const AllocationIndex _numAllocations;
   EdgePredicate<Offset>& _edgeIsFavored;
+  EdgePredicate<Offset>& _edgeIsTainted;
   std::vector<TagIndex> _tags;
   std::vector<std::string> _indexToName;
   std::vector<bool> _tagIsStrong;
