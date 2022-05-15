@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -405,6 +405,7 @@ class InfrastructureFinder {
     Reader reader(_virtualAddressMap);
 
     Offset bestBase = 0;
+    Offset bestLimitLowerBound = 0;
     Offset bestLimit = 0;
     Offset moduleBase = rangeToFlags.begin()->_base;
     Offset moduleLimit = rangeToFlags.rbegin()->_limit;
@@ -424,7 +425,8 @@ class InfrastructureFinder {
          * last consecutive byte that has the same permission as the last
          * byte in the range.
          */
-        Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
+        Offset limitLowerBound = itRange->_limit;
+        Offset limit = _virtualAddressMap.find(limitLowerBound - 1).Limit();
 
         for (Offset moduleAddr = base; moduleAddr < limit;
              moduleAddr += sizeof(Offset)) {
@@ -585,6 +587,7 @@ class InfrastructureFinder {
             _maxPoolsIfNotAligned = maxPoolsIfNotAligned;
             bestBase = base;
             bestLimit = limit;
+            bestLimitLowerBound = limitLowerBound;
           }
         }
       }
@@ -632,7 +635,8 @@ class InfrastructureFinder {
     if (_arenaStructCount != 0) {
       FindTypes(moduleBase, moduleLimit, bestBase, bestLimit, reader);
       if (_typeType != 0) {
-        FindNonEmptyGarbageCollectionLists(rangeToFlags, reader);
+        FindNonEmptyGarbageCollectionLists(bestBase, bestLimit,
+                                           bestLimitLowerBound, reader);
         FindDynamicallyAllocatedTypes();
       }
     }
@@ -1337,39 +1341,15 @@ class InfrastructureFinder {
     Offset objectType =
         reader.ReadOffset(firstEntry + sizeCandidate + TYPE_IN_PYOBJECT, 0);
     if (objectType != 0 &&
-        reader.ReadOffset(objectType + TYPE_IN_PYOBJECT, 0) == _typeType) {
+        IsATypeType(reader.ReadOffset(objectType + TYPE_IN_PYOBJECT, 0))) {
       _garbageCollectionHeaderSize = sizeCandidate;
       return true;
     }
     return false;
   }
 
-  void FindNonEmptyGarbageCollectionLists(
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags,
-      Reader& reader) {
-    for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-             itRange = rangeToFlags.begin();
-         itRange != rangeToFlags.end(); ++itRange) {
-      int flags = itRange->_value;
-      if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
-        Offset base = itRange->_base;
-        /*
-         * At present the module finding logic can get a lower value for the
-         * limit than the true limit.  It is conservative about selecting the
-         * limit to avoid tagging too large a range in the partition.  However
-         * this conservative estimate is problematic if the pointer to the
-         * arena struct array lies between the calculated limit and the real
-         * limit.  This code works around this to extend the limit to the
-         * last consecutive byte that has the same permission as the last
-         * byte in the range.
-         */
-        Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
-        FindNonEmptyGarbageCollectionLists(base, limit, reader);
-      }
-    }
-  }
-
   void FindNonEmptyGarbageCollectionLists(Offset base, Offset limit,
+                                          Offset limitLowerBound,
                                           Reader& reader) {
     Reader otherReader(_virtualAddressMap);
     Offset listCandidateLimit = limit - 2 * sizeof(Offset);
@@ -1401,8 +1381,24 @@ class InfrastructureFinder {
                                                   4 * sizeof(Offset)))
               : CheckGarbageCollectionHeaderSize(
                     otherReader, firstEntry, _garbageCollectionHeaderSize)) {
-        _nonEmptyGarbageCollectionLists.push_back(listCandidate);
-        listCandidate += 2 * sizeof(Offset);
+        if (CheckGarbageCollectionHeaderSize(
+              otherReader, lastEntry, _garbageCollectionHeaderSize)) {
+          /*
+           * Given that we don't fully trust the upper limit of the given
+           * module range, and may have accidentally extended it to include
+           * an adjacent writable range, it can be a problem if the adjacent
+           * module range can be used to allocate python objects that
+           * are subject to garbage collection, so we use the following
+           * check to avoid this.
+           */
+          if (listCandidate >= limitLowerBound &&
+              CheckGarbageCollectionHeaderSize(otherReader, listCandidate,
+                                               _garbageCollectionHeaderSize)) {
+            break;
+          }
+          _nonEmptyGarbageCollectionLists.push_back(listCandidate);
+          listCandidate += 2 * sizeof(Offset);
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -399,9 +399,9 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
     if (_typeType != 0 && offsetLimit - offsets >= 2) {
       Offset typeCandidate = offsets[1];
       if (typeCandidate != 0 &&
-          _reader.ReadOffset(
+          _infrastructureFinder.IsATypeType(_reader.ReadOffset(
               typeCandidate + InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT,
-              ~0) == _typeType) {
+              ~0))) {
         _tagHolder.TagAllocation(index, _simplePythonObjectTagIndex);
         if (typeCandidate == _intType || typeCandidate == _floatType ||
             typeCandidate == _bytesType || typeCandidate == _strType) {
@@ -431,9 +431,12 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
       Offset typeCandidate =
           *((Offset*)(firstChar + _garbageCollectionHeaderSize +
                       InfrastructureFinder<Offset>::TYPE_IN_PYOBJECT));
+      if (typeCandidate == 0) {
+        return false;
+      }
       if (typeCandidate == _dictType || typeCandidate == _listType ||
           typeCandidate == _dequeType ||
-          (*((Offset*)(firstChar)) == 0 &&
+          ((*((Offset*)(firstChar)) == 0) &&
            _infrastructureFinder.HasType(typeCandidate))) {
         _tagHolder.TagAllocation(index, _containerPythonObjectTagIndex);
         if (typeCandidate == _dictType) {
