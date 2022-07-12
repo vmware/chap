@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -38,6 +38,7 @@ class InfrastructureFinder {
         _mainArenaIsContiguous(false),
         _completeArenaRingFound(false),
         _unfilledImagesFound(false),
+        _fastBinLinksAreMangled(false),
         _maxHeapSize(DEFAULT_MAX_HEAP_SIZE) {
     FindHeapAndArenaCandidates();
 
@@ -287,6 +288,7 @@ class InfrastructureFinder {
   Offset GetArenaStructSize() const { return _arenaStructSize; }
   Offset GetFastBinStartOffset() const { return _fastBinStartOffset; }
   Offset GetFastBinLimitOffset() const { return _fastBinLimitOffset; }
+  bool FastBinLinksAreMangled() const { return _fastBinLinksAreMangled; }
   Offset GetArenaDoublyLinkedFreeListOffset() const {
     return _arenaDoublyLinkedFreeListOffset;
   }
@@ -338,6 +340,7 @@ class InfrastructureFinder {
   bool _mainArenaIsContiguous;
   bool _completeArenaRingFound;
   bool _unfilledImagesFound;
+  bool _fastBinLinksAreMangled;
   Offset _arenaNextOffset;
   Offset _arenaSizeOffset;
   Offset _arenaMaxSizeOffset;
@@ -866,6 +869,90 @@ class InfrastructureFinder {
     }
   }
 
+  bool CheckForFastBinLinkMangling() {
+    size_t votesForMangling = 0;
+    size_t votesAgainstMangling = 0;
+    Reader reader(_addressMap);
+    for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end(); ++it) {
+      Arena& arena = it->second;
+      for (Offset inFastBin = _fastBinStartOffset;
+           inFastBin < _fastBinLimitOffset; inFastBin += OFFSET_SIZE) {
+        if (votesForMangling > 10 && votesAgainstMangling == 0) {
+          return true;
+        }
+        if (votesAgainstMangling > 10 && votesForMangling == 0) {
+          return false;
+        }
+        Offset firstOnList = reader.ReadOffset(arena._address + inFastBin, 0);
+        if (firstOnList == 0) {
+          // The list is empty or perhaps the arena header is unreadable.
+          continue;
+        }
+        Offset linkAddr = firstOnList + 2 * OFFSET_SIZE;
+        Offset nextOnList = reader.ReadOffset(linkAddr, (Offset)(~0));
+        if (nextOnList == 0) {
+          // This ought to indicate that no mangling is present, unless the
+          // link was corrupted with a 0.
+          votesAgainstMangling += 3;
+          continue;
+        }
+        Offset nextOnListXor = linkAddr >> 12;
+        if (nextOnList == nextOnListXor) {
+          // This almost certainly indicates that mangling is present unless
+          // the link was corrupted with that one peculiar value, which
+          // seems rather unlikely.
+          votesForMangling += 7;
+          continue;
+        }
+
+        if (((nextOnList ^ nextOnListXor) & (2 * OFFSET_SIZE - 1)) == 0) {
+          while (nextOnList != nextOnListXor) {
+            linkAddr = nextOnList + 2 * OFFSET_SIZE;
+            nextOnList =
+                reader.ReadOffset(nextOnList ^ nextOnListXor, (Offset)(~0));
+            if (nextOnList == (Offset)(~0)) {
+              break;
+            }
+            nextOnListXor = linkAddr >> 12;
+            votesForMangling++;
+          }
+          if (nextOnList == nextOnListXor) {
+            votesForMangling += 9;
+            continue;
+          }
+        }
+        if ((nextOnList & (2 * OFFSET_SIZE - 1)) != 0) {
+          while (nextOnList != 0) {
+            nextOnList = reader.ReadOffset(nextOnList, (Offset)(~0));
+            if (nextOnList == (Offset)(~0)) {
+              break;
+            }
+            votesAgainstMangling++;
+          }
+          if (nextOnList == 0) {
+            votesAgainstMangling += 5;
+          }
+        }
+      }
+    }
+    /*
+     * We might have a wrong result if there are no non-empty fast bin lists
+     * but this doesn't particularly matter because we have no links to
+     * traverse.  A false result could happen if the only non-empty
+     * fast bin list or lists were corrupt in the first link, but this seems
+     * very unlikely and is probably not a big deal given that corruption
+     * will at least be caught.
+     */
+    if (votesForMangling == 0) {
+      return false;
+    }
+    if (votesAgainstMangling == 0) {
+      return true;
+    }
+
+    return votesForMangling > votesAgainstMangling;
+  }
+
   bool DeriveArenaOffsets(bool showErrors) {
     size_t numArenas = _arenas.size();
     _arenaTopOffset = 0xb * OFFSET_SIZE;
@@ -897,6 +984,8 @@ class InfrastructureFinder {
     }
 
     DeriveFastBinLimits();
+
+    _fastBinLinksAreMangled = CheckForFastBinLinkMangling();
 
     if (numListOffsetVotes < numArenas) {
       if (numListOffsetVotes == 0) {
@@ -1043,7 +1132,7 @@ class InfrastructureFinder {
     }
     return true;
   }
-  void UnfilledImagesFound() {
+  void SetUnfilledImagesFound() {
     if (!_unfilledImagesFound) {
       _unfilledImagesFound = true;
       std::cerr << "Apparently this core file was not completely filled in.\n"
@@ -1056,7 +1145,7 @@ class InfrastructureFinder {
   bool CheckUnfilledHeapStart(Offset address) {
     if (_unfilledImages.RegisterIfUnfilled(
             address, _maxHeapSize, LIBC_MALLOC_HEAP) == LIBC_MALLOC_HEAP) {
-      UnfilledImagesFound();
+      SetUnfilledImagesFound();
       return true;
     }
     return false;
@@ -1064,7 +1153,7 @@ class InfrastructureFinder {
   bool CheckUnfilledMainArenaStartPage(Offset address) {
     if (_unfilledImages.RegisterIfUnfilled(
             address, 1, LIBC_MALLOC_MAIN_ARENA) == LIBC_MALLOC_MAIN_ARENA) {
-      UnfilledImagesFound();
+      SetUnfilledImagesFound();
       return true;
     }
     return false;

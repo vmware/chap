@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -28,6 +28,7 @@ class FastBinFreeStatusFixer {
         _maxHeapSize(infrastructureFinder.GetMaxHeapSize()),
         _fastBinStartOffset(infrastructureFinder.GetFastBinStartOffset()),
         _fastBinLimitOffset(infrastructureFinder.GetFastBinLimitOffset()),
+        _fastBinLinksAreMangled(infrastructureFinder.FastBinLinksAreMangled()),
         _allocationDirectory(allocationDirectory),
         _threadMap(threadMap) {}
 
@@ -43,8 +44,8 @@ class FastBinFreeStatusFixer {
          fastBinCheck += sizeof(Offset)) {
       try {
         AllocationIndex numIndicesVisited = 0;
-        for (Offset nextNode = reader.ReadOffset(fastBinCheck); nextNode != 0;
-             nextNode = reader.ReadOffset(nextNode + sizeof(Offset) * 2)) {
+        Offset nextNode = reader.ReadOffset(fastBinCheck);
+        while (nextNode != 0) {
           if (++numIndicesVisited > numAllocations) {
             ReportFastBinCycle(arena, fastBinCheck, corruptionReported,
                                numAllocations);
@@ -87,6 +88,10 @@ class FastBinFreeStatusFixer {
             break;
           }
           _allocationDirectory.MarkAsFree(index);
+          nextNode = reader.ReadOffset(allocation);
+          if (_fastBinLinksAreMangled) {
+            nextNode = nextNode ^ (allocation >> 12);
+          }
         }
       } catch (typename VirtualAddressMap<Offset>::NotMapped& e) {
         // It is not possible to process the rest of this
@@ -164,6 +169,9 @@ class FastBinFreeStatusFixer {
           }
           size_t chainLength = 1;
           Offset link = reader.ReadOffset(allocationAddress, 0xbad);
+          if (_fastBinLinksAreMangled) {
+            link = link ^ (allocationAddress >> 12);
+          }
           while (link != 0 && link != 0xbad) {
             allocationAddress = link + 2 * sizeof(Offset);
             index = _allocationDirectory.AllocationIndexOf(allocationAddress);
@@ -186,6 +194,9 @@ class FastBinFreeStatusFixer {
                         << arenaAddress << ".\n";
             }
             link = reader.ReadOffset(allocationAddress, 0xbad);
+            if (_fastBinLinksAreMangled) {
+              link = link ^ (allocationAddress >> 12);
+            }
           }
 
           if (chainLength > maxChainLength) {
@@ -204,6 +215,9 @@ class FastBinFreeStatusFixer {
           _allocationDirectory.MarkAsFree(
               _allocationDirectory.AllocationIndexOf(allocationAddress));
           link = reader.ReadOffset(allocationAddress, 0xbad);
+          if (_fastBinLinksAreMangled) {
+            link = link ^ (allocationAddress >> 12);
+          }
         }
         if (stopMarkingLongestChainAt != 0) {
           std::cerr
@@ -222,6 +236,7 @@ class FastBinFreeStatusFixer {
   const Offset _maxHeapSize;
   const Offset _fastBinStartOffset;
   const Offset _fastBinLimitOffset;
+  const bool _fastBinLinksAreMangled;
   Allocations::Directory<Offset>& _allocationDirectory;
   const ThreadMap<Offset>& _threadMap;
   void ReportFastBinCorruption(const Arena& arena, Offset fastBinHeader,
@@ -246,8 +261,8 @@ class FastBinFreeStatusFixer {
     Reader reader(_addressMap);
     std::vector<bool> alreadySeen;
     alreadySeen.resize(numAllocations, false);
-    for (Offset nextNode = reader.ReadOffset(fastBinHeader); nextNode != 0;
-         nextNode = reader.ReadOffset(nextNode + sizeof(Offset) * 2)) {
+    Offset nextNode = reader.ReadOffset(fastBinHeader);
+    while (nextNode != 0) {
       Offset allocation = nextNode + sizeof(Offset) * 2;
       AllocationIndex index =
           _allocationDirectory.AllocationIndexOf(allocation);
@@ -259,6 +274,10 @@ class FastBinFreeStatusFixer {
         break;
       }
       alreadySeen[index] = true;
+      nextNode = reader.ReadOffset(nextNode + sizeof(Offset) * 2);
+      if (_fastBinLinksAreMangled) {
+        nextNode = nextNode ^ (allocation >> 12);
+      }
     }
   }
 };
