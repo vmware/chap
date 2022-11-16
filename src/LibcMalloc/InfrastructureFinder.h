@@ -39,6 +39,7 @@ class InfrastructureFinder {
         _completeArenaRingFound(false),
         _unfilledImagesFound(false),
         _fastBinLinksAreMangled(false),
+        _arenaNextOffset(0),
         _maxHeapSize(DEFAULT_MAX_HEAP_SIZE) {
     FindHeapAndArenaCandidates();
 
@@ -953,6 +954,50 @@ class InfrastructureFinder {
     return votesForMangling > votesAgainstMangling;
   }
 
+  bool DeriveArenaNextOffset(bool showErrors) {
+    size_t numArenas = _arenas.size();
+    size_t bestNextOffsetVotes = 0;
+    for (Offset nextOffset =
+             _arenaLastDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE;
+         nextOffset < 0x130 * OFFSET_SIZE; nextOffset += OFFSET_SIZE) {
+      Offset mainArenaCandidate;
+      size_t numVotes = CheckNextOffset(nextOffset, mainArenaCandidate);
+      if (bestNextOffsetVotes < numVotes) {
+        bestNextOffsetVotes = numVotes;
+        _arenaNextOffset = nextOffset;
+        if (mainArenaCandidate != 0) {
+          _mainArenaAddress = mainArenaCandidate;
+        }
+        if (numVotes == numArenas) {
+          break;
+        }
+      }
+    }
+    if (bestNextOffsetVotes < numArenas) {
+      if (bestNextOffsetVotes == 0) {
+        if (showErrors) {
+          std::cerr << "The arena next pointer was not found.\n";
+          std::cerr << "Scanning started at offset 0x" << std::hex
+                    << (_arenaLastDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE)
+                    << " and applied to the following arenas:\n";
+          for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end();
+               ++it) {
+            std::cerr << "0x" << it->first << "\n";
+          }
+        }
+        _arenaNextOffset = 0;
+        return false;
+      } else {
+        if (showErrors) {
+          std::cerr << "At least one arena has an invalid next pointer"
+                    << " at offset 0x" << std::hex << _arenaNextOffset
+                    << std::endl;
+        }
+      }
+    }
+    return true;
+  }
+
   bool DeriveArenaOffsets(bool showErrors) {
     size_t numArenas = _arenas.size();
     _arenaTopOffset = 0xb * OFFSET_SIZE;
@@ -1011,44 +1056,9 @@ class InfrastructureFinder {
       }
       _arenaLastDoublyLinkedFreeListOffset = freeListOffset;
     }
-    size_t bestNextOffsetVotes = 0;
 
-    for (Offset nextOffset =
-             _arenaLastDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE;
-         nextOffset < 0x130 * OFFSET_SIZE; nextOffset += OFFSET_SIZE) {
-      Offset mainArenaCandidate;
-      size_t numVotes = CheckNextOffset(nextOffset, mainArenaCandidate);
-      if (bestNextOffsetVotes < numVotes) {
-        bestNextOffsetVotes = numVotes;
-        _arenaNextOffset = nextOffset;
-        if (mainArenaCandidate != 0) {
-          _mainArenaAddress = mainArenaCandidate;
-        }
-        if (numVotes == numArenas) {
-          break;
-        }
-      }
-    }
-    if (bestNextOffsetVotes < numArenas) {
-      if (bestNextOffsetVotes == 0) {
-        if (showErrors) {
-          std::cerr << "The arena next pointer was not found.\n";
-          std::cerr << "Scanning started at offset 0x" << std::hex
-                    << (_arenaLastDoublyLinkedFreeListOffset + 2 * OFFSET_SIZE)
-                    << " and applied to the following arenas:\n";
-          for (ArenaMapIterator it = _arenas.begin(); it != _arenas.end();
-               ++it) {
-            std::cerr << "0x" << it->first << "\n";
-          }
-        }
-        return false;
-      } else {
-        if (showErrors) {
-          std::cerr << "At least one arena has an invalid next pointer"
-                    << " at offset 0x" << std::hex << _arenaNextOffset
-                    << std::endl;
-        }
-      }
+    if ((_arenaNextOffset == 0) && !DeriveArenaNextOffset(showErrors)) {
+      return false;
     }
 
     size_t bestSizeOffsetVotes = 0;
@@ -1349,6 +1359,15 @@ class InfrastructureFinder {
     return ((top + topSize) & 0xfff) == 0;
   }
 
+  bool IsPlausibleNonMainArena(Reader& reader, Offset arenaAddress) {
+    Offset heapCandidate = arenaAddress - 4 * OFFSET_SIZE;
+    if ((heapCandidate & 0xffff) == 0 &&
+        arenaAddress == reader.ReadOffset(heapCandidate, 0xbadbad)) {
+      return true;
+    }
+    return false;
+  }
+
   bool ScanForMainArenaByEmptyFreeLists(Offset base, Offset limit) {
     Offset mainArenaCandidate = 0;
     Offset minListAddr = base + 13 * OFFSET_SIZE;
@@ -1429,7 +1448,10 @@ class InfrastructureFinder {
            * flux  and under recent versions.
            */
           mainArenaCandidate = runBase - 10 * OFFSET_SIZE - 2 * sizeof(int);
-          break;
+          if (!IsPlausibleNonMainArena(reader, mainArenaCandidate)) {
+            break;
+          }
+          mainArenaCandidate = 0;
         } else if (!extendedBefore && !extendedAfter &&
                    HasPlausibleTop(reader, runBase - 2 * OFFSET_SIZE)) {
           /*
@@ -1437,66 +1459,95 @@ class InfrastructureFinder {
            * sized chunks was under flux at the time of the core.
            */
           mainArenaCandidate = runBase - 12 * OFFSET_SIZE - 2 * sizeof(int);
-          break;
+          if (!IsPlausibleNonMainArena(reader, mainArenaCandidate)) {
+            break;
+          }
+          mainArenaCandidate = 0;
         }
       }
       listAddr = runLimit;
     }
-    if (mainArenaCandidate != 0) {
-      /*
-       * This is necessary because the maximum heap size may differ from
-       * the default maximum heap size.  We don't want to treat a missed
-       * non-main arena as the main arena.
-       */
-      bool isNonMainArena = false;
-      Offset heapCandidate = mainArenaCandidate - 4 * OFFSET_SIZE;
-      if ((heapCandidate & 0xffff) == 0 &&
-          mainArenaCandidate == reader.ReadOffset(heapCandidate, 0xbadbad)) {
-        isNonMainArena = true;
+
+    if (mainArenaCandidate == 0) {
+      return false;
+    }
+    /*
+     * This is a minor hack for the case that the difference between the
+     * run base and the arena start was calculated incorrectly.  It
+     * needs to be made more robust but for now I am using this to
+     * support glibc 2.27.
+     */
+    Offset bestChainLength = 0;
+    Offset bestAltChainLength = 0;
+    Offset altMainArenaCandidate = mainArenaCandidate - sizeof(Offset);
+    for (Offset nextOffset = 0xc0 * sizeof(Offset);
+         nextOffset < 0x140 * sizeof(Offset); nextOffset += sizeof(Offset)) {
+      Offset altNextOffset = nextOffset + sizeof(Offset);
+      Offset next = reader.ReadOffset(mainArenaCandidate + nextOffset, 0xbad);
+      if (next == 0xbad) {
+        break;
       }
-      if (!isNonMainArena) {
-        /*
-         * This is a minor hack for the case that the difference between the
-         * run base and the arena start was calculated incorrectly.  It
-         * needs to be made more robust but for now I am using this to
-         * support glibc 2.27.
-         */
-        for (Offset nextOffset = 0xc0 * sizeof(Offset);
-             nextOffset < 0x140 * sizeof(Offset);
-             nextOffset += sizeof(Offset)) {
-          Offset next =
-              reader.ReadOffset(mainArenaCandidate + nextOffset, 0xbad);
-          if (next == mainArenaCandidate || next == 0xbad) {
-            break;
-          }
-          if (next == mainArenaCandidate - sizeof(Offset)) {
-            mainArenaCandidate -= sizeof(Offset);
-            break;
-          }
-        }
+      if (next == mainArenaCandidate) {
         _mainArenaAddress = mainArenaCandidate;
+        _arenaNextOffset = nextOffset;
+        break;
+      }
+      if (next == altMainArenaCandidate) {
+        _mainArenaAddress = altMainArenaCandidate;
+        _arenaNextOffset = altNextOffset;
+        break;
+      }
+      if ((next & 0xfffff) != 0x20) {
+        continue;
+      }
+      Offset chainLength = 1;
+      Offset link = reader.ReadOffset(next + nextOffset, 0xbad);
+      do {
+        if (link == mainArenaCandidate) {
+          _mainArenaAddress = mainArenaCandidate;
+          _arenaNextOffset = nextOffset;
+          break;
+        }
+        link = reader.ReadOffset(link + nextOffset, 0xbad);
+      } while ((link & 0xfffff) == 0x20 && ++chainLength < 0x100000);
+      if (bestChainLength < chainLength) {
+        bestChainLength = chainLength;
+      }
+      chainLength = 1;
+      link = reader.ReadOffset(next + altNextOffset, 0xbad);
+      do {
+        if (link == altMainArenaCandidate) {
+          _mainArenaAddress = altMainArenaCandidate;
+          _arenaNextOffset = altNextOffset;
+          break;
+        }
+        link = reader.ReadOffset(link + altNextOffset, 0xbad);
+      } while ((link & 0xfffff) == 0x20 && ++chainLength < 0x100000);
+      if (bestAltChainLength < chainLength) {
+        bestAltChainLength = chainLength;
       }
     }
 
-    if (_mainArenaAddress) {
-      ArenaMapIterator it =
-          _arenas
-              .insert(
-                  std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
-              .first;
-      Arena& mainArena = it->second;
-      mainArena._nextArena = _mainArenaAddress;
-
-      mainArena._top = reader.ReadOffset(_mainArenaAddress + 12 * OFFSET_SIZE);
-      mainArena._size =
-          reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10e * OFFSET_SIZE);
-      mainArena._maxSize =
-          reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10f * OFFSET_SIZE);
-      _mainArenaIsContiguous =
-          (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
-      return true;
+    if (_mainArenaAddress == 0) {
+      _mainArenaAddress = (bestChainLength >= bestAltChainLength)
+                              ? mainArenaCandidate
+                              : altMainArenaCandidate;
     }
-    return false;
+    ArenaMapIterator it =
+        _arenas
+            .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
+            .first;
+    Arena& mainArena = it->second;
+    mainArena._nextArena = _mainArenaAddress;
+
+    mainArena._top = reader.ReadOffset(_mainArenaAddress + 12 * OFFSET_SIZE);
+    mainArena._size =
+        reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10e * OFFSET_SIZE);
+    mainArena._maxSize =
+        reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10f * OFFSET_SIZE);
+    _mainArenaIsContiguous =
+        (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
+    return true;
   }
 
   bool ScanForMainArenaInModules(bool libcOnly) {
