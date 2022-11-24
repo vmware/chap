@@ -1348,11 +1348,12 @@ class InfrastructureFinder {
     return false;
   }
 
-  void FindNonEmptyGarbageCollectionLists(Offset base, Offset limit,
-                                          Offset limitLowerBound,
-                                          Reader& reader) {
-    Reader otherReader(_virtualAddressMap);
+  void FindNonEmptyGarbageCollectionListsInRange(Offset base, Offset limit,
+                                                 Offset limitLowerBound,
+                                                 Reader& reader,
+                                                 Reader& otherReader) {
     Offset listCandidateLimit = limit - 2 * sizeof(Offset);
+
     for (Offset listCandidate = base; listCandidate < listCandidateLimit;
          listCandidate += sizeof(Offset)) {
       Offset firstEntry = reader.ReadOffset(listCandidate, 0);
@@ -1381,8 +1382,8 @@ class InfrastructureFinder {
                                                   4 * sizeof(Offset)))
               : CheckGarbageCollectionHeaderSize(
                     otherReader, firstEntry, _garbageCollectionHeaderSize)) {
-        if (CheckGarbageCollectionHeaderSize(
-              otherReader, lastEntry, _garbageCollectionHeaderSize)) {
+        if (CheckGarbageCollectionHeaderSize(otherReader, lastEntry,
+                                             _garbageCollectionHeaderSize)) {
           /*
            * Given that we don't fully trust the upper limit of the given
            * module range, and may have accidentally extended it to include
@@ -1401,6 +1402,113 @@ class InfrastructureFinder {
         }
       }
     }
+  }
+  bool IsPlausiblePyInterpreterState(Offset pyRuntimeStateCandidate,
+                                     Offset pyInterpreterStateCandidate,
+                                     Reader& reader) {
+    if ((pyInterpreterStateCandidate == 0) ||
+        ((pyInterpreterStateCandidate & (sizeof(Offset) - 1)) != 0)) {
+      return false;
+    }
+    if (reader.ReadOffset(pyInterpreterStateCandidate + 2 * sizeof(Offset),
+                          0xbad) != pyRuntimeStateCandidate) {
+      return false;
+    }
+    Offset pyThreadStateCandidate =
+        reader.ReadOffset(pyInterpreterStateCandidate + sizeof(Offset), 0xbad);
+    if ((pyThreadStateCandidate == 0) ||
+        ((pyThreadStateCandidate & (sizeof(Offset) - 1)) != 0)) {
+      return false;
+    }
+    if (reader.ReadOffset(pyThreadStateCandidate + 2 * sizeof(Offset), 0xbad) !=
+        pyInterpreterStateCandidate) {
+      return false;
+    }
+
+    return true;
+  }
+  void FindNonEmptyGarbageCollectionListsInPyInterpreterStates(
+      Offset base, Offset limit, Offset limitLowerBound, Reader& reader,
+      Reader& otherReader) {
+    Offset pyRuntimeStateCandidateLimit = limit - 8 * sizeof(Offset);
+    for (Offset pyRuntimeStateCandidate = base;
+         pyRuntimeStateCandidate < pyRuntimeStateCandidateLimit;
+         pyRuntimeStateCandidate += sizeof(Offset)) {
+      Offset headPyInterpreterStateCandidate = reader.ReadOffset(
+          pyRuntimeStateCandidate + 4 * sizeof(int) + 2 * sizeof(Offset),
+          0xbad);
+      if (!IsPlausiblePyInterpreterState(pyRuntimeStateCandidate,
+                                         headPyInterpreterStateCandidate,
+                                         otherReader)) {
+        continue;
+      }
+      Offset currentPyInterpreterStateCandidate = reader.ReadOffset(
+          pyRuntimeStateCandidate + 4 * sizeof(int) + 3 * sizeof(Offset),
+          0xbad);
+      Offset link =
+          otherReader.ReadOffset(headPyInterpreterStateCandidate, 0xbad);
+      if (currentPyInterpreterStateCandidate ==
+          headPyInterpreterStateCandidate) {
+        if (link != 0) {
+          continue;
+        }
+      } else {
+        if (!IsPlausiblePyInterpreterState(pyRuntimeStateCandidate,
+                                           currentPyInterpreterStateCandidate,
+                                           otherReader)) {
+          continue;
+        }
+        if (link == 0) {
+          continue;
+        }
+        Offset numChecks = 0;
+        do {
+          if (link != currentPyInterpreterStateCandidate) {
+            if (!IsPlausiblePyInterpreterState(pyRuntimeStateCandidate, link,
+                                               otherReader)) {
+              continue;
+            }
+          }
+          link = otherReader.ReadOffset(link, 0xbad);
+        } while ((link != 0) && (++numChecks < 10));
+        if (link != 0) {
+          continue;
+        }
+      }
+      for (link = headPyInterpreterStateCandidate; link != 0;
+           link = otherReader.ReadOffset(link, 0xbad)) {
+        Offset base = link + 0x40 * sizeof(Offset);
+        Offset limit = link + 0x80 * sizeof(Offset);
+        FindNonEmptyGarbageCollectionListsInRange(base, limit, limit, reader,
+                                                  otherReader);
+      }
+      if (!_nonEmptyGarbageCollectionLists.empty()) {
+        break;
+      }
+    }
+  }
+
+  void FindNonEmptyGarbageCollectionLists(Offset base, Offset limit,
+                                          Offset limitLowerBound,
+                                          Reader& reader) {
+    Reader otherReader(_virtualAddressMap);
+
+    FindNonEmptyGarbageCollectionListsInRange(base, limit, limitLowerBound,
+                                              reader, otherReader);
+    if (!_nonEmptyGarbageCollectionLists.empty()) {
+      return;
+    }
+
+    FindNonEmptyGarbageCollectionListsInPyInterpreterStates(
+        base, limit, limitLowerBound, reader, otherReader);
+    if (!_nonEmptyGarbageCollectionLists.empty()) {
+      return;
+    }
+
+    std::cerr << "Warning: No non-empty Python garbage collection lists were "
+                 "found.\n"
+              << "   The counts for %ContainerPythonObject are likely to be "
+                 "incorrectly low.\n";
   }
 };
 }  // namespace Python
