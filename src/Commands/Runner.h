@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020,2022 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -96,6 +96,10 @@ class Input {
           cmdLine.erase(commentPos);
         }
         std::string::size_type pos = cmdLine.find_first_not_of(" \t", 0);
+        while ((pos != std::string::npos) && (cmdLine[pos] == '\xc2') &&
+               ((pos + 1) < cmdLine.size()) && (cmdLine[pos + 1] == '\xa0')) {
+          pos = cmdLine.find_first_not_of(" \t", pos + 2);
+        }
         if (pos == std::string::npos) {
           // There is no non-white space on the current line.
           if (tokens.empty() || checkNextLine) {
@@ -114,12 +118,24 @@ class Input {
         // ??? TODO: support piping with |
         do {
           std::string::size_type tokenPos = pos;
-          pos = cmdLine.find_first_of(" \t", pos);
+          pos = cmdLine.find_first_of(" \t\xc2", pos);
+          while ((pos != std::string::npos) && (cmdLine[pos] == '\xc2') &&
+                 ((pos + 1) < cmdLine.size()) && (cmdLine[pos + 1] != '\xa0')) {
+            // This will cause mildly strange error message if a non-ascii
+            // character other than a non-breaking-blank is found but this
+            // doesn't seem like a particular problem if we just want to
+            // add support for non-breaking-blank as whitespace for now.
+            pos = cmdLine.find_first_of(" \t\xc2", pos + 2);
+          }
           std::string token(cmdLine, tokenPos, (pos == std::string::npos)
                                                    ? pos
                                                    : (pos - tokenPos));
           tokens.push_back(token);
           pos = cmdLine.find_first_not_of(" \t", pos);
+          while ((pos != std::string::npos) && (cmdLine[pos] == '\xc2') &&
+                 ((pos + 1) < cmdLine.size()) && (cmdLine[pos + 1] == '\xa0')) {
+            pos = cmdLine.find_first_not_of(" \t", pos + 2);
+          }
         } while (pos != std::string::npos);
         if (!checkNextLine) {
           return;
