@@ -65,6 +65,7 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
           vectors.emplace_back(
               InAllocation, incomingAddress,
               candidates[candidateIndex + 1] - allocationAddress,
+              candidates[candidateIndex + 2] - allocationAddress,
               candidateIndex * sizeof(Offset));
         }
       }
@@ -82,8 +83,42 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
     Commands::Output& output = context.GetOutput();
     output << "This allocation matches pattern VectorBody.\n";
     std::string label;
-    if (vectors.size() == 1) {
-      output << "Only the first 0x" << std::hex << vectors.begin()->_bytesUsed
+    size_t numVectorCandidates = vectors.size();
+    Offset bytesUsed = vectors[0]._bytesUsed;
+    Offset bytesUsable = vectors[0]._bytesUsable;
+    bool keepJustOne = true;
+    if (numVectorCandidates > 1) {
+      /*
+       * If there are multiple possible vectors and all but one
+       * can be explained as pointers into the used part of the other,
+       * pick the other.
+       */
+      for (size_t index = 1; index < numVectorCandidates; index++) {
+        Offset usableForThisVector = vectors[index]._bytesUsable;
+        if (bytesUsable == usableForThisVector) {
+          keepJustOne = false;
+          continue;
+        }
+        if (bytesUsable < usableForThisVector) {
+          bytesUsable = usableForThisVector;
+          bytesUsed = vectors[index]._bytesUsed;
+          keepJustOne = true;
+        }
+      }
+
+      if (keepJustOne) {
+        for (const auto& vectorInfo : vectors) {
+          Offset bytesUsableForThisOne = vectorInfo._bytesUsable;
+          if ((bytesUsableForThisOne < bytesUsable) &&
+              (bytesUsableForThisOne > bytesUsed)) {
+            keepJustOne = false;
+            break;
+          }
+        }
+      }
+    }
+    if (keepJustOne) {
+      output << "Only the first 0x" << bytesUsed
              << " bytes are considered live.\n";
       label.assign("The vector");
     } else {
@@ -117,14 +152,16 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
   enum LocationType { InAllocation, InStaticMemory, OnStack };
   struct VectorInfo {
     VectorInfo(LocationType locationType, Offset address, Offset bytesUsed,
-               Offset offsetInAllocation)
+               Offset bytesUsable, Offset offsetInAllocation)
         : _locationType(locationType),
           _address(address),
           _bytesUsed(bytesUsed),
+          _bytesUsable(bytesUsable),
           _offsetInAllocation(offsetInAllocation) {}
     LocationType _locationType;
     Offset _address;
     Offset _bytesUsed;
+    Offset _bytesUsable;
     Offset _offsetInAllocation;
   };
   void FindVectors(LocationType locationType, Offset allocationAddress,
@@ -140,7 +177,8 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
           if (endUsed >= allocationAddress && endUsable >= endUsed &&
               endUsable > allocationAddress && endUsable <= allocationLimit) {
             vectors.emplace_back(locationType, anchor,
-                                 endUsed - allocationAddress, 0);
+                                 endUsed - allocationAddress,
+                                 endUsable - allocationAddress, 0);
           }
         }
       }
