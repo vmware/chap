@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019,2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019,2021-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -104,13 +104,13 @@ class VirtualAddressMap {
         throw NotMapped(address);
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -134,13 +134,13 @@ class VirtualAddressMap {
         return defaultValue;
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -164,13 +164,13 @@ class VirtualAddressMap {
         throw NotMapped(address);
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -193,13 +193,13 @@ class VirtualAddressMap {
         return defaultValue;
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -223,13 +223,13 @@ class VirtualAddressMap {
         throw NotMapped(address);
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -252,13 +252,13 @@ class VirtualAddressMap {
         return defaultValue;
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -281,13 +281,13 @@ class VirtualAddressMap {
         return defaultValue;
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -311,13 +311,13 @@ class VirtualAddressMap {
         throw NotMapped(address);
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -340,13 +340,13 @@ class VirtualAddressMap {
         return defaultValue;
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -370,13 +370,13 @@ class VirtualAddressMap {
         throw NotMapped(address);
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -399,13 +399,13 @@ class VirtualAddressMap {
         return defaultValue;
       }
       if (_base > address || _limit < readLimit) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -418,16 +418,52 @@ class VirtualAddressMap {
       }
       return *((uint8_t *)(_image + (address - _base)));
     }
+
+    /*
+     * If the given address is mapped into memory, copy as much of the
+     * c-string at that location as will fit into the buffer.  In any
+     * case, return the number of bytes copied, not including any
+     * trailing '\0'.
+     */
+    size_t ReadCString(Offset address, char *buffer, size_t bufferSize) {
+      if (_base > address || _limit <= address) {
+        _image = nullptr;
+        _base = 0;
+        _limit = 0;
+        _iterator = _map.find(address);
+        if (_iterator == _endIterator) {
+          return 0;
+        }
+        _image = _iterator.GetImage();
+        if (_image == nullptr) {
+          return 0;
+        }
+        _base = _iterator.Base();
+        _limit = _iterator.Limit();
+      }
+      size_t maxStringLenPlus1 = bufferSize;
+      if ((address + bufferSize > _limit) || (address + bufferSize < address)) {
+        maxStringLenPlus1 = (size_t)(_limit - address);
+      }
+      char *stringStart = (char *)(_image + (address - _base));
+      size_t stringLength = strnlen(stringStart, maxStringLenPlus1);
+      memcpy(buffer, stringStart, stringLength);
+      if (stringLength < bufferSize) {
+        buffer[stringLength] = '\0';
+      }
+      return stringLength;
+    }
+
     template <typename T>
     void Read(Offset address, T *valueRead) {
       if (_base > address || _limit < address + sizeof(T)) {
-        _image = (char *)0;
+        _image = nullptr;
         _base = 0;
         _limit = 0;
         _iterator = _map.find(address);
         if (_iterator != _endIterator) {
           _image = _iterator.GetImage();
-          if (_image != (char *)0) {
+          if (_image != nullptr) {
             _base = _iterator.Base();
             _limit = _iterator.Limit();
           } else {
@@ -464,10 +500,6 @@ class VirtualAddressMap {
   }
   const_iterator find(Offset addr) const {
     return const_iterator(_ranges.find(addr), _fileImage.GetImage());
-  }
-
-  const_iterator lower_bound(Offset addr) const {
-    return const_iterator(_ranges.lower_bound(addr), _fileImage.GetImage());
   }
 
   const_iterator upper_bound(Offset addr) const {
@@ -520,22 +552,30 @@ class VirtualAddressMap {
     bool overlap = false;
     if (!isMapped || _fileSize >= limit) {
       // No image was expected, or it is entirely in the file.
-      overlap = !_ranges.MapRange(rangeAddr, rangeSize,
-                                  RangeAttributes(adjustToFileOffset, flags));
+      overlap = !_ranges
+                     .MapRange(rangeAddr, rangeSize,
+                               RangeAttributes(adjustToFileOffset, flags))
+                     .second;
     } else if (_fileSize <= rangeAddr + adjustToFileOffset) {
       // The entire expected image is missing due to truncation of the file.
       flags |= RangeAttributes::IS_TRUNCATED;
-      overlap = !_ranges.MapRange(rangeAddr, rangeSize,
-                                  RangeAttributes(adjustToFileOffset, flags));
+      overlap = !_ranges
+                     .MapRange(rangeAddr, rangeSize,
+                               RangeAttributes(adjustToFileOffset, flags))
+                     .second;
     } else {
       // Some of the expected image was missing due to truncation of the file.
       Offset missing = limit - _fileSize;
       Offset present = rangeSize - missing;
-      overlap = !_ranges.MapRange(rangeAddr, present,
-                                  RangeAttributes(adjustToFileOffset, flags));
+      overlap = !_ranges
+                     .MapRange(rangeAddr, present,
+                               RangeAttributes(adjustToFileOffset, flags))
+                     .second;
       flags |= RangeAttributes::IS_TRUNCATED;
-      if (!_ranges.MapRange(rangeAddr + present, missing,
-                            RangeAttributes(adjustToFileOffset, flags))) {
+      if (!_ranges
+               .MapRange(rangeAddr + present, missing,
+                         RangeAttributes(adjustToFileOffset, flags))
+               .second) {
         overlap = true;
       }
     }

@@ -63,21 +63,21 @@ The allocation at 0x135e170 appears to be directly statically anchored.
 Address 0x602170 is at offset 0x170 in range
 [0x602000, 603000)
 for module /home/tim/Demo6
-and at module-relative virtual address 0x202170.
+and at module-relative virtual address 0x602170.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x602170 references 0x135e170.
 Address 0x602178 is at offset 0x178 in range
 [0x602000, 603000)
 for module /home/tim/Demo6
-and at module-relative virtual address 0x202178.
+and at module-relative virtual address 0x602178.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x602178 references 0x135e170.
 Address 0x602180 is at offset 0x180 in range
 [0x602000, 603000)
 for module /home/tim/Demo6
-and at module-relative virtual address 0x202180.
+and at module-relative virtual address 0x602180.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x602180 references 0x135e170.

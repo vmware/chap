@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -45,10 +45,8 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _tagIndex(_tagHolder.RegisterTag("%COWStringBody", true, true)) {
     _votesNeeded.resize(_numAllocations, 0xff);
     bool foundCheckableLibrary = false;
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             moduleDirectory.begin();
-         it != moduleDirectory.end(); ++it) {
-      if (it->first.find("libstdc++.so.6") != std::string::npos) {
+    for (const auto& nameAndModuleInfo : moduleDirectory) {
+      if (nameAndModuleInfo.first.find("libstdc++.so.6") != std::string::npos) {
         foundCheckableLibrary = true;
       }
     }
@@ -58,21 +56,15 @@ class COWStringAllocationsTagger : public Allocations::Tagger<Offset> {
     }
 
     bool cPlusPlus11ABIFound = false;
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             moduleDirectory.begin();
-         it != moduleDirectory.end(); ++it) {
-      typename ModuleDirectory<Offset>::RangeToFlags::const_iterator itRange =
-          it->second.begin();
-      const auto& itRangeEnd = it->second.end();
-
-      for (; itRange != itRangeEnd; ++itRange) {
-        if ((itRange->_value &
+    for (const auto& nameAndModuleInfo : moduleDirectory) {
+      for (const auto& range : nameAndModuleInfo.second._ranges) {
+        if ((range._value._flags &
              ~VirtualAddressMap<Offset>::RangeAttributes::IS_EXECUTABLE) ==
             (VirtualAddressMap<Offset>::RangeAttributes::IS_READABLE |
              VirtualAddressMap<Offset>::RangeAttributes::HAS_KNOWN_PERMISSIONS |
              VirtualAddressMap<Offset>::RangeAttributes::IS_MAPPED)) {
-          Offset base = itRange->_base;
-          Offset limit = itRange->_limit;
+          Offset base = range._base;
+          Offset limit = range._limit;
           typename VirtualAddressMap<Offset>::const_iterator itVirt =
               _addressMap.find(base);
           const char* check = itVirt.GetImage() + (base - itVirt.Base());

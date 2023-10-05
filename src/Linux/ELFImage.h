@@ -1,4 +1,4 @@
-// Copyright (c) 2017,2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2021,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -57,6 +57,7 @@ class ELFImage {
   typedef Nhdr NoteHeader;
   typedef Off Offset;
   typedef Word ElfWord;
+  static constexpr unsigned char EXPECTED_ELF_CLASS = elfClass;
   typedef RangeMapper<Offset, Offset> AddrToOffsetMap;
 
   static const Offset MAX_OFFSET = ~0;
@@ -92,7 +93,7 @@ class ELFImage {
       throw WrongElfByteOrderException();
     }
 
-    if (((const unsigned char *)_image)[EI_CLASS] != elfClass) {
+    if (((const unsigned char *)_image)[EI_CLASS] != EXPECTED_ELF_CLASS) {
       throw WrongElfClassException();
     }
 
@@ -241,7 +242,7 @@ class ELFImage {
                         >
       NoteVisitor;
 
-  bool VisitNotes(NoteVisitor visitor) {
+  bool VisitNotes(NoteVisitor visitor) const {
     int entrySize = _elfHeader->e_phentsize;
     const char *headerImage = _image + _elfHeader->e_phoff;
     const char *headerLimit = headerImage + (_elfHeader->e_phnum * entrySize);

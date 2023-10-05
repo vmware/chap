@@ -2,12 +2,18 @@ Address 235c010 is at offset 0 of
 an anchored allocation at 235c010 of size 58
 The allocation at 0x235c010 appears to be directly statically anchored.
 Address 0x954e28 is at offset 0x76e28 in range
-[0x8de000, 955000)
+[0x8de000, 978000)
 for module /usr/bin/python2.7
-and at module-relative virtual address 0x77e28.
+and at module-relative virtual address 0x954e28.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x954e28 references 0x235c010.
+Address 0x955908 is at offset 0x77908 in range
+[0x8de000, 978000)
+for module /usr/bin/python2.7
+and at module-relative virtual address 0x955908.
+This is readable and writable
+and is mapped into the process image.
 Static address 0x955908 references 0x235c010.
 The allocation at 0x235c010 appears to be indirectly anchored from
 at least one register via anchor point 0x23c5210.

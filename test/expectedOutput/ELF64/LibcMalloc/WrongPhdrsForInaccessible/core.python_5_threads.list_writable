@@ -1,5 +1,4 @@
-Range [0x8de000, 0x955000) uses 0x77000 bytes.
-Range [0x955000, 0x978000) uses 0x23000 bytes.
+Range [0x8de000, 0x978000) uses 0x9a000 bytes.
 Range [0x235c000, 0x243d000) uses 0xe1000 bytes.
 Range [0x7f51d8000000, 0x7f51d8021000) uses 0x21000 bytes.
 Range [0x7f51dc000000, 0x7f51dc021000) uses 0x21000 bytes.
@@ -13,10 +12,8 @@ Range [0x7f51ece5c000, 0x7f51ece5d000) uses 0x1000 bytes.
 Range [0x7f51ed076000, 0x7f51ed077000) uses 0x1000 bytes.
 Range [0x7f51ed279000, 0x7f51ed27a000) uses 0x1000 bytes.
 Range [0x7f51ed47d000, 0x7f51ed47e000) uses 0x1000 bytes.
-Range [0x7f51ed842000, 0x7f51ed844000) uses 0x2000 bytes.
-Range [0x7f51ed844000, 0x7f51ed848000) uses 0x4000 bytes.
-Range [0x7f51eda60000, 0x7f51eda61000) uses 0x1000 bytes.
-Range [0x7f51eda61000, 0x7f51eda65000) uses 0x4000 bytes.
+Range [0x7f51ed842000, 0x7f51ed848000) uses 0x6000 bytes.
+Range [0x7f51eda60000, 0x7f51eda65000) uses 0x5000 bytes.
 Range [0x7f51edabb000, 0x7f51edafb000) uses 0x40000 bytes.
 Range [0x7f51edafb000, 0x7f51edb3b000) uses 0x40000 bytes.
 Range [0x7f51edb3b000, 0x7f51edb7b000) uses 0x40000 bytes.
@@ -27,4 +24,4 @@ Range [0x7f51edc2c000, 0x7f51edc6c000) uses 0x40000 bytes.
 Range [0x7f51edc6c000, 0x7f51edc71000) uses 0x5000 bytes.
 Range [0x7f51edc8b000, 0x7f51edc8d000) uses 0x2000 bytes.
 Range [0x7fffe22bc000, 0x7fffe22dd000) uses 0x21000 bytes.
-29 writable ranges use 0x23e7000 (37,646,336) bytes.
+26 writable ranges use 0x23e7000 (37,646,336) bytes.

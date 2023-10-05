@@ -1,4 +1,4 @@
-// Copyright (c) 2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2021,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -17,8 +17,9 @@ class StackRegistry {
 
   bool RegisterStack(Offset regionBase, Offset regionLimit,
                      const char *stackType) {
-    if (_stacks.MapRange(regionBase, regionLimit - regionBase,
-                         _stackInfo.size())) {
+    if (_stacks
+            .MapRange(regionBase, regionLimit - regionBase, _stackInfo.size())
+            .second) {
       _stackInfo.emplace_back(stackType);
       return true;
     }

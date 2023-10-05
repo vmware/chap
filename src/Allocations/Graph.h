@@ -219,7 +219,7 @@ class Graph {
     return _numAllocations;
   }
 
-  Index TargetEdgeIndex(Index source, Offset addr) const {
+  EdgeIndex TargetEdgeIndex(Index source, Offset addr) const {
     if (source < _numAllocations) {
       EdgeIndex base = _firstOutgoing[source];
       EdgeIndex limit = _firstOutgoing[source + 1];

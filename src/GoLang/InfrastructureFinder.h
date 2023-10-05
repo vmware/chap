@@ -1,4 +1,4 @@
-// Copyright (c) 2020,2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -87,14 +87,13 @@ class InfrastructureFinder {
       abort();
     }
 
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             _moduleDirectory.begin();
-         it != _moduleDirectory.end(); ++it) {
-      if (it->first.find(".so") != std::string::npos) {
+    for (const auto& nameAndModuleInfo : _moduleDirectory) {
+      if (nameAndModuleInfo.first.find(".so") != std::string::npos) {
         // For now, assume the go runtime code is not in a shared library.
         continue;
       }
-      FindGoRoutines(it->second);
+      const auto& moduleInfo = nameAndModuleInfo.second;
+      FindGoRoutines(moduleInfo);
       if (_goRoutines == 0) {
         continue;
       }
@@ -107,11 +106,11 @@ class InfrastructureFinder {
        * At this point, we have the header to the goroutines.
        */
 
-      FindSpans(it->second);
+      FindSpans(moduleInfo);
       if (_mspans == 0) {
         _stateInMspan = STATE_IN_OLD_MSPAN;
         _limitInMspan = LIMIT_IN_OLD_MSPAN;
-        FindSpans(it->second);
+        FindSpans(moduleInfo);
         if (_mspans == 0) {
           std::cerr << "Warning: Failed to find mspan pointers for apparent "
                        "GoLang process.\n";
@@ -177,29 +176,17 @@ class InfrastructureFinder {
   }
 
   void FindGoRoutines(
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags) {
+      const typename ModuleDirectory<Offset>::ModuleInfo& moduleInfo) {
     Reader moduleReader(_virtualAddressMap);
     Reader reader(_virtualAddressMap);
 
-    for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-             itRange = rangeToFlags.begin();
-         itRange != rangeToFlags.end(); ++itRange) {
-      int flags = itRange->_value;
+    for (const auto& range : moduleInfo._ranges) {
+      int flags = range._value._flags;
       if ((flags & RangeAttributes::IS_WRITABLE) == 0) {
         continue;
       }
-      Offset base = itRange->_base;
-      /*
-       * At present the module finding logic can get a lower value for the
-       * limit than the true limit.  It is conservative about selecting the
-       * limit to avoid tagging too large a range in the partition.  However
-       * this conservative estimate is problematic if the array header we
-       * are seeking lies between the calculated limit and the real
-       * limit.  This code works around this to extend the limit to the
-       * last consecutive byte that has the same permission as the last
-       * byte in the range.
-       */
-      Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
+      Offset base = range._base;
+      Offset limit = range._limit;
 
       for (Offset moduleAddr = base; moduleAddr < limit;
            moduleAddr += sizeof(Offset)) {
@@ -282,7 +269,7 @@ class InfrastructureFinder {
     Offset spanLimit = startAddr + spanSize;
     Offset nelems = reader.ReadOffset(mspan + NELEMS_IN_MSPAN, ~0);
     if (nelems > spanSize) {
-      return 0;
+      return false;
     }
     Offset elementSize = reader.ReadOffset(mspan + ELEM_SIZE_IN_MSPAN, ~0);
     if (elementSize == ~((Offset)0)) {
@@ -360,29 +347,17 @@ class InfrastructureFinder {
   }
 
   void FindSpans(
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags) {
+      const typename ModuleDirectory<Offset>::ModuleInfo& moduleInfo) {
     Reader moduleReader(_virtualAddressMap);
     Reader reader(_virtualAddressMap);
 
-    for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-             itRange = rangeToFlags.begin();
-         itRange != rangeToFlags.end(); ++itRange) {
-      int flags = itRange->_value;
+    for (const auto& range : moduleInfo._ranges) {
+      int flags = range._value._flags;
       if ((flags & RangeAttributes::IS_WRITABLE) == 0) {
         continue;
       }
-      Offset base = itRange->_base;
-      /*
-       * At present the module finding logic can get a lower value for the
-       * limit than the true limit.  It is conservative about selecting the
-       * limit to avoid tagging too large a range in the partition.  However
-       * this conservative estimate is problematic if the array header we
-       * are seeking lies between the calculated limit and the real
-       * limit.  This code works around this to extend the limit to the
-       * last consecutive byte that has the same permission as the last
-       * byte in the range.
-       */
-      Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
+      Offset base = range._base;
+      Offset limit = range._limit;
 
       for (Offset moduleAddr = base; moduleAddr < limit;
            moduleAddr += sizeof(Offset)) {
@@ -410,16 +385,19 @@ class InfrastructureFinder {
               numMspans++;
             }
           }
-          if (numMspans > size - 4) {
+          if (2 * numMspans > size) {
             _mspans = arrayOfPointers;
             _numSpans = size;
             _mspansIndicesByStart.reserve(size);
-            _mspansIndicesByStart.resize(size, 0);
             Reader spanReader(_virtualAddressMap);
             for (Offset spanIndex = 0; spanIndex < _numSpans; ++spanIndex) {
-              _mspansIndicesByStart[spanIndex] = spanIndex;
               Offset mspan =
                   reader.ReadOffset(_mspans + spanIndex * sizeof(Offset), 0);
+              uint8_t state = spanReader.ReadU8(mspan + _stateInMspan, 92);
+              if (state == SPAN_STATE_DEAD) {
+                continue;
+              }
+              _mspansIndicesByStart.push_back(spanIndex);
               Offset spanStart =
                   spanReader.ReadOffset(mspan + START_ADDR_IN_MSPAN, 0);
               Offset numSpanPages =
@@ -427,11 +405,9 @@ class InfrastructureFinder {
               Offset spanSize = numSpanPages << PAGE_SHIFT;
               if (!_virtualMemoryPartition.ClaimRange(spanStart, spanSize,
                                                       GO_SPAN, false)) {
-                // TODO: Fix this.
-                // std::cerr << "Warning: Failed to claim span range [" <<
-                // std::hex
-                //          << spanStart << ", " << (spanStart + spanSize)
-                //          << ") due to overlap.\n";
+                std::cerr << "Warning: Failed to claim span range [" << std::hex
+                          << spanStart << ", " << (spanStart + spanSize)
+                          << ") due to overlap.\n";
               }
             }
             std::sort(

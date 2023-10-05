@@ -7,14 +7,14 @@ via anchor point 0x604040.
 Address 0x6032f0 is at offset 0x2f0 in range
 [0x603000, 604000)
 for module main executable
-and at module-relative virtual address 0x2032f0.
+and at module-relative virtual address 0x6032f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6032f0 (SomeBogusMap + 16) references anchor point 0x604040
 Address 0x603300 is at offset 0x300 in range
 [0x603000, 604000)
 for module main executable
-and at module-relative virtual address 0x203300.
+and at module-relative virtual address 0x603300.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x603300 (SomeBogusMap + 32) references anchor point 0x604040
@@ -39,14 +39,14 @@ The allocation at 0x604040 appears to be directly statically anchored.
 Address 0x6032f0 is at offset 0x2f0 in range
 [0x603000, 604000)
 for module main executable
-and at module-relative virtual address 0x2032f0.
+and at module-relative virtual address 0x6032f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6032f0 (SomeBogusMap + 16) references 0x604040.
 Address 0x603300 is at offset 0x300 in range
 [0x603000, 604000)
 for module main executable
-and at module-relative virtual address 0x203300.
+and at module-relative virtual address 0x603300.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x603300 (SomeBogusMap + 32) references 0x604040.
@@ -64,7 +64,7 @@ via anchor point 0x6040c0.
 Address 0x6032f8 is at offset 0x2f8 in range
 [0x603000, 604000)
 for module main executable
-and at module-relative virtual address 0x2032f8.
+and at module-relative virtual address 0x6032f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6032f8 (SomeBogusMap + 24) references anchor point 0x6040c0
@@ -88,7 +88,7 @@ The allocation at 0x6040c0 appears to be directly statically anchored.
 Address 0x6032f8 is at offset 0x2f8 in range
 [0x603000, 604000)
 for module main executable
-and at module-relative virtual address 0x2032f8.
+and at module-relative virtual address 0x6032f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6032f8 (SomeBogusMap + 24) references 0x6040c0.

@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -27,14 +27,17 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   typedef typename Allocations::EdgePredicate<Offset> EdgePredicate;
   typedef typename TagHolder::TagIndex TagIndex;
   static constexpr int NUM_OFFSETS_IN_HEADER = 4;
-  LongStringAllocationsTagger(Graph& graph, TagHolder& tagHolder,
-                              EdgePredicate& edgeIsTainted,
-                              EdgePredicate& edgeIsFavored,
-                              const ModuleDirectory<Offset>& moduleDirectory)
+  LongStringAllocationsTagger(
+      Graph& graph, TagHolder& tagHolder, EdgePredicate& edgeIsTainted,
+      EdgePredicate& edgeIsFavored,
+      const ModuleDirectory<Offset>& moduleDirectory,
+      const typename Allocations::SignatureDirectory<Offset>&
+          signatureDirectory)
       : _graph(graph),
         _tagHolder(tagHolder),
         _edgeIsTainted(edgeIsTainted),
         _edgeIsFavored(edgeIsFavored),
+        _signatureDirectory(signatureDirectory),
         _directory(graph.GetAllocationDirectory()),
         _numAllocations(_directory.NumAllocations()),
         _addressMap(graph.GetAddressMap()),
@@ -42,12 +45,10 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         _staticAnchorReader(_addressMap),
         _stackAnchorReader(_addressMap),
         _enabled(true),
-        _tagIndex(_tagHolder.RegisterTag("%LongString", true, true)) {
+        _tagIndex(_tagHolder.RegisterTag("%LongString", false, true)) {
     bool foundCheckableLibrary = false;
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             moduleDirectory.begin();
-         it != moduleDirectory.end(); ++it) {
-      if (it->first.find("libstdc++.so.6") != std::string::npos) {
+    for (const auto& nameAndModuleInfo : moduleDirectory) {
+      if (nameAndModuleInfo.first.find("libstdc++.so.6") != std::string::npos) {
         foundCheckableLibrary = true;
       }
     }
@@ -57,21 +58,15 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     }
 
     bool preCPlusPlus11ABIFound = false;
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             moduleDirectory.begin();
-         it != moduleDirectory.end(); ++it) {
-      typename ModuleDirectory<Offset>::RangeToFlags::const_iterator itRange =
-          it->second.begin();
-      const auto& itRangeEnd = it->second.end();
-
-      for (; itRange != itRangeEnd; ++itRange) {
-        if ((itRange->_value &
+    for (const auto& nameAndModuleInfo : moduleDirectory) {
+      for (const auto& range : nameAndModuleInfo.second._ranges) {
+        if ((range._value._flags &
              ~VirtualAddressMap<Offset>::RangeAttributes::IS_EXECUTABLE) ==
             (VirtualAddressMap<Offset>::RangeAttributes::IS_READABLE |
              VirtualAddressMap<Offset>::RangeAttributes::HAS_KNOWN_PERMISSIONS |
              VirtualAddressMap<Offset>::RangeAttributes::IS_MAPPED)) {
-          Offset base = itRange->_base;
-          Offset limit = itRange->_limit;
+          Offset base = range._base;
+          Offset limit = range._limit;
           typename VirtualAddressMap<Offset>::const_iterator itVirt =
               _addressMap.find(base);
           const char* check = itVirt.GetImage() + (base - itVirt.Base());
@@ -100,7 +95,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   bool TagFromAllocation(const ContiguousImage& contiguousImage,
                          Reader& /* reader */, AllocationIndex index,
                          Phase phase, const Allocation& allocation,
-                         bool /* isUnsigned */) {
+                         bool isUnsigned) {
     if (!_enabled) {
       // The C++11 ABI doesn't appear to have been used in the process.
       return true;
@@ -108,6 +103,21 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     if (_tagHolder.IsStronglyTagged(index)) {
       // Don't override any strong tags but do override weak ones.
       return true;  // We are finished looking at this allocation for this pass.
+    }
+    if (!isUnsigned) {
+      /*
+       * Unfortunately, there is a possibility of a string with large
+       * capacity but short (<8) bytes length where the residue from
+       * the previous usage of the buffer had a signature and the short
+       * c-string imposed on the lower bits of the signature still leave
+       * what looks like a signature.  For example, in the case that the
+       * signature already has a low byte of 0x00 and there happens to
+       * be a long string of 0 length, this might happen.  For now, in the
+       * case of some ambiguity with an empty string, favor the signature.
+       */
+      if (*(contiguousImage.FirstChar()) == (const char)(0)) {
+        return true;
+      }
     }
     return TagAnchorPointLongStringChars(contiguousImage, index, phase,
                                          allocation);
@@ -132,6 +142,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   TagHolder& _tagHolder;
   EdgePredicate& _edgeIsTainted;
   EdgePredicate& _edgeIsFavored;
+  const typename Allocations::SignatureDirectory<Offset>& _signatureDirectory;
   const Directory& _directory;
   AllocationIndex _numAllocations;
   const VirtualAddressMap<Offset>& _addressMap;
@@ -161,7 +172,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         break;
       case Tagger::MEDIUM_CHECK:
         // Sublinear if reject, match must be solid
-        if (size < 10 * sizeof(Offset)) {
+        if ((size > 0) && (size < 10 * sizeof(Offset))) {
           TagIfLongStringCharsAnchorPoint(contiguousImage, index, allocation);
           return true;
         }
@@ -277,7 +288,6 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
   void CheckEmbeddedStrings(AllocationIndex index,
                             const ContiguousImage& contiguousImage,
                             const AllocationIndex* unresolvedOutgoing) {
-    Reader charsReader(_addressMap);
     const Offset* checkLimit = contiguousImage.OffsetLimit() - 3;
     const Offset* firstCheck = contiguousImage.FirstOffset();
     ;
@@ -307,9 +317,13 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         continue;
       }
 
-      if (stringLength < 2 * sizeof(Offset)) {
-        continue;
-      }
+      /*
+       * We cannot insist that the string length be >= 16 because the string
+       * may have been shortened after the extra buffer was allocated but we
+       * most definitely can insist that the capacity is large enough to
+       * store a string of the given length and can check that the length
+       * matches the actual length of the c-string.
+       */
 
       if (stringLength > capacity) {
         continue;
@@ -335,12 +349,25 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         continue;
       }
 
-      if (stringLength == (Offset)(strlen(chars))) {
-        _tagHolder.TagAllocation(charsIndex, _tagIndex);
-        _edgeIsTainted.SetAllOutgoing(charsIndex, true);
-        _edgeIsFavored.Set(index, charsIndex, true);
-        check += (NUM_OFFSETS_IN_HEADER - 1);
+      if (stringLength != (Offset)(strlen(chars))) {
+        continue;
       }
+
+      if (stringLength == 0) {
+        /*
+         * Empty strings are such a weak pattern that we check to see whether
+         * we simply have a signature with a low byte of 0, in which case
+         * this is rejected as a long string.
+         */
+        Offset signatureCandidate = *(_charsImage.FirstOffset());
+        if (_signatureDirectory.IsMapped(signatureCandidate)) {
+          continue;
+        }
+      }
+      _tagHolder.TagAllocation(charsIndex, _tagIndex);
+      _edgeIsTainted.SetAllOutgoing(charsIndex, true);
+      _edgeIsFavored.Set(index, charsIndex, true);
+      check += (NUM_OFFSETS_IN_HEADER - 1);
     }
   }
 };

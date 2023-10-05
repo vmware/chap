@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -12,6 +12,7 @@
 #include "CPlusPlus/ListNodeDescriber.h"
 #include "CPlusPlus/LongStringDescriber.h"
 #include "CPlusPlus/MapOrSetNodeDescriber.h"
+#include "CPlusPlus/Subcommands/SummarizeStringUsers.h"
 #include "CPlusPlus/UnorderedMapOrSetBucketsDescriber.h"
 #include "CPlusPlus/UnorderedMapOrSetNodeDescriber.h"
 #include "CPlusPlus/VectorBodyDescriber.h"
@@ -27,6 +28,7 @@
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
 #include "ModuleAlignmentGapDescriber.h"
+#include "ModuleCommands/DescribeModules.h"
 #include "ModuleCommands/ListModules.h"
 #include "PThread/StackOverflowGuardDescriber.h"
 #include "ProcessImage.h"
@@ -48,10 +50,12 @@
 #include "StackDescriber.h"
 #include "VirtualAddressMapCommands/CountRanges.h"
 #include "VirtualAddressMapCommands/DescribePointers.h"
+#include "VirtualAddressMapCommands/DescribeRangeRefs.h"
 #include "VirtualAddressMapCommands/DescribeRanges.h"
 #include "VirtualAddressMapCommands/DescribeRelRefs.h"
 #include "VirtualAddressMapCommands/DumpCommand.h"
 #include "VirtualAddressMapCommands/EnumeratePointers.h"
+#include "VirtualAddressMapCommands/EnumerateRangeRefs.h"
 #include "VirtualAddressMapCommands/EnumerateRelRefs.h"
 #include "VirtualAddressMapCommands/ListRanges.h"
 #include "VirtualAddressMapCommands/SummarizeRanges.h"
@@ -79,6 +83,7 @@ class ProcessImageCommandHandler {
         _listStacksSubcommand(processImage),
         _describeStacksSubcommand(processImage),
         _listModulesSubcommand(processImage),
+        _describeModulesSubcommand(processImage),
         _countInaccessibleSubcommand(
             "inaccessible",
             "This command provides totals of the number of "
@@ -186,7 +191,11 @@ class ProcessImageCommandHandler {
         _describeRelRefsSubcommand(processImage.GetVirtualAddressMap(),
                                    _compoundDescriber),
         _enumerateRelRefsSubcommand(processImage.GetVirtualAddressMap()),
+        _describeRangeRefsSubcommand(processImage.GetVirtualAddressMap(),
+                                     _compoundDescriber),
+        _enumerateRangeRefsSubcommand(processImage.GetVirtualAddressMap()),
         _summarizeSignaturesSubcommand(processImage),
+        _summarizeStringUsersSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
                                        _patternDescriberRegistry),
         _dequeMapDescriber(processImage),
@@ -246,6 +255,7 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _listStacksSubcommand);
     RegisterSubcommand(r, _describeStacksSubcommand);
     RegisterSubcommand(r, _listModulesSubcommand);
+    RegisterSubcommand(r, _describeModulesSubcommand);
     RegisterSubcommand(r, _countInaccessibleSubcommand);
     RegisterSubcommand(r, _summarizeInaccessibleSubcommand);
     RegisterSubcommand(r, _listInaccessibleSubcommand);
@@ -266,7 +276,10 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _enumeratePointersSubcommand);
     RegisterSubcommand(r, _describeRelRefsSubcommand);
     RegisterSubcommand(r, _enumerateRelRefsSubcommand);
+    RegisterSubcommand(r, _describeRangeRefsSubcommand);
+    RegisterSubcommand(r, _enumerateRangeRefsSubcommand);
     RegisterSubcommand(r, _summarizeSignaturesSubcommand);
+    RegisterSubcommand(r, _summarizeStringUsersSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
   }
 
@@ -293,6 +306,7 @@ class ProcessImageCommandHandler {
   StackCommands::ListStacks<Offset> _listStacksSubcommand;
   StackCommands::DescribeStacks<Offset> _describeStacksSubcommand;
   ModuleCommands::ListModules<Offset> _listModulesSubcommand;
+  ModuleCommands::DescribeModules<Offset> _describeModulesSubcommand;
   VirtualAddressMapCommands::CountRanges<Offset> _countInaccessibleSubcommand;
   VirtualAddressMapCommands::SummarizeRanges<Offset>
       _summarizeInaccessibleSubcommand;
@@ -320,9 +334,16 @@ class ProcessImageCommandHandler {
   VirtualAddressMapCommands::DescribeRelRefs<Offset> _describeRelRefsSubcommand;
   VirtualAddressMapCommands::EnumerateRelRefs<Offset>
       _enumerateRelRefsSubcommand;
+  VirtualAddressMapCommands::DescribeRangeRefs<Offset>
+      _describeRangeRefsSubcommand;
+  VirtualAddressMapCommands::EnumerateRangeRefs<Offset>
+      _enumerateRangeRefsSubcommand;
 
   Allocations::Subcommands::SummarizeSignatures<Offset>
       _summarizeSignaturesSubcommand;
+
+  CPlusPlus::Subcommands::SummarizeStringUsers<Offset>
+      _summarizeStringUsersSubcommand;
 
   void RegisterSubcommand(Commands::Runner& runner,
                           Commands::Subcommand& subcommand) {

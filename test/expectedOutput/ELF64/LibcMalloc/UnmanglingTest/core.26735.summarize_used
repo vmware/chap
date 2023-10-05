@@ -1,8 +1,8 @@
 Pattern %VectorBody has 1 instances taking 0x48(72) bytes.
    Matches of size 0x48 have 1 instances taking 0x48(72) bytes.
-Signature 401350 (NSA::NSC::Dozen<bool,longlong,unsignedlonglong,longdouble,__float128,void***,void**,void*,wchar_t,std::map<int,long,std::less<int>,std::allocator<std::pair<intconst,long>>>,std::set<int,std::less<int>,std::allocator<int>>,std::string>) has 1 instances taking 0xd8(216) bytes.
-Signature 401210 (NSA::NSC::Dozen<signedchar,char,unsignedchar,int,unsignedint,short,unsignedshort,long,unsignedlong,double,longdouble,float>) has 1 instances taking 0x58(88) bytes.
-Signature 4012d0 (NSA::NSC::Dozen<signedchar,char,unsignedchar,int,unsignedint,short,unsignedshort,long,unsignedlong,double,longdouble,float>::FirstTwo) has 1 instances taking 0x18(24) bytes.
-Signature 4013f0 (NSA::NSC::Dozen<void(*)(void),bool(*)(char),char(*)(short,long),void(*)(int,...),std::stringconst&(*)(int,short),int(**)(void),char(**)(short,long),NSA::SB*,NSA::NSB::SA,NSA::NSB::SA&(*)(void),NSA::SBconst&(*)(void),char(***)(short,long)>) has 1 instances taking 0x78(120) bytes.
-Signature 401510 (NSA::NSC::Dozen<void(*)(void),void(*)(int),void(*)(int,short),int(*)(void),int(*)(int),int(*)(int,short),short(**)(int,short,long),int,int,int,int,int>) has 1 instances taking 0x58(88) bytes.
+Signature 401350 (NSA::NSC::Dozen<bool,long_long,unsigned_long_long,long_double,__float128,void***,void**,void*,wchar_t,std::map<int,long,std::less<int>,std::allocator<std::pair<int_const,long>>>,std::set<int,std::less<int>,std::allocator<int>>,std::string>) has 1 instances taking 0xd8(216) bytes.
+Signature 401210 (NSA::NSC::Dozen<signed_char,char,unsigned_char,int,unsigned_int,short,unsigned_short,long,unsigned_long,double,long_double,float>) has 1 instances taking 0x58(88) bytes.
+Signature 4012d0 (NSA::NSC::Dozen<signed_char,char,unsigned_char,int,unsigned_int,short,unsigned_short,long,unsigned_long,double,long_double,float>::FirstTwo) has 1 instances taking 0x18(24) bytes.
+Signature 4013f0 (NSA::NSC::Dozen<void(*)(),bool(*)(char),char(*)(short,long),void(*)(int,...),std::string_const&(*)(int,short),int(**)(),char(**)(short,long),NSA::SB*,NSA::NSB::SA,NSA::NSB::SA&(*)(),NSA::SB_const&(*)(),char(***)(short,long)>) has 1 instances taking 0x78(120) bytes.
+Signature 401510 (NSA::NSC::Dozen<void(*)(),void(*)(int),void(*)(int,short),int(*)(),int(*)(int),int(*)(int,short),short(**)(int,short,long),int,int,int,int,int>) has 1 instances taking 0x58(88) bytes.
 6 allocations use 0x260 (608) bytes.

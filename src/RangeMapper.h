@@ -1,4 +1,4 @@
-// Copyright (c) 2017, 2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017, 2019, 2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -103,9 +103,12 @@ class RangeMapper {
     return RangeIterator<MapConstReverseIterator>(this->_map.rend());
   }
 
-  bool MapRange(Offset rangeBase, Offset rangeSize, ValueType value) {
+  bool empty() const { return (this->_map.empty()); }
+
+  std::pair<const_iterator, bool> MapRange(Offset rangeBase, Offset rangeSize,
+                                           ValueType value) {
     if (rangeSize == 0) {
-      return true;
+      return std::make_pair(end(), true);
     }
     Offset rangeLimit = rangeBase + rangeSize;
 
@@ -127,7 +130,7 @@ class RangeMapper {
            * values.
            */
           it->second.first += rangeSize;
-          return true;
+          return std::make_pair(const_iterator(it), true);
         }
       } else if (it->first == rangeBase) {
         /*
@@ -140,7 +143,7 @@ class RangeMapper {
         if (itNext != _map.end() &&
             itNext->first - itNext->second.first < rangeLimit) {
           // There is overlap with the range after that one.
-          return false;
+          return std::make_pair(const_iterator(itNext), false);
         }
         if (it->second.second == value && _coallesceMatchingValues) {
           // The ranges can be coallesced into a range with a new end.
@@ -152,11 +155,12 @@ class RangeMapper {
          * There is overlap between the start of the existing range and
          * the end of the new one.
          */
-        return false;
+        return std::make_pair(const_iterator(it), false);
       }
     }
-    _map[rangeLimit] = std::make_pair(rangeSize, value);
-    return true;
+    auto emplaceResult =
+        _map.emplace(rangeLimit, std::make_pair(rangeSize, value));
+    return std::make_pair(const_iterator(emplaceResult.first), true);
   }
 
   void UnmapRange(Offset rangeBase, Offset rangeSize) {
@@ -222,14 +226,6 @@ class RangeMapper {
   }
 
   /*
-   * This returns an iterator to the first range with limit not before the
-   * given member, or an iterator to the end if no such range exists.
-   */
-  const_iterator lower_bound(Offset member) const {
-    return const_iterator(_map.upper_bound(member));
-  }
-
-  /*
    * This returns an iterator to the first range with limit after the given
    * member, or an iterator to the end if no such range exists.
    */
@@ -244,7 +240,7 @@ class RangeMapper {
 
   /*
    * If a range containing the given member exists, return true and
-   * set rangeBase, rangeSize and valueType accordingly.  If not, return
+   * set rangeBase, rangeSize and value accordingly.  If not, return
    * false and leave rangeBase, rangeSize and valueType untouched.
    */
 

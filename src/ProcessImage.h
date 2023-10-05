@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,12 +13,14 @@
 #include "CPlusPlus/ListAllocationsTagger.h"
 #include "CPlusPlus/LongStringAllocationsTagger.h"
 #include "CPlusPlus/MapOrSetAllocationsTagger.h"
-#include "CPlusPlus/TypeInfoFinder.h"
+#include "CPlusPlus/TypeInfoDirectory.h"
 #include "CPlusPlus/UnorderedMapOrSetAllocationsTagger.h"
 #include "CPlusPlus/VectorAllocationsTagger.h"
+#include "FileMappedRangeDirectory.h"
 #include "FollyFibers/InfrastructureFinder.h"
 #include "GoLang/FinderGroup.h"
 #include "ModuleDirectory.h"
+#include "ModuleImageFactory.h"
 #include "OpenSSLAllocationsTagger.h"
 #include "PThread/InfrastructureFinder.h"
 #include "Python/AllocationsTagger.h"
@@ -39,13 +41,15 @@ class ProcessImage {
   typedef typename AddressMap::NotMapped NotMapped;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
   ProcessImage(const AddressMap &virtualAddressMap,
-               const ThreadMap<Offset> &threadMap)
+               const ThreadMap<Offset> &threadMap,
+               ModuleImageFactory<Offset> *moduleImageFactory)
       : STACK("stack"),
         STACK_OVERFLOW_GUARD("stack overflow guard"),
         _virtualAddressMap(virtualAddressMap),
         _threadMap(threadMap),
         _virtualMemoryPartition(virtualAddressMap),
-        _moduleDirectory(_virtualMemoryPartition),
+        _fileMappedRangeDirectory(_virtualMemoryPartition),
+        _moduleDirectory(_virtualMemoryPartition, moduleImageFactory),
         _unfilledImages(virtualAddressMap),
         _allocationTagHolder(nullptr),
         _allocationGraph(nullptr),
@@ -58,7 +62,8 @@ class ProcessImage {
                                      _stackRegistry),
         _follyFibersInfrastructureFinder(
             _moduleDirectory, _virtualMemoryPartition, _stackRegistry),
-        _typeInfoFinder(_moduleDirectory, _virtualAddressMap) {}
+        _typeInfoDirectory(_moduleDirectory, _virtualAddressMap,
+                           _allocationDirectory) {}
 
   virtual ~ProcessImage() {
     if (_allocationGraph != nullptr) {
@@ -79,6 +84,10 @@ class ProcessImage {
 
   const StackRegistry<Offset> &GetStackRegistry() const {
     return _stackRegistry;
+  }
+
+  const ModuleDirectory<Offset> &GetFileMappedRangeDirectory() const {
+    return _fileMappedRangeDirectory;
   }
 
   const ModuleDirectory<Offset> &GetModuleDirectory() const {
@@ -153,6 +162,7 @@ class ProcessImage {
   const ThreadMap<OffsetType> &_threadMap;
   StackRegistry<Offset> _stackRegistry;
   VirtualMemoryPartition<Offset> _virtualMemoryPartition;
+  FileMappedRangeDirectory<Offset> _fileMappedRangeDirectory;
   ModuleDirectory<Offset> _moduleDirectory;
   UnfilledImages<Offset> _unfilledImages;
   Allocations::TagHolder<Offset> *_allocationTagHolder;
@@ -165,7 +175,7 @@ class ProcessImage {
   GoLang::FinderGroup<Offset> _goLangFinderGroup;
   PThread::InfrastructureFinder<Offset> _pThreadInfrastructureFinder;
   FollyFibers::InfrastructureFinder<Offset> _follyFibersInfrastructureFinder;
-  CPlusPlus::TypeInfoFinder<Offset> _typeInfoFinder;
+  CPlusPlus::TypeInfoDirectory<Offset> _typeInfoDirectory;
 
   /*
    * Pre-tag all allocations.  This should be done just once, at the end
@@ -205,7 +215,7 @@ class ProcessImage {
 
     runner.RegisterTagger(new CPlusPlus::LongStringAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
-        *_edgeIsFavored, _moduleDirectory));
+        *_edgeIsFavored, _moduleDirectory, _signatureDirectory));
 
     runner.RegisterTagger(new CPlusPlus::VectorAllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,

@@ -1,16 +1,16 @@
 Anchored allocation at 804c008 of size 4a04
 The allocation at 0x804c008 appears to be directly statically anchored.
 Address 0xf7fb8eb8 is at offset 0xeb8 in range
-[0xf7fb8000, f7fb9000)
+[0xf7fb8000, f7fbc000)
 for module /usr/lib32/libstdc++.so.6.0.21
-and at module-relative virtual address 0x5eb8.
+and at module-relative virtual address 0x173eb8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0xf7fb8eb8 references 0x804c008.
 Address 0xf7fb8ebc is at offset 0xebc in range
-[0xf7fb8000, f7fb9000)
+[0xf7fb8000, f7fbc000)
 for module /usr/lib32/libstdc++.so.6.0.21
-and at module-relative virtual address 0x5ebc.
+and at module-relative virtual address 0x173ebc.
 This is readable and writable
 and is mapped into the process image.
 Static address 0xf7fb8ebc references 0x804c008.
@@ -23,14 +23,14 @@ The allocation at 0x8050a10 appears to be directly statically anchored.
 Address 0x804b08c is at offset 0x8c in range
 [0x804b000, 804c000)
 for module /home/tim/LongStringTest32
-and at module-relative virtual address 0x308c.
+and at module-relative virtual address 0x804b08c.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x804b08c references 0x8050a10.
 Address 0x804b094 is at offset 0x94 in range
 [0x804b000, 804c000)
 for module /home/tim/LongStringTest32
-and at module-relative virtual address 0x3094.
+and at module-relative virtual address 0x804b094.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x804b094 references 0x8050a10.
@@ -68,7 +68,7 @@ The allocation at 0x8050a70 appears to be directly statically anchored.
 Address 0x804b090 is at offset 0x90 in range
 [0x804b000, 804c000)
 for module /home/tim/LongStringTest32
-and at module-relative virtual address 0x3090.
+and at module-relative virtual address 0x804b090.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x804b090 references 0x8050a70.
@@ -82,7 +82,7 @@ via anchor point 0x8050a70.
 Address 0x804b090 is at offset 0x90 in range
 [0x804b000, 804c000)
 for module /home/tim/LongStringTest32
-and at module-relative virtual address 0x3090.
+and at module-relative virtual address 0x804b090.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x804b090 references anchor point 0x8050a70
@@ -96,7 +96,7 @@ The allocation at 0x8050ab8 appears to be directly statically anchored.
 Address 0x804b06c is at offset 0x6c in range
 [0x804b000, 804c000)
 for module /home/tim/LongStringTest32
-and at module-relative virtual address 0x306c.
+and at module-relative virtual address 0x804b06c.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x804b06c references 0x8050ab8.

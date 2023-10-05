@@ -6,21 +6,21 @@ The allocation at 0x60a010 appears to be directly statically anchored.
 Address 0x6092a0 is at offset 0x2a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092a0.
+and at module-relative virtual address 0x6092a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092a0 references 0x60a010.
 Address 0x6092c8 is at offset 0x2c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092c8.
+and at module-relative virtual address 0x6092c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092c8 references 0x60a010.
 Address 0x6092e8 is at offset 0x2e8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092e8.
+and at module-relative virtual address 0x6092e8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092e8 references 0x60a010.
@@ -31,42 +31,42 @@ The allocation at 0x60a060 appears to be directly statically anchored.
 Address 0x6092b0 is at offset 0x2b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092b0.
+and at module-relative virtual address 0x6092b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092b0 references 0x60a060.
 Address 0x6092b8 is at offset 0x2b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092b8.
+and at module-relative virtual address 0x6092b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092b8 references 0x60a060.
 Address 0x6092c0 is at offset 0x2c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092c0.
+and at module-relative virtual address 0x6092c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092c0 references 0x60a060.
 Address 0x6092d0 is at offset 0x2d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092d0.
+and at module-relative virtual address 0x6092d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092d0 references 0x60a060.
 Address 0x6092d8 is at offset 0x2d8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092d8.
+and at module-relative virtual address 0x6092d8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092d8 references 0x60a060.
 Address 0x6092e0 is at offset 0x2e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092e0.
+and at module-relative virtual address 0x6092e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092e0 references 0x60a060.
@@ -79,21 +79,21 @@ The allocation at 0x60a270 appears to be directly statically anchored.
 Address 0x6092f0 is at offset 0x2f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2092f0.
+and at module-relative virtual address 0x6092f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6092f0 references 0x60a270.
 Address 0x609318 is at offset 0x318 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209318.
+and at module-relative virtual address 0x609318.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609318 references 0x60a270.
 Address 0x609338 is at offset 0x338 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209338.
+and at module-relative virtual address 0x609338.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609338 references 0x60a270.
@@ -104,42 +104,42 @@ The allocation at 0x60a2c0 appears to be directly statically anchored.
 Address 0x609300 is at offset 0x300 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209300.
+and at module-relative virtual address 0x609300.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609300 references 0x60a2c0.
 Address 0x609308 is at offset 0x308 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209308.
+and at module-relative virtual address 0x609308.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609308 references 0x60a2c0.
 Address 0x609310 is at offset 0x310 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209310.
+and at module-relative virtual address 0x609310.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609310 references 0x60a2c0.
 Address 0x609320 is at offset 0x320 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209320.
+and at module-relative virtual address 0x609320.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609320 references 0x60a2c0.
 Address 0x609328 is at offset 0x328 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209328.
+and at module-relative virtual address 0x609328.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609328 references 0x60a2c0.
 Address 0x609330 is at offset 0x330 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209330.
+and at module-relative virtual address 0x609330.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609330 references 0x60a2c0.
@@ -152,21 +152,21 @@ The allocation at 0x60a4d0 appears to be directly statically anchored.
 Address 0x609340 is at offset 0x340 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209340.
+and at module-relative virtual address 0x609340.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609340 references 0x60a4d0.
 Address 0x609368 is at offset 0x368 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209368.
+and at module-relative virtual address 0x609368.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609368 references 0x60a4d0.
 Address 0x609388 is at offset 0x388 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209388.
+and at module-relative virtual address 0x609388.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609388 references 0x60a4d0.
@@ -177,42 +177,42 @@ The allocation at 0x60a520 appears to be directly statically anchored.
 Address 0x609350 is at offset 0x350 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209350.
+and at module-relative virtual address 0x609350.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609350 references 0x60a520.
 Address 0x609358 is at offset 0x358 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209358.
+and at module-relative virtual address 0x609358.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609358 references 0x60a520.
 Address 0x609360 is at offset 0x360 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209360.
+and at module-relative virtual address 0x609360.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609360 references 0x60a520.
 Address 0x609370 is at offset 0x370 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209370.
+and at module-relative virtual address 0x609370.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609370 references 0x60a520.
 Address 0x609378 is at offset 0x378 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209378.
+and at module-relative virtual address 0x609378.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609378 references 0x60a520.
 Address 0x609380 is at offset 0x380 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209380.
+and at module-relative virtual address 0x609380.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609380 references 0x60a520.
@@ -225,21 +225,21 @@ The allocation at 0x60a730 appears to be directly statically anchored.
 Address 0x609390 is at offset 0x390 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209390.
+and at module-relative virtual address 0x609390.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609390 references 0x60a730.
 Address 0x6093b8 is at offset 0x3b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093b8.
+and at module-relative virtual address 0x6093b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093b8 references 0x60a730.
 Address 0x6093d8 is at offset 0x3d8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093d8.
+and at module-relative virtual address 0x6093d8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093d8 references 0x60a730.
@@ -250,42 +250,42 @@ The allocation at 0x60a780 appears to be directly statically anchored.
 Address 0x6093a0 is at offset 0x3a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093a0.
+and at module-relative virtual address 0x6093a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093a0 references 0x60a780.
 Address 0x6093a8 is at offset 0x3a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093a8.
+and at module-relative virtual address 0x6093a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093a8 references 0x60a780.
 Address 0x6093b0 is at offset 0x3b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093b0.
+and at module-relative virtual address 0x6093b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093b0 references 0x60a780.
 Address 0x6093c0 is at offset 0x3c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093c0.
+and at module-relative virtual address 0x6093c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093c0 references 0x60a780.
 Address 0x6093c8 is at offset 0x3c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093c8.
+and at module-relative virtual address 0x6093c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093c8 references 0x60a780.
 Address 0x6093d0 is at offset 0x3d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093d0.
+and at module-relative virtual address 0x6093d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093d0 references 0x60a780.
@@ -298,21 +298,21 @@ The allocation at 0x60a990 appears to be directly statically anchored.
 Address 0x6093e0 is at offset 0x3e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093e0.
+and at module-relative virtual address 0x6093e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093e0 references 0x60a990.
 Address 0x609408 is at offset 0x408 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209408.
+and at module-relative virtual address 0x609408.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609408 references 0x60a990.
 Address 0x609428 is at offset 0x428 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209428.
+and at module-relative virtual address 0x609428.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609428 references 0x60a990.
@@ -323,42 +323,42 @@ The allocation at 0x60a9e0 appears to be directly statically anchored.
 Address 0x6093f0 is at offset 0x3f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093f0.
+and at module-relative virtual address 0x6093f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093f0 references 0x60a9e0.
 Address 0x6093f8 is at offset 0x3f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2093f8.
+and at module-relative virtual address 0x6093f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6093f8 references 0x60a9e0.
 Address 0x609400 is at offset 0x400 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209400.
+and at module-relative virtual address 0x609400.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609400 references 0x60a9e0.
 Address 0x609410 is at offset 0x410 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209410.
+and at module-relative virtual address 0x609410.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609410 references 0x60a9e0.
 Address 0x609418 is at offset 0x418 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209418.
+and at module-relative virtual address 0x609418.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609418 references 0x60a9e0.
 Address 0x609420 is at offset 0x420 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209420.
+and at module-relative virtual address 0x609420.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609420 references 0x60a9e0.
@@ -371,21 +371,21 @@ The allocation at 0x60abf0 appears to be directly statically anchored.
 Address 0x609430 is at offset 0x430 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209430.
+and at module-relative virtual address 0x609430.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609430 references 0x60abf0.
 Address 0x609458 is at offset 0x458 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209458.
+and at module-relative virtual address 0x609458.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609458 references 0x60abf0.
 Address 0x609478 is at offset 0x478 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209478.
+and at module-relative virtual address 0x609478.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609478 references 0x60abf0.
@@ -396,42 +396,42 @@ The allocation at 0x60ac40 appears to be directly statically anchored.
 Address 0x609440 is at offset 0x440 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209440.
+and at module-relative virtual address 0x609440.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609440 references 0x60ac40.
 Address 0x609448 is at offset 0x448 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209448.
+and at module-relative virtual address 0x609448.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609448 references 0x60ac40.
 Address 0x609450 is at offset 0x450 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209450.
+and at module-relative virtual address 0x609450.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609450 references 0x60ac40.
 Address 0x609460 is at offset 0x460 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209460.
+and at module-relative virtual address 0x609460.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609460 references 0x60ac40.
 Address 0x609468 is at offset 0x468 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209468.
+and at module-relative virtual address 0x609468.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609468 references 0x60ac40.
 Address 0x609470 is at offset 0x470 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209470.
+and at module-relative virtual address 0x609470.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609470 references 0x60ac40.
@@ -444,21 +444,21 @@ The allocation at 0x60ae50 appears to be directly statically anchored.
 Address 0x609480 is at offset 0x480 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209480.
+and at module-relative virtual address 0x609480.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609480 references 0x60ae50.
 Address 0x6094a8 is at offset 0x4a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094a8.
+and at module-relative virtual address 0x6094a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094a8 references 0x60ae50.
 Address 0x6094c8 is at offset 0x4c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094c8.
+and at module-relative virtual address 0x6094c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094c8 references 0x60ae50.
@@ -469,42 +469,42 @@ The allocation at 0x60aea0 appears to be directly statically anchored.
 Address 0x609490 is at offset 0x490 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209490.
+and at module-relative virtual address 0x609490.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609490 references 0x60aea0.
 Address 0x609498 is at offset 0x498 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209498.
+and at module-relative virtual address 0x609498.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609498 references 0x60aea0.
 Address 0x6094a0 is at offset 0x4a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094a0.
+and at module-relative virtual address 0x6094a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094a0 references 0x60aea0.
 Address 0x6094b0 is at offset 0x4b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094b0.
+and at module-relative virtual address 0x6094b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094b0 references 0x60aea0.
 Address 0x6094b8 is at offset 0x4b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094b8.
+and at module-relative virtual address 0x6094b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094b8 references 0x60aea0.
 Address 0x6094c0 is at offset 0x4c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094c0.
+and at module-relative virtual address 0x6094c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094c0 references 0x60aea0.
@@ -517,21 +517,21 @@ The allocation at 0x60b0b0 appears to be directly statically anchored.
 Address 0x6094d0 is at offset 0x4d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094d0.
+and at module-relative virtual address 0x6094d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094d0 references 0x60b0b0.
 Address 0x6094f8 is at offset 0x4f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094f8.
+and at module-relative virtual address 0x6094f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094f8 references 0x60b0b0.
 Address 0x609518 is at offset 0x518 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209518.
+and at module-relative virtual address 0x609518.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609518 references 0x60b0b0.
@@ -542,42 +542,42 @@ The allocation at 0x60b100 appears to be directly statically anchored.
 Address 0x6094e0 is at offset 0x4e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094e0.
+and at module-relative virtual address 0x6094e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094e0 references 0x60b100.
 Address 0x6094e8 is at offset 0x4e8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094e8.
+and at module-relative virtual address 0x6094e8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094e8 references 0x60b100.
 Address 0x6094f0 is at offset 0x4f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2094f0.
+and at module-relative virtual address 0x6094f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6094f0 references 0x60b100.
 Address 0x609500 is at offset 0x500 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209500.
+and at module-relative virtual address 0x609500.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609500 references 0x60b100.
 Address 0x609508 is at offset 0x508 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209508.
+and at module-relative virtual address 0x609508.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609508 references 0x60b100.
 Address 0x609510 is at offset 0x510 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209510.
+and at module-relative virtual address 0x609510.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609510 references 0x60b100.
@@ -590,21 +590,21 @@ The allocation at 0x60b310 appears to be directly statically anchored.
 Address 0x609520 is at offset 0x520 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209520.
+and at module-relative virtual address 0x609520.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609520 references 0x60b310.
 Address 0x609548 is at offset 0x548 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209548.
+and at module-relative virtual address 0x609548.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609548 references 0x60b310.
 Address 0x609568 is at offset 0x568 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209568.
+and at module-relative virtual address 0x609568.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609568 references 0x60b310.
@@ -615,42 +615,42 @@ The allocation at 0x60b360 appears to be directly statically anchored.
 Address 0x609530 is at offset 0x530 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209530.
+and at module-relative virtual address 0x609530.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609530 references 0x60b360.
 Address 0x609538 is at offset 0x538 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209538.
+and at module-relative virtual address 0x609538.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609538 references 0x60b360.
 Address 0x609540 is at offset 0x540 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209540.
+and at module-relative virtual address 0x609540.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609540 references 0x60b360.
 Address 0x609550 is at offset 0x550 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209550.
+and at module-relative virtual address 0x609550.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609550 references 0x60b360.
 Address 0x609558 is at offset 0x558 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209558.
+and at module-relative virtual address 0x609558.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609558 references 0x60b360.
 Address 0x609560 is at offset 0x560 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209560.
+and at module-relative virtual address 0x609560.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609560 references 0x60b360.
@@ -663,21 +663,21 @@ The allocation at 0x60b570 appears to be directly statically anchored.
 Address 0x609570 is at offset 0x570 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209570.
+and at module-relative virtual address 0x609570.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609570 references 0x60b570.
 Address 0x609598 is at offset 0x598 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209598.
+and at module-relative virtual address 0x609598.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609598 references 0x60b570.
 Address 0x6095b8 is at offset 0x5b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095b8.
+and at module-relative virtual address 0x6095b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095b8 references 0x60b570.
@@ -688,42 +688,42 @@ The allocation at 0x60b5c0 appears to be directly statically anchored.
 Address 0x609580 is at offset 0x580 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209580.
+and at module-relative virtual address 0x609580.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609580 references 0x60b5c0.
 Address 0x609588 is at offset 0x588 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209588.
+and at module-relative virtual address 0x609588.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609588 references 0x60b5c0.
 Address 0x609590 is at offset 0x590 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209590.
+and at module-relative virtual address 0x609590.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609590 references 0x60b5c0.
 Address 0x6095a0 is at offset 0x5a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095a0.
+and at module-relative virtual address 0x6095a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095a0 references 0x60b5c0.
 Address 0x6095a8 is at offset 0x5a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095a8.
+and at module-relative virtual address 0x6095a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095a8 references 0x60b5c0.
 Address 0x6095b0 is at offset 0x5b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095b0.
+and at module-relative virtual address 0x6095b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095b0 references 0x60b5c0.
@@ -736,21 +736,21 @@ The allocation at 0x60b7d0 appears to be directly statically anchored.
 Address 0x6095c0 is at offset 0x5c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095c0.
+and at module-relative virtual address 0x6095c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095c0 references 0x60b7d0.
 Address 0x6095e8 is at offset 0x5e8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095e8.
+and at module-relative virtual address 0x6095e8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095e8 references 0x60b7d0.
 Address 0x609608 is at offset 0x608 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209608.
+and at module-relative virtual address 0x609608.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609608 references 0x60b7d0.
@@ -761,42 +761,42 @@ The allocation at 0x60b820 appears to be directly statically anchored.
 Address 0x6095d0 is at offset 0x5d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095d0.
+and at module-relative virtual address 0x6095d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095d0 references 0x60b820.
 Address 0x6095d8 is at offset 0x5d8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095d8.
+and at module-relative virtual address 0x6095d8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095d8 references 0x60b820.
 Address 0x6095e0 is at offset 0x5e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095e0.
+and at module-relative virtual address 0x6095e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095e0 references 0x60b820.
 Address 0x6095f0 is at offset 0x5f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095f0.
+and at module-relative virtual address 0x6095f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095f0 references 0x60b820.
 Address 0x6095f8 is at offset 0x5f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2095f8.
+and at module-relative virtual address 0x6095f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6095f8 references 0x60b820.
 Address 0x609600 is at offset 0x600 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209600.
+and at module-relative virtual address 0x609600.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609600 references 0x60b820.
@@ -809,21 +809,21 @@ The allocation at 0x60ba30 appears to be directly statically anchored.
 Address 0x609610 is at offset 0x610 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209610.
+and at module-relative virtual address 0x609610.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609610 references 0x60ba30.
 Address 0x609638 is at offset 0x638 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209638.
+and at module-relative virtual address 0x609638.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609638 references 0x60ba30.
 Address 0x609658 is at offset 0x658 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209658.
+and at module-relative virtual address 0x609658.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609658 references 0x60ba30.
@@ -834,42 +834,42 @@ The allocation at 0x60ba80 appears to be directly statically anchored.
 Address 0x609620 is at offset 0x620 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209620.
+and at module-relative virtual address 0x609620.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609620 references 0x60ba80.
 Address 0x609628 is at offset 0x628 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209628.
+and at module-relative virtual address 0x609628.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609628 references 0x60ba80.
 Address 0x609630 is at offset 0x630 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209630.
+and at module-relative virtual address 0x609630.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609630 references 0x60ba80.
 Address 0x609640 is at offset 0x640 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209640.
+and at module-relative virtual address 0x609640.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609640 references 0x60ba80.
 Address 0x609648 is at offset 0x648 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209648.
+and at module-relative virtual address 0x609648.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609648 references 0x60ba80.
 Address 0x609650 is at offset 0x650 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209650.
+and at module-relative virtual address 0x609650.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609650 references 0x60ba80.
@@ -882,21 +882,21 @@ The allocation at 0x60bc90 appears to be directly statically anchored.
 Address 0x609660 is at offset 0x660 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209660.
+and at module-relative virtual address 0x609660.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609660 references 0x60bc90.
 Address 0x609688 is at offset 0x688 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209688.
+and at module-relative virtual address 0x609688.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609688 references 0x60bc90.
 Address 0x6096a8 is at offset 0x6a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096a8.
+and at module-relative virtual address 0x6096a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096a8 references 0x60bc90.
@@ -907,42 +907,42 @@ The allocation at 0x60bce0 appears to be directly statically anchored.
 Address 0x609670 is at offset 0x670 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209670.
+and at module-relative virtual address 0x609670.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609670 references 0x60bce0.
 Address 0x609678 is at offset 0x678 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209678.
+and at module-relative virtual address 0x609678.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609678 references 0x60bce0.
 Address 0x609680 is at offset 0x680 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209680.
+and at module-relative virtual address 0x609680.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609680 references 0x60bce0.
 Address 0x609690 is at offset 0x690 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209690.
+and at module-relative virtual address 0x609690.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609690 references 0x60bce0.
 Address 0x609698 is at offset 0x698 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209698.
+and at module-relative virtual address 0x609698.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609698 references 0x60bce0.
 Address 0x6096a0 is at offset 0x6a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096a0.
+and at module-relative virtual address 0x6096a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096a0 references 0x60bce0.
@@ -955,21 +955,21 @@ The allocation at 0x60bef0 appears to be directly statically anchored.
 Address 0x6096b0 is at offset 0x6b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096b0.
+and at module-relative virtual address 0x6096b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096b0 references 0x60bef0.
 Address 0x6096d8 is at offset 0x6d8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096d8.
+and at module-relative virtual address 0x6096d8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096d8 references 0x60bef0.
 Address 0x6096f8 is at offset 0x6f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096f8.
+and at module-relative virtual address 0x6096f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096f8 references 0x60bef0.
@@ -980,42 +980,42 @@ The allocation at 0x60bf40 appears to be directly statically anchored.
 Address 0x6096c0 is at offset 0x6c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096c0.
+and at module-relative virtual address 0x6096c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096c0 references 0x60bf40.
 Address 0x6096c8 is at offset 0x6c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096c8.
+and at module-relative virtual address 0x6096c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096c8 references 0x60bf40.
 Address 0x6096d0 is at offset 0x6d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096d0.
+and at module-relative virtual address 0x6096d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096d0 references 0x60bf40.
 Address 0x6096e0 is at offset 0x6e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096e0.
+and at module-relative virtual address 0x6096e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096e0 references 0x60bf40.
 Address 0x6096e8 is at offset 0x6e8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096e8.
+and at module-relative virtual address 0x6096e8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096e8 references 0x60bf40.
 Address 0x6096f0 is at offset 0x6f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2096f0.
+and at module-relative virtual address 0x6096f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6096f0 references 0x60bf40.
@@ -1028,21 +1028,21 @@ The allocation at 0x60c150 appears to be directly statically anchored.
 Address 0x609700 is at offset 0x700 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209700.
+and at module-relative virtual address 0x609700.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609700 references 0x60c150.
 Address 0x609728 is at offset 0x728 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209728.
+and at module-relative virtual address 0x609728.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609728 references 0x60c150.
 Address 0x609748 is at offset 0x748 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209748.
+and at module-relative virtual address 0x609748.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609748 references 0x60c150.
@@ -1053,42 +1053,42 @@ The allocation at 0x60c1a0 appears to be directly statically anchored.
 Address 0x609710 is at offset 0x710 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209710.
+and at module-relative virtual address 0x609710.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609710 references 0x60c1a0.
 Address 0x609718 is at offset 0x718 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209718.
+and at module-relative virtual address 0x609718.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609718 references 0x60c1a0.
 Address 0x609720 is at offset 0x720 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209720.
+and at module-relative virtual address 0x609720.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609720 references 0x60c1a0.
 Address 0x609730 is at offset 0x730 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209730.
+and at module-relative virtual address 0x609730.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609730 references 0x60c1a0.
 Address 0x609738 is at offset 0x738 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209738.
+and at module-relative virtual address 0x609738.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609738 references 0x60c1a0.
 Address 0x609740 is at offset 0x740 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209740.
+and at module-relative virtual address 0x609740.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609740 references 0x60c1a0.
@@ -1101,21 +1101,21 @@ The allocation at 0x60c3b0 appears to be directly statically anchored.
 Address 0x609750 is at offset 0x750 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209750.
+and at module-relative virtual address 0x609750.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609750 references 0x60c3b0.
 Address 0x609778 is at offset 0x778 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209778.
+and at module-relative virtual address 0x609778.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609778 references 0x60c3b0.
 Address 0x609798 is at offset 0x798 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209798.
+and at module-relative virtual address 0x609798.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609798 references 0x60c3b0.
@@ -1126,42 +1126,42 @@ The allocation at 0x60c400 appears to be directly statically anchored.
 Address 0x6097b0 is at offset 0x7b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097b0.
+and at module-relative virtual address 0x6097b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097b0 references 0x60c400.
 Address 0x6097b8 is at offset 0x7b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097b8.
+and at module-relative virtual address 0x6097b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097b8 references 0x60c400.
 Address 0x6097c0 is at offset 0x7c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097c0.
+and at module-relative virtual address 0x6097c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097c0 references 0x60c400.
 Address 0x6097d0 is at offset 0x7d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097d0.
+and at module-relative virtual address 0x6097d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097d0 references 0x60c400.
 Address 0x6097d8 is at offset 0x7d8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097d8.
+and at module-relative virtual address 0x6097d8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097d8 references 0x60c400.
 Address 0x6097e0 is at offset 0x7e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097e0.
+and at module-relative virtual address 0x6097e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097e0 references 0x60c400.
@@ -1174,21 +1174,21 @@ The allocation at 0x60c610 appears to be directly statically anchored.
 Address 0x6097a0 is at offset 0x7a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097a0.
+and at module-relative virtual address 0x6097a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097a0 references 0x60c610.
 Address 0x6097c8 is at offset 0x7c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097c8.
+and at module-relative virtual address 0x6097c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097c8 references 0x60c610.
 Address 0x6097e8 is at offset 0x7e8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097e8.
+and at module-relative virtual address 0x6097e8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097e8 references 0x60c610.
@@ -1199,42 +1199,42 @@ The allocation at 0x60c660 appears to be directly statically anchored.
 Address 0x609800 is at offset 0x800 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209800.
+and at module-relative virtual address 0x609800.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609800 references 0x60c660.
 Address 0x609808 is at offset 0x808 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209808.
+and at module-relative virtual address 0x609808.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609808 references 0x60c660.
 Address 0x609810 is at offset 0x810 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209810.
+and at module-relative virtual address 0x609810.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609810 references 0x60c660.
 Address 0x609820 is at offset 0x820 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209820.
+and at module-relative virtual address 0x609820.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609820 references 0x60c660.
 Address 0x609828 is at offset 0x828 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209828.
+and at module-relative virtual address 0x609828.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609828 references 0x60c660.
 Address 0x609830 is at offset 0x830 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209830.
+and at module-relative virtual address 0x609830.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609830 references 0x60c660.
@@ -1247,21 +1247,21 @@ The allocation at 0x60c870 appears to be directly statically anchored.
 Address 0x6097f0 is at offset 0x7f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2097f0.
+and at module-relative virtual address 0x6097f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6097f0 references 0x60c870.
 Address 0x609818 is at offset 0x818 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209818.
+and at module-relative virtual address 0x609818.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609818 references 0x60c870.
 Address 0x609838 is at offset 0x838 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209838.
+and at module-relative virtual address 0x609838.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609838 references 0x60c870.
@@ -1274,21 +1274,21 @@ The allocation at 0x60c8c0 appears to be directly statically anchored.
 Address 0x609840 is at offset 0x840 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209840.
+and at module-relative virtual address 0x609840.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609840 references 0x60c8c0.
 Address 0x609868 is at offset 0x868 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209868.
+and at module-relative virtual address 0x609868.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609868 references 0x60c8c0.
 Address 0x609888 is at offset 0x888 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209888.
+and at module-relative virtual address 0x609888.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609888 references 0x60c8c0.
@@ -1301,21 +1301,21 @@ The allocation at 0x60c910 appears to be directly statically anchored.
 Address 0x609890 is at offset 0x890 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209890.
+and at module-relative virtual address 0x609890.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609890 references 0x60c910.
 Address 0x6098b8 is at offset 0x8b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098b8.
+and at module-relative virtual address 0x6098b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098b8 references 0x60c910.
 Address 0x6098d8 is at offset 0x8d8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098d8.
+and at module-relative virtual address 0x6098d8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098d8 references 0x60c910.
@@ -1328,21 +1328,21 @@ The allocation at 0x60c960 appears to be directly statically anchored.
 Address 0x6098e0 is at offset 0x8e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098e0.
+and at module-relative virtual address 0x6098e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098e0 references 0x60c960.
 Address 0x609908 is at offset 0x908 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209908.
+and at module-relative virtual address 0x609908.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609908 references 0x60c960.
 Address 0x609928 is at offset 0x928 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209928.
+and at module-relative virtual address 0x609928.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609928 references 0x60c960.
@@ -1355,21 +1355,21 @@ The allocation at 0x60c9b0 appears to be directly statically anchored.
 Address 0x609930 is at offset 0x930 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209930.
+and at module-relative virtual address 0x609930.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609930 references 0x60c9b0.
 Address 0x609958 is at offset 0x958 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209958.
+and at module-relative virtual address 0x609958.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609958 references 0x60c9b0.
 Address 0x609978 is at offset 0x978 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209978.
+and at module-relative virtual address 0x609978.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609978 references 0x60c9b0.
@@ -1382,21 +1382,21 @@ The allocation at 0x60ca00 appears to be directly statically anchored.
 Address 0x609980 is at offset 0x980 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209980.
+and at module-relative virtual address 0x609980.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609980 references 0x60ca00.
 Address 0x6099a8 is at offset 0x9a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099a8.
+and at module-relative virtual address 0x6099a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099a8 references 0x60ca00.
 Address 0x6099c8 is at offset 0x9c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099c8.
+and at module-relative virtual address 0x6099c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099c8 references 0x60ca00.
@@ -1409,21 +1409,21 @@ The allocation at 0x60ca50 appears to be directly statically anchored.
 Address 0x6099d0 is at offset 0x9d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099d0.
+and at module-relative virtual address 0x6099d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099d0 references 0x60ca50.
 Address 0x6099f8 is at offset 0x9f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099f8.
+and at module-relative virtual address 0x6099f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099f8 references 0x60ca50.
 Address 0x609a18 is at offset 0xa18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a18.
+and at module-relative virtual address 0x609a18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a18 references 0x60ca50.
@@ -1434,42 +1434,42 @@ The allocation at 0x60cad0 appears to be directly statically anchored.
 Address 0x609760 is at offset 0x760 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209760.
+and at module-relative virtual address 0x609760.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609760 references 0x60cad0.
 Address 0x609768 is at offset 0x768 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209768.
+and at module-relative virtual address 0x609768.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609768 references 0x60cad0.
 Address 0x609770 is at offset 0x770 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209770.
+and at module-relative virtual address 0x609770.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609770 references 0x60cad0.
 Address 0x609780 is at offset 0x780 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209780.
+and at module-relative virtual address 0x609780.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609780 references 0x60cad0.
 Address 0x609788 is at offset 0x788 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209788.
+and at module-relative virtual address 0x609788.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609788 references 0x60cad0.
 Address 0x609790 is at offset 0x790 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209790.
+and at module-relative virtual address 0x609790.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609790 references 0x60cad0.
@@ -1480,42 +1480,42 @@ The allocation at 0x60cce0 appears to be directly statically anchored.
 Address 0x609850 is at offset 0x850 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209850.
+and at module-relative virtual address 0x609850.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609850 references 0x60cce0.
 Address 0x609858 is at offset 0x858 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209858.
+and at module-relative virtual address 0x609858.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609858 references 0x60cce0.
 Address 0x609860 is at offset 0x860 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209860.
+and at module-relative virtual address 0x609860.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609860 references 0x60cce0.
 Address 0x609870 is at offset 0x870 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209870.
+and at module-relative virtual address 0x609870.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609870 references 0x60cce0.
 Address 0x609878 is at offset 0x878 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209878.
+and at module-relative virtual address 0x609878.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609878 references 0x60cce0.
 Address 0x609880 is at offset 0x880 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209880.
+and at module-relative virtual address 0x609880.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609880 references 0x60cce0.
@@ -1526,42 +1526,42 @@ The allocation at 0x60cef0 appears to be directly statically anchored.
 Address 0x6098a0 is at offset 0x8a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098a0.
+and at module-relative virtual address 0x6098a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098a0 references 0x60cef0.
 Address 0x6098a8 is at offset 0x8a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098a8.
+and at module-relative virtual address 0x6098a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098a8 references 0x60cef0.
 Address 0x6098b0 is at offset 0x8b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098b0.
+and at module-relative virtual address 0x6098b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098b0 references 0x60cef0.
 Address 0x6098c0 is at offset 0x8c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098c0.
+and at module-relative virtual address 0x6098c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098c0 references 0x60cef0.
 Address 0x6098c8 is at offset 0x8c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098c8.
+and at module-relative virtual address 0x6098c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098c8 references 0x60cef0.
 Address 0x6098d0 is at offset 0x8d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098d0.
+and at module-relative virtual address 0x6098d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098d0 references 0x60cef0.
@@ -1572,42 +1572,42 @@ The allocation at 0x60d100 appears to be directly statically anchored.
 Address 0x6098f0 is at offset 0x8f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098f0.
+and at module-relative virtual address 0x6098f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098f0 references 0x60d100.
 Address 0x6098f8 is at offset 0x8f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2098f8.
+and at module-relative virtual address 0x6098f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6098f8 references 0x60d100.
 Address 0x609900 is at offset 0x900 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209900.
+and at module-relative virtual address 0x609900.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609900 references 0x60d100.
 Address 0x609910 is at offset 0x910 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209910.
+and at module-relative virtual address 0x609910.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609910 references 0x60d100.
 Address 0x609918 is at offset 0x918 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209918.
+and at module-relative virtual address 0x609918.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609918 references 0x60d100.
 Address 0x609920 is at offset 0x920 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209920.
+and at module-relative virtual address 0x609920.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609920 references 0x60d100.
@@ -1618,21 +1618,21 @@ The allocation at 0x60d310 appears to be directly statically anchored.
 Address 0x609940 is at offset 0x940 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209940.
+and at module-relative virtual address 0x609940.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609940 references 0x60d310.
 Address 0x609948 is at offset 0x948 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209948.
+and at module-relative virtual address 0x609948.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609948 references 0x60d310.
 Address 0x609950 is at offset 0x950 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209950.
+and at module-relative virtual address 0x609950.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609950 references 0x60d310.
@@ -1644,21 +1644,21 @@ via anchor point 0x60ca00.
 Address 0x609980 is at offset 0x980 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209980.
+and at module-relative virtual address 0x609980.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609980 references anchor point 0x60ca00
 Address 0x6099a8 is at offset 0x9a8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099a8.
+and at module-relative virtual address 0x6099a8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099a8 references anchor point 0x60ca00
 Address 0x6099c8 is at offset 0x9c8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099c8.
+and at module-relative virtual address 0x6099c8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099c8 references anchor point 0x60ca00
@@ -1668,21 +1668,21 @@ via anchor point 0x60ca50.
 Address 0x6099d0 is at offset 0x9d0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099d0.
+and at module-relative virtual address 0x6099d0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099d0 references anchor point 0x60ca50
 Address 0x6099f8 is at offset 0x9f8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099f8.
+and at module-relative virtual address 0x6099f8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099f8 references anchor point 0x60ca50
 Address 0x609a18 is at offset 0xa18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a18.
+and at module-relative virtual address 0x609a18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a18 references anchor point 0x60ca50
@@ -1694,21 +1694,21 @@ The allocation at 0x60d730 appears to be directly statically anchored.
 Address 0x6099e0 is at offset 0x9e0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099e0.
+and at module-relative virtual address 0x6099e0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099e0 references 0x60d730.
 Address 0x6099e8 is at offset 0x9e8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099e8.
+and at module-relative virtual address 0x6099e8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099e8 references 0x60d730.
 Address 0x6099f0 is at offset 0x9f0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099f0.
+and at module-relative virtual address 0x6099f0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099f0 references 0x60d730.
@@ -1721,21 +1721,21 @@ The allocation at 0x60d940 appears to be directly statically anchored.
 Address 0x609b60 is at offset 0xb60 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b60.
+and at module-relative virtual address 0x609b60.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b60 references 0x60d940.
 Address 0x609b88 is at offset 0xb88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b88.
+and at module-relative virtual address 0x609b88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b88 references 0x60d940.
 Address 0x609ba8 is at offset 0xba8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ba8.
+and at module-relative virtual address 0x609ba8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ba8 references 0x60d940.
@@ -1746,42 +1746,42 @@ The allocation at 0x60d990 appears to be directly statically anchored.
 Address 0x609bc0 is at offset 0xbc0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bc0.
+and at module-relative virtual address 0x609bc0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bc0 references 0x60d990.
 Address 0x609bc8 is at offset 0xbc8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bc8.
+and at module-relative virtual address 0x609bc8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bc8 references 0x60d990.
 Address 0x609bd0 is at offset 0xbd0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bd0.
+and at module-relative virtual address 0x609bd0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bd0 references 0x60d990.
 Address 0x609be0 is at offset 0xbe0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209be0.
+and at module-relative virtual address 0x609be0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609be0 references 0x60d990.
 Address 0x609be8 is at offset 0xbe8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209be8.
+and at module-relative virtual address 0x609be8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609be8 references 0x60d990.
 Address 0x609bf0 is at offset 0xbf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bf0.
+and at module-relative virtual address 0x609bf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bf0 references 0x60d990.
@@ -1794,21 +1794,21 @@ The allocation at 0x60dba0 appears to be directly statically anchored.
 Address 0x609b10 is at offset 0xb10 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b10.
+and at module-relative virtual address 0x609b10.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b10 references 0x60dba0.
 Address 0x609b38 is at offset 0xb38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b38.
+and at module-relative virtual address 0x609b38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b38 references 0x60dba0.
 Address 0x609b58 is at offset 0xb58 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b58.
+and at module-relative virtual address 0x609b58.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b58 references 0x60dba0.
@@ -1821,21 +1821,21 @@ The allocation at 0x60dbf0 appears to be directly statically anchored.
 Address 0x609bb0 is at offset 0xbb0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bb0.
+and at module-relative virtual address 0x609bb0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bb0 references 0x60dbf0.
 Address 0x609bd8 is at offset 0xbd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bd8.
+and at module-relative virtual address 0x609bd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bd8 references 0x60dbf0.
 Address 0x609bf8 is at offset 0xbf8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209bf8.
+and at module-relative virtual address 0x609bf8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609bf8 references 0x60dbf0.
@@ -1848,21 +1848,21 @@ The allocation at 0x60dc40 appears to be directly statically anchored.
 Address 0x609c00 is at offset 0xc00 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c00.
+and at module-relative virtual address 0x609c00.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c00 references 0x60dc40.
 Address 0x609c28 is at offset 0xc28 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c28.
+and at module-relative virtual address 0x609c28.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c28 references 0x60dc40.
 Address 0x609c48 is at offset 0xc48 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c48.
+and at module-relative virtual address 0x609c48.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c48 references 0x60dc40.
@@ -1875,21 +1875,21 @@ The allocation at 0x60dc90 appears to be directly statically anchored.
 Address 0x609ca0 is at offset 0xca0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ca0.
+and at module-relative virtual address 0x609ca0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ca0 references 0x60dc90.
 Address 0x609cc8 is at offset 0xcc8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cc8.
+and at module-relative virtual address 0x609cc8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cc8 references 0x60dc90.
 Address 0x609ce8 is at offset 0xce8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ce8.
+and at module-relative virtual address 0x609ce8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ce8 references 0x60dc90.
@@ -1955,21 +1955,21 @@ The allocation at 0x60dd80 appears to be directly statically anchored.
 Address 0x609d90 is at offset 0xd90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d90.
+and at module-relative virtual address 0x609d90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d90 references 0x60dd80.
 Address 0x609db8 is at offset 0xdb8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209db8.
+and at module-relative virtual address 0x609db8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609db8 references 0x60dd80.
 Address 0x609dd8 is at offset 0xdd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dd8.
+and at module-relative virtual address 0x609dd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dd8 references 0x60dd80.
@@ -1982,21 +1982,21 @@ The allocation at 0x60de00 appears to be directly statically anchored.
 Address 0x609ac0 is at offset 0xac0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ac0.
+and at module-relative virtual address 0x609ac0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ac0 references 0x60de00.
 Address 0x609ae8 is at offset 0xae8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ae8.
+and at module-relative virtual address 0x609ae8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ae8 references 0x60de00.
 Address 0x609b08 is at offset 0xb08 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b08.
+and at module-relative virtual address 0x609b08.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b08 references 0x60de00.
@@ -2007,42 +2007,42 @@ The allocation at 0x60de50 appears to be directly statically anchored.
 Address 0x609b70 is at offset 0xb70 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b70.
+and at module-relative virtual address 0x609b70.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b70 references 0x60de50.
 Address 0x609b78 is at offset 0xb78 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b78.
+and at module-relative virtual address 0x609b78.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b78 references 0x60de50.
 Address 0x609b80 is at offset 0xb80 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b80.
+and at module-relative virtual address 0x609b80.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b80 references 0x60de50.
 Address 0x609b90 is at offset 0xb90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b90.
+and at module-relative virtual address 0x609b90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b90 references 0x60de50.
 Address 0x609b98 is at offset 0xb98 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b98.
+and at module-relative virtual address 0x609b98.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b98 references 0x60de50.
 Address 0x609ba0 is at offset 0xba0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ba0.
+and at module-relative virtual address 0x609ba0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ba0 references 0x60de50.
@@ -2053,21 +2053,21 @@ The allocation at 0x60e060 appears to be directly statically anchored.
 Address 0x609960 is at offset 0x960 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209960.
+and at module-relative virtual address 0x609960.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609960 references 0x60e060.
 Address 0x609968 is at offset 0x968 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209968.
+and at module-relative virtual address 0x609968.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609968 references 0x60e060.
 Address 0x609970 is at offset 0x970 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209970.
+and at module-relative virtual address 0x609970.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609970 references 0x60e060.
@@ -2078,42 +2078,42 @@ The allocation at 0x60e270 appears to be directly statically anchored.
 Address 0x609990 is at offset 0x990 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209990.
+and at module-relative virtual address 0x609990.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609990 references 0x60e270.
 Address 0x609998 is at offset 0x998 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209998.
+and at module-relative virtual address 0x609998.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609998 references 0x60e270.
 Address 0x6099a0 is at offset 0x9a0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099a0.
+and at module-relative virtual address 0x6099a0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099a0 references 0x60e270.
 Address 0x6099b0 is at offset 0x9b0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099b0.
+and at module-relative virtual address 0x6099b0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099b0 references 0x60e270.
 Address 0x6099b8 is at offset 0x9b8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099b8.
+and at module-relative virtual address 0x6099b8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099b8 references 0x60e270.
 Address 0x6099c0 is at offset 0x9c0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x2099c0.
+and at module-relative virtual address 0x6099c0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x6099c0 references 0x60e270.
@@ -2124,21 +2124,21 @@ The allocation at 0x60e480 appears to be directly statically anchored.
 Address 0x609a00 is at offset 0xa00 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a00.
+and at module-relative virtual address 0x609a00.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a00 references 0x60e480.
 Address 0x609a08 is at offset 0xa08 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a08.
+and at module-relative virtual address 0x609a08.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a08 references 0x60e480.
 Address 0x609a10 is at offset 0xa10 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a10.
+and at module-relative virtual address 0x609a10.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a10 references 0x60e480.
@@ -2149,42 +2149,42 @@ The allocation at 0x60e690 appears to be directly statically anchored.
 Address 0x609ad0 is at offset 0xad0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ad0.
+and at module-relative virtual address 0x609ad0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ad0 references 0x60e690.
 Address 0x609ad8 is at offset 0xad8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ad8.
+and at module-relative virtual address 0x609ad8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ad8 references 0x60e690.
 Address 0x609ae0 is at offset 0xae0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ae0.
+and at module-relative virtual address 0x609ae0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ae0 references 0x60e690.
 Address 0x609af0 is at offset 0xaf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209af0.
+and at module-relative virtual address 0x609af0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609af0 references 0x60e690.
 Address 0x609af8 is at offset 0xaf8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209af8.
+and at module-relative virtual address 0x609af8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609af8 references 0x60e690.
 Address 0x609b00 is at offset 0xb00 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b00.
+and at module-relative virtual address 0x609b00.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b00 references 0x60e690.
@@ -2195,21 +2195,21 @@ The allocation at 0x60e8a0 appears to be directly statically anchored.
 Address 0x609c10 is at offset 0xc10 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c10.
+and at module-relative virtual address 0x609c10.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c10 references 0x60e8a0.
 Address 0x609c18 is at offset 0xc18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c18.
+and at module-relative virtual address 0x609c18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c18 references 0x60e8a0.
 Address 0x609c20 is at offset 0xc20 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c20.
+and at module-relative virtual address 0x609c20.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c20 references 0x60e8a0.
@@ -2222,21 +2222,21 @@ The allocation at 0x60eab0 appears to be directly statically anchored.
 Address 0x609c50 is at offset 0xc50 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c50.
+and at module-relative virtual address 0x609c50.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c50 references 0x60eab0.
 Address 0x609c78 is at offset 0xc78 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c78.
+and at module-relative virtual address 0x609c78.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c78 references 0x60eab0.
 Address 0x609c98 is at offset 0xc98 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c98.
+and at module-relative virtual address 0x609c98.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c98 references 0x60eab0.
@@ -2249,21 +2249,21 @@ The allocation at 0x60eb00 appears to be directly statically anchored.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cf0.
+and at module-relative virtual address 0x609cf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cf0 references 0x60eb00.
 Address 0x609d18 is at offset 0xd18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d18.
+and at module-relative virtual address 0x609d18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d18 references 0x60eb00.
 Address 0x609d38 is at offset 0xd38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d38.
+and at module-relative virtual address 0x609d38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d38 references 0x60eb00.
@@ -2276,21 +2276,21 @@ The allocation at 0x60eba0 appears to be directly statically anchored.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d40.
+and at module-relative virtual address 0x609d40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d40 references 0x60eba0.
 Address 0x609d68 is at offset 0xd68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d68.
+and at module-relative virtual address 0x609d68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d68 references 0x60eba0.
 Address 0x609d88 is at offset 0xd88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d88.
+and at module-relative virtual address 0x609d88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d88 references 0x60eba0.
@@ -2320,21 +2320,21 @@ The allocation at 0x60ecc0 appears to be directly statically anchored.
 Address 0x609a30 is at offset 0xa30 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a30.
+and at module-relative virtual address 0x609a30.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a30 references 0x60ecc0.
 Address 0x609a38 is at offset 0xa38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a38.
+and at module-relative virtual address 0x609a38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a38 references 0x60ecc0.
 Address 0x609a40 is at offset 0xa40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a40.
+and at module-relative virtual address 0x609a40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a40 references 0x60ecc0.
@@ -2347,21 +2347,21 @@ The allocation at 0x60eed0 appears to be directly statically anchored.
 Address 0x609a20 is at offset 0xa20 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a20.
+and at module-relative virtual address 0x609a20.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a20 references 0x60eed0.
 Address 0x609a48 is at offset 0xa48 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a48.
+and at module-relative virtual address 0x609a48.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a48 references 0x60eed0.
 Address 0x609a68 is at offset 0xa68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a68.
+and at module-relative virtual address 0x609a68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a68 references 0x60eed0.
@@ -2373,21 +2373,21 @@ via anchor point 0x60eed0.
 Address 0x609a20 is at offset 0xa20 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a20.
+and at module-relative virtual address 0x609a20.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a20 references anchor point 0x60eed0
 Address 0x609a48 is at offset 0xa48 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a48.
+and at module-relative virtual address 0x609a48.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a48 references anchor point 0x60eed0
 Address 0x609a68 is at offset 0xa68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a68.
+and at module-relative virtual address 0x609a68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a68 references anchor point 0x60eed0
@@ -2400,21 +2400,21 @@ via anchor point 0x60eed0.
 Address 0x609a20 is at offset 0xa20 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a20.
+and at module-relative virtual address 0x609a20.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a20 references anchor point 0x60eed0
 Address 0x609a48 is at offset 0xa48 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a48.
+and at module-relative virtual address 0x609a48.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a48 references anchor point 0x60eed0
 Address 0x609a68 is at offset 0xa68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a68.
+and at module-relative virtual address 0x609a68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a68 references anchor point 0x60eed0
@@ -2426,21 +2426,21 @@ The allocation at 0x60f390 appears to be directly statically anchored.
 Address 0x609a50 is at offset 0xa50 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a50.
+and at module-relative virtual address 0x609a50.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a50 references 0x60f390.
 Address 0x609a58 is at offset 0xa58 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a58.
+and at module-relative virtual address 0x609a58.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a58 references 0x60f390.
 Address 0x609a60 is at offset 0xa60 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a60.
+and at module-relative virtual address 0x609a60.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a60 references 0x60f390.
@@ -2453,21 +2453,21 @@ The allocation at 0x60f5a0 appears to be directly statically anchored.
 Address 0x609a70 is at offset 0xa70 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a70.
+and at module-relative virtual address 0x609a70.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a70 references 0x60f5a0.
 Address 0x609a98 is at offset 0xa98 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a98.
+and at module-relative virtual address 0x609a98.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a98 references 0x60f5a0.
 Address 0x609ab8 is at offset 0xab8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ab8.
+and at module-relative virtual address 0x609ab8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ab8 references 0x60f5a0.
@@ -2478,42 +2478,42 @@ The allocation at 0x60f640 appears to be directly statically anchored.
 Address 0x609b20 is at offset 0xb20 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b20.
+and at module-relative virtual address 0x609b20.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b20 references 0x60f640.
 Address 0x609b28 is at offset 0xb28 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b28.
+and at module-relative virtual address 0x609b28.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b28 references 0x60f640.
 Address 0x609b30 is at offset 0xb30 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b30.
+and at module-relative virtual address 0x609b30.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b30 references 0x60f640.
 Address 0x609b40 is at offset 0xb40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b40.
+and at module-relative virtual address 0x609b40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b40 references 0x60f640.
 Address 0x609b48 is at offset 0xb48 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b48.
+and at module-relative virtual address 0x609b48.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b48 references 0x60f640.
 Address 0x609b50 is at offset 0xb50 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209b50.
+and at module-relative virtual address 0x609b50.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609b50 references 0x60f640.
@@ -2524,42 +2524,42 @@ The allocation at 0x60f850 appears to be directly statically anchored.
 Address 0x609a80 is at offset 0xa80 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a80.
+and at module-relative virtual address 0x609a80.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a80 references 0x60f850.
 Address 0x609a88 is at offset 0xa88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a88.
+and at module-relative virtual address 0x609a88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a88 references 0x60f850.
 Address 0x609a90 is at offset 0xa90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209a90.
+and at module-relative virtual address 0x609a90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609a90 references 0x60f850.
 Address 0x609aa0 is at offset 0xaa0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209aa0.
+and at module-relative virtual address 0x609aa0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609aa0 references 0x60f850.
 Address 0x609aa8 is at offset 0xaa8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209aa8.
+and at module-relative virtual address 0x609aa8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609aa8 references 0x60f850.
 Address 0x609ab0 is at offset 0xab0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ab0.
+and at module-relative virtual address 0x609ab0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ab0 references 0x60f850.
@@ -2571,21 +2571,21 @@ via anchor point 0x60dc90.
 Address 0x609ca0 is at offset 0xca0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ca0.
+and at module-relative virtual address 0x609ca0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ca0 references anchor point 0x60dc90
 Address 0x609cc8 is at offset 0xcc8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cc8.
+and at module-relative virtual address 0x609cc8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cc8 references anchor point 0x60dc90
 Address 0x609ce8 is at offset 0xce8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ce8.
+and at module-relative virtual address 0x609ce8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ce8 references anchor point 0x60dc90
@@ -2595,21 +2595,21 @@ via anchor point 0x60eab0.
 Address 0x609c50 is at offset 0xc50 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c50.
+and at module-relative virtual address 0x609c50.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c50 references anchor point 0x60eab0
 Address 0x609c78 is at offset 0xc78 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c78.
+and at module-relative virtual address 0x609c78.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c78 references anchor point 0x60eab0
 Address 0x609c98 is at offset 0xc98 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c98.
+and at module-relative virtual address 0x609c98.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c98 references anchor point 0x60eab0
@@ -2637,21 +2637,21 @@ The allocation at 0x60fc70 appears to be directly statically anchored.
 Address 0x609cb0 is at offset 0xcb0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cb0.
+and at module-relative virtual address 0x609cb0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cb0 references 0x60fc70.
 Address 0x609cb8 is at offset 0xcb8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cb8.
+and at module-relative virtual address 0x609cb8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cb8 references 0x60fc70.
 Address 0x609cc0 is at offset 0xcc0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cc0.
+and at module-relative virtual address 0x609cc0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cc0 references 0x60fc70.
@@ -2717,21 +2717,21 @@ via anchor point 0x60dd80.
 Address 0x609d90 is at offset 0xd90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d90.
+and at module-relative virtual address 0x609d90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d90 references anchor point 0x60dd80
 Address 0x609db8 is at offset 0xdb8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209db8.
+and at module-relative virtual address 0x609db8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609db8 references anchor point 0x60dd80
 Address 0x609dd8 is at offset 0xdd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dd8.
+and at module-relative virtual address 0x609dd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dd8 references anchor point 0x60dd80
@@ -2741,21 +2741,21 @@ via anchor point 0x60eb00.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cf0.
+and at module-relative virtual address 0x609cf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cf0 references anchor point 0x60eb00
 Address 0x609d18 is at offset 0xd18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d18.
+and at module-relative virtual address 0x609d18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d18 references anchor point 0x60eb00
 Address 0x609d38 is at offset 0xd38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d38.
+and at module-relative virtual address 0x609d38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d38 references anchor point 0x60eb00
@@ -2765,21 +2765,21 @@ via anchor point 0x60eba0.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d40.
+and at module-relative virtual address 0x609d40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d40 references anchor point 0x60eba0
 Address 0x609d68 is at offset 0xd68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d68.
+and at module-relative virtual address 0x609d68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d68 references anchor point 0x60eba0
 Address 0x609d88 is at offset 0xd88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d88.
+and at module-relative virtual address 0x609d88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d88 references anchor point 0x60eba0
@@ -2820,21 +2820,21 @@ via anchor point 0x60dd80.
 Address 0x609d90 is at offset 0xd90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d90.
+and at module-relative virtual address 0x609d90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d90 references anchor point 0x60dd80
 Address 0x609db8 is at offset 0xdb8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209db8.
+and at module-relative virtual address 0x609db8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609db8 references anchor point 0x60dd80
 Address 0x609dd8 is at offset 0xdd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dd8.
+and at module-relative virtual address 0x609dd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dd8 references anchor point 0x60dd80
@@ -2844,21 +2844,21 @@ via anchor point 0x60eba0.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d40.
+and at module-relative virtual address 0x609d40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d40 references anchor point 0x60eba0
 Address 0x609d68 is at offset 0xd68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d68.
+and at module-relative virtual address 0x609d68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d68 references anchor point 0x60eba0
 Address 0x609d88 is at offset 0xd88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d88.
+and at module-relative virtual address 0x609d88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d88 references anchor point 0x60eba0
@@ -2885,21 +2885,21 @@ via anchor point 0x60dd80.
 Address 0x609d90 is at offset 0xd90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d90.
+and at module-relative virtual address 0x609d90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d90 references anchor point 0x60dd80
 Address 0x609db8 is at offset 0xdb8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209db8.
+and at module-relative virtual address 0x609db8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609db8 references anchor point 0x60dd80
 Address 0x609dd8 is at offset 0xdd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dd8.
+and at module-relative virtual address 0x609dd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dd8 references anchor point 0x60dd80
@@ -3032,21 +3032,21 @@ The allocation at 0x6104b0 appears to be directly statically anchored.
 Address 0x609c30 is at offset 0xc30 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c30.
+and at module-relative virtual address 0x609c30.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c30 references 0x6104b0.
 Address 0x609c38 is at offset 0xc38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c38.
+and at module-relative virtual address 0x609c38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c38 references 0x6104b0.
 Address 0x609c40 is at offset 0xc40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c40.
+and at module-relative virtual address 0x609c40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c40 references 0x6104b0.
@@ -3057,42 +3057,42 @@ The allocation at 0x6106c0 appears to be directly statically anchored.
 Address 0x609c60 is at offset 0xc60 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c60.
+and at module-relative virtual address 0x609c60.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c60 references 0x6106c0.
 Address 0x609c68 is at offset 0xc68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c68.
+and at module-relative virtual address 0x609c68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c68 references 0x6106c0.
 Address 0x609c70 is at offset 0xc70 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c70.
+and at module-relative virtual address 0x609c70.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c70 references 0x6106c0.
 Address 0x609c80 is at offset 0xc80 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c80.
+and at module-relative virtual address 0x609c80.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c80 references 0x6106c0.
 Address 0x609c88 is at offset 0xc88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c88.
+and at module-relative virtual address 0x609c88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c88 references 0x6106c0.
 Address 0x609c90 is at offset 0xc90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209c90.
+and at module-relative virtual address 0x609c90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609c90 references 0x6106c0.
@@ -3103,21 +3103,21 @@ The allocation at 0x6108d0 appears to be directly statically anchored.
 Address 0x609cd0 is at offset 0xcd0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cd0.
+and at module-relative virtual address 0x609cd0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cd0 references 0x6108d0.
 Address 0x609cd8 is at offset 0xcd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cd8.
+and at module-relative virtual address 0x609cd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cd8 references 0x6108d0.
 Address 0x609ce0 is at offset 0xce0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209ce0.
+and at module-relative virtual address 0x609ce0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609ce0 references 0x6108d0.
@@ -3144,42 +3144,42 @@ The allocation at 0x610ae0 appears to be directly statically anchored.
 Address 0x609da0 is at offset 0xda0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209da0.
+and at module-relative virtual address 0x609da0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609da0 references 0x610ae0.
 Address 0x609da8 is at offset 0xda8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209da8.
+and at module-relative virtual address 0x609da8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609da8 references 0x610ae0.
 Address 0x609db0 is at offset 0xdb0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209db0.
+and at module-relative virtual address 0x609db0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609db0 references 0x610ae0.
 Address 0x609dc0 is at offset 0xdc0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dc0.
+and at module-relative virtual address 0x609dc0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dc0 references 0x610ae0.
 Address 0x609dc8 is at offset 0xdc8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dc8.
+and at module-relative virtual address 0x609dc8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dc8 references 0x610ae0.
 Address 0x609dd0 is at offset 0xdd0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dd0.
+and at module-relative virtual address 0x609dd0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dd0 references 0x610ae0.
@@ -3248,21 +3248,21 @@ via anchor point 0x60eb00.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cf0.
+and at module-relative virtual address 0x609cf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cf0 references anchor point 0x60eb00
 Address 0x609d18 is at offset 0xd18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d18.
+and at module-relative virtual address 0x609d18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d18 references anchor point 0x60eb00
 Address 0x609d38 is at offset 0xd38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d38.
+and at module-relative virtual address 0x609d38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d38 references anchor point 0x60eb00
@@ -3272,21 +3272,21 @@ via anchor point 0x60eba0.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d40.
+and at module-relative virtual address 0x609d40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d40 references anchor point 0x60eba0
 Address 0x609d68 is at offset 0xd68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d68.
+and at module-relative virtual address 0x609d68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d68 references anchor point 0x60eba0
 Address 0x609d88 is at offset 0xd88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d88.
+and at module-relative virtual address 0x609d88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d88 references anchor point 0x60eba0
@@ -3327,21 +3327,21 @@ via anchor point 0x60eb00.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cf0.
+and at module-relative virtual address 0x609cf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cf0 references anchor point 0x60eb00
 Address 0x609d18 is at offset 0xd18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d18.
+and at module-relative virtual address 0x609d18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d18 references anchor point 0x60eb00
 Address 0x609d38 is at offset 0xd38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d38.
+and at module-relative virtual address 0x609d38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d38 references anchor point 0x60eb00
@@ -3351,21 +3351,21 @@ via anchor point 0x60eba0.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d40.
+and at module-relative virtual address 0x609d40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d40 references anchor point 0x60eba0
 Address 0x609d68 is at offset 0xd68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d68.
+and at module-relative virtual address 0x609d68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d68 references anchor point 0x60eba0
 Address 0x609d88 is at offset 0xd88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d88.
+and at module-relative virtual address 0x609d88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d88 references anchor point 0x60eba0
@@ -3486,21 +3486,21 @@ The allocation at 0x611110 appears to be directly statically anchored.
 Address 0x609d00 is at offset 0xd00 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d00.
+and at module-relative virtual address 0x609d00.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d00 references 0x611110.
 Address 0x609d08 is at offset 0xd08 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d08.
+and at module-relative virtual address 0x609d08.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d08 references 0x611110.
 Address 0x609d10 is at offset 0xd10 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d10.
+and at module-relative virtual address 0x609d10.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d10 references 0x611110.
@@ -3527,21 +3527,21 @@ via anchor point 0x60eb00.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cf0.
+and at module-relative virtual address 0x609cf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cf0 references anchor point 0x60eb00
 Address 0x609d18 is at offset 0xd18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d18.
+and at module-relative virtual address 0x609d18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d18 references anchor point 0x60eb00
 Address 0x609d38 is at offset 0xd38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d38.
+and at module-relative virtual address 0x609d38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d38 references anchor point 0x60eb00
@@ -3554,21 +3554,21 @@ via anchor point 0x60eb00.
 Address 0x609cf0 is at offset 0xcf0 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209cf0.
+and at module-relative virtual address 0x609cf0.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609cf0 references anchor point 0x60eb00
 Address 0x609d18 is at offset 0xd18 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d18.
+and at module-relative virtual address 0x609d18.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d18 references anchor point 0x60eb00
 Address 0x609d38 is at offset 0xd38 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d38.
+and at module-relative virtual address 0x609d38.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d38 references anchor point 0x60eb00
@@ -3580,21 +3580,21 @@ The allocation at 0x611740 appears to be directly statically anchored.
 Address 0x609d20 is at offset 0xd20 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d20.
+and at module-relative virtual address 0x609d20.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d20 references 0x611740.
 Address 0x609d28 is at offset 0xd28 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d28.
+and at module-relative virtual address 0x609d28.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d28 references 0x611740.
 Address 0x609d30 is at offset 0xd30 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d30.
+and at module-relative virtual address 0x609d30.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d30 references 0x611740.
@@ -3606,21 +3606,21 @@ via anchor point 0x60dd80.
 Address 0x609d90 is at offset 0xd90 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d90.
+and at module-relative virtual address 0x609d90.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d90 references anchor point 0x60dd80
 Address 0x609db8 is at offset 0xdb8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209db8.
+and at module-relative virtual address 0x609db8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609db8 references anchor point 0x60dd80
 Address 0x609dd8 is at offset 0xdd8 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209dd8.
+and at module-relative virtual address 0x609dd8.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609dd8 references anchor point 0x60dd80
@@ -3630,21 +3630,21 @@ via anchor point 0x60eba0.
 Address 0x609d40 is at offset 0xd40 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d40.
+and at module-relative virtual address 0x609d40.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d40 references anchor point 0x60eba0
 Address 0x609d68 is at offset 0xd68 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d68.
+and at module-relative virtual address 0x609d68.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d68 references anchor point 0x60eba0
 Address 0x609d88 is at offset 0xd88 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d88.
+and at module-relative virtual address 0x609d88.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d88 references anchor point 0x60eba0
@@ -3682,42 +3682,42 @@ The allocation at 0x611b60 appears to be directly statically anchored.
 Address 0x609d50 is at offset 0xd50 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d50.
+and at module-relative virtual address 0x609d50.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d50 references 0x611b60.
 Address 0x609d58 is at offset 0xd58 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d58.
+and at module-relative virtual address 0x609d58.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d58 references 0x611b60.
 Address 0x609d60 is at offset 0xd60 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d60.
+and at module-relative virtual address 0x609d60.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d60 references 0x611b60.
 Address 0x609d70 is at offset 0xd70 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d70.
+and at module-relative virtual address 0x609d70.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d70 references 0x611b60.
 Address 0x609d78 is at offset 0xd78 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d78.
+and at module-relative virtual address 0x609d78.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d78 references 0x611b60.
 Address 0x609d80 is at offset 0xd80 in range
 [0x609000, 60a000)
 for module main executable
-and at module-relative virtual address 0x209d80.
+and at module-relative virtual address 0x609d80.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x609d80 references 0x611b60.

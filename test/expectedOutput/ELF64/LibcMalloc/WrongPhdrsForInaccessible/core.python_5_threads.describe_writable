@@ -1,9 +1,6 @@
-Range [0x8de000, 0x955000) uses 0x77000 bytes.
+Range [0x8de000, 0x978000) uses 0x9a000 bytes.
 Region use: used by module
 This is for module /usr/bin/python2.7.
-
-Range [0x955000, 0x978000) uses 0x23000 bytes.
-Region use: unknown
 
 Range [0x235c000, 0x243d000) uses 0xe1000 bytes.
 Region use: libc malloc main arena pages
@@ -57,19 +54,13 @@ Range [0x7f51ed47d000, 0x7f51ed47e000) uses 0x1000 bytes.
 Region use: used by module
 This is for module /lib/x86_64-linux-gnu/libdl-2.23.so.
 
-Range [0x7f51ed842000, 0x7f51ed844000) uses 0x2000 bytes.
+Range [0x7f51ed842000, 0x7f51ed848000) uses 0x6000 bytes.
 Region use: used by module
 This is for module /lib/x86_64-linux-gnu/libc-2.23.so.
 
-Range [0x7f51ed844000, 0x7f51ed848000) uses 0x4000 bytes.
-Region use: unknown
-
-Range [0x7f51eda60000, 0x7f51eda61000) uses 0x1000 bytes.
+Range [0x7f51eda60000, 0x7f51eda65000) uses 0x5000 bytes.
 Region use: used by module
 This is for module /lib/x86_64-linux-gnu/libpthread-2.23.so.
-
-Range [0x7f51eda61000, 0x7f51eda65000) uses 0x4000 bytes.
-Region use: unknown
 
 Range [0x7f51edabb000, 0x7f51edafb000) uses 0x40000 bytes.
 Region use: python arena
@@ -110,4 +101,4 @@ Range [0x7fffe22bc000, 0x7fffe22dd000) uses 0x21000 bytes.
 Region use: main stack
 This main stack is currently used by thread 1.
 
-29 writable ranges use 0x23e7000 (37,646,336) bytes.
+26 writable ranges use 0x23e7000 (37,646,336) bytes.

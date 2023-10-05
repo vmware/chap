@@ -1,9 +1,9 @@
 4 ranges take 0x2000000 bytes for use: used pthread stack
 6 ranges take 0x180000 bytes for use: python arena
 1 ranges take 0xe1000 bytes for use: libc malloc main arena pages
+8 ranges take 0xab000 bytes for use: used by module
 4 ranges take 0x84000 bytes for use: libc malloc heap
-8 ranges take 0x80000 bytes for use: used by module
 1 ranges take 0x31000 bytes for use: libc malloc mmapped allocation
-4 ranges take 0x30000 bytes for use: unknown
 1 ranges take 0x21000 bytes for use: main stack
-29 writable ranges use 0x23e7000 (37,646,336) bytes.
+1 ranges take 0x5000 bytes for use: unknown
+26 writable ranges use 0x23e7000 (37,646,336) bytes.

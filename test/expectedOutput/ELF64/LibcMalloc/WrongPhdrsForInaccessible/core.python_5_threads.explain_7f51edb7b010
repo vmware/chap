@@ -3669,6 +3669,12 @@ This allocation matches pattern PyDictKeysObject.
 "parse_config_h" : "parse_config_h"
 The allocation at 0x7f51edb7b010 appears to be indirectly statically anchored
 via anchor point 0x7f51edc2e148.
+Address 0x9550d0 is at offset 0x770d0 in range
+[0x8de000, 978000)
+for module /usr/bin/python2.7
+and at module-relative virtual address 0x9550d0.
+This is readable and writable
+and is mapped into the process image.
 Static address 0x9550d0 references anchor point 0x7f51edc2e148
 which references 0x7f51edb7b010
 The allocation at 0x7f51edb7b010 appears to be indirectly anchored from

@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019, 2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -51,14 +51,21 @@ class VirtualMemoryPartition {
 
   bool ClaimRange(Offset base, Offset size, const char *label,
                   bool staticAnchorCandidate) {
-    if (!_claimedRanges.MapRange(base, size, label)) {
+    auto claimedRangesResult = _claimedRanges.MapRange(base, size, label);
+    if (!claimedRangesResult.second) {
+      auto itClaimed = claimedRangesResult.first;
+      std::cerr << "Warning: Failed in attempt to register [0x" << std::hex
+                << base << ", 0x" << (base + size) << ") with label " << label
+                << "\n    due to conflict with range [0x" << itClaimed->_base
+                << ", 0x" << itClaimed->_limit << ") with label "
+                << itClaimed->_value << ".\n";
       return false;  // The range overlaps a claimed range.
     }
     Offset limit = base + size;
     /*
-     * Find the first range with limit not less than the base address.
+     * Find the first range with limit greater than the base address.
      */
-    auto it = _addressMap.lower_bound(base);
+    auto it = _addressMap.upper_bound(base);
     auto itEnd = _addressMap.end();
     if (it == itEnd || it.Base() >= limit) {
       /*

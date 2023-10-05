@@ -32,7 +32,7 @@ via anchor point 0x615cb0.
 Address 0x603138 is at offset 0x138 in range
 [0x603000, 604000)
 for module /home/tim/LongStringTest
-and at module-relative virtual address 0x203138.
+and at module-relative virtual address 0x603138.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x603138 references anchor point 0x615cb0
@@ -46,7 +46,7 @@ The allocation at 0x615d20 appears to be directly statically anchored.
 Address 0x603100 is at offset 0x100 in range
 [0x603000, 604000)
 for module /home/tim/LongStringTest
-and at module-relative virtual address 0x203100.
+and at module-relative virtual address 0x603100.
 This is readable and writable
 and is mapped into the process image.
 Static address 0x603100 references 0x615d20.

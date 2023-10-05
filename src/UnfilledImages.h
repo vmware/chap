@@ -1,4 +1,4 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017, 2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -14,16 +14,14 @@ class UnfilledImages {
   typedef RangeMapper<Offset, const char *> UnfilledRanges;
   typedef typename UnfilledRanges::const_iterator UnfilledRangesConstIterator;
 
-  UnfilledImages(const AddressMap &addressMap)
-      : _addressMap(addressMap) {
-  }
+  UnfilledImages(const AddressMap &addressMap) : _addressMap(addressMap) {}
 
   const char *RegisterIfUnfilled(Offset base, Offset maxSize,
                                  const char *label) {
     base = base & ~0xfff;
     maxSize = maxSize & ~0xfff;
     typename VirtualAddressMap<Offset>::const_iterator it =
-       _addressMap.find(base);
+        _addressMap.find(base);
     if (it == _addressMap.end()) {
       return (const char *)(0);
     }
@@ -32,7 +30,8 @@ class UnfilledImages {
       return (const char *)(0);
     }
     int flags = it.Flags();
-    if ((flags & VirtualAddressMap<Offset>::RangeAttributes::IS_WRITABLE) == 0) {
+    if ((flags & VirtualAddressMap<Offset>::RangeAttributes::IS_WRITABLE) ==
+        0) {
       return (const char *)(0);
     }
     Offset leftInRegion = it.Limit() - base;
@@ -40,7 +39,7 @@ class UnfilledImages {
       maxSize = leftInRegion;
     }
     Offset size = 0;
-    for ( ; size < maxSize; size += sizeof(Offset)) {
+    for (; size < maxSize; size += sizeof(Offset)) {
       if (*((Offset *)(image + size)) != 0) {
         break;
       }
@@ -49,7 +48,7 @@ class UnfilledImages {
     if (size == 0) {
       return (const char *)(0);
     }
-    if (_unfilledRanges.MapRange(base, size, label)) {
+    if (_unfilledRanges.MapRange(base, size, label).second) {
       return label;
     }
     UnfilledRangesConstIterator itUnfilled = _unfilledRanges.find(base);

@@ -1,45 +1,177 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include <cstdlib>
 #include <map>
+#include "ModuleImageFactory.h"
 #include "RangeMapper.h"
 #include "VirtualMemoryPartition.h"
 
 namespace chap {
 template <typename Offset>
 class ModuleDirectory {
+  static constexpr Offset MODULE_OFFSET_UNKNOWN = ~0;
+
  public:
-  static const Offset MODULE_OFFSET_UNKNOWN = ~0;
-  typedef RangeMapper<Offset, int> RangeToFlags;
-  typedef typename std::map<std::string, RangeToFlags> NameToRanges;
-  typedef typename NameToRanges::iterator iterator;
-  typedef typename NameToRanges::const_iterator const_iterator;
+  struct ModuleInfo;
+
+  struct RangeInfo {
+    RangeInfo(struct ModuleInfo& moduleInfo,
+              Offset adjustToModuleVirtualAddress, int flags,
+              bool isInCoreVirtualAddressMap)
+        : _moduleInfo(&moduleInfo),
+          _adjustToModuleVirtualAddress(adjustToModuleVirtualAddress),
+          _flags(flags),
+          _isInCoreVirtualAddressMap(isInCoreVirtualAddressMap) {}
+    RangeInfo()
+        : _moduleInfo(nullptr),
+          _adjustToModuleVirtualAddress(MODULE_OFFSET_UNKNOWN),
+          _flags(0),
+          _isInCoreVirtualAddressMap(false) {}
+    RangeInfo(const RangeInfo& other)
+        : _moduleInfo(other._moduleInfo),
+          _adjustToModuleVirtualAddress(other._adjustToModuleVirtualAddress),
+          _flags(other._flags),
+          _isInCoreVirtualAddressMap(other._isInCoreVirtualAddressMap) {}
+    RangeInfo& operator=(const RangeInfo& other) {
+      if (this != &other) {
+        _moduleInfo = other._moduleInfo;
+        _adjustToModuleVirtualAddress = other._adjustToModuleVirtualAddress;
+        _flags = other._flags;
+        _isInCoreVirtualAddressMap = other._isInCoreVirtualAddressMap;
+      }
+      return *this;
+    }
+    bool operator==(const RangeInfo& other) {
+      return _moduleInfo == other._moduleInfo &&
+             _adjustToModuleVirtualAddress ==
+                 other._adjustToModuleVirtualAddress &&
+             _flags == other._flags &&
+             _isInCoreVirtualAddressMap == other._isInCoreVirtualAddressMap;
+    }
+    struct ModuleInfo* _moduleInfo;
+    /*
+     * This value is subtracted from a program virtual address to yield a
+     * virtual address in the module for the given range.
+     */
+    Offset _adjustToModuleVirtualAddress;
+    int _flags;  // The meanings of the bits match those in VirtualAddressMap.
+    bool _isInCoreVirtualAddressMap;
+  };
+  typedef RangeMapper<Offset, RangeInfo> RangeToInfo;
+  typedef RangeMapper<Offset, const ModuleInfo*> RangeToModuleInfoPointer;
+  struct ModuleInfo {
+    ModuleInfo(std::string modulePath) : _originalPath(modulePath) {}
+    /*
+     * This is where the module was found at the time the process was
+     * running.
+     */
+    std::string _originalPath;
+    /*
+     * This is where the chap found a copy of the module, or is empty
+     * if the module was not found.  In the most common case, where
+     * the environment variable CHAP_MODULE_ROOTS is not set, the
+     * _relocatedPath will match the _originalPath, unless
+     * there is no file at that location.  If CHAP_MODULE_ROOTS is set,
+     * chap will try to append the _original path to each of the entries
+     * in CHAP_MODULE_ROOTS until it finds a file that exists with that
+     * constructed path name.
+     */
+    std::string _relocatedPath;
+    RangeToInfo _ranges;
+    std::unique_ptr<ModuleImage<Offset> > _moduleImage;
+  };
+  typedef std::map<std::string, ModuleInfo> NameToModuleInfo;
+
+  typedef typename NameToModuleInfo::iterator iterator;
+  typedef typename NameToModuleInfo::const_iterator const_iterator;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
-  ModuleDirectory(VirtualMemoryPartition<Offset>& partition)
+  ModuleDirectory(VirtualMemoryPartition<Offset>& partition,
+                  ModuleImageFactory<Offset>* moduleImageFactory)
       : MODULE_ALIGNMENT_GAP("module alignment gap"),
         USED_BY_MODULE("used by module"),
         _isResolved(false),
         _virtualMemoryPartition(partition),
-        _virtualAddressMap(partition.GetAddressMap()) {}
-  void AddRange(Offset base, Offset size, std::string name) {
+        _virtualAddressMap(partition.GetAddressMap()),
+        _moduleImageFactory(moduleImageFactory) {
+    const char* chapModuleRoots = std::getenv("CHAP_MODULE_ROOTS");
+    if (chapModuleRoots != nullptr) {
+      std::string roots(chapModuleRoots);
+      std::string::size_type pos = 0;
+      while (true) {
+        std::string::size_type colonPos = roots.find(pos, ':');
+        bool lastRoot = (colonPos == std::string::npos);
+        std::string root(lastRoot ? roots.substr(pos)
+                                  : roots.substr(pos, colonPos - pos));
+        _chapModuleRoots.emplace_back(root);
+        if (lastRoot) {
+          break;
+        }
+        pos = colonPos + 1;
+      }
+    } else {
+      _chapModuleRoots.emplace_back("");
+    }
+  }
+  void AddRange(Offset base, Offset size, Offset adjustToModuleVirtualAddress,
+                const std::string& name, Offset flags) {
     if (_isResolved) {
       // The module directory cannot be changed after it has been resolved.
       abort();
     }
-    if (!_rangeMapper.MapRange(base, size, name)) {
-      std::cerr << "Warning, range [0x" << std::hex << base << ", 0x"
-                << (base + size) << ")\nfor module " << name
-                << "\noverlaps some other mapped range.\n";
-      return;
+    auto emplaceResult = _nameToModuleInfo.emplace(name, name);
+    ModuleInfo& moduleInfo = emplaceResult.first->second;
+    if (emplaceResult.second) {
+      for (const auto chapModuleRoot : _chapModuleRoots) {
+        std::string relocatedPath = chapModuleRoot + name;
+        moduleInfo._moduleImage.reset(
+            _moduleImageFactory->MakeModuleImage(relocatedPath));
+        if (moduleInfo._moduleImage.get() != nullptr) {
+          moduleInfo._relocatedPath = relocatedPath;
+          break;
+        }
+      }
     }
-    RangeToFlags& rangesForModule = _rangesByName[name];
     Offset limit = base + size;
     auto itEnd = _virtualAddressMap.end();
     Offset subrangeBase = base;
-    for (auto it = _virtualAddressMap.lower_bound(base);
+    for (auto it = _virtualAddressMap.upper_bound(base);
          it != itEnd && it.Base() < limit; ++it) {
       if (subrangeBase < it.Base()) {
+        // The range to be registered was not included in the core.
+        if (flags != 0) {
+          // However, we know it was actually present in the process and
+          // know what the permissions were.
+          int flagsForSubrange = (flags & ~RangeAttributes::IS_MAPPED) |
+                                 RangeAttributes::HAS_KNOWN_PERMISSIONS;
+          Offset subrangeLimit = it.Base();
+          if (subrangeLimit > limit) {
+            subrangeLimit = limit;
+          }
+          Offset subrangeSize = subrangeLimit - subrangeBase;
+          auto mapRangeResult = _rangeToModuleInfoPointer.MapRange(
+              subrangeBase, subrangeSize, &moduleInfo);
+          if (mapRangeResult.second) {
+            if (!moduleInfo._ranges
+                     .MapRange(
+                         subrangeBase, subrangeSize,
+                         RangeInfo(moduleInfo, adjustToModuleVirtualAddress,
+                                   flagsForSubrange, true))
+                     .second) {
+              /*
+               * This should never happen because we have already checked that
+               * the range doesn't overlap any range for any module.
+               */
+              abort();
+            }
+          } else {
+            std::cerr << "Warning, range [0x" << std::hex << base << ", 0x"
+                      << (base + size) << ")\nfor module " << name
+                      << "\noverlaps some other mapped range in "
+                         "_rangeToModuleInfoPointer.\n";
+          }
+        }
         subrangeBase = it.Base();
       }
       // [subrangeBase, it.Limit()) is known to the process image.
@@ -56,102 +188,82 @@ class ModuleDirectory {
         // environment specific knowledge to calculate alignment gaps and
         // because such logic is best done after we know all the ranges
         // for the module.
-        if (!rangesForModule.MapRange(subrangeBase,
-                                      subrangeLimit - subrangeBase, flags)) {
-          std::cerr << "Warning: failure to add [0x" << std::hex << subrangeBase
-                    << ", 0x" << subrangeLimit << ") for module " << name
-                    << "\n";
+        Offset subrangeSize = subrangeLimit - subrangeBase;
+        auto mapRangeResult = _rangeToModuleInfoPointer.MapRange(
+            subrangeBase, subrangeSize, &moduleInfo);
+        if (mapRangeResult.second) {
+          if (!moduleInfo._ranges
+                   .MapRange(subrangeBase, subrangeSize,
+                             RangeInfo(moduleInfo, adjustToModuleVirtualAddress,
+                                       flags, true))
+                   .second) {
+            /*
+             * This should never happen because we have already checked that
+             * the range doesn't overlap any range for any module.
+             */
+            abort();
+          }
+        } else {
+          std::cerr << "Warning, range [0x" << std::hex << base << ", 0x"
+                    << (base + size) << ")\nfor module " << name
+                    << "\noverlaps some other mapped range in "
+                       "_rangeToModuleInfoPointer.\n";
         }
       }
       subrangeBase = subrangeLimit;
     }
   }
 
-  bool ExtendLastRange(Offset moduleBase, Offset newLimit) {
-    Offset base;
-    Offset size;
-    if (_isResolved) {
-      // The module directory cannot be changed after it has been resolved.
-      abort();
-    }
-    std::string name;
-    if (!_rangeMapper.FindRange(moduleBase, base, size, name)) {
-      return false;
-    }
-    auto it = _rangesByName.find(name);
-    if (it == _rangesByName.end()) {
-      return false;
-    }
-    if (it->second.begin()->_base != base) {
-      return false;
-    }
-    auto itLastRange = it->second.rbegin();
-    Offset lastRangeLimit = itLastRange->_limit;
-    if (lastRangeLimit < newLimit) {
-      /*
-       * The old limit was wrong and needs to be fixed.  First verify that the
-       * old limit and new limit are mapped in the the same range or that the
-       * new limit is at the end of the range containing the old one.
-       */
-      auto itMap = _virtualAddressMap.find(lastRangeLimit);
-      if (itMap == _virtualAddressMap.end() || itMap.Limit() < newLimit) {
-        return false;
-      }
-      if (!_rangeMapper.MapRange(lastRangeLimit, newLimit - lastRangeLimit,
-                                 it->first)) {
-        return false;
-      }
-      if (!it->second.MapRange(lastRangeLimit, (newLimit - lastRangeLimit),
-                               itLastRange->_value)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  const RangeToFlags* Find(const std::string& name) const {
-    const_iterator it = _rangesByName.find(name);
-    if (it != _rangesByName.end()) {
+  const ModuleInfo* Find(const std::string& name) const {
+    const_iterator it = _nameToModuleInfo.find(name);
+    if (it != _nameToModuleInfo.end()) {
       return &(it->second);
     } else {
-      return (RangeToFlags*)(0);
+      return nullptr;
     }
   }
 
   bool Find(Offset addr, std::string& name, Offset& base, Offset& size,
             Offset& relativeVirtualAddress) const {
-    if (_rangeMapper.FindRange(addr, base, size, name)) {
-      const_iterator it = _rangesByName.find(name);
-      if (it != _rangesByName.end()) {
-        relativeVirtualAddress = addr - (it->second.begin()->_base);
-        int flags;
-        if (it->second.FindRange(addr, base, size, flags)) {
-          return true;
-        }
-      }
+    const ModuleInfo* moduleInfo;
+    Offset coallescedBase;  // Coallesced ignoring RangeInfo values
+    Offset coallescedSize;
+    if (!_rangeToModuleInfoPointer.FindRange(addr, coallescedBase,
+                                             coallescedSize, moduleInfo)) {
+      return false;
     }
-    return false;
+    const auto& ranges = moduleInfo->_ranges;
+    RangeInfo rangeInfo;
+    if (!ranges.FindRange(addr, base, size, rangeInfo)) {
+      return false;
+    }
+    name = moduleInfo->_originalPath;
+    relativeVirtualAddress = addr - rangeInfo._adjustToModuleVirtualAddress;
+    return true;
   }
+
   void Resolve() { _isResolved = true; }
   bool IsResolved() const { return _isResolved; }
-  const_iterator begin() const { return _rangesByName.begin(); }
-  const_iterator end() const { return _rangesByName.end(); }
-  size_t NumModules() const { return _rangesByName.size(); }
+  const_iterator begin() const { return _nameToModuleInfo.begin(); }
+  const_iterator end() const { return _nameToModuleInfo.end(); }
+
+  size_t NumModules() const { return _nameToModuleInfo.size(); }
   const char* MODULE_ALIGNMENT_GAP;
   const char* USED_BY_MODULE;
+  const ModuleImage<Offset>* GetModuleImage(
+      const std::string& modulePath) const {
+    const auto& it = _nameToModuleInfo.find(modulePath);
+    return (it == _nameToModuleInfo.end()) ? nullptr
+                                           : it->second._moduleImage.get();
+  }
 
  private:
   bool _isResolved;
-  // The following allows determining which module, if any, is associated
-  // with a given address.
-  RangeMapper<Offset, std::string> _rangeMapper;
-  // The following allows looking up memory ranges by short module name.
-  // Each entry in the map allows one to determine, for any range associated
-  // with the corresponding module, the limits of that range and possibly,
-  // if it is known, the start address relative to the binary.
-  NameToRanges _rangesByName;
+  NameToModuleInfo _nameToModuleInfo;
+  RangeToModuleInfoPointer _rangeToModuleInfoPointer;
   VirtualMemoryPartition<Offset>& _virtualMemoryPartition;
   const VirtualAddressMap<Offset>& _virtualAddressMap;
+  std::unique_ptr<ModuleImageFactory<Offset> > _moduleImageFactory;
+  std::vector<std::string> _chapModuleRoots;
 };
 }  // namespace chap

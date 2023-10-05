@@ -1,4 +1,4 @@
-// Copyright (c) 2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2021-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -202,29 +202,17 @@ class InfrastructureFinder {
   }
 
   bool FindStacks(
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags) {
+      const typename ModuleDirectory<Offset>::ModuleInfo& moduleInfo) {
     Reader moduleReader(_virtualAddressMap);
     Reader reader(_virtualAddressMap);
 
-    for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-             itRange = rangeToFlags.begin();
-         itRange != rangeToFlags.end(); ++itRange) {
-      int flags = itRange->_value;
+    for (const auto& range : moduleInfo._ranges) {
+      int flags = range._value._flags;
       if ((flags & RangeAttributes::IS_WRITABLE) == 0) {
         continue;
       }
-      Offset base = itRange->_base;
-      /*
-       * At present the module finding logic can get a lower value for the
-       * limit than the true limit.  It is conservative about selecting the
-       * limit to avoid tagging too large a range in the partition.  However
-       * this conservative estimate is problematic if the array header we
-       * are seeking lies between the calculated limit and the real
-       * limit.  This code works around this to extend the limit to the
-       * last consecutive byte that has the same permission as the last
-       * byte in the range.
-       */
-      Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
+      Offset base = range._base;
+      Offset limit = range._limit;
 
       for (Offset moduleAddr = base; moduleAddr < limit;
            moduleAddr += sizeof(Offset)) {
@@ -339,8 +327,8 @@ class InfrastructureFinder {
   }
 
   bool FindAndRegisterStacks(
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags) {
-    if (FindStacks(rangeToFlags)) {
+      const typename ModuleDirectory<Offset>::ModuleInfo& moduleInfo) {
+    if (FindStacks(moduleInfo)) {
       ResolveStackLimits();
       RegisterStacks();
       return true;

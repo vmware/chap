@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -59,6 +59,7 @@ class InfrastructureFinder {
         _sizeInDictKeys(UNKNOWN_OFFSET),
         _numElementsInDictKeys(UNKNOWN_OFFSET),
         _dictKeysHaveIndex(false),
+        _logarithmicSizeInKeys(false),
         _strType(0),
         _cstringInStr(UNKNOWN_OFFSET),
         _listType(0),
@@ -88,14 +89,10 @@ class InfrastructureFinder {
 
     std::regex moduleRegex("^.*/(lib)?python([23])?[^/]+$");
     std::smatch moduleSmatch;
-    typename ModuleDirectory<Offset>::const_iterator itLib =
-        _moduleDirectory.end();
-    typename ModuleDirectory<Offset>::const_iterator itExe =
-        _moduleDirectory.end();
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             _moduleDirectory.begin();
-         it != _moduleDirectory.end(); ++it) {
-      const std::string& modulePath = it->first;
+    const typename ModuleDirectory<Offset>::ModuleInfo* exeModuleInfo = nullptr;
+    const typename ModuleDirectory<Offset>::ModuleInfo* libModuleInfo = nullptr;
+    for (const auto& nameAndModuleInfo : _moduleDirectory) {
+      const std::string& modulePath = nameAndModuleInfo.first;
       if (!std::regex_match(modulePath, moduleSmatch, moduleRegex)) {
         continue;
       }
@@ -120,23 +117,23 @@ class InfrastructureFinder {
         if (!_libraryPath.empty()) {
           std::cerr << "Warning: error finding python library path.\n";
         }
-        itLib = it;
-        _libraryPath = it->first;
+        libModuleInfo = &(nameAndModuleInfo.second);
+        _libraryPath = modulePath;
       } else {
         if (!_executablePath.empty()) {
           std::cerr << "Warning: error finding python executable path.\n";
         }
-        itExe = it;
-        _executablePath = it->first;
+        exeModuleInfo = &(nameAndModuleInfo.second);
+        _executablePath = modulePath;
       }
     }
 
-    if (itLib != _moduleDirectory.end()) {
-      FindArenaStructArrayAndTypes(itLib->second);
+    if (libModuleInfo != nullptr) {
+      FindArenaStructArrayAndTypes(*libModuleInfo);
     }
-    if (itExe != _moduleDirectory.end()) {
+    if (exeModuleInfo != nullptr) {
       if (_arenaStructArray == 0) {
-        FindArenaStructArrayAndTypes(itExe->second);
+        FindArenaStructArrayAndTypes(*exeModuleInfo);
       }
     }
     _garbageCollectionRefcntShift =
@@ -250,17 +247,19 @@ class InfrastructureFinder {
       if (typeObject == _typeType) {
         return true;
       }
+      if ((reader.ReadOffset(typeObject + TYPE_IN_PYOBJECT, 0) &
+           (sizeof(Offset) - 1)) != 0) {
+        return false;
+      }
       if (++depth == 100) {
         /*
-         * This branch is not expected ever to be taken because it is assumed
-         * that there is reasonable expectation that typeObject will be the
-         * address of a type object and that depth will not be anywhere near
-         * that much.
+         * This can happen occasionally, but generally just because
+         * the original typeObject has a pointer to something similar
+         * at offset _baseInType.  We don't bother warning because
+         * this simply means that the typeObject argument passed in
+         * didn't refer to a type type.
          */
-        std::cerr
-            << "Warning: excessive depth found for probable type object 0x"
-            << std::hex << typeObject << ".\n";
-        break;
+        return false;
       }
       typeObject = reader.ReadOffset(typeObject + _baseInType, 0);
     }
@@ -303,6 +302,13 @@ class InfrastructureFinder {
 
     Offset entrySize = (Offset)(3) * (Offset)(sizeof(Offset));
     Offset capacity = reader.ReadOffset(keys + _sizeInDictKeys, 0);
+    if (_logarithmicSizeInKeys) {
+      capacity = 1 << (capacity & 0xff);
+    } else {
+      if ((capacity & (capacity - 1)) != 0) {
+        return;
+      }
+    }
     triples = keys + _dictKeysHeaderSize;
     if (_dictKeysHaveIndex) {
       triples += (capacity * ((capacity < 0x80) ? ((Offset)(1))
@@ -311,8 +317,8 @@ class InfrastructureFinder {
                                                       : (capacity < 0x80000000)
                                                             ? ((Offset)(4))
                                                             : ((Offset)(8))));
-      limit = triples +
-              reader.ReadOffset(keys + _numElementsInDictKeys, 0) * entrySize;
+      Offset numElements = reader.ReadOffset(keys + _numElementsInDictKeys, 0);
+      limit = triples + numElements * entrySize;
     } else {
       limit = triples + capacity * entrySize;
     }
@@ -357,11 +363,15 @@ class InfrastructureFinder {
   static constexpr Offset PYTHON2_CSTRING_IN_STR = 0x24;
   static constexpr Offset PYTHON3_5_KEYS_IN_DICT = 3 * sizeof(Offset);
   static constexpr Offset PYTHON3_6_KEYS_IN_DICT = 4 * sizeof(Offset);
+  static constexpr Offset PYTHON3_11_KEYS_IN_DICT = 4 * sizeof(Offset);
   static constexpr Offset PYTHON3_SIZE_IN_DICT_KEYS = sizeof(Offset);
   static constexpr Offset PYTHON3_5_DICT_KEYS_HEADER_SIZE = 4 * sizeof(Offset);
   static constexpr Offset PYTHON3_6_NUM_ELEMENTS_IN_DICT_KEYS =
       4 * sizeof(Offset);
   static constexpr Offset PYTHON3_6_DICT_KEYS_HEADER_SIZE = 5 * sizeof(Offset);
+  static constexpr Offset PYTHON3_11_NUM_ELEMENTS_IN_DICT_KEYS =
+      3 * sizeof(Offset);
+  static constexpr Offset PYTHON3_11_DICT_KEYS_HEADER_SIZE = 4 * sizeof(Offset);
   static constexpr Offset PYTHON3_CSTRING_IN_STR = 6 * sizeof(Offset);
   Offset _typeType;
   Offset _typeSize;
@@ -376,6 +386,7 @@ class InfrastructureFinder {
   Offset _sizeInDictKeys;
   Offset _numElementsInDictKeys;
   bool _dictKeysHaveIndex;
+  bool _logarithmicSizeInKeys;
   Offset _strType;
   Offset _cstringInStr;
   Offset _listType;
@@ -400,33 +411,20 @@ class InfrastructureFinder {
 
   void FindMajorVersionFromPaths() {}
   void FindArenaStructArrayAndTypes(
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags) {
+      const typename ModuleDirectory<Offset>::ModuleInfo& moduleInfo) {
     Reader moduleReader(_virtualAddressMap);
     Reader reader(_virtualAddressMap);
 
     Offset bestBase = 0;
-    Offset bestLimitLowerBound = 0;
     Offset bestLimit = 0;
-    Offset moduleBase = rangeToFlags.begin()->_base;
-    Offset moduleLimit = rangeToFlags.rbegin()->_limit;
-    for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-             itRange = rangeToFlags.begin();
-         itRange != rangeToFlags.end(); ++itRange) {
-      int flags = itRange->_value;
+    const auto& ranges = moduleInfo._ranges;
+    Offset moduleBase = ranges.begin()->_base;
+    Offset moduleLimit = ranges.rbegin()->_limit;
+    for (const auto& range : ranges) {
+      int flags = range._value._flags;
       if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
-        Offset base = itRange->_base;
-        /*
-         * At present the module finding logic can get a lower value for the
-         * limit than the true limit.  It is conservative about selecting the
-         * limit to avoid tagging too large a range in the partition.  However
-         * this conservative estimate is problematic if the pointer to the
-         * arena struct array lies between the calculated limit and the real
-         * limit.  This code works around this to extend the limit to the
-         * last consecutive byte that has the same permission as the last
-         * byte in the range.
-         */
-        Offset limitLowerBound = itRange->_limit;
-        Offset limit = _virtualAddressMap.find(limitLowerBound - 1).Limit();
+        Offset base = range._base;
+        Offset limit = range._limit;
 
         for (Offset moduleAddr = base; moduleAddr < limit;
              moduleAddr += sizeof(Offset)) {
@@ -587,7 +585,6 @@ class InfrastructureFinder {
             _maxPoolsIfNotAligned = maxPoolsIfNotAligned;
             bestBase = base;
             bestLimit = limit;
-            bestLimitLowerBound = limitLowerBound;
           }
         }
       }
@@ -635,8 +632,7 @@ class InfrastructureFinder {
     if (_arenaStructCount != 0) {
       FindTypes(moduleBase, moduleLimit, bestBase, bestLimit, reader);
       if (_typeType != 0) {
-        FindNonEmptyGarbageCollectionLists(bestBase, bestLimit,
-                                           bestLimitLowerBound, reader);
+        FindNonEmptyGarbageCollectionLists(bestBase, bestLimit, reader);
         FindDynamicallyAllocatedTypes();
       }
     }
@@ -860,29 +856,10 @@ class InfrastructureFinder {
   }
 
   void FindStaticallyAllocatedTypes(Reader& reader) {
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             _moduleDirectory.begin();
-         it != _moduleDirectory.end(); ++it) {
-      const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags =
-          it->second;
-      for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-               itRange = rangeToFlags.begin();
-           itRange != rangeToFlags.end(); ++itRange) {
-        int flags = itRange->_value;
-        if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
-          Offset base = itRange->_base;
-          /*
-           * At present the module finding logic can get a lower value for the
-           * limit than the true limit.  It is conservative about selecting the
-           * limit to avoid tagging too large a range in the partition.  However
-           * this conservative estimate is problematic if the pointer to the
-           * arena struct array lies between the calculated limit and the real
-           * limit.  This code works around this to extend the limit to the
-           * last consecutive byte that has the same permission as the last
-           * byte in the range.
-           */
-          Offset limit = _virtualAddressMap.find(itRange->_limit - 1).Limit();
-          FindStaticallyAllocatedTypes(base, limit, reader);
+    for (const auto& nameAndModuleInfo : _moduleDirectory) {
+      for (const auto& range : nameAndModuleInfo.second._ranges) {
+        if ((range._value._flags & RangeAttributes::IS_WRITABLE) != 0) {
+          FindStaticallyAllocatedTypes(range._base, range._limit, reader);
         }
       }
     }
@@ -1279,6 +1256,17 @@ class InfrastructureFinder {
       return true;
     }
 
+    _keysInDict = PYTHON3_11_KEYS_IN_DICT;
+    _valuesInDict = _keysInDict + sizeof(Offset);
+    _dictKeysHeaderSize = PYTHON3_11_DICT_KEYS_HEADER_SIZE;
+    _numElementsInDictKeys = PYTHON3_11_NUM_ELEMENTS_IN_DICT_KEYS;
+    _dictKeysHaveIndex = true;
+    _logarithmicSizeInKeys = true;
+
+    if (CheckDictAndStrOffsets(dictForTypeType)) {
+      return true;
+    }
+
     if (_majorVersion == Version3) {
       std::cerr << "Warning: Failed to confirm dict and str offsets for "
                    "python3.\n";
@@ -1349,7 +1337,6 @@ class InfrastructureFinder {
   }
 
   void FindNonEmptyGarbageCollectionListsInRange(Offset base, Offset limit,
-                                                 Offset limitLowerBound,
                                                  Reader& reader,
                                                  Reader& otherReader) {
     Offset listCandidateLimit = limit - 2 * sizeof(Offset);
@@ -1384,15 +1371,7 @@ class InfrastructureFinder {
                     otherReader, firstEntry, _garbageCollectionHeaderSize)) {
         if (CheckGarbageCollectionHeaderSize(otherReader, lastEntry,
                                              _garbageCollectionHeaderSize)) {
-          /*
-           * Given that we don't fully trust the upper limit of the given
-           * module range, and may have accidentally extended it to include
-           * an adjacent writable range, it can be a problem if the adjacent
-           * module range can be used to allocate python objects that
-           * are subject to garbage collection, so we use the following
-           * check to avoid this.
-           */
-          if (listCandidate >= limitLowerBound &&
+          if (listCandidate >= limit &&
               CheckGarbageCollectionHeaderSize(otherReader, listCandidate,
                                                _garbageCollectionHeaderSize)) {
             break;
@@ -1428,8 +1407,7 @@ class InfrastructureFinder {
     return true;
   }
   void FindNonEmptyGarbageCollectionListsInPyInterpreterStates(
-      Offset base, Offset limit, Offset limitLowerBound, Reader& reader,
-      Reader& otherReader) {
+      Offset base, Offset limit, Reader& reader, Reader& otherReader) {
     Offset pyRuntimeStateCandidateLimit = limit - 8 * sizeof(Offset);
     for (Offset pyRuntimeStateCandidate = base;
          pyRuntimeStateCandidate < pyRuntimeStateCandidateLimit;
@@ -1479,7 +1457,7 @@ class InfrastructureFinder {
            link = otherReader.ReadOffset(link, 0xbad)) {
         Offset base = link + 0x40 * sizeof(Offset);
         Offset limit = link + 0x80 * sizeof(Offset);
-        FindNonEmptyGarbageCollectionListsInRange(base, limit, limit, reader,
+        FindNonEmptyGarbageCollectionListsInRange(base, limit, reader,
                                                   otherReader);
       }
       if (!_nonEmptyGarbageCollectionLists.empty()) {
@@ -1489,18 +1467,16 @@ class InfrastructureFinder {
   }
 
   void FindNonEmptyGarbageCollectionLists(Offset base, Offset limit,
-                                          Offset limitLowerBound,
                                           Reader& reader) {
     Reader otherReader(_virtualAddressMap);
 
-    FindNonEmptyGarbageCollectionListsInRange(base, limit, limitLowerBound,
-                                              reader, otherReader);
+    FindNonEmptyGarbageCollectionListsInRange(base, limit, reader, otherReader);
     if (!_nonEmptyGarbageCollectionLists.empty()) {
       return;
     }
 
-    FindNonEmptyGarbageCollectionListsInPyInterpreterStates(
-        base, limit, limitLowerBound, reader, otherReader);
+    FindNonEmptyGarbageCollectionListsInPyInterpreterStates(base, limit, reader,
+                                                            otherReader);
     if (!_nonEmptyGarbageCollectionLists.empty()) {
       return;
     }

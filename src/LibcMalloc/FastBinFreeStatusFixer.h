@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -187,7 +187,7 @@ class FastBinFreeStatusFixer {
             chainLength++;
             if (chainLength == 0x10000000) {
               chainLength = 0;
-              std::cerr << "Warning: A possible cyclic consolodating fast bin "
+              std::cerr << "Warning: A possible cyclic consolidating fast bin "
                            "chain at 0x"
                         << std::hex << regValue
                         << " was found\n...for libc malloc arena 0x"

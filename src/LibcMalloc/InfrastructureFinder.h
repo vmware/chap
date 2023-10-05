@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -1551,19 +1551,12 @@ class InfrastructureFinder {
   }
 
   bool ScanForMainArenaInModules(bool libcOnly) {
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             _moduleDirectory.begin();
-         it != _moduleDirectory.end(); ++it) {
-      if (!libcOnly || it->first.find("libc") != std::string::npos) {
-        const typename ModuleDirectory<Offset>::RangeToFlags& rangeToFlags =
-            it->second;
-        for (typename ModuleDirectory<Offset>::RangeToFlags::const_iterator
-                 itRange = rangeToFlags.begin();
-             itRange != rangeToFlags.end(); ++itRange) {
-          int flags = itRange->_value;
-          if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
-            if (ScanForMainArenaByEmptyFreeLists(itRange->_base,
-                                                 itRange->_limit)) {
+    for (const auto& nameAndModuleInfo : _moduleDirectory) {
+      if (!libcOnly ||
+          nameAndModuleInfo.first.find("libc") != std::string::npos) {
+        for (const auto& range : nameAndModuleInfo.second._ranges) {
+          if ((range._value._flags & RangeAttributes::IS_WRITABLE) != 0) {
+            if (ScanForMainArenaByEmptyFreeLists(range._base, range._limit)) {
               return true;
             }
           }

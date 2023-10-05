@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -316,7 +316,7 @@ class UnorderedMapOrSetAllocationsTagger : public Allocations::Tagger<Offset> {
       if (!_tagHolder.TagAllocation(nodeIndex, _nodeTagIndex)) {
         std::cerr << "Warning: failed to tag allocation at 0x" << std::hex
                   << node << " as %UnorderedMapOrSetNode."
-                             "It was already tagged as "
+                             "\n   It was already tagged as "
                   << _tagHolder.GetTagName(nodeIndex) << "\n";
       }
       if (refIndex != _numAllocations) {

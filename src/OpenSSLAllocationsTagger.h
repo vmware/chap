@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -38,18 +38,16 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
         _numAllocations(_directory.NumAllocations()),
         _SSLTagIndex(_tagHolder.RegisterTag("%SSL", true, true)),
         _SSL_CTXTagIndex(_tagHolder.RegisterTag("%SSL_CTX", true, true)),
-        _rangeToFlags(nullptr),
+        _moduleInfo(nullptr),
         _candidateBase(0),
         _candidateLimit(0),
         _enabled(false),
         _reader(addressMap) {
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             moduleDirectory.begin();
-         it != moduleDirectory.end(); ++it) {
-      if (it->first.find("libssl") != std::string::npos) {
-        _rangeToFlags = &(it->second);
-        _candidateBase = _rangeToFlags->begin()->_base;
-        _candidateLimit = _rangeToFlags->rbegin()->_limit;
+    for (const auto& nameAndModuleInfo : moduleDirectory) {
+      if (nameAndModuleInfo.first.find("libssl") != std::string::npos) {
+        const auto& ranges = nameAndModuleInfo.second._ranges;
+        _candidateBase = ranges.begin()->_base;
+        _candidateLimit = ranges.rbegin()->_limit;
         _enabled = true;
         break;
       }
@@ -161,7 +159,7 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
   AllocationIndex _numAllocations;
   TagIndex _SSLTagIndex;
   TagIndex _SSL_CTXTagIndex;
-  const typename ModuleDirectory<Offset>::RangeToFlags* _rangeToFlags;
+  const typename ModuleDirectory<Offset>::ModuleInfo* _moduleInfo;
   Offset _candidateBase;
   Offset _candidateLimit;
   bool _enabled;
@@ -170,7 +168,11 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
   Reader _reader;
 
   bool CheckSSL_METHOD(Offset candidate) {
-    if (_rangeToFlags->find(candidate) == _rangeToFlags->end()) {
+    if (_moduleInfo == nullptr) {
+      return false;
+    }
+    const auto& ranges = _moduleInfo->_ranges;
+    if (ranges.find(candidate) == ranges.end()) {
       return false;
     }
 
@@ -180,13 +182,12 @@ class OpenSSLAllocationsTagger : public Allocations::Tagger<Offset> {
       return false;
     }
 
-    typename ModuleDirectory<Offset>::RangeToFlags::const_iterator it =
-        _rangeToFlags->find(firstMethod);
-    if (it == _rangeToFlags->end()) {
+    auto it = ranges.find(firstMethod);
+    if (it == ranges.end()) {
       return false;
     }
 
-    int flags = it->_value;
+    int flags = it->_value._flags;
     if ((flags & (RangeAttributes::IS_READABLE | RangeAttributes::IS_WRITABLE |
                   RangeAttributes::IS_EXECUTABLE)) !=
         (RangeAttributes::IS_READABLE | RangeAttributes::IS_EXECUTABLE)) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -23,10 +23,10 @@ class ListModules : public Commands::Subcommand {
   void Run(Commands::Context& context) {
     Commands::Output& output = context.GetOutput();
     SizedTally<Offset> tally(context, "modules");
-    for (const auto& moduleNameAndRanges : _moduleDirectory) {
+    for (const auto& nameAndModuleInfo : _moduleDirectory) {
       Offset totalBytesForModule = 0;
-      output << moduleNameAndRanges.first << " uses the following ranges:\n";
-      for (const auto& range : moduleNameAndRanges.second) {
+      output << nameAndModuleInfo.first << " uses the following ranges:\n";
+      for (const auto& range : nameAndModuleInfo.second._ranges) {
         totalBytesForModule += range._size;
         output << "[0x" << std::hex << range._base << ", 0x" << range._limit
                << ")\n";
