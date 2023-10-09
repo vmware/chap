@@ -1,3 +1,3 @@
-1 ranges take 0x26000 bytes for use: used by module
-2 ranges take 0x3000 bytes for use: unknown
-3 rx-only ranges use 0x29000 (167,936) bytes.
+2 ranges take 0x27000 bytes for use: used by module
+2 ranges take 0x2000 bytes for use: unknown
+4 rx-only ranges use 0x29000 (167,936) bytes.

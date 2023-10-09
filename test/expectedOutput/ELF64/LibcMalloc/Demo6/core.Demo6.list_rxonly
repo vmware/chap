@@ -12,6 +12,7 @@ Range [0x7ff37de96000, 0x7ff37de97000) uses 0x1000 bytes.
 Range [0x7ff37de97000, 0x7ff37e008000) uses 0x171000 bytes.
 Range [0x7ff37e218000, 0x7ff37e219000) uses 0x1000 bytes.
 Range [0x7ff37e219000, 0x7ff37e23e000) uses 0x25000 bytes.
-Range [0x7fffe5582000, 0x7fffe5584000) uses 0x2000 bytes.
+Range [0x7fffe5582000, 0x7fffe5583000) uses 0x1000 bytes.
+Range [0x7fffe5583000, 0x7fffe5584000) uses 0x1000 bytes.
 Range [0xffffffffff600000, 0xffffffffff601000) uses 0x1000 bytes.
-16 rx-only ranges use 0x492000 (4,792,320) bytes.
+17 rx-only ranges use 0x492000 (4,792,320) bytes.

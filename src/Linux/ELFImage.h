@@ -48,7 +48,7 @@ const char *const ELF64PRStatusRegInfo::REGISTER_NAMES[] = {
     "rip", "",    "",    "rsp", "",    "*fs-base*"};
 
 template <class Ehdr, class Phdr, class Shdr, class Nhdr, class Off, class Word,
-          unsigned char elfClass, class PRStatusRegInfo>
+          class Dyn, unsigned char elfClass, class PRStatusRegInfo>
 class ELFImage {
  public:
   typedef Ehdr ElfHeader;
@@ -57,6 +57,7 @@ class ELFImage {
   typedef Nhdr NoteHeader;
   typedef Off Offset;
   typedef Word ElfWord;
+  typedef Dyn ElfDynamic;
   static constexpr unsigned char EXPECTED_ELF_CLASS = elfClass;
   typedef RangeMapper<Offset, Offset> AddrToOffsetMap;
 
@@ -191,7 +192,7 @@ class ELFImage {
 
     if (_elfHeader->e_type == ET_CORE) {
       VisitNotes(
-          std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, elfClass,
+          std::bind(&ELFImage<Ehdr, Phdr, Shdr, Nhdr, Off, Word, Dyn, elfClass,
                               PRStatusRegInfo>::FindThreadsFromPRStatus,
                     this, std::placeholders::_1, std::placeholders::_2,
                     std::placeholders::_3));
@@ -425,11 +426,11 @@ class ELFImage {
 };
 
 typedef ELFImage<Elf32_Ehdr, Elf32_Phdr, Elf32_Shdr, Elf32_Nhdr, Elf32_Off,
-                 Elf32_Word, ELFCLASS32, ELF32PRStatusRegInfo>
+                 Elf32_Word, Elf32_Dyn, ELFCLASS32, ELF32PRStatusRegInfo>
     Elf32;
 
 typedef ELFImage<Elf64_Ehdr, Elf64_Phdr, Elf64_Shdr, Elf64_Nhdr, Elf64_Off,
-                 Elf64_Word, ELFCLASS64, ELF64PRStatusRegInfo>
+                 Elf64_Word, Elf64_Dyn, ELFCLASS64, ELF64PRStatusRegInfo>
     Elf64;
 
 }  // namespace Linux

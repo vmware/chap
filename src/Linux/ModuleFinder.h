@@ -77,6 +77,7 @@ class ModuleFinder {
   typedef typename ElfImage::ProgramHeader ProgramHeader;
   typedef typename ElfImage::SectionHeader SectionHeader;
   typedef typename ElfImage::NoteHeader NoteHeader;
+  typedef typename ElfImage::ElfDynamic ElfDynamic;
 
   Offset _baseInLinkMap;
   Offset _limitInLinkMap;
@@ -240,6 +241,69 @@ class ModuleFinder {
     return "";
   }
 
+  std::string FindModuleNameByMappedSONAME(const char* image,
+                                           Offset numImageBytes, Offset dynamic,
+                                           Offset adjust, Offset base,
+                                           Offset limit) {
+    std::string emptyName;
+    if (numImageBytes < 0x1000) {
+      return emptyName;
+    }
+    const ElfHeader* elfHeader = (const ElfHeader*)(image);
+    if (elfHeader->e_type != ET_EXEC && elfHeader->e_type != ET_DYN) {
+      return emptyName;
+    }
+    int entrySize = elfHeader->e_phentsize;
+    Offset minimumExpectedRegionSize =
+        elfHeader->e_phoff + (elfHeader->e_phnum * entrySize);
+    const char* headerImage = image + elfHeader->e_phoff;
+    const char* headerLimit = image + minimumExpectedRegionSize;
+    if (numImageBytes < minimumExpectedRegionSize) {
+      return emptyName;
+    }
+
+    Offset dynamicSize = 0;
+    for (; headerImage < headerLimit; headerImage += entrySize) {
+      ProgramHeader* programHeader = (ProgramHeader*)(headerImage);
+      if (programHeader->p_type == PT_DYNAMIC) {
+        if ((programHeader->p_vaddr + adjust) != dynamic) {
+          continue;
+        }
+        dynamicSize = programHeader->p_memsz;
+        break;
+      }
+    }
+    if (dynamicSize == 0) {
+      return emptyName;
+    }
+
+    Offset dynStrAddr = 0;
+    Offset nameInDynStr = (Offset)( ~0);
+   
+    int numDyn = dynamicSize / sizeof(ElfDynamic);
+    const char* dynImage = 0;
+    Offset numBytesFound =
+        _virtualAddressMap.FindMappedMemoryImage(dynamic, &dynImage);
+    if (numBytesFound < dynamicSize) {
+      numDyn = numBytesFound / sizeof(ElfDynamic);
+    }
+    const ElfDynamic* dyn = (ElfDynamic*)(dynImage);
+    const ElfDynamic* dynLimit = dyn + numDyn;
+    for (; dyn < dynLimit; dyn++) {
+      if (dyn->d_tag == DT_STRTAB) {
+        dynStrAddr = (Offset)dyn->d_un.d_ptr;
+      } else if (dyn->d_tag == DT_SONAME) {
+        nameInDynStr = (Offset)dyn->d_un.d_ptr;
+      }
+    }
+
+    if ((nameInDynStr == (Offset)(~0)) || (dynStrAddr == 0)) {
+      return emptyName;
+    }
+
+    return ReadNameFromAddress(adjust + dynStrAddr + nameInDynStr);
+  }
+
   // The image is of the start of a mapped image of the given module.
   // The module has already been checked to be of the expected
   // ELF class and the image has the correct ELF magic.
@@ -328,13 +392,13 @@ class ModuleFinder {
     return true;
   }
 
-  std::string ReadNameFromAddress(Offset nameAddressFromLinkMap) {
+  std::string ReadNameFromAddress(Offset nameAddress) {
     Reader reader(_virtualAddressMap);
     std::string path;
     char buffer[1000];
 
     size_t bytesRead =
-        reader.ReadCString(nameAddressFromLinkMap, buffer, sizeof(buffer));
+        reader.ReadCString(nameAddress, buffer, sizeof(buffer));
     if ((bytesRead != 0) && (bytesRead != sizeof(buffer))) {
       path.assign(buffer, bytesRead);
     }
@@ -398,12 +462,15 @@ class ModuleFinder {
           path = "main executable";
           // TODO: possibly get the main program name from the PT_NOTE section
         } else {
-          // TODO: possibly get the path of the shared library using DT_SONAME
-          // and DT_STRTAB, as seen in some older code in this file.
-          std::cerr << "Warning: cannot figure out name for module with "
-                       "link_map at 0x"
-                    << std::hex << linkMap << ".\n";
-          return;
+          path = FindModuleNameByMappedSONAME(moduleHeaderImage,
+                                              contiguousModuleHeaderImageBytes,
+                                              dynamic, adjust, base, limit);
+          if (path.empty()) {
+            std::cerr << "Warning: cannot figure out name for module with "
+                         "link_map at 0x"
+                      << std::hex << linkMap << ".\n";
+            return;
+          }
         }
       }
     }

@@ -32,4 +32,6 @@
 [0x7ff37de97000, 0x7ff37e008000)
 [0x7ff37e208000, 0x7ff37e212000)
 [0x7ff37e212000, 0x7ff37e218000)
-7 modules use 0x4b7000 (4,943,872) bytes.
+linux-vdso.so.1 uses the following ranges:
+[0x7fffe5582000, 0x7fffe5583000)
+8 modules use 0x4b8000 (4,947,968) bytes.
