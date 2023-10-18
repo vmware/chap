@@ -8,6 +8,9 @@ namespace chap {
 template <typename Offset>
 class ModuleImage {
  public:
-  const virtual VirtualAddressMap<Offset> &GetVirtualAddressMap() const = 0;
+  virtual ~ModuleImage(){};
+  const virtual VirtualAddressMap<Offset>& GetVirtualAddressMap() const = 0;
+  const virtual FileImage& GetFileImage() const = 0;
+  const virtual std::string& GetPath() const = 0;
 };
 }  // namespace chap

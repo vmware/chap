@@ -278,8 +278,8 @@ class ModuleFinder {
     }
 
     Offset dynStrAddr = 0;
-    Offset nameInDynStr = (Offset)( ~0);
-   
+    Offset nameInDynStr = (Offset)(~0);
+
     int numDyn = dynamicSize / sizeof(ElfDynamic);
     const char* dynImage = 0;
     Offset numBytesFound =
@@ -304,15 +304,62 @@ class ModuleFinder {
     return ReadNameFromAddress(adjust + dynStrAddr + nameInDynStr);
   }
 
-  // The image is of the start of a mapped image of the given module.
-  // The module has already been checked to be of the expected
-  // ELF class and the image has the correct ELF magic.
+  /*
+   * Record that a module range was present in the process, regardless of
+   * whether it was actually present in the core.  If the range was not
+   * present in the core, base the flags on the program header.
+   */
+  void AddRangeFromProgramHeader(Offset base, Offset size, Offset adjust,
+                                 const std::string& path,
+                                 int flagsFromProgramHeader) {
+    int flagsIfUnmapped = RangeAttributes::HAS_KNOWN_PERMISSIONS;
+    if ((flagsFromProgramHeader & PF_R) != 0) {
+      flagsIfUnmapped |= RangeAttributes::IS_READABLE;
+    }
+    if ((flagsFromProgramHeader & PF_W) != 0) {
+      flagsIfUnmapped |= RangeAttributes::IS_WRITABLE;
+    }
+    if ((flagsFromProgramHeader & PF_X) != 0) {
+      flagsIfUnmapped |= RangeAttributes::IS_EXECUTABLE;
+    }
+    Offset limit = base + size;
+    auto itEnd = _virtualAddressMap.end();
+    Offset subrangeBase = base;
+    for (auto it = _virtualAddressMap.upper_bound(base);
+         it != itEnd && it.Base() < limit; ++it) {
+      Offset mappedBase = it.Base();
+      if (subrangeBase < mappedBase) {
+        // The range to be registered was not included in the core.
+        // However, we know it was actually present in the process and
+        // know what the permissions were.
+        _moduleDirectory.AddRange(subrangeBase, mappedBase - subrangeBase,
+                                  adjust, path, flagsIfUnmapped);
+        subrangeBase = mappedBase;
+      }
+      Offset subrangeLimit = it.Limit();
+      if (subrangeLimit > limit) {
+        subrangeLimit = limit;
+      }
+      _moduleDirectory.AddRange(subrangeBase, subrangeLimit - subrangeBase,
+                                adjust, path, it.Flags());
+      if (subrangeLimit == limit) {
+        return;
+      }
+      subrangeBase = subrangeLimit;
+    }
+    _moduleDirectory.AddRange(subrangeBase, limit - subrangeBase, adjust, path,
+                              flagsIfUnmapped);
+  }
+
+  /*
+   * Add ranges for the given module based on program headers for that module.
+   */
   bool FindRangesForModuleByMappedProgramHeaders(const char* image,
                                                  Offset numImageBytes,
-                                                 std::string& path,
+                                                 const std::string& path,
                                                  Offset adjust, Offset base,
                                                  Offset limit) {
-    if (numImageBytes < 0x1000) {
+    if (numImageBytes < sizeof(ElfHeader)) {
       return false;
     }
     const ElfHeader* elfHeader = (const ElfHeader*)(image);
@@ -340,20 +387,33 @@ class ModuleFinder {
         Offset rangeBase = (vAddrFromPH & ~0xfff) + adjust;
         Offset rangeLimit =
             ((vAddrFromPH + programHeader->p_memsz + 0xfff) & ~0xfff) + adjust;
-        _moduleDirectory.AddRange(rangeBase, rangeLimit - rangeBase, adjust,
+        AddRangeFromProgramHeader(rangeBase, rangeLimit - rangeBase, adjust,
                                   path, programHeader->p_flags);
       }
     }
     return true;
   }
 
-  bool FindRangesForModuleByModuleProgramHeaders(std::string& /* path */,
-                                                 Offset /* adjust */,
+  bool FindRangesForModuleByModuleProgramHeaders(std::string& path,
+                                                 Offset adjust,
                                                  Offset /* dynamic */,
-                                                 Offset /* base */,
-                                                 Offset /* limit */) {
-    return false;
+                                                 Offset base, Offset limit) {
+    const ModuleImage<Offset>* moduleImage =
+        _moduleDirectory.GetModuleImage(path);
+    if (moduleImage == nullptr) {
+      return false;
+    }
+    const FileImage& fileImage = moduleImage->GetFileImage();
+    const char* image = fileImage.GetImage();
+    uint64_t fileSize = fileImage.GetFileSize();
+    if (fileSize > ((Offset)(~0))) {
+      abort();
+    }
+
+    return FindRangesForModuleByMappedProgramHeaders(image, (Offset)(fileSize),
+                                                     path, adjust, base, limit);
   }
+
   bool FindRangesForModuleByLimitsFromLinkMap(std::string& path, Offset adjust,
                                               Offset dynamic, Offset base,
                                               Offset limit) {
@@ -397,8 +457,7 @@ class ModuleFinder {
     std::string path;
     char buffer[1000];
 
-    size_t bytesRead =
-        reader.ReadCString(nameAddress, buffer, sizeof(buffer));
+    size_t bytesRead = reader.ReadCString(nameAddress, buffer, sizeof(buffer));
     if ((bytesRead != 0) && (bytesRead != sizeof(buffer))) {
       path.assign(buffer, bytesRead);
     }
@@ -495,6 +554,63 @@ class ModuleFinder {
       return;
     }
 
+    _moduleDirectory.AddModule(
+        path, [adjust, dynamic, this](ModuleImage<Offset>& moduleImage) {
+          const FileImage& fileImage = moduleImage.GetFileImage();
+          const char* image = fileImage.GetImage();
+          uint64_t fileSize = fileImage.GetFileSize();
+          if (fileSize > ((Offset)(~0))) {
+            return false;
+          }
+          Offset numImageBytes = fileSize;
+
+          const ElfHeader* elfHeader = (const ElfHeader*)(image);
+          int entrySize = elfHeader->e_phentsize;
+          Offset minimumExpectedRegionSize =
+              elfHeader->e_phoff + (elfHeader->e_phnum * entrySize);
+          const char* headerImage = image + elfHeader->e_phoff;
+          const char* headerLimit = image + minimumExpectedRegionSize;
+          if (numImageBytes < minimumExpectedRegionSize) {
+            return false;
+          }
+
+          Offset dynamicSize = 0;
+          for (; headerImage < headerLimit; headerImage += entrySize) {
+            ProgramHeader* programHeader = (ProgramHeader*)(headerImage);
+            if (programHeader->p_type == PT_DYNAMIC) {
+              if ((programHeader->p_vaddr + adjust) != dynamic) {
+                return false;
+              }
+              dynamicSize = programHeader->p_memsz;
+              break;
+            }
+          }
+          if (dynamicSize == 0) {
+            return false;
+          }
+
+          Offset numBytesToCompare = dynamicSize;
+          const char* dynamicImageFromCore;
+          Offset numBytesFound = _virtualAddressMap.FindMappedMemoryImage(
+              dynamic, &dynamicImageFromCore);
+          if (numBytesToCompare > numBytesFound) {
+            numBytesToCompare = numBytesFound;
+          }
+          const VirtualAddressMap<Offset>& moduleVirtualAddressMap =
+              moduleImage.GetVirtualAddressMap();
+          const char* dynamicImageFromModule;
+          numBytesFound = moduleVirtualAddressMap.FindMappedMemoryImage(
+              dynamic - adjust, &dynamicImageFromModule);
+          if (numBytesToCompare > numBytesFound) {
+            numBytesToCompare = numBytesFound;
+          }
+          if (numBytesToCompare == 0) {
+            return false;
+          }
+          return memcmp(dynamicImageFromModule, dynamicImageFromCore,
+                        numBytesToCompare) != 0;
+        });
+
     if ((moduleHeaderImage != nullptr) &&
         FindRangesForModuleByMappedProgramHeaders(
             moduleHeaderImage, contiguousModuleHeaderImageBytes, path, adjust,
@@ -504,7 +620,6 @@ class ModuleFinder {
     if ((fileMappedRangeDirectoryIsEmpty || rangeIsInFileMappedDirectory) &&
         FindRangesForModuleByModuleProgramHeaders(path, adjust, dynamic, base,
                                                   limit)) {
-      // TODO: write the function
       return;
     }
     if (FindRangesForModuleByLimitsFromLinkMap(path, adjust, dynamic, base,
@@ -527,7 +642,6 @@ class ModuleFinder {
                           limit);
     }
   }
-
 
   struct ModuleRange {
     ModuleRange() : _base(0), _size(0), _permissions(0), _image(0) {}
@@ -701,7 +815,8 @@ class ModuleFinder {
         Offset gapSize = gapLimit - gapBase;
         if (gapSize == 0x200000 || gapSize == 0x1ff000) {
           /*
-           * Guess that the gap has been found but we must still make sure that
+           * Guess that the gap has been found but we must still make sure
+           * that
            * it is legitimately a gap, by making sure that there are no ranges
            * known to that core that lie in the given range.
            */

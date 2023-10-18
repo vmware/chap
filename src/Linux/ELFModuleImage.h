@@ -11,24 +11,26 @@ namespace Linux {
 template <class ElfImage>
 class ELFModuleImage : public ModuleImage<typename ElfImage::Offset> {
  public:
-  ELFModuleImage(const std::string& filePath) {
-    _fileImage.reset(new FileImage(filePath.c_str(), false));
-    _elfImage.reset(new ElfImage(*_fileImage));
-    uint16_t elfType = _elfImage->GetELFType();
+  ELFModuleImage(const std::string& filePath)
+      : _fileImage(filePath.c_str(), false), _elfImage(_fileImage) {
+    uint16_t elfType = _elfImage.GetELFType();
     if (elfType != ET_EXEC && elfType != ET_DYN) {
       std::cerr << "Warning: there was an attempt to reference " << filePath
                 << " as a shared library or executable.\n";
       throw filePath;
     }
   }
+  ~ELFModuleImage() {}
   const VirtualAddressMap<typename ElfImage::Offset>& GetVirtualAddressMap()
       const {
-    return _elfImage->GetVirtualAddressMap();
+    return _elfImage.GetVirtualAddressMap();
   }
+  const FileImage& GetFileImage() const { return _fileImage; }
+  const std::string& GetPath() const { return _fileImage.GetFileName(); }
 
  private:
-  std::unique_ptr<FileImage> _fileImage;
-  std::unique_ptr<ElfImage> _elfImage;
+  FileImage _fileImage;
+  ElfImage _elfImage;
 };
 }  // namespace Linux
 }  // namespace chap
