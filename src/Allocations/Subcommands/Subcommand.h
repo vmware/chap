@@ -1,10 +1,11 @@
-// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include "../../CPlusPlus/TypeInfoDirectory.h"
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
 #include "../Directory.h"
@@ -55,6 +56,8 @@ class Subcommand : public Commands::Subcommand {
 
     const SignatureDirectory<Offset>& signatureDirectory =
         _processImage.GetSignatureDirectory();
+    const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory =
+        _processImage.GetTypeInfoDirectory();
     const VirtualAddressMap<Offset>& addressMap =
         _processImage.GetVirtualAddressMap();
 
@@ -84,9 +87,9 @@ class Subcommand : public Commands::Subcommand {
     }
 
     bool signatureOrPatternError = false;
-    SignatureChecker<Offset> signatureChecker(signatureDirectory,
-                                              _patternDescriberRegistry,
-                                              addressMap, signatureString);
+    SignatureChecker<Offset> signatureChecker(
+        signatureDirectory, typeInfoDirectory, _patternDescriberRegistry,
+        addressMap, signatureString);
     bool switchError = false;
     bool allowMissingSignatures = false;
     if (!context.ParseBooleanSwitch("allowMissingSignatures",
@@ -226,41 +229,46 @@ class Subcommand : public Commands::Subcommand {
           AddReferenceConstraints(
               context, "minincoming", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, directory, *graph,
-              signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures, *tagHolder, skipTaintedReferences,
-              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
+              signatureDirectory, typeInfoDirectory, addressMap,
+              referenceConstraints, allowMissingSignatures, *tagHolder,
+              skipTaintedReferences, *edgeIsTainted, skipUnfavoredReferences,
+              *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxincoming", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::INCOMING, true, directory, *graph,
-              signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures, *tagHolder, skipTaintedReferences,
-              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
+              signatureDirectory, typeInfoDirectory, addressMap,
+              referenceConstraints, allowMissingSignatures, *tagHolder,
+              skipTaintedReferences, *edgeIsTainted, skipUnfavoredReferences,
+              *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, directory, *graph,
-              signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures, *tagHolder, skipTaintedReferences,
-              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
+              signatureDirectory, typeInfoDirectory, addressMap,
+              referenceConstraints, allowMissingSignatures, *tagHolder,
+              skipTaintedReferences, *edgeIsTainted, skipUnfavoredReferences,
+              *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "maxoutgoing", ReferenceConstraint<Offset>::MAXIMUM,
               ReferenceConstraint<Offset>::OUTGOING, true, directory, *graph,
-              signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures, *tagHolder, skipTaintedReferences,
-              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
+              signatureDirectory, typeInfoDirectory, addressMap,
+              referenceConstraints, allowMissingSignatures, *tagHolder,
+              skipTaintedReferences, *edgeIsTainted, skipUnfavoredReferences,
+              *edgeIsFavored);
       switchError =
           switchError |
           AddReferenceConstraints(
               context, "minfreeoutgoing", ReferenceConstraint<Offset>::MINIMUM,
               ReferenceConstraint<Offset>::OUTGOING, false, directory, *graph,
-              signatureDirectory, addressMap, referenceConstraints,
-              allowMissingSignatures, *tagHolder, skipTaintedReferences,
-              *edgeIsTainted, skipUnfavoredReferences, *edgeIsFavored);
+              signatureDirectory, typeInfoDirectory, addressMap,
+              referenceConstraints, allowMissingSignatures, *tagHolder,
+              skipTaintedReferences, *edgeIsTainted, skipUnfavoredReferences,
+              *edgeIsFavored);
     }
 
     ExtendedVisitor<Offset, Visitor> extendedVisitor(
@@ -400,6 +408,7 @@ class Subcommand : public Commands::Subcommand {
       bool wantUsed, const Directory<Offset>& directory,
       const Graph<Offset>& graph,
       const SignatureDirectory<Offset>& signatureDirectory,
+      const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory,
       const VirtualAddressMap<Offset>& addressMap,
       std::vector<ReferenceConstraint<Offset> >& constraints,
       bool allowMissingSignatures, const TagHolder<Offset>& tagHolder,
@@ -429,11 +438,11 @@ class Subcommand : public Commands::Subcommand {
           switchError = true;
         }
       }
-      constraints.emplace_back(signatureDirectory, _patternDescriberRegistry,
-                               addressMap, signature, count, wantUsed,
-                               boundaryType, referenceType, directory, graph,
-                               tagHolder, skipTaintedReferences, edgeIsTainted,
-                               skipUnfavoredReferences, edgeIsFavored);
+      constraints.emplace_back(
+          signatureDirectory, typeInfoDirectory, _patternDescriberRegistry,
+          addressMap, signature, count, wantUsed, boundaryType, referenceType,
+          directory, graph, tagHolder, skipTaintedReferences, edgeIsTainted,
+          skipUnfavoredReferences, edgeIsFavored);
       if (constraints.back().UnrecognizedSignature()) {
         if (!allowMissingSignatures) {
           error << "Signature \"" << signature << "\" is not recognized.\n";

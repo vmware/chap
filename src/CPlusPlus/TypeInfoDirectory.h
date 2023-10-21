@@ -51,6 +51,10 @@ class TypeInfoDirectory {
 
   bool IsResolved() const { return _isResolved; }
 
+  bool ContainsName(const std::string& name) const {
+    return _typeNameToTypeInfos.find(name) != _typeNameToTypeInfos.end();
+  }
+
  private:
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
@@ -276,7 +280,7 @@ class TypeInfoDirectory {
        * TODO: This check doesn't have enough redundancy to actually be
        * confident that a typeinfo has been found.  We could possibly add
        * another check at the point where we try to unmangle the name.
-       * We don't want to reject based on lack if signatures that use that
+       * We don't want to reject based on lack of signatures that use that
        * typeinfo but we might reject based on lack of vtables that do so.
        */
       _detailsMap.emplace(typeInfo, typeInfo)
@@ -423,8 +427,7 @@ class TypeInfoDirectory {
         }
       }
       if (!typeName.empty()) {
-        std::vector<Offset>& typeInfosForName =
-            _typeNameToTypeInfos[mangledName];
+        std::vector<Offset>& typeInfosForName = _typeNameToTypeInfos[typeName];
         typeInfosForName.insert(typeInfosForName.end(), typeInfos.begin(),
                                 typeInfos.end());
       }

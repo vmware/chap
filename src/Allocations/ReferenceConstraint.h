@@ -1,10 +1,11 @@
-// Copyright (c) 2017,2020-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020-2021,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <iostream>
 #include <set>
 #include <sstream>
+#include "../CPlusPlus/TypeInfoDirectory.h"
 #include "../VirtualAddressMap.h"
 #include "Directory.h"
 #include "EdgePredicate.h"
@@ -25,6 +26,7 @@ class ReferenceConstraint {
   enum ReferenceType { INCOMING, OUTGOING };
   ReferenceConstraint(
       const SignatureDirectory<Offset>& signatureDirectory,
+      const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory,
       const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
       const VirtualAddressMap<Offset>& addressMap, const std::string& signature,
       size_t count, bool wantUsed, BoundaryType boundaryType,
@@ -32,8 +34,8 @@ class ReferenceConstraint {
       const Graph<Offset>& graph, const TagHolder<Offset>& tagHolder,
       bool skipTaintedReferences, const EdgePredicate<Offset>& edgeIsTainted,
       bool skipUnfavoredReferences, const EdgePredicate<Offset>& edgeIsFavored)
-      : _signatureChecker(signatureDirectory, patternDescriberRegistry,
-                          addressMap, signature),
+      : _signatureChecker(signatureDirectory, typeInfoDirectory,
+                          patternDescriberRegistry, addressMap, signature),
         _count(count),
         _wantUsed(wantUsed),
         _boundaryType(boundaryType),

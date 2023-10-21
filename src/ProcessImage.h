@@ -153,6 +153,10 @@ class ProcessImage {
     return _pythonFinderGroup;
   }
 
+  const CPlusPlus::TypeInfoDirectory<Offset> &GetTypeInfoDirectory() const {
+    return _typeInfoDirectory;
+  }
+
   const char *STACK;
   const char *STACK_OVERFLOW_GUARD;
 

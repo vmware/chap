@@ -1,10 +1,11 @@
-// Copyright (c) 2017-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 
 #include <regex>
 #include <stack>
+#include "../CPlusPlus/TypeInfoDirectory.h"
 #include "../Commands/Runner.h"
 #include "../ProcessImage.h"
 #include "Directory.h"
@@ -182,6 +183,8 @@ class ExtendedVisitor {
 
     const SignatureDirectory<Offset>& signatureDirectory =
         processImage.GetSignatureDirectory();
+    const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory =
+        processImage.GetTypeInfoDirectory();
 
     /*
      * Create the extension rules in the calculated order.
@@ -189,8 +192,8 @@ class ExtendedVisitor {
 
     _rules.reserve(numSpecs);
     for (size_t i = 0; i < numSpecs; i++) {
-      _rules.emplace_back(signatureDirectory, _patternDescriberRegistry,
-                          _addressMap,
+      _rules.emplace_back(signatureDirectory, typeInfoDirectory,
+                          _patternDescriberRegistry, _addressMap,
                           specifications[ruleIndexToArgumentIndex[i]]);
       Rule& rule = _rules.back();
       if (rule._memberSignatureChecker.UnrecognizedSignature()) {
@@ -567,6 +570,7 @@ class ExtendedVisitor {
   };
   struct Rule {
     Rule(const SignatureDirectory<Offset>& directory,
+         const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory,
          const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
          const VirtualAddressMap<Offset>& addressMap, const Specification& spec)
         : _offsetInMember(spec._offsetInMember),
@@ -575,10 +579,12 @@ class ExtendedVisitor {
           _useOffsetInExtension(spec._useOffsetInExtension),
           _referenceIsOutgoing(spec._referenceIsOutgoing),
           _extensionMustBeLeaked(spec._extensionMustBeLeaked),
-          _memberSignatureChecker(directory, patternDescriberRegistry,
-                                  addressMap, spec._memberSignature),
-          _extensionSignatureChecker(directory, patternDescriberRegistry,
-                                     addressMap, spec._extensionSignature),
+          _memberSignatureChecker(directory, typeInfoDirectory,
+                                  patternDescriberRegistry, addressMap,
+                                  spec._memberSignature),
+          _extensionSignatureChecker(directory, typeInfoDirectory,
+                                     patternDescriberRegistry, addressMap,
+                                     spec._extensionSignature),
           _baseState(spec._baseState),
           _newState(spec._newState) {}
 

@@ -1,10 +1,11 @@
-// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <iostream>
 #include <set>
 #include <sstream>
+#include "../CPlusPlus/TypeInfoDirectory.h"
 #include "../VirtualAddressMap.h"
 #include "Directory.h"
 #include "PatternDescriberRegistry.h"
@@ -23,14 +24,18 @@ class SignatureChecker {
     UNSIGNED_ONLY,           // Must be unsigned
     SIGNATURE_CHECK,         // Must match the specified signature
     PATTERN_CHECK,           // Must match the specified pattern
+    TYPE_NAME_NO_INSTANCES,  // A type name has been specified but it has no
+                             // instances
     UNRECOGNIZED_ONLY        // Must be unsigned and not patch a pattern
   };
   SignatureChecker(
       const SignatureDirectory<Offset>& directory,
+      const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory,
       const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
       const VirtualAddressMap<Offset>& addressMap, const std::string& signature)
       : _checkType(NO_CHECK_NEEDED),
         _directory(directory),
+        _typeInfoDirectory(typeInfoDirectory),
         _patternDescriberRegistry(patternDescriberRegistry),
         _addressMap(addressMap),
         _signature((signature[0] != '%') ? signature : ""),
@@ -61,23 +66,34 @@ class SignatureChecker {
 
     _signatures = _directory.Signatures(signature);
     Offset numericSignature;
-    // Note that if a class has some name that happens to look OK
-    // as hexadecimal, such as BEEF, for example, a requested
-    // signature BEEF will be treated as referring to the class
-    // name.  For purposes of pseudo signatures, the number can
-    // be selected as a sudo-signature by prepending 0, or 0x
-    // or anything that chap will parse as hexadecimal but that
-    // will make it not match the symbol.
     if (_signatures.empty()) {
+      // The directory doesn't have the signature by name.  Check if the
+      // signature is numeric.
+      // Note that if a class has some name that happens to look OK
+      // as hexadecimal, such as BEEF, for example, a requested
+      // signature BEEF will be treated as referring to the class
+      // name.  For purposes of pseudo signatures, the number can
+      // be selected as a sudo-signature by prepending 0, or 0x
+      // or anything that chap will parse as hexadecimal but that
+      // will make it not match the symbol.
       std::istringstream is(signature);
       is >> std::hex >> numericSignature;
       if (!is.fail() && is.eof()) {
         _signatures.insert(numericSignature);
+        _checkType = SIGNATURE_CHECK;
+        return;
       }
+      if (!_typeInfoDirectory.ContainsName(signature)) {
+        _checkType = UNRECOGNIZED_SIGNATURE;
+        // TODO: Allow derived types here
+        return;
+      }
+      _checkType = TYPE_NAME_NO_INSTANCES;
+      // TODO: Allow derived types here.
+      return;
     }
-
-    _checkType =
-        (_signatures.empty()) ? UNRECOGNIZED_SIGNATURE : SIGNATURE_CHECK;
+    // TODO: Possibly extend to all derived types.
+    _checkType = SIGNATURE_CHECK;
   }
   bool UnrecognizedSignature() const {
     return _checkType == UNRECOGNIZED_SIGNATURE;
@@ -93,6 +109,8 @@ class SignatureChecker {
       case NO_CHECK_NEEDED:
         return true;
       case UNRECOGNIZED_SIGNATURE:
+        return false;
+      case TYPE_NAME_NO_INSTANCES:
         return false;
       case UNRECOGNIZED_PATTERN:
         return false;
@@ -133,6 +151,7 @@ class SignatureChecker {
  private:
   enum CheckType _checkType;
   const SignatureDirectory<Offset>& _directory;
+  const CPlusPlus::TypeInfoDirectory<Offset>& _typeInfoDirectory;
   const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
   const VirtualAddressMap<Offset>& _addressMap;
   const std::string _signature;
