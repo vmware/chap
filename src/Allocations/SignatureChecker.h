@@ -85,16 +85,19 @@ class SignatureChecker {
       }
       if (!_typeInfoDirectory.ContainsName(signature)) {
         _checkType = UNRECOGNIZED_SIGNATURE;
-        // TODO: Allow derived types here
         return;
       }
-      _checkType = TYPE_NAME_NO_INSTANCES;
-      // TODO: Allow derived types here.
-      return;
+      _typeInfoDirectory.AddSignatures(signature, _signatures);
+      if (_signatures.empty()) {
+        _checkType = TYPE_NAME_NO_INSTANCES;
+        return;
+      }
+    } else {
+      _typeInfoDirectory.AddSignatures(signature, _signatures);
     }
-    // TODO: Possibly extend to all derived types.
     _checkType = SIGNATURE_CHECK;
   }
+
   bool UnrecognizedSignature() const {
     return _checkType == UNRECOGNIZED_SIGNATURE;
   }

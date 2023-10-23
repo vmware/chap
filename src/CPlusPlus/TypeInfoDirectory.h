@@ -42,7 +42,6 @@ class TypeInfoDirectory {
       FillInDerivedTypeInfos();
       ResolveUsedDirectSignatures();
       ResolveUsedSignatures();
-      MapNamesToUsedSignatures();
     }
     // TODO: Possibly complain if a C++ library is present but the
     // typeinfo objects are not found.
@@ -55,21 +54,42 @@ class TypeInfoDirectory {
     return _typeNameToTypeInfos.find(name) != _typeNameToTypeInfos.end();
   }
 
+  void AddSignatures(const std::string& name,
+                     std::set<Offset>& signatures) const {
+    const auto it = _typeNameToTypeInfos.find(name);
+    if (it == _typeNameToTypeInfos.end()) {
+      return;
+    }
+    const std::vector<Offset>& typeInfos = it->second;
+    for(Offset typeInfo: typeInfos) {
+      const auto itDetails = _detailsMap.find(typeInfo);
+      const Details& details = itDetails->second;
+      if (details._usedSignatures == nullptr) {
+        return;
+      }
+      for (Offset signature: *(details._usedSignatures)) {
+        signatures.insert(signature);
+      }
+    }
+  }
+
  private:
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
   struct Details {
     Details(Offset address)
-        : _address(address), _mangledNameAddress(0), _nameReadFromCore(false) {}
+      : _address(address), _mangledNameAddress(0), _nameReadFromCore(false), _usedSignatures(nullptr) {}
     Details(Offset address, Offset mangledNameAddress)
         : _address(address),
           _mangledNameAddress(mangledNameAddress),
-          _nameReadFromCore(false) {}
+          _nameReadFromCore(false), _usedSignatures(nullptr) {}
     Offset _address;
     Offset _mangledNameAddress;
     std::string _mangledName;
     std::string _unmangledName;
     bool _nameReadFromCore;
+    std::unordered_set<Offset> *_usedDirectSignatures;
+    std::unordered_set<Offset> *_usedSignatures;
   };
   const ModuleDirectory<Offset>& _moduleDirectory;
   const VirtualAddressMap<Offset>& _virtualAddressMap;
@@ -101,24 +121,6 @@ class TypeInfoDirectory {
    * entry in the unordered_map.
    */
   std::unordered_map<Offset, std::unordered_set<Offset> > _derivedTypeInfos;
-  /*
-   * Map from a given typeinfo to the set of used signatures for that
-   * type exactly.  To save space, if no such signatures exist there
-   * should be no corresponding entry in the unordered_map.
-   */
-  std::unordered_map<Offset, std::unordered_set<Offset> > _usedDirectSignatures;
-  /*
-   * Map from a given typeinfo to the set of used signatures for that
-   * type or derived types.  To save space, if no such signatures exist there
-   * should be no corresponding entry in the unordered_map.
-   */
-  std::unordered_map<Offset, std::unordered_set<Offset> > _usedSignatures;
-  /*
-   * Map from type names to used signatures.  In this particular case,
-   * an entry is present for a type name even if it has no used signatures.
-   */
-  std::unordered_map<std::string, std::unordered_set<Offset> >
-      _nameToUsedSignatures;
 
   bool FindBaseTypeInfoInstances(
       const typename ModuleDirectory<Offset>::ModuleInfo& moduleInfo) {
@@ -507,11 +509,16 @@ class TypeInfoDirectory {
       if (typeInfoCandidate == 0) {
         continue;
       }
-      if (_detailsMap.find(typeInfoCandidate) == _detailsMap.end()) {
+      auto it = _detailsMap.find(typeInfoCandidate);
+      if (it == _detailsMap.end()) {
         continue;
       }
-      _usedDirectSignatures[typeInfoCandidate].insert(signature);
-      _usedSignatures[typeInfoCandidate].insert(signature);
+      Details& details = it->second;
+      if (details._usedSignatures == nullptr) {
+        details._usedSignatures = new std::unordered_set<Offset>;
+      }
+      details._usedSignatures->insert(signature);
+      
     }
   }
   void ResolveUsedSignatures() {
@@ -533,12 +540,30 @@ class TypeInfoDirectory {
       Offset derived = readyToResolveDirectBases.front();
       std::unordered_set<Offset>& bases = _directBases[derived];
       readyToResolveDirectBases.pop_front();
-      const auto itSignatures = _usedSignatures.find(derived);
-      bool derivedHasUsedSignatures = (itSignatures != _usedSignatures.end());
+
+      auto itDerived = _detailsMap.find(derived);
+      if (itDerived == _detailsMap.end()) {
+        continue;
+      }
+      Details& details = itDerived->second;
+
+
+
+      bool derivedHasUsedSignatures = (details._usedSignatures != nullptr);
       for (Offset base : bases) {
         if (derivedHasUsedSignatures) {
-          std::unordered_set<Offset>& signaturesForBase = _usedSignatures[base];
-          for (Offset signature : itSignatures->second) {
+          auto itBase = _detailsMap.find(base);
+          if (itBase == _detailsMap.end()) {
+            continue;
+          }
+          Details& detailsForBase = itBase->second;
+
+          if (detailsForBase._usedSignatures == nullptr) {
+            detailsForBase._usedSignatures = new std::unordered_set<Offset>;
+          }
+          std::unordered_set<Offset>& signaturesForBase = *(detailsForBase._usedSignatures);
+
+          for (Offset signature : *(details._usedSignatures)) {
             signaturesForBase.insert(signature);
           }
         }
@@ -559,63 +584,6 @@ class TypeInfoDirectory {
     }
   }
 
-  void MapNamesToUsedSignatures() {
-    Reader reader(_virtualAddressMap);
-    for (const auto& kv : _detailsMap) {
-      Offset typeInfo = kv.first;
-      const auto it = _usedSignatures.find(typeInfo);
-      bool typeInfoHasUsedSignatures = (it != _usedSignatures.end());
-      Offset nameAddress = reader.ReadOffset(typeInfo + sizeof(Offset), 0);
-      if (nameAddress == 0) {
-        if (typeInfoHasUsedSignatures) {
-          std::cerr
-              << "Warning: cannot get address of name for used type_info at 0x"
-              << std::hex << typeInfo << "\n";
-        }
-        continue;
-      }
-      char mangledNameBuffer[1000];
-      size_t stringLength = reader.ReadCString(nameAddress, mangledNameBuffer,
-                                               sizeof(mangledNameBuffer));
-      if (stringLength == sizeof(mangledNameBuffer)) {
-        if (typeInfoHasUsedSignatures) {
-          std::cerr
-              << "Warning: unexpectedly long name for used type_info at 0x"
-              << std::hex << typeInfo << "\n";
-        }
-        continue;
-      }
-      if (stringLength == 0) {
-        if (typeInfoHasUsedSignatures) {
-#if 0
-          std::cerr
-              << "Warning: cannot read mangled name for used type_info at 0x"
-              << std::hex << typeInfo << "\n";
-#endif
-        }
-        continue;
-      }
-      Unmangler<Offset> unmangler(mangledNameBuffer, false);
-      std::string name = unmangler.Unmangled();
-      if (name.empty()) {
-        if (typeInfoHasUsedSignatures) {
-#if 0
-          std::cerr << "Warning: cannot unmangle name for used type_info at 0x"
-                    << std::hex << typeInfo << "\n";
-#endif
-        }
-        continue;
-      }
-      std::unordered_set<Offset>& usedSignatures = _nameToUsedSignatures[name];
-      if (!typeInfoHasUsedSignatures) {
-        continue;
-      }
-      std::unordered_set<Offset>& usedForTypeInfo = it->second;
-      for (Offset signature : usedForTypeInfo) {
-        usedSignatures.insert(signature);
-      }
-    }
-  }
 };
 }  // namespace CPlusPlus
 }  // namespace chap
