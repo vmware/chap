@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2020,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -20,6 +20,7 @@ class HeapDescriber : public Describer<Offset> {
                 const VirtualAddressMap<Offset> &addressMap)
       : _addressMap(addressMap),
         _maxHeapSize(infrastructureFinder.GetMaxHeapSize()),
+        _heapHeaderSize(infrastructureFinder.GetHeapHeaderSize()),
         _heaps(infrastructureFinder.GetHeaps()),
         _arenaStructSize(infrastructureFinder.GetArenaStructSize()) {}
   /*
@@ -56,7 +57,7 @@ class HeapDescriber : public Describer<Offset> {
         }
       }
     }
-    Offset pastHeapHeader = heapStart + 4 * sizeof(Offset);
+    Offset pastHeapHeader = heapStart + _heapHeaderSize;
     Offset pastArenaStruct = pastHeapHeader;
     if (pastHeapHeader == heap._arenaAddress) {
       pastArenaStruct += _arenaStructSize;
@@ -136,9 +137,10 @@ class HeapDescriber : public Describer<Offset> {
 
  protected:
   const VirtualAddressMap<Offset> &_addressMap;
-  Offset _maxHeapSize;
+  const Offset _maxHeapSize;
+  const Offset _heapHeaderSize;
   const HeapMap &_heaps;
-  Offset _arenaStructSize;
+  const Offset _arenaStructSize;
 };
 }  // namespace LibcMalloc
 }  // namespace chap

@@ -40,8 +40,14 @@ class InfrastructureFinder {
         _unfilledImagesFound(false),
         _fastBinLinksAreMangled(false),
         _arenaNextOffset(0),
+        _heapHeaderSize(UNKNOWN_HEAP_HEADER_SIZE),
         _maxHeapSize(DEFAULT_MAX_HEAP_SIZE) {
+    _heapHeaderSize = OLD_HEAP_HEADER_SIZE;
     FindHeapAndArenaCandidates();
+    if (_arenas.size() == 0) {
+      _heapHeaderSize = NEW_HEAP_HEADER_SIZE;
+      FindHeapAndArenaCandidates();
+    }
 
     if (_arenas.size() == 0) {
       /*
@@ -50,6 +56,7 @@ class InfrastructureFinder {
        * also possible that someone has overridden the default max heap
        * size at the time glibc was compiled.
        */
+      _heapHeaderSize = UNKNOWN_HEAP_HEADER_SIZE;
       if (ScanForMainArena()) {
         /*
          * The main arena was found.  See if it points to itself, in which
@@ -63,7 +70,7 @@ class InfrastructureFinder {
          * an incomplete core (which could cause the following call
          * to fail if one of the headers from the ring were not present).
          */
-        FindNonMainArenasByRingFromMainArena();
+        FindRemainingArenasByRingFromMainArena();
       }
 
     } else {
@@ -84,7 +91,7 @@ class InfrastructureFinder {
            * The main arena was found.  Perhaps someone reduced the
            * default max heap size at compilation time.  Check that.
            */
-          FindNonMainArenasByRingFromMainArena();
+          FindRemainingArenasByRingFromMainArena();
         }
       }
     }
@@ -298,6 +305,7 @@ class InfrastructureFinder {
   }
   const HeapMap& GetHeaps() const { return _heaps; }
   Offset GetMaxHeapSize() const { return _maxHeapSize; }
+  Offset GetHeapHeaderSize() const { return _heapHeaderSize; }
   const MainArenaRuns& GetMainArenaRuns() const { return _mainArenaRuns; }
   Offset ArenaAddressFor(Offset address) const {
     HeapMapConstIterator itHeaps = _heaps.find(address & ~(_maxHeapSize - 1));
@@ -333,6 +341,9 @@ class InfrastructureFinder {
   static constexpr Offset OFFSET_SIZE = sizeof(Offset);
   static constexpr Offset DEFAULT_MAX_HEAP_SIZE =
       (OFFSET_SIZE == 4) ? 0x100000 : 0x4000000;
+  static constexpr Offset UNKNOWN_HEAP_HEADER_SIZE = 0;
+  static constexpr Offset OLD_HEAP_HEADER_SIZE = 4 * OFFSET_SIZE;
+  static constexpr Offset NEW_HEAP_HEADER_SIZE = 6 * OFFSET_SIZE;
 
   HeapMap _heaps;
   ArenaMap _arenas;
@@ -351,6 +362,7 @@ class InfrastructureFinder {
   Offset _arenaDoublyLinkedFreeListOffset;
   Offset _arenaLastDoublyLinkedFreeListOffset;
   Offset _arenaStructSize;
+  Offset _heapHeaderSize;
   Offset _maxHeapSize;
 
   void FindHeapAndArenaCandidates() {
@@ -376,13 +388,13 @@ class InfrastructureFinder {
            heapStart += _maxHeapSize) {
         Offset* headers = ((Offset*)(image + (heapStart - base)));
         Offset arenaAddress = headers[0];
-        if ((arenaAddress & (_maxHeapSize - 1)) == (OFFSET_SIZE * 4) &&
+        if ((arenaAddress & (_maxHeapSize - 1)) == (_heapHeaderSize) &&
             (headers[1] & (_maxHeapSize - 1)) == 0 && headers[2] != 0 &&
             (headers[2] & 0xFFF) == 0 && headers[3] != 0 &&
             (headers[3] & 0xFFF) == 0 &&
             ((headers[0] & ~(_maxHeapSize - 1)) == heapStart) ==
                 (headers[1] == 0)) {
-          if (arenaAddress == heapStart + (OFFSET_SIZE * 4)) {
+          if (arenaAddress == heapStart + (_heapHeaderSize)) {
             (void)_arenas
                 .insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
                 .first;
@@ -443,7 +455,7 @@ class InfrastructureFinder {
           Offset nextNext = reader.ReadOffset(next + candidate, 0);
           if ((nextNext != 0) && (_arenas.find(nextNext) != _arenas.end())) {
             numVotes++;
-            if ((next & 0xFFFFF) != (OFFSET_SIZE * 4)) {
+            if ((next & 0xFFFFF) != _heapHeaderSize) {
               mainArenaCandidate = next;
             } else {
               std::cerr << "Arena at " << std::hex << arena._address
@@ -524,7 +536,7 @@ class InfrastructureFinder {
         }
         Offset* headers = ((Offset*)(image + (heapStart - base)));
         Offset arenaAddress = headers[0];
-        if ((arenaAddress & (_maxHeapSize - 1)) == (OFFSET_SIZE * 4) &&
+        if ((arenaAddress & (_maxHeapSize - 1)) == _heapHeaderSize &&
             (headers[1] & (_maxHeapSize - 1)) == 0 && headers[2] != 0 &&
             (headers[2] & 0xFFF) == 0 && headers[3] != 0 &&
             (headers[3] & 0xFFF) == 0 &&
@@ -589,7 +601,7 @@ class InfrastructureFinder {
       Offset arenaAddress = it->first;
       if (arenaAddress != _mainArenaAddress) {
         sumOfNonMainArenaSizes += it->second._size;
-        Offset firstHeapAddress = arenaAddress - 4 * OFFSET_SIZE;
+        Offset firstHeapAddress = arenaAddress - _heapHeaderSize;
         orOfNonMainArenaFirstHeaps |= firstHeapAddress;
       }
     }
@@ -713,40 +725,19 @@ class InfrastructureFinder {
     return true;
   }
 
-  /*
-   * This is useful in the case that no non-main arenas have been found in
-   * the scan by heaps, but the main arena has, if we need to rule out the
-   * uncommon case that glibc has been compiled in such a way that the
-   * constant for the maximum heap size differs from the standard one.
-   * Return true if this finds at least one non-main arena, or false
-   * otherwise.
-   */
-
-  bool FindNonMainArenasByRingFromMainArena() {
-    Reader reader(_addressMap);
+  bool FindNonMainArenasByRingFromMainArena(Reader& reader) {
     Offset limit = _mainArenaAddress + 0x120 * OFFSET_SIZE;
-    for (Offset checkAt = _mainArenaAddress + 0x80 * OFFSET_SIZE;
-         checkAt < limit; checkAt += OFFSET_SIZE) {
-      if (reader.ReadOffset(checkAt, 0xbadbad) == _mainArenaAddress) {
-        /*
-         * The arena points to itself so there really is just one
-         * arena and no non-main arenas exist.
-         */
-        return false;
-      }
-    }
-
     for (Offset checkAt = _mainArenaAddress; checkAt < limit;
          checkAt += OFFSET_SIZE) {
       Offset candidate = reader.ReadOffset(checkAt, 0xbadbad);
       Offset nextOffset = checkAt - _mainArenaAddress;
       std::vector<Offset> candidates;
 
-      if ((candidate & 0xffff) == (4 * OFFSET_SIZE)) {
+      if (IsPlausibleNonMainArena(reader, candidate)) {
         do {
           candidates.push_back(candidate);
           candidate = reader.ReadOffset(candidate + nextOffset, 0xbadbad);
-        } while ((candidate & 0xffff) == (4 * OFFSET_SIZE));
+        } while (IsPlausibleNonMainArena(reader, candidate));
         if (candidate == _mainArenaAddress) {
           /*
            * We had to have made it at least one time through the ring
@@ -763,6 +754,44 @@ class InfrastructureFinder {
         }
       }
     }
+    return false;
+  }
+
+  /*
+   * This is useful in the case that no non-main arenas have been found in
+   * the scan by heaps, but the main arena has, if we need to rule out the
+   * uncommon case that glibc has been compiled in such a way that the
+   * constant for the maximum heap size differs from the standard one.
+   * Return true if this finds at least one non-main arena, or false
+   * otherwise.
+   */
+
+  bool FindRemainingArenasByRingFromMainArena() {
+    Reader reader(_addressMap);
+    Offset limit = _mainArenaAddress + 0x120 * OFFSET_SIZE;
+    for (Offset checkAt = _mainArenaAddress + 0x80 * OFFSET_SIZE;
+         checkAt < limit; checkAt += OFFSET_SIZE) {
+      if (reader.ReadOffset(checkAt, 0xbadbad) == _mainArenaAddress) {
+        /*
+         * The arena points to itself so there really is just one
+         * arena and no non-main arenas exist.
+         */
+        return false;
+      }
+    }
+
+    if (_heapHeaderSize != UNKNOWN_HEAP_HEADER_SIZE) {
+      return FindNonMainArenasByRingFromMainArena(reader);
+    }
+    _heapHeaderSize = OLD_HEAP_HEADER_SIZE;
+    if (FindNonMainArenasByRingFromMainArena(reader)) {
+      return true;
+    }
+    _heapHeaderSize = NEW_HEAP_HEADER_SIZE;
+    if (FindNonMainArenasByRingFromMainArena(reader)) {
+      return true;
+    }
+    _heapHeaderSize = UNKNOWN_HEAP_HEADER_SIZE;
     return false;
   }
 
@@ -812,7 +841,7 @@ class InfrastructureFinder {
         _mainArenaAddress = 0;
         break;
       }
-    } while ((arenaAddress & 0xffff) == (4 * OFFSET_SIZE));
+    } while ((arenaAddress & 0xffff) == _heapHeaderSize);
     _mainArenaAddress = 0;
     return false;  // The ring was never found or failed verfication.
   }
@@ -1069,7 +1098,7 @@ class InfrastructureFinder {
       if (bestSizeOffsetVotes < numVotes) {
         bestSizeOffsetVotes = numVotes;
         _arenaSizeOffset = sizeOffset;
-        _arenaMaxSizeOffset = sizeOffset + sizeof(Offset);
+        _arenaMaxSizeOffset = sizeOffset + OFFSET_SIZE;
         if (numVotes == numArenas) {
           break;
         }
@@ -1169,7 +1198,7 @@ class InfrastructureFinder {
     return false;
   }
   bool CheckUnfilledArenaStart(Offset address) {
-    return ((address & (_maxHeapSize - 1)) == (4 * sizeof(Offset)))
+    return ((address & (_maxHeapSize - 1)) == _heapHeaderSize)
                ? CheckUnfilledHeapStart(address & ~(_maxHeapSize - 1))
                : CheckUnfilledMainArenaStartPage(address);
   }
@@ -1200,7 +1229,7 @@ class InfrastructureFinder {
         int numSizesOk = 0;
         for (; numSizesOk < 10; ++numSizesOk) {
           Offset chunkSize = sizeAndFlags & (Offset)(~7);
-          if (chunkSize < 4 * sizeof(Offset) || chunkSize > bytesLeft) {
+          if (chunkSize < 4 * OFFSET_SIZE || chunkSize > bytesLeft) {
             break;
           }
           chunkAddr += chunkSize;
@@ -1210,7 +1239,7 @@ class InfrastructureFinder {
           }
           sizeAndFlags = reader.ReadOffset(chunkAddr, 0);
         }
-        if (numSizesOk == 10 || bytesLeft < 2 * sizeof(Offset)) {
+        if (numSizesOk == 10 || bytesLeft < 2 * OFFSET_SIZE) {
           _arenas.insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
               .first->second._missingOrUnfilledHeader = true;
           if (!CheckUnfilledArenaStart(arenaAddress)) {
@@ -1360,10 +1389,23 @@ class InfrastructureFinder {
   }
 
   bool IsPlausibleNonMainArena(Reader& reader, Offset arenaAddress) {
-    Offset heapCandidate = arenaAddress - 4 * OFFSET_SIZE;
-    if ((heapCandidate & 0xffff) == 0 &&
-        arenaAddress == reader.ReadOffset(heapCandidate, 0xbadbad)) {
-      return true;
+    if (_heapHeaderSize == 0) {
+      Offset heapCandidate = arenaAddress - OLD_HEAP_HEADER_SIZE;
+      if ((heapCandidate & 0xffff) == 0 &&
+          arenaAddress == reader.ReadOffset(heapCandidate, 0xbadbad)) {
+        return true;
+      }
+      heapCandidate = arenaAddress - NEW_HEAP_HEADER_SIZE;
+      if ((heapCandidate & 0xffff) == 0 &&
+          arenaAddress == reader.ReadOffset(heapCandidate, 0xbadbad)) {
+        return true;
+      }
+    } else {
+      Offset heapCandidate = arenaAddress - _heapHeaderSize;
+      if ((heapCandidate & 0xffff) == 0 &&
+          arenaAddress == reader.ReadOffset(heapCandidate, 0xbadbad)) {
+        return true;
+      }
     }
     return false;
   }
@@ -1479,10 +1521,10 @@ class InfrastructureFinder {
      */
     Offset bestChainLength = 0;
     Offset bestAltChainLength = 0;
-    Offset altMainArenaCandidate = mainArenaCandidate - sizeof(Offset);
-    for (Offset nextOffset = 0xc0 * sizeof(Offset);
-         nextOffset < 0x140 * sizeof(Offset); nextOffset += sizeof(Offset)) {
-      Offset altNextOffset = nextOffset + sizeof(Offset);
+    Offset altMainArenaCandidate = mainArenaCandidate - OFFSET_SIZE;
+    for (Offset nextOffset = 0xc0 * OFFSET_SIZE;
+         nextOffset < 0x140 * OFFSET_SIZE; nextOffset += OFFSET_SIZE) {
+      Offset altNextOffset = nextOffset + OFFSET_SIZE;
       Offset next = reader.ReadOffset(mainArenaCandidate + nextOffset, 0xbad);
       if (next == 0xbad) {
         break;
@@ -1497,7 +1539,7 @@ class InfrastructureFinder {
         _arenaNextOffset = altNextOffset;
         break;
       }
-      if ((next & 0xfffff) != 0x20) {
+      if ((next & 0xfffff) != _heapHeaderSize) {
         continue;
       }
       Offset chainLength = 1;

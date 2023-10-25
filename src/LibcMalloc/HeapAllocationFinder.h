@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020,2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -31,6 +31,7 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
         _mainArenaAddress(_infrastructureFinder.GetMainArenaAddress()),
         _arenaStructSize(_infrastructureFinder.GetArenaStructSize()),
         _maxHeapSize(_infrastructureFinder.GetMaxHeapSize()),
+        _heapHeaderSize(_infrastructureFinder.GetHeapHeaderSize()),
         _heapMap(_infrastructureFinder.GetHeaps()),
         _heapMapIterator(_heapMap.begin()),
         _corruptionSkipper(corruptionSkipper),
@@ -112,6 +113,7 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
   const Offset _mainArenaAddress;
   const Offset _arenaStructSize;
   const Offset _maxHeapSize;
+  const Offset _heapHeaderSize;
   const typename InfrastructureFinder<Offset>::HeapMap& _heapMap;
   typename InfrastructureFinder<Offset>::HeapMap::const_iterator
       _heapMapIterator;
@@ -146,9 +148,9 @@ class HeapAllocationFinder : public Allocations::Directory<Offset>::Finder {
     _limit = _base + size;
 
     if ((heap._arenaAddress & ~(_maxHeapSize - 1)) == _base) {
-      _base += 4 * sizeof(Offset) + _arenaStructSize;
+      _base += _heapHeaderSize + _arenaStructSize;
     } else {
-      _base += 4 * sizeof(Offset);
+      _base += _heapHeaderSize;
     }
 
     _top = 0;
