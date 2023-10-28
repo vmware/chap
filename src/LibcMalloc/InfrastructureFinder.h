@@ -57,26 +57,29 @@ class InfrastructureFinder {
        * size at the time glibc was compiled.
        */
       _heapHeaderSize = UNKNOWN_HEAP_HEADER_SIZE;
-      if (ScanForMainArena()) {
+      if (ScanForMainArena() && !_completeArenaRingFound) {
         /*
-         * The main arena was found.  See if it points to itself, in which
-         * case there really is just one arena, or it points to something
-         * that looks like a heap, in which case someone has probably
-         * reduced the default max heap size at compilation time, causing
-         * the heaps not to be detected based on the default.
-         * At present no attempt is made to handle the corner case
-         * of a non-standard maximum heap size (which might cause the
-         * initial attempt to scan for heaps to failed) coupled with
-         * an incomplete core (which could cause the following call
-         * to fail if one of the headers from the ring were not present).
+         * The main arena was found but it was not the only one.
+         * This probably means that someone changed the default
+         * max heap size for at compile time for glibc.
+         * Another possibility is a not fully formed core.
+       * At present no attempt is made to handle the corner case
+       * of a non-standard maximum heap size (which might cause the
+       * initial attempt to scan for heaps to fail) coupled with
+       * an incomplete core (which could cause the following call
+       * to fail if one of the headers from the ring were not present).
+         */
+        /*
+         * The main arena was found but is not the only arena.
+         * This probably means someone reduced the default max heap
+         * size at compile time.  Check that.
          */
         FindRemainingArenasByRingFromMainArena();
       }
-
     } else {
       /*
-       * At least one non-main arena is present.  That means, if the
-       * core is complete, that we expect to find a ring containing
+       * At least one non-main arena probably exists.  That means, if
+       * the core is complete, that we expect to find a ring containing
        * at least two arenas, one of which was the main arena.
        */
 
@@ -86,10 +89,12 @@ class InfrastructureFinder {
          * based on the default maximum heap size.
          */
 
-        if (ScanForMainArena()) {
+        if (ScanForMainArena() && !_completeArenaRingFound) {
           /*
-           * The main arena was found.  Perhaps someone reduced the
-           * default max heap size at compilation time.  Check that.
+           * The main arena was found but it was not the only one.
+           * This probably means that someone changed the default
+           * max heap size for at compile time for glibc.
+           * Another possibility is a not fully formed core.
            */
           FindRemainingArenasByRingFromMainArena();
         }
@@ -555,6 +560,27 @@ class InfrastructureFinder {
     return addedHeapSizes;
   }
 
+  void SetMainArenaAsOnlyArena(Offset mainArenaAddress) {
+    _heaps.clear();
+    _arenas.clear();
+    _mainArenaAddress = mainArenaAddress;
+    ArenaMapIterator it =
+        _arenas
+            .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
+            .first;
+    Arena& mainArena = it->second;
+    mainArena._nextArena = _mainArenaAddress;
+    _completeArenaRingFound = true;
+    if (!DeriveArenaOffsets(false)) {
+      // Note that this will fill in various values (_top, _size ...)
+      // once the correct offsets have been found.
+      abort();
+    }
+    Reader reader(_addressMap);
+    _mainArenaIsContiguous =
+        (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
+  }
+
   bool SetArenasBasedOnRing(const std::vector<Offset> arenaAddresses) {
     _arenas.clear();
     size_t numArenas = arenaAddresses.size();
@@ -734,10 +760,12 @@ class InfrastructureFinder {
       std::vector<Offset> candidates;
 
       if (IsPlausibleNonMainArena(reader, candidate)) {
+        size_t numAttempts = 0;
         do {
           candidates.push_back(candidate);
           candidate = reader.ReadOffset(candidate + nextOffset, 0xbadbad);
-        } while (IsPlausibleNonMainArena(reader, candidate));
+        } while (IsPlausibleNonMainArena(reader, candidate) &&
+                 ++numAttempts < 10000);
         if (candidate == _mainArenaAddress) {
           /*
            * We had to have made it at least one time through the ring
@@ -1425,6 +1453,7 @@ class InfrastructureFinder {
       return false;
     }
     Reader reader(_addressMap);
+    Reader otherReader(_addressMap);
     for (Offset listAddr = minListAddr; listAddr < maxListAddr;) {
       if (!IsEmptyDoubleFreeList(reader, listAddr)) {
         listAddr += OFFSET_SIZE;
@@ -1530,16 +1559,16 @@ class InfrastructureFinder {
         break;
       }
       if (next == mainArenaCandidate) {
-        _mainArenaAddress = mainArenaCandidate;
         _arenaNextOffset = nextOffset;
-        break;
+        SetMainArenaAsOnlyArena(mainArenaCandidate);
+        return true;
       }
       if (next == altMainArenaCandidate) {
-        _mainArenaAddress = altMainArenaCandidate;
         _arenaNextOffset = altNextOffset;
-        break;
+        SetMainArenaAsOnlyArena(altMainArenaCandidate);
+        return true;
       }
-      if ((next & 0xfffff) != _heapHeaderSize) {
+      if (!IsPlausibleNonMainArena(otherReader, next)) {
         continue;
       }
       Offset chainLength = 1;
@@ -1551,7 +1580,8 @@ class InfrastructureFinder {
           break;
         }
         link = reader.ReadOffset(link + nextOffset, 0xbad);
-      } while ((link & 0xfffff) == 0x20 && ++chainLength < 0x100000);
+      } while (IsPlausibleNonMainArena(otherReader, link) &&
+               ++chainLength < 0x100000);
       if (bestChainLength < chainLength) {
         bestChainLength = chainLength;
       }
@@ -1564,7 +1594,8 @@ class InfrastructureFinder {
           break;
         }
         link = reader.ReadOffset(link + altNextOffset, 0xbad);
-      } while ((link & 0xfffff) == 0x20 && ++chainLength < 0x100000);
+      } while (IsPlausibleNonMainArena(otherReader, link) &&
+               ++chainLength < 0x100000);
       if (bestAltChainLength < chainLength) {
         bestAltChainLength = chainLength;
       }
@@ -1579,14 +1610,6 @@ class InfrastructureFinder {
         _arenas
             .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
             .first;
-    Arena& mainArena = it->second;
-    mainArena._nextArena = _mainArenaAddress;
-
-    mainArena._top = reader.ReadOffset(_mainArenaAddress + 12 * OFFSET_SIZE);
-    mainArena._size =
-        reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10e * OFFSET_SIZE);
-    mainArena._maxSize =
-        reader.ReadOffset(_mainArenaAddress + 0x10 + 0x10f * OFFSET_SIZE);
     _mainArenaIsContiguous =
         (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
     return true;
