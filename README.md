@@ -7,8 +7,8 @@ catch leaks before they are committed. As an interactive tool, it helps explain
 memory growth, can identify some forms of corruption, and  supplements a
 debugger by giving the status of various memory locations.
 
-`chap` currently supports only glibc malloc. It does not support jemalloc or
-tcmalloc.
+`chap` currently supports only glibc malloc and the allocator used for cpython.
+It does not support jemalloc or tcmalloc.
 
 ## Motivation
 
