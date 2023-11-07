@@ -1,0 +1,8 @@
+Anchored allocation at 557ca51e7f30 of size 28
+This allocation matches pattern VectorBody.
+Only the first 0x20 bytes are considered live.
+
+Anchored allocation at 557ca51e7ed0 of size 18
+... with signature 557ca3994cb0(S3)
+
+2 allocations use 0x40 (64) bytes.

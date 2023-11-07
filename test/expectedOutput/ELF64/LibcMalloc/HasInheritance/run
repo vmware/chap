@@ -1,0 +1,29 @@
+# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the HasInheritance program.
+# This core is used to verify that base types can be used in selection of 
+# the base set, in reference constraints, and with the /extend switch.
+# The core dump was gathered with coredump_filter set to 0x37.
+
+
+chap=$1
+
+$1 core.HasInheritance.37 << DONE
+redirect on
+summarize signatures
+describe used S1
+describe used S2
+describe used S3
+describe used S4
+describe used /minoutgoing S1=4
+describe used %VectorBody /maxoutgoing S1=3
+describe used /minoutgoing S2=2
+describe used %VectorBody /maxoutgoing S2=2
+describe used /minoutgoing S2=3
+describe used %VectorBody /maxoutgoing S2=1
+describe used %VectorBody /extend ->S1
+describe used %VectorBody /extend ->S2
+describe used %VectorBody /extend ->S3
+describe used %VectorBody /extend ->S4
+DONE

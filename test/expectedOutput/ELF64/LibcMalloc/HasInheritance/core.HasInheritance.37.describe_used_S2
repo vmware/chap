@@ -1,0 +1,7 @@
+Anchored allocation at 557ca51e7ef0 of size 18
+... with signature 557ca3994cd8(S2)
+
+Anchored allocation at 557ca51e7f10 of size 18
+... with signature 557ca3994c88(S4)
+
+2 allocations use 0x30 (48) bytes.
