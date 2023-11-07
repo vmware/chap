@@ -401,8 +401,8 @@ class TypeInfoDirectory {
           _detailsMap.find(typeInfo)->second._nameReadFromCore = true;
         }
       } else {
-        size_t stringLength = moduleReader.ReadCString(
-            address, mangledNameBuffer, sizeof(mangledNameBuffer));
+        stringLength = moduleReader.ReadCString(address, mangledNameBuffer,
+                                                sizeof(mangledNameBuffer));
         if (stringLength == sizeof(mangledNameBuffer)) {
           continue;
         }
