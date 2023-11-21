@@ -1,0 +1,21 @@
+Free allocation at 603550 of size 48
+
+Free allocation at 6037f0 of size 20810
+
+Free allocation at 7fffc80008c0 of size 18
+
+Free allocation at 7fffc80008e0 of size 20720
+
+Free allocation at 7fffd00008c0 of size 18
+
+Free allocation at 7fffd00008e0 of size 20720
+
+Free allocation at 7fffdc0008c0 of size 18
+
+Free allocation at 7fffdc0008e0 of size 20720
+
+Free allocation at 7fffe80008c0 of size 18
+
+Free allocation at 7fffe80008e0 of size 20720
+
+10 allocations use 0xa2538 (664,888) bytes.

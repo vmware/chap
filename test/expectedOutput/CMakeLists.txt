@@ -96,3 +96,4 @@ exout_test(PATH ELF64/LibcMalloc/MallocedPythonArenasTest
 exout_test(PATH ELF64/LibcMalloc/JustABigOne
            FILES core.justABigOne)
 exout_test(PATH ELF64/LibcMalloc/HasInheritance FILES core.HasInheritance.37)
+exout_test(PATH ELF64/LibcMalloc/SpinningThreads FILES core.SpinningThreads.bz2)

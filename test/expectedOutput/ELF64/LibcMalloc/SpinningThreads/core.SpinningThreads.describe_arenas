@@ -1,0 +1,26 @@
+Arena at 0x7fffc8000020 has size 0x21000 (135168),
+maximum size 0x21000 (135168) and "top" address 0x7fffc80008d0.
+2 free allocations take 0x20738 (132920) bytes.
+0 used allocations take 0x0 (0) bytes.
+
+Arena at 0x7fffd0000020 has size 0x21000 (135168),
+maximum size 0x21000 (135168) and "top" address 0x7fffd00008d0.
+2 free allocations take 0x20738 (132920) bytes.
+0 used allocations take 0x0 (0) bytes.
+
+Arena at 0x7fffdc000020 has size 0x21000 (135168),
+maximum size 0x21000 (135168) and "top" address 0x7fffdc0008d0.
+2 free allocations take 0x20738 (132920) bytes.
+0 used allocations take 0x0 (0) bytes.
+
+Arena at 0x7fffe8000020 has size 0x21000 (135168),
+maximum size 0x21000 (135168) and "top" address 0x7fffe80008d0.
+2 free allocations take 0x20738 (132920) bytes.
+0 used allocations take 0x0 (0) bytes.
+
+Arena at 0x7ffff7398760 has size 0x21000 (135168),
+maximum size 0x21000 (135168) and "top" address 0x6037e0.
+2 free allocations take 0x20858 (133208) bytes.
+5 used allocations take 0x768 (1896) bytes.
+
+5 arenas use 0xa5000 (675,840) bytes.

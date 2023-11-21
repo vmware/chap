@@ -1,0 +1,23 @@
+# Copyright (c) 2023 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests that in the case of multiple threads and multiple arenas
+# they are found properly.  In this case using a core created using
+# Centos 8.
+
+chap=$1
+
+bunzip2 -q core.SpinningThreads.bz2
+$1 core.SpinningThreads << DONE
+redirect on
+
+describe arenas
+describe stacks
+list used
+list free
+summarize writable
+describe writable
+DONE
+
+bzip2 -q core.SpinningThreads
+
