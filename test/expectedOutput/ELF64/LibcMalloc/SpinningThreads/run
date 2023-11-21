@@ -15,8 +15,6 @@ describe arenas
 describe stacks
 list used
 list free
-summarize writable
-describe writable
 DONE
 
 bzip2 -q core.SpinningThreads
