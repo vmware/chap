@@ -44,14 +44,6 @@ class ModuleFinder {
       FindModulesByLinkMapChain();
     }
 
-    for (typename ModuleDirectory<Offset>::const_iterator it =
-             _moduleDirectory.begin();
-         it != _moduleDirectory.end(); ++it) {
-      // TODO: possibly this should be done in the individual range finding
-      //       methods
-      ClaimRangesForModule(it);
-    }
-    // TODO: possibly this should do less
     _moduleDirectory.Resolve();
   }
 
@@ -351,6 +343,75 @@ class ModuleFinder {
                               flagsIfUnmapped);
   }
 
+  void ClaimModuleAlignmentGapIfCompatible(Offset base, Offset size,
+                                           const std::string& path) {
+    Offset limit = base + size;
+    typename VirtualAddressMap<Offset>::const_iterator itVirt =
+        _virtualAddressMap.upper_bound(base);
+    typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
+        _virtualAddressMap.end();
+    for (; itVirt != itVirtEnd; ++itVirt) {
+      Offset rangeBase = itVirt.Base();
+      if (rangeBase >= limit) {
+        // We have passed the last range known to the VirtualAddressMap
+        // that overlaps with the proposed gap.
+        break;
+      }
+      if (rangeBase < base) {
+        rangeBase = base;
+      }
+      Offset rangeLimit = itVirt.Limit();
+      if (rangeLimit > limit) {
+        rangeLimit = limit;
+      }
+      int flags = itVirt.Flags();
+      if ((flags & (RangeAttributes::IS_WRITABLE |
+                    RangeAttributes::IS_EXECUTABLE)) != 0) {
+        /*
+         * The proposed alignment gap overlaps a region that is clearly used
+         * for something else.
+         */
+        return;
+      }
+      if ((flags & RangeAttributes::IS_READABLE) != 0) {
+        /*
+         * The proposed alignment gap overlaps a region that is marked as
+         * readable.  If the entire gap is mapped and 0-filled, this may be
+         * due to a bug in the creation of cores that can result in an
+         * inaccessible region being marked as read-only.
+         */
+        if (rangeBase > base || rangeLimit < limit) {
+          return;
+        }
+        if ((flags & RangeAttributes::IS_MAPPED) != 0) {
+          /*
+           * The region is clearly used for something else, because in the
+           * case of the known bug in core creation, the inaccessible region
+           * would be mapped.
+           */
+          return;
+        }
+        const char* image;
+        Offset numBytesFound =
+            _virtualAddressMap.FindMappedMemoryImage(base, &image);
+        if (numBytesFound < size) {
+          return;
+        }
+        for (const char* mustBe0 = image + size; --mustBe0 >= image;) {
+          if (*mustBe0 != '\000') {
+            return;
+          }
+        }
+      }
+    }
+    if (!_virtualMemoryPartition.ClaimRange(
+            base, size, _moduleDirectory.MODULE_ALIGNMENT_GAP, false)) {
+      std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
+                << base << ", 0x" << size << ")\nalignment gap for module "
+                << path << "\n";
+    }
+  }
+
   /*
    * Add ranges for the given module based on program headers for that module.
    */
@@ -380,6 +441,7 @@ class ModuleFinder {
       return false;
     }
 
+    Offset prevRangeLimit = 0;
     for (; headerImage < headerLimit; headerImage += entrySize) {
       ProgramHeader* programHeader = (ProgramHeader*)(headerImage);
       if (programHeader->p_type == PT_LOAD) {
@@ -387,8 +449,16 @@ class ModuleFinder {
         Offset rangeBase = (vAddrFromPH & ~0xfff) + adjust;
         Offset rangeLimit =
             ((vAddrFromPH + programHeader->p_memsz + 0xfff) & ~0xfff) + adjust;
+        Offset align = programHeader->p_align;
+        if ((prevRangeLimit > 0) && (align > 1)) {
+          Offset gap = rangeBase - prevRangeLimit;
+          if ((gap > 0) && ((gap == align) || (gap == (align - 0x1000)))) {
+            ClaimModuleAlignmentGapIfCompatible(prevRangeLimit, gap, path);
+          }
+        }
         AddRangeFromProgramHeader(rangeBase, rangeLimit - rangeBase, adjust,
                                   path, programHeader->p_flags);
+        prevRangeLimit = rangeLimit;
       }
     }
     return true;
@@ -420,6 +490,7 @@ class ModuleFinder {
     // TODO: possibly check contiguity from link_map (assumed at present).
     // TODO: if first range is not present, consider adding unmapped range
     //       of expected type.
+    Offset prevRangeLimit = 0;
     typename VirtualAddressMap<Offset>::const_iterator itVirt =
         _virtualAddressMap.upper_bound(base);
     typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
@@ -443,10 +514,18 @@ class ModuleFinder {
         // an alignment gap.  Note that perhaps this could happen to a
         // non-writable region but the consequences of missing this are
         // much higher for a writable region.
+        prevRangeLimit = limit;
         continue;
+      }
+      if (prevRangeLimit > 0) {
+        Offset gap = rangeBase - prevRangeLimit;
+        if ((gap == 0x200000) || (gap == 0x1ff000)) {
+          ClaimModuleAlignmentGapIfCompatible(prevRangeLimit, gap, path);
+        }
       }
       _moduleDirectory.AddRange(rangeBase, rangeLimit - rangeBase, adjust, path,
                                 flags);
+      prevRangeLimit = 0;
     }
 
     return true;
@@ -640,212 +719,6 @@ class ModuleFinder {
       Offset limit = reader.ReadOffset(linkMap + _limitInLinkMap, 0);
       FindModuleByLinkMap(linkMap, adjust, nameFromLinkMap, dynamic, base,
                           limit);
-    }
-  }
-
-  struct ModuleRange {
-    ModuleRange() : _base(0), _size(0), _permissions(0), _image(0) {}
-    ModuleRange(Offset base, Offset size, int permissions, const char* image)
-        : _base(base), _size(size), _permissions(permissions), _image(image) {}
-    ModuleRange(const ModuleRange& other) {
-      _base = other._base;
-
-      _size = other._size;
-      _permissions = other._permissions;
-      _image = other._image;
-    }
-    Offset _base;
-    Offset _size;
-    int _permissions;
-    const char* _image;
-  };
-
-  void FindRangesForModule(typename ModuleDirectory<Offset>::const_iterator it,
-                           std::vector<ModuleRange>& unmappedRanges) {
-    const auto& ranges = it->second._ranges;
-    auto itRange = ranges.begin();
-    const auto& itRangeEnd = ranges.end();
-    Offset base = itRange->_base;
-    Offset rangeLimit = itRange->_limit;
-    typename VirtualAddressMap<Offset>::const_iterator itVirt =
-        _virtualAddressMap.find(base);
-    typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
-        _virtualAddressMap.end();
-    if (itVirt == itVirtEnd) {
-      return;
-    }
-    if (base < itVirt.Base()) {
-      base = itVirt.Base();
-    }
-    Offset virtLimit = itVirt.Limit();
-    int permissionsBits = itVirt.Flags() & RangeAttributes::PERMISSIONS_MASK;
-
-    while (true) {
-      Offset limit = virtLimit;
-      if (limit > rangeLimit) {
-        limit = rangeLimit;
-      }
-      const char* image = itVirt.GetImage();
-      if (image != nullptr) {
-        image += (base - itVirt.Base());
-      }
-      unmappedRanges.emplace_back(base, limit - base, permissionsBits, image);
-      base = limit;
-      while (base >= rangeLimit) {
-        if (++itRange == itRangeEnd) {
-          return;
-        }
-
-        if (base < itRange->_base) {
-          base = itRange->_base;
-        }
-        rangeLimit = itRange->_limit;
-      }
-      while (base >= virtLimit) {
-        if (++itVirt == itVirtEnd) {
-          return;
-        }
-        Offset virtBase = itVirt.Base();
-        virtLimit = itVirt.Limit();
-        if (base < virtBase) {
-          base = virtBase;
-        }
-
-        permissionsBits = itVirt.Flags() & RangeAttributes::PERMISSIONS_MASK;
-      }
-    }
-  }
-  void ClaimRangesForModule(
-      typename ModuleDirectory<Offset>::const_iterator it) {
-    std::vector<ModuleRange> ranges;
-    FindRangesForModule(it, ranges);
-    size_t numRanges = ranges.size();
-    bool gapFound = false;
-    for (const auto& range : ranges) {
-      if ((range._permissions & (RangeAttributes::HAS_KNOWN_PERMISSIONS |
-                                 RangeAttributes::IS_WRITABLE)) ==
-          (RangeAttributes::HAS_KNOWN_PERMISSIONS |
-           RangeAttributes::IS_WRITABLE)) {
-        if (!_virtualMemoryPartition.ClaimRange(range._base, range._size,
-                                                _moduleDirectory.USED_BY_MODULE,
-                                                true)) {
-          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
-                    << range._base << ", 0x" << (range._base + range._size)
-                    << ")\nused by module " << it->first << "\n";
-        }
-
-      } else if (range._permissions == (RangeAttributes::HAS_KNOWN_PERMISSIONS |
-                                        RangeAttributes::IS_READABLE |
-                                        RangeAttributes::IS_EXECUTABLE)) {
-        if (!_virtualMemoryPartition.ClaimRange(range._base, range._size,
-                                                _moduleDirectory.USED_BY_MODULE,
-                                                true)) {
-          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
-                    << range._base << ", 0x" << (range._base + range._size)
-                    << ")\nused by module " << it->first << "\n";
-        }
-      } else if (range._permissions == RangeAttributes::HAS_KNOWN_PERMISSIONS) {
-        gapFound = true;
-        if (!_virtualMemoryPartition.ClaimRange(
-                range._base, range._size, _moduleDirectory.MODULE_ALIGNMENT_GAP,
-                false)) {
-          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
-                    << range._base << ", 0x" << (range._base + range._size)
-                    << ")\nalignment gap for module " << it->first << "\n";
-        }
-      }
-    }
-    for (size_t i = 0; i < numRanges; i++) {
-      const ModuleRange& range = ranges[i];
-      Offset size = range._size;
-      if (range._permissions == (RangeAttributes::HAS_KNOWN_PERMISSIONS |
-                                 RangeAttributes::IS_READABLE)) {
-        if (!gapFound && ((size == 0x200000) || (size == 0x1ff000)) && i > 0 &&
-            i < numRanges - 1 && ranges[i + 1]._base == range._base + size) {
-          bool knownZeroImage = false;
-          if (range._image != nullptr) {
-            const char* limit = range._image + range._size;
-            knownZeroImage = true;
-            for (const char* pC = range._image; pC != limit; ++pC) {
-              if (*pC != '\000') {
-                knownZeroImage = false;
-                break;
-              }
-            }
-          }
-          if (knownZeroImage) {
-            /*
-             * Some versions of gdb incorrectly record inaccessible regions as
-             * being readonly and store 0-filled images of such ranges, which
-             * makes the core a bit larger.  We do this claiming as a way
-             * for the user to understand how the given range is used, but
-             * leave it as considered read-only to be consistent with how
-             * the range is marked in the core.
-             */
-            if (!_virtualMemoryPartition.ClaimRange(
-                    range._base, range._size,
-                    _moduleDirectory.MODULE_ALIGNMENT_GAP, false)) {
-              std::cerr << "Warning: unexpected overlap found for [0x"
-                        << std::hex << range._base << ", 0x"
-                        << (range._base + range._size)
-                        << ")\nalignment gap for module " << it->first << "\n";
-            }
-            gapFound = true;
-            continue;
-          }
-        }
-        if (!_virtualMemoryPartition.ClaimRange(range._base, range._size,
-                                                _moduleDirectory.USED_BY_MODULE,
-                                                true)) {
-          std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
-                    << range._base << ", 0x" << (range._base + range._size)
-                    << ")\nused by module " << it->first << "\n";
-        }
-      }
-    }
-    /*
-     * The gap wasn't found.  Perhaps it wasn't reported for the module and
-     * wasn't
-     * mapped in memory.
-     */
-    if (!gapFound && numRanges > 1) {
-      for (size_t i = 1; i < numRanges; i++) {
-        Offset gapBase = ranges[i - 1]._base + ranges[i - 1]._size;
-        Offset gapLimit = ranges[i]._base;
-        Offset gapSize = gapLimit - gapBase;
-        if (gapSize == 0x200000 || gapSize == 0x1ff000) {
-          /*
-           * Guess that the gap has been found but we must still make sure
-           * that
-           * it is legitimately a gap, by making sure that there are no ranges
-           * known to that core that lie in the given range.
-           */
-          gapFound = true;
-
-          typename VirtualAddressMap<Offset>::const_iterator itVirt =
-              _virtualAddressMap.upper_bound(gapBase);
-          typename VirtualAddressMap<Offset>::const_iterator itVirtEnd =
-              _virtualAddressMap.end();
-          for (; itVirt != itVirtEnd && itVirt.Base() < gapLimit; ++itVirt) {
-            if ((itVirt.Flags() & RangeAttributes::PERMISSIONS_MASK) !=
-                RangeAttributes::HAS_KNOWN_PERMISSIONS) {
-              gapFound = false;
-              break;
-            }
-          }
-          if (gapFound) {
-            if (!_virtualMemoryPartition.ClaimRange(
-                    gapBase, gapSize, _moduleDirectory.MODULE_ALIGNMENT_GAP,
-                    false)) {
-              std::cerr
-                  << "Warning: unexpected overlap found for alignment gap [0x"
-                  << std::hex << gapBase << ", 0x" << gapLimit
-                  << ")\nfor module " << it->first << "\n";
-            }
-            break;
-          }
-        }
-      }
     }
   }
 };

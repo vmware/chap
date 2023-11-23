@@ -77,7 +77,11 @@ class VirtualMemoryPartition {
       _unclaimedInaccessibleRanges.UnmapRange(base, size);
       return true;
     }
-    int flags = it.Flags();
+    return ClaimRange(base, size, label, it.Flags(), staticAnchorCandidate);
+  }
+
+  bool ClaimRange(Offset base, Offset size, const char *label, int flags,
+                  bool staticAnchorCandidate) {
     if ((flags & RangeAttributes::IS_WRITABLE) != 0) {
       _unclaimedWritableRangesWithImages.UnmapRange(base, size);
       if (!staticAnchorCandidate) {

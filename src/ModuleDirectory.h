@@ -164,6 +164,12 @@ class ModuleDirectory {
          */
         abort();
       }
+      if (!_virtualMemoryPartition.ClaimRange(base, size, USED_BY_MODULE, flags,
+                                              true)) {
+        std::cerr << "Warning: unexpected overlap found for [0x" << std::hex
+                  << base << ", 0x" << (base + size) << ")\nused by module "
+                  << it->first << "\n";
+      }
     }
   }
 
