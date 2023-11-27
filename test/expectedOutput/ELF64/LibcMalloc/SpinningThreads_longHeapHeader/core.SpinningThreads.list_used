@@ -1,0 +1,27 @@
+Used allocation at 564fb1088010 of size 288
+
+Used allocation at 564fb10882a0 of size 11c08
+
+Used allocation at 564fb1099eb0 of size 28
+... with signature 564fb036dd38(std::thread::_State_impl<std::thread::_Invoker<std::tuple<Spinner>>>)
+
+Used allocation at 564fb1099ee0 of size 128
+
+Used allocation at 564fb109a010 of size 28
+... with signature 564fb036dd38(std::thread::_State_impl<std::thread::_Invoker<std::tuple<Spinner>>>)
+
+Used allocation at 564fb109a040 of size 128
+
+Used allocation at 564fb109a1a0 of size 128
+
+Used allocation at 564fb109a300 of size 128
+
+Used allocation at 7f654c0008e0 of size 288
+
+Used allocation at 7f654c000b70 of size 18
+
+Used allocation at 7f65540008e0 of size 288
+
+Used allocation at 7f6554000b70 of size 18
+
+12 allocations use 0x128c0 (75,968) bytes.

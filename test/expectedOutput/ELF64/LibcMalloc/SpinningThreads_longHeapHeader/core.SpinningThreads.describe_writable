@@ -1,0 +1,69 @@
+Range [0x564fb036e000, 0x564fb036f000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /home/tim/chap/scratch/SpinningThreads.
+
+Range [0x564fb1088000, 0x564fb10a9000) uses 0x21000 bytes.
+Region use: libc malloc main arena pages
+This is a run of pages used for allocations for the main arena.
+
+Range [0x7f6544000000, 0x7f6544021000) uses 0x21000 bytes.
+Region use: libc malloc heap
+This is a libc malloc heap of current size 0x21000 and maximum size reached so far 0x21000.
+
+Range [0x7f654c000000, 0x7f654c021000) uses 0x21000 bytes.
+Region use: libc malloc heap
+This is a libc malloc heap of current size 0x21000 and maximum size reached so far 0x21000.
+
+Range [0x7f6550000000, 0x7f6550021000) uses 0x21000 bytes.
+Region use: libc malloc heap
+This is a libc malloc heap of current size 0x21000 and maximum size reached so far 0x21000.
+
+Range [0x7f6554000000, 0x7f6554021000) uses 0x21000 bytes.
+Region use: libc malloc heap
+This is a libc malloc heap of current size 0x21000 and maximum size reached so far 0x21000.
+
+Range [0x7f6558bfd000, 0x7f65593fd000) uses 0x800000 bytes.
+Region use: cached pthread stack
+
+Range [0x7f65593fe000, 0x7f6559bfe000) uses 0x800000 bytes.
+Region use: cached pthread stack
+
+Range [0x7f6559bff000, 0x7f655a3ff000) uses 0x800000 bytes.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 3.
+
+Range [0x7f655a400000, 0x7f655ac00000) uses 0x800000 bytes.
+Region use: used pthread stack
+This used pthread stack is currently used by thread 2.
+
+Range [0x7f655ae19000, 0x7f655ae28000) uses 0xf000 bytes.
+Region use: used by module
+This is for module /usr/lib/x86_64-linux-gnu/libc.so.6.
+
+Range [0x7f655afff000, 0x7f655b000000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /usr/lib/x86_64-linux-gnu/libm.so.6.
+
+Range [0x7f655b226000, 0x7f655b22c000) uses 0x6000 bytes.
+Region use: used by module
+This is for module /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30.
+
+Range [0x7f655b2c4000, 0x7f655b2c8000) uses 0x4000 bytes.
+Region use: unknown
+
+Range [0x7f655b2e7000, 0x7f655b2e8000) uses 0x1000 bytes.
+Region use: used by module
+This is for module /usr/lib/x86_64-linux-gnu/libgcc_s.so.1.
+
+Range [0x7f655b304000, 0x7f655b306000) uses 0x2000 bytes.
+Region use: unknown
+
+Range [0x7f655b340000, 0x7f655b342000) uses 0x2000 bytes.
+Region use: used by module
+This is for module /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2.
+
+Range [0x7ffc4bd14000, 0x7ffc4bd35000) uses 0x21000 bytes.
+Region use: main stack
+This main stack is currently used by thread 1.
+
+18 writable ranges use 0x20e6000 (34,496,512) bytes.

@@ -1,0 +1,15 @@
+set logging file core.SpinningThreads.symdefs
+set logging overwrite 1
+set logging redirect 1
+set logging on
+set height 0
+printf "ANCHOR 7f655b2c7358\n"
+info symbol 0x7f655b2c7358
+printf "ANCHOR 7f655b228328\n"
+info symbol 0x7f655b228328
+printf "ANCHOR 7f655b228330\n"
+info symbol 0x7f655b228330
+set logging off
+set logging overwrite 0
+set logging redirect 0
+printf "output written to core.SpinningThreads.symdefs\n"

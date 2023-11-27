@@ -97,3 +97,5 @@ exout_test(PATH ELF64/LibcMalloc/JustABigOne
            FILES core.justABigOne)
 exout_test(PATH ELF64/LibcMalloc/HasInheritance FILES core.HasInheritance.37)
 exout_test(PATH ELF64/LibcMalloc/SpinningThreads FILES core.SpinningThreads.bz2)
+exout_test(PATH ELF64/LibcMalloc/SpinningThreads_longHeapHeader
+           FILES core.SpinningThreads.bz2)

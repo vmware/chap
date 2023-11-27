@@ -1,0 +1,19 @@
+Stack region [0x7f6558bfd000, 0x7f65593fd000) is for a cached pthread stack.
+Peak stack usage was 0x1328 bytes out of 0x800000 total.
+
+Stack region [0x7f65593fe000, 0x7f6559bfe000) is for a cached pthread stack.
+Peak stack usage was 0x1848 bytes out of 0x800000 total.
+
+Stack region [0x7f6559bff000, 0x7f655a3ff000) is for a used pthread stack
+ with stack top 0x7f655a3fddb0 used by thread 3.
+Peak stack usage was 0x1328 bytes out of 0x800000 total.
+
+Stack region [0x7f655a400000, 0x7f655ac00000) is for a used pthread stack
+ with stack top 0x7f655abfeda0 used by thread 2.
+Peak stack usage was 0x1328 bytes out of 0x800000 total.
+
+Stack region [0x7ffc4bd14000, 0x7ffc4bd35000) is for a main stack
+ with stack top 0x7ffc4bd32ff0 used by thread 1.
+Peak stack usage was 0x3508 bytes out of 0x21000 total.
+
+5 stacks use 0x2021000 (33,689,600) bytes.

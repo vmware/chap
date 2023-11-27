@@ -1,0 +1,23 @@
+Free allocation at 564fb109a170 of size 28
+
+Free allocation at 564fb109a2d0 of size 28
+
+Free allocation at 564fb109a430 of size ebd0
+
+Free allocation at 7f65440008e0 of size 288
+
+Free allocation at 7f6544000b70 of size 18
+
+Free allocation at 7f6544000b90 of size 20470
+
+Free allocation at 7f654c000b90 of size 20470
+
+Free allocation at 7f65500008e0 of size 288
+
+Free allocation at 7f6550000b70 of size 18
+
+Free allocation at 7f6550000b90 of size 20470
+
+Free allocation at 7f6554000b90 of size 20470
+
+11 allocations use 0x90320 (590,624) bytes.
