@@ -42,6 +42,9 @@
     * [Analyzing Memory Leaks](#analyzing-memory-leaks)
     * [Supplementing gdb](#supplementing-gdb)
     * [Analyzing Memory Growth](#analyzing-memory-growth)
+        * [Getting a Broad Overview of the Memory Usage](#getting-a-broad-overview-of-the-memory-usage)
+            * [Example Where Overview Suggests Container Growth](#example-where-overview-suggests-container-growth)
+            * [Example Where Overview Shows Large Stack Usage](#example-where-overview-shows-large-stack-usage)
         * [Analyzing Memory Growth Due to Used Allocations](#analyzing-memory-growth-due-to-used-allocations)
         * [Analyzing Memory Growth Due to Free Allocations](#analyzing-memory-growth-due-to-free-allocations)
     * [Detecting Memory Corruption](#detecting-memory-corruption)
@@ -947,6 +950,9 @@ One of the most common causes of leaks is a failure to do the last dereference o
 When you look at a core with gdb it is very desirable to know the how various addresses seen in registers on the stack are used.  Try **describe** *address* to get an understanding of whether the given address points to a used allocation or a free allocation or stack or something else.  If the address corresponds to a used allocation, use **list incoming** *allocation-address* to understand whether that allocation is referenced elsewhere.
 
 ### Analyzing Memory Growth
+
+#### Getting a Broad Overview of the Memory Usage
+
 Generally, the first thing one will want to do in analyzing memory growth is to understand in a very general sense, using various commands from chap, where the memory is used in the process.  Here are some sample commands that will provide this high level information:
 * **count writable** will tell you how much writable memory was being used by the process.
 * **count used** will tell you how much memory is taken by used allocations.
@@ -954,6 +960,39 @@ Generally, the first thing one will want to do in analyzing memory growth is to 
 * **count free** will tell you how much memory is being used by free allocations.
 * **count stacks** will tell you how much memory is used by stacks for threads.  It can be surprising to people but in some cases the default stack sizes are quite large and coupled with a large number of threads the stack usage can dominate.  Even though a stack in one sense shrinks as function calls return, it is common that the entire stack is counted in the committed memory for a process, even if the stack is rather inactive and so has no resident pages.  This distinction matters because when the sum of the committed memory across all the processes gets large enough, even processes that aren't unduly large can be refused the opportunity to grow further, because mmap calls will start failing.
 
+##### Example Where Overview Suggests Container Growth
+
+In the following example, getting a an overview suggests that most of the writable memory is for sed allocations that are not leaked, because the results of **count used** are pretty close to the results of **count writable** and the results of **count leaked** show no leaks.
+
+```
+chap> count writable
+420 writable ranges use 0x139c3b000 (5,264,093,184) bytes.
+chap> count used
+78631451 allocations use 0x10be34c20 (4,494,412,832) bytes.
+chap> count leaked
+0 allocations use 0x0 (0) bytes.
+chap> count free
+47209 allocations use 0x134e148 (20,242,760) bytes.
+chap> count stacks
+210 stacks use 0x7021000 (117,575,680) bytes.
+```
+
+##### Example Where Overview Shows Large Stack Usage
+
+In the following example, the results of **count stacks** as compared to the results of **count writable** show that stacks take most of the writable memory, and that understanding the total stack size will clarify the reason for most of the process memory usage.
+
+```
+chap> count writable
+18 writable ranges use 0x20e6000 (34,496,512) bytes.
+chap> count used
+12 allocations use 0x128c0 (75,968) bytes.
+chap> count leaked
+0 allocations use 0x0 (0) bytes.
+chap> count free
+11 allocations use 0x90320 (590,624) bytes.
+chap> count stacks
+5 stacks use 0x2021000 (33,689,600) bytes.
+```
 
 TODO: add some examples here.
 
@@ -961,6 +1000,7 @@ TODO: add some examples here.
 If the results of **count writable** and **count used** suggest that used allocations occupy most of the writable memory, probably the next thing you will want to do is to make sure that chap is set up properly to handle named signatures, as described [here](#allocation-signatures) then use **redirect on** to redirect output to a file then **summarize used** to get an overall summary of the used allocations, sorted by the count for each type that has a signature and for each matched pattern, with both the allocations that match patterns and the unrecognized allocations (no signature or matched pattern) further broken down to have counts by size.  Alternatively, **summarize used /sortby bytes** will sort by total bytes used directly for allocations of a given signed type or pattern, with the allocations that match patterns and unrecognized allocations broken down by size and again sorted by total bytes used directly for allocations of a given size.  It can be useful to scan down to the tallies for particular signatures because often one particular count can stand out as being too high and often allocations with the given suspect signature can hold many unsigned allocations in memory, particularly if the class or struct in question has a field that is some sort of collection.  In the special case that the results of **count leaked** are similar to the results of **count used**, one can fall back on techniques for analyzing memory leaks but otherwise one is typically looking for container growth (for example,  a large set or map or queue).
 
 Once one has a theory about the cause of the growth (for example, which container is too large) it is desirable to assess the actual cost of the growth associated with that theory.  For example in the case of a large std::map one might want to understand the cost of the allocations used to represent the std::map, as well as any other objects held in memory by this map.  The best way to do this is often to use the **/extend** switch to attempt to walk a graph of the relevant objects, generally as part of the **summarize** command or the **describe** command.
+
 
 TODO: Add at least one example here.
 
