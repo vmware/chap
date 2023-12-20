@@ -324,6 +324,34 @@ class InfrastructureFinder {
     }
   }
 
+  void ClaimArenaRangesIfNeeded() {
+    if (_allArenasAreAligned) {
+      return;
+    }
+    Reader reader(_virtualAddressMap);
+    for (Offset arenaStruct = _arenaStructArray;
+         arenaStruct < _arenaStructArrayLimit;
+         arenaStruct += _arenaStructSize) {
+      Offset arena = reader.ReadOffset(arenaStruct + _arenaOffset, 0);
+      if (arena == 0) {
+        continue;
+      }
+
+      if (_virtualMemoryPartition.IsClaimed(arena)) {
+        continue;
+      }
+      /*
+       * Attempt to claim the arena.  We do not treat it as an anchor area
+       * because it is a source of allocations.
+       */
+      if (!_virtualMemoryPartition.ClaimRange(arena, _arenaSize, PYTHON_ARENA,
+                                              false)) {
+        std::cerr << "Warning: Part of the python arena at 0x" << std::hex
+                  << arena << " was already marked as something else.\n";
+      }
+    }
+  }
+
  private:
   typedef typename VirtualAddressMap<Offset>::Reader Reader;
   typedef typename VirtualAddressMap<Offset>::RangeAttributes RangeAttributes;
@@ -418,6 +446,9 @@ class InfrastructureFinder {
     Offset bestBase = 0;
     Offset bestLimit = 0;
     const auto& ranges = moduleInfo._ranges;
+    if (ranges.empty()) {
+      return;
+    }
     Offset moduleBase = ranges.begin()->_base;
     Offset moduleLimit = ranges.rbegin()->_limit;
     for (const auto& range : ranges) {

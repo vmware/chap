@@ -154,6 +154,17 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
     WriteSymreqsFileIfNeeded();
 
     /*
+     * We do this after finding the allocations, because there is
+     * a possiblity that the arenas may not have been aligned as
+     * expected but are still directly created by mmap, as opposed
+     * to being embedded in a large allocation carved out by
+     * malloc().  We need the allocations to be found before we
+     * check that.
+     */
+
+    Base::_pythonFinderGroup.ClaimArenaRangesIfNeeded();
+
+    /*
      * Once this constructor as finished, any classification of ranges is
      * done.
      */
@@ -221,7 +232,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
         /*
          * At least part of the range given in the ELIF note is also known
-         * in the PT_LOAD section.  In theory, the whole range should be 
+         * in the PT_LOAD section.  In theory, the whole range should be
          * known, because even if the coredump_filter effectively specifies
          * that certain regions should be omitted, they should still appear
          * in the PT_LOAD section but not mapped in the core, but this aspect
@@ -266,8 +277,8 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
         }
         if (rangeBase < rangeLimit) {
           Base::_fileMappedRangeDirectory.AddRange(
-              rangeBase, rangeLimit - rangeBase, rangePath,
-              offsetInFile, flagsWithoutMapping);
+              rangeBase, rangeLimit - rangeBase, rangePath, offsetInFile,
+              flagsWithoutMapping);
         }
       }
     }

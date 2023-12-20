@@ -1,4 +1,4 @@
-// Copyright (c) 2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2023 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -56,6 +56,10 @@ class FinderGroup {
     if (!(_arenaDescriber == nullptr)) {
       compoundDescriber.AddDescriber(*(_arenaDescriber.get()));
     }
+  }
+
+  void ClaimArenaRangesIfNeeded() {
+    _infrastructureFinder.ClaimArenaRangesIfNeeded();
   }
 
  private:
