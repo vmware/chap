@@ -90,6 +90,13 @@ class StackRegistry {
     return false;
   }
 
+  bool IsStackAddress(Offset address) const {
+    Offset regionBase;
+    Offset regionSize;
+    size_t stackInfoIndex;
+    return _stacks.FindRange(address, regionBase, regionSize, stackInfoIndex);
+  }
+
  private:
   struct StackInfo {
     StackInfo(const char *stackType)
