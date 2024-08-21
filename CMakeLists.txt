@@ -1,11 +1,12 @@
-# Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 # SPDX-License-Identifier: GPL-2.0
 
 # We want to work on Ubuntu 16 LTS which uses CMake 3.5.
 cmake_minimum_required (VERSION 3.5)
 
 project(chap LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(CTest)

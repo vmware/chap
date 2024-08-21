@@ -1,0 +1,6 @@
+Unrecognized allocations have 3 instances taking 0x12010(73,744) bytes.
+   Unrecognized allocations of size 0x8 have 2 instances taking 0x10(16) bytes.
+   Unrecognized allocations of size 0x12000 have 1 instances taking 0x12000(73,728) bytes.
+Signature 619b88 (MallocExtension) has 1 instances taking 0x8(8) bytes.
+Signature 413028 (TCMallocImplementation) has 1 instances taking 0x10(16) bytes.
+5 allocations use 0x12028 (73,768) bytes.

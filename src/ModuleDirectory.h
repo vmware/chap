@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2019,2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019,2023,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -143,10 +144,15 @@ class ModuleDirectory {
                 const std::string& name, Offset flags) {
     if (_isResolved) {
       // The module directory cannot be changed after it has been resolved.
+      std::cerr << "Fatal Error: Added a module range for module "
+                << "\"" << name
+                << "\" after the module directory was resolved.\n";
       abort();
     }
     iterator it = _nameToModuleInfo.find(name);
     if (it == _nameToModuleInfo.end()) {
+      std::cerr << "Fatal Error: Added a module range before adding module "
+                << "\"" << name << "\".\n";
       abort();
     }
     ModuleInfo& moduleInfo = it->second;
@@ -162,6 +168,8 @@ class ModuleDirectory {
          * This should never happen because we have already checked that
          * the range doesn't overlap any range for any module.
          */
+        std::cerr << "Fatal Error: Corruption found in range info for module "
+                  << "\"" << name << "\".\n";
         abort();
       }
       if (!_virtualMemoryPartition.ClaimRange(base, size, USED_BY_MODULE, flags,
@@ -205,6 +213,7 @@ class ModuleDirectory {
   bool IsResolved() const { return _isResolved; }
   const_iterator begin() const { return _nameToModuleInfo.begin(); }
   const_iterator end() const { return _nameToModuleInfo.end(); }
+  bool empty() const { return _nameToModuleInfo.empty(); }
 
   size_t NumModules() const { return _nameToModuleInfo.size(); }
   const char* MODULE_ALIGNMENT_GAP;

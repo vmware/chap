@@ -1,4 +1,5 @@
-// Copyright (c) 2021-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2021-2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -37,27 +38,26 @@ class InfrastructureFinder {
       abort();
     }
 
-    typename ModuleDirectory<Offset>::const_iterator itEnd =
-        _moduleDirectory.end();
-    typename ModuleDirectory<Offset>::const_iterator it =
-        _moduleDirectory.begin();
-    for (; it != _moduleDirectory.end(); ++it) {
-      if ((it->first.find("libfolly") == std::string::npos)) {
+    for (const auto& modulePathAndInfo : _moduleDirectory) {
+      if (modulePathAndInfo.first.find("libfolly") == std::string::npos) {
         continue;
       }
       _follyLibraryPresent = true;
-      if (FindAndRegisterStacks(it->second)) {
+      if (FindAndRegisterStacks(modulePathAndInfo.second)) {
         _stacksFound = true;
         break;
       }
     }
     if (!_stacksFound) {
-      for (; it != _moduleDirectory.end(); ++it) {
-        if (it->first.find(".so") != std::string::npos) {
-          // For now, assume the go runtime code is not in a shared library.
+      for (const auto& modulePathAndInfo : _moduleDirectory) {
+        if (modulePathAndInfo.first.find(".so") != std::string::npos) {
+          /*
+           * For now, assume the folly fibers runtime code is not in a shared
+           * library.
+           */
           continue;
         }
-        if (FindAndRegisterStacks(it->second)) {
+        if (FindAndRegisterStacks(modulePathAndInfo.second)) {
           _stacksFound = true;
         }
       }

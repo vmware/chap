@@ -1,0 +1,13 @@
+Used allocation at fce000 of size 12000
+
+Used allocation at fe0000 of size 8
+... with signature 619b88(MallocExtension)
+
+Used allocation at fe0008 of size 8
+
+Used allocation at fe0010 of size 8
+
+Used allocation at fe2000 of size 10
+... with signature 413028(TCMallocImplementation)
+
+5 allocations use 0x12028 (73,768) bytes.

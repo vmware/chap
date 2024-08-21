@@ -1,0 +1,4 @@
+Used allocation at fe0000 of size 8
+... with signature 619b88(MallocExtension)
+
+1 allocations use 0x8 (8) bytes.

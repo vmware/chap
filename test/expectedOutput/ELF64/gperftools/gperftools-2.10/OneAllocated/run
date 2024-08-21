@@ -1,0 +1,93 @@
+# Copyright (c) 2024 Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program.  In
+# this particular core there are multiple allocations because the code in gperftools
+# allocates some and the code in OneAllocated.c allocates 1.
+# anchored both by registers and stack for the current threaare multiple allocations
+# because the code in gperftools allocates some and the code in OneAllocated.c
+# allocates one allocation.  Unfortunately, one allocation is leaked even if the 
+# the test code doesn't allocate any allocations.
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$1 core.193373 << DONE
+run
+
+redirect on
+count used
+summarize used
+enumerate used
+list used
+show used
+count free
+summarize free
+enumerate free
+list free
+count leaked
+summarize leaked
+enumerate leaked
+list leaked
+show leaked
+count anchored
+summarize anchored
+enumerate anchored
+list anchored
+show anchored
+count staticanchored
+summarize staticanchored
+enumerate staticanchored
+list staticanchored
+show staticanchored
+count stackanchored
+summarize stackanchored
+enumerate stackanchored
+list stackanchored
+show stackanchored
+count registeranchored
+summarize registeranchored
+enumerate registeranchored
+list registeranchored
+show registeranchored
+count anchorpoints
+summarize anchorpoints
+enumerate anchorpoints
+list anchorpoints
+show anchorpoints
+count staticanchorpoints
+summarize staticanchorpoints
+enumerate staticanchorpoints
+list staticanchorpoints
+show staticanchorpoints
+count stackanchorpoints
+summarize stackanchorpoints
+enumerate stackanchorpoints
+list stackanchorpoints
+show stackanchorpoints
+count registeranchorpoints
+summarize registeranchorpoints
+enumerate registeranchorpoints
+list registeranchorpoints
+show registeranchorpoints
+count incoming fe0008
+summarize incoming fe0008
+enumerate incoming fe0008
+list incoming fe0008
+show incoming fe0008
+count outgoing fe0008
+count exactincoming fe0008
+summarize exactincoming fe0008
+enumerate exactincoming fe0008
+list exactincoming fe0008
+show exactincoming fe0008
+count outgoing fe0008
+summarize outgoing fe0008
+enumerate outgoing fe0008
+list outgoing fe0008
+show outgoing fe0008
+enumerate pointers fe0008
+DONE

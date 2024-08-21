@@ -1,4 +1,5 @@
-// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once

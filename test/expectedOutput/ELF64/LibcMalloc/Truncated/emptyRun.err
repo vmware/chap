@@ -1,3 +1,4 @@
+Warning: No modules were found.
 Process image does not contain image for main stack that contains address 0x7fffffffe3c0.
 Leak information cannot be trusted without the main stack.
 core.48555.512K is truncated.

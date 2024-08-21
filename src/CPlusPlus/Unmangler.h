@@ -1,4 +1,5 @@
-// Copyright (c) 2017,2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2023,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -48,6 +49,7 @@ class Unmangler {
       _hasRQualifier = other._hasRQualifier;
       _hasOQualifier = other._hasOQualifier;
     }
+    UnmangledItem& operator=(const UnmangledItem&) = default;
     void Extend(std::string toAdd, bool addParenthesesIfApplicable) {
       if (_unmangled.empty()) {
         return;

@@ -1,0 +1,94 @@
+# Copyright (c) 2024 Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: GPL-2.0
+
+# This tests various commands against a core from the OneAllocated program.  In
+# this particular core there are multiple allocations because the code in gperftools
+# allocates some and the code in OneAllocated.c allocates 1.
+# anchored both by registers and stack for the current threaare multiple allocations
+# because the code in gperftools allocates some and the code in OneAllocated.c
+# allocates one allocation.  Unfortunately, one allocation is leaked even if the 
+# the test code doesn't allocate any allocations.
+# The leak is discussed in https://github.com/gperftools/gperftools/issues/758
+
+# Note that in general we don't do show free because the output may be
+# quite large.
+
+chap=$1
+
+$1 core.591414 << DONE
+run
+
+redirect on
+count used
+summarize used
+enumerate used
+list used
+show used
+count free
+summarize free
+enumerate free
+list free
+count leaked
+summarize leaked
+enumerate leaked
+list leaked
+show leaked
+count anchored
+summarize anchored
+enumerate anchored
+list anchored
+show anchored
+count staticanchored
+summarize staticanchored
+enumerate staticanchored
+list staticanchored
+show staticanchored
+count stackanchored
+summarize stackanchored
+enumerate stackanchored
+list stackanchored
+show stackanchored
+count registeranchored
+summarize registeranchored
+enumerate registeranchored
+list registeranchored
+show registeranchored
+count anchorpoints
+summarize anchorpoints
+enumerate anchorpoints
+list anchorpoints
+show anchorpoints
+count staticanchorpoints
+summarize staticanchorpoints
+enumerate staticanchorpoints
+list staticanchorpoints
+show staticanchorpoints
+count stackanchorpoints
+summarize stackanchorpoints
+enumerate stackanchorpoints
+list stackanchorpoints
+show stackanchorpoints
+count registeranchorpoints
+summarize registeranchorpoints
+enumerate registeranchorpoints
+list registeranchorpoints
+show registeranchorpoints
+count incoming fdc000
+summarize incoming fdc000
+enumerate incoming fdc000
+list incoming fdc000
+show incoming fdc000
+count outgoing fdc000
+count exactincoming fdc000
+summarize exactincoming fdc000
+enumerate exactincoming fdc000
+list exactincoming fdc000
+show exactincoming fdc000
+count outgoing fdc000
+summarize outgoing fdc000
+enumerate outgoing fdc000
+list outgoing fdc000
+show outgoing fdc000
+enumerate pointers fdc000
+DONE

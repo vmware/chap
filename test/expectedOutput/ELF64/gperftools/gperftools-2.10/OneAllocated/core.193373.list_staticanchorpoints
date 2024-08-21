@@ -1,0 +1,8 @@
+Used allocation at fce000 of size 12000
+
+Used allocation at fe0010 of size 8
+
+Used allocation at fe2000 of size 10
+... with signature 413028(TCMallocImplementation)
+
+3 allocations use 0x12018 (73,752) bytes.

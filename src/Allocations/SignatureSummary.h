@@ -1,4 +1,5 @@
-// Copyright (c) 2017,2019-2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2019-2020,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -16,7 +17,7 @@ class SignatureSummary {
   struct Tally {
     Tally() : _count(0), _bytes(0) {}
     Tally(Offset count, Offset bytes) : _count(count), _bytes(bytes) {}
-    Tally(const Tally& other) : _count(other._count), _bytes(other._bytes) {}
+    Tally& operator=(const Tally& other) = default;
     void Bump(Offset size) {
       _count++;
       _bytes += size;
@@ -30,12 +31,7 @@ class SignatureSummary {
     SizeToCount _sizeToCount;
     void Bump(Offset size) {
       _tally.Bump(size);
-      typename SizeToCount::iterator it = _sizeToCount.find(size);
-      if (it == _sizeToCount.end()) {
-        _sizeToCount[size] = 1;
-      } else {
-        it->second = it->second + 1;
-      }
+      ++(_sizeToCount.try_emplace(size, 0).first->second);
     }
   };
   typedef std::map<Offset, Tally> OffsetToTally;
@@ -50,7 +46,7 @@ class SignatureSummary {
     Tally _totals;
     std::vector<std::pair<Offset, Tally> > _subtotals;
     void AddSubtotal(Offset signature, const Tally& tally) {
-      _subtotals.push_back(std::make_pair(signature, tally));
+      _subtotals.emplace_back(signature, tally);
     }
   };
 
@@ -115,47 +111,39 @@ class SignatureSummary {
       _talliesWithSizeSubtotals;
 
   void TallyBySignature(Offset signature, Offset size) {
-    OffsetToTallyIterator it = _signatureToTally.find(signature);
-    if (it != _signatureToTally.end()) {
-      it->second._count++;
-      it->second._bytes += size;
-    } else {
-      _signatureToTally[signature] = Tally(1, size);
-    }
+    Tally& tally = _signatureToTally.try_emplace(signature).first->second;
+    tally._count++;
+    tally._bytes += size;
   }
+
   void TallyByName(std::string name, Offset size) {
-    NameToTallyIterator it = _nameToTally.find(name);
-    if (it != _nameToTally.end()) {
-      it->second._count++;
-      it->second._bytes += size;
-    } else {
-      _nameToTally[name] = Tally(1, size);
-    }
+    Tally& tally = _nameToTally.try_emplace(name).first->second;
+    tally._count++;
+    tally._bytes += size;
   }
 
   void FillItems(std::vector<Item>& items) const {
     items.clear();
     if (_unsignedTallyWithSizeSubtotals._tally._count > 0) {
-      items.push_back(Item());
-      Item& item = items.back();
+      Item& item = items.emplace_back();
       item._name = "?";
       item._totals = _unsignedTallyWithSizeSubtotals._tally;
-      for (typename std::map<Offset, Offset>::const_iterator it =
-               _unsignedTallyWithSizeSubtotals._sizeToCount.begin();
-           it != _unsignedTallyWithSizeSubtotals._sizeToCount.end(); ++it) {
-        item.AddSubtotal(it->first, Tally(it->second, it->first * it->second));
+      for (const auto& sizeAndCount :
+           _unsignedTallyWithSizeSubtotals._sizeToCount) {
+        item.AddSubtotal(sizeAndCount.first,
+                         Tally(sizeAndCount.second,
+                               sizeAndCount.first * sizeAndCount.second));
       }
     }
     for (const auto nameAndTally : _talliesWithSizeSubtotals) {
-      items.push_back(Item());
-      Item& item = items.back();
+      Item& item = items.emplace_back();
       item._name = nameAndTally.first;
       TallyWithSizeSubtotals tallyWithSizeSubtotals = nameAndTally.second;
       item._totals = tallyWithSizeSubtotals._tally;
-      for (typename std::map<Offset, Offset>::const_iterator it =
-               tallyWithSizeSubtotals._sizeToCount.begin();
-           it != tallyWithSizeSubtotals._sizeToCount.end(); ++it) {
-        item.AddSubtotal(it->first, Tally(it->second, it->first * it->second));
+      for (const auto& sizeAndCount : tallyWithSizeSubtotals._sizeToCount) {
+        item.AddSubtotal(sizeAndCount.first,
+                         Tally(sizeAndCount.second,
+                               sizeAndCount.first * sizeAndCount.second));
       }
     }
     FillUnnamedSignatures(items);
@@ -163,14 +151,12 @@ class SignatureSummary {
   }
 
   void FillUnnamedSignatures(std::vector<Item>& items) const {
-    for (OffsetToTallyConstIterator it = _signatureToTally.begin();
-         it != _signatureToTally.end(); ++it) {
-      std::string name = _directory.Name(it->first);
+    for (const auto& signatureAndTally: _signatureToTally) {
+      std::string name = _directory.Name(signatureAndTally.first);
       if (name.empty()) {
-        items.push_back(Item());
-        Item& item = items.back();
-        item._totals = it->second;
-        item.AddSubtotal(it->first, it->second);
+        Item& item = items.emplace_back();
+        item._totals = signatureAndTally.second;
+        item.AddSubtotal(signatureAndTally.first, signatureAndTally.second);
       }
     }
   }
@@ -178,15 +164,11 @@ class SignatureSummary {
     for (NameToTallyConstIterator it = _nameToTally.begin();
          it != _nameToTally.end(); ++it) {
       const std::string& name = it->first;
-      items.push_back(Item());
-      Item& item = items.back();
+      Item& item = items.emplace_back();
       item._name = name;
       item._totals = it->second;
 
-      const std::set<Offset>& signatures = _directory.Signatures(name);
-      for (typename std::set<Offset>::const_iterator itSig = signatures.begin();
-           itSig != signatures.end(); ++itSig) {
-        Offset signature = *itSig;
+      for (Offset signature: _directory.Signatures(name)) {
         OffsetToTallyConstIterator itTally = _signatureToTally.find(signature);
         if (itTally != _signatureToTally.end()) {
           item.AddSubtotal(signature, itTally->second);

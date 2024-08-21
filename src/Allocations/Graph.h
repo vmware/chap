@@ -1,4 +1,5 @@
-// Copyright (c) 2017,2020-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020-2021,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -329,7 +330,7 @@ class Graph {
           size_t threadNum = anchor / numRegisters;
           const char *regName =
               _threadMap.GetRegisterName(anchor % numRegisters);
-          anchors.push_back(std::make_pair(threadNum, regName));
+          anchors.emplace_back(threadNum, regName);
         }
       }
     }
@@ -418,7 +419,7 @@ class Graph {
           size_t threadNum = anchor / numRegisters;
           const char *regName =
               _threadMap.GetRegisterName(anchor % numRegisters);
-          anchors.push_back(std::make_pair(threadNum, regName));
+          anchors.emplace_back(threadNum, regName);
         }
         return visitor.VisitRegisterAnchorChainHeader(anchors, address, size,
                                                       image);
@@ -510,7 +511,7 @@ class Graph {
       // The edge target is already considered visited.
       visited[index] = true;
       std::vector<std::pair<Index, EdgeIndex> > edgesToVisit;
-      edgesToVisit.push_back(std::make_pair(index, edgeIndex - 1));
+      edgesToVisit.emplace_back(index, edgeIndex - 1);
       while (!edgesToVisit.empty()) {
         edgeIndex = ++(edgesToVisit.back().second);
         Index targetIndex = edgesToVisit.back().first;
@@ -575,7 +576,7 @@ class Graph {
         }
 
         edgeIndex = _firstIncoming[sourceIndex];
-        edgesToVisit.push_back(std::make_pair(sourceIndex, edgeIndex - 1));
+        edgesToVisit.emplace_back(sourceIndex, edgeIndex - 1);
       }
     }
     return false;
@@ -849,13 +850,7 @@ class Graph {
         Index targetIndex = EdgeTargetIndex(candidateTarget);
         const Allocation *target = _directory.AllocationAt(targetIndex);
         if ((target != 0) && target->IsUsed()) {
-          AnchorPointMapIterator it = anchorPoints.find(targetIndex);
-          if (it == anchorPoints.end()) {
-            it = anchorPoints
-                     .insert(std::make_pair(targetIndex, std::vector<Offset>()))
-                     .first;
-          }
-          it->second.push_back(anchor);
+          anchorPoints.try_emplace(targetIndex).first->second.push_back(anchor);
         }
       } catch (NotMapped &) {
       }
@@ -908,15 +903,8 @@ class Graph {
           Index targetIndex = _directory.AllocationIndexOf(candidateTarget);
           const Allocation *target = _directory.AllocationAt(targetIndex);
           if ((target != 0) && target->IsUsed()) {
-            AnchorPointMapIterator itAnchor =
-                _registerAnchorPoints.find(targetIndex);
-            if (itAnchor == _registerAnchorPoints.end()) {
-              itAnchor = _registerAnchorPoints
-                             .insert(std::make_pair(targetIndex,
-                                                    std::vector<Offset>()))
-                             .first;
-            }
-            itAnchor->second.push_back(it->_threadNum * numRegisters + i);
+            _registerAnchorPoints.try_emplace(targetIndex)
+                .first->second.push_back(it->_threadNum * numRegisters + i);
           }
         }
       }

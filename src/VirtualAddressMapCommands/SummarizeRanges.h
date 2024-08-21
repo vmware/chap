@@ -1,4 +1,5 @@
-// Copyright (c) 2018-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2019,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -33,7 +34,8 @@ class SummarizeRanges : public Commands::Subcommand {
   typedef std::map<const char*, std::pair<Offset, Offset> > UseTallies;
   typedef typename UseTallies::value_type UseTalliesValue;
   struct Compare {
-    bool operator()(const UseTalliesValue& left, const UseTalliesValue& right) {
+    bool operator()(const UseTalliesValue& left,
+                    const UseTalliesValue& right) const {
       // Sort in decreasing order of total bytes.
       if (left.second.second > right.second.second) {
         return true;

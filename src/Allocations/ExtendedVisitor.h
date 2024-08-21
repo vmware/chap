@@ -1,10 +1,13 @@
-// Copyright (c) 2017-2021,2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021,2023,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 
 #include <regex>
 #include <stack>
+#include "../Annotator.h"
+#include "../AnnotatorRegistry.h"
 #include "../CPlusPlus/TypeInfoDirectory.h"
 #include "../Commands/Runner.h"
 #include "../ProcessImage.h"
@@ -33,14 +36,21 @@ class ExtendedVisitor {
   ExtendedVisitor(
       Commands::Context& context, const ProcessImage<Offset>& processImage,
       const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
+      const AnnotatorRegistry<Offset>& annotatorRegistry,
       bool allowMissingSignatures, Set<Offset>& visited)
       : _context(context),
         _isEnabled(false),
         _hasErrors(false),
+        _hasAnnotations(false),
+        _allowMissingSignatures(allowMissingSignatures),
         _patternDescriberRegistry(patternDescriberRegistry),
+        _annotatorRegistry(annotatorRegistry),
+        _globalAnnotationSequence(annotatorRegistry),
         _graph(0),
         _directory(processImage.GetAllocationDirectory()),
         _addressMap(processImage.GetVirtualAddressMap()),
+        _signatureDirectory(processImage.GetSignatureDirectory()),
+        _typeInfoDirectory(processImage.GetTypeInfoDirectory()),
         _tagHolder(processImage.GetAllocationTagHolder()),
         _edgeIsTainted(processImage.GetEdgeIsTainted()),
         _edgeIsFavored(processImage.GetEdgeIsFavored()),
@@ -50,202 +60,28 @@ class ExtendedVisitor {
         _skipTaintedReferences(false),
         _skipUnfavoredReferences(false) {
     Commands::Error& error = context.GetError();
-    size_t numExtensionArguments = context.GetNumArguments("extend");
-    if (numExtensionArguments == 0) {
-      return;
+    size_t numExtendArguments = context.GetNumArguments("extend");
+    size_t numAnnotateArguments = context.GetNumArguments("annotate");
+    bool extensionNeeded = false;
+    bool graphNeeded = false;
+    if (numExtendArguments != 0) {
+      extensionNeeded = true;
+      graphNeeded = true;
+      ProcessExtendArguments(context, error, numExtendArguments);
     }
-    if (!context.ParseBooleanSwitch("commentExtensions", _commentExtensions)) {
-      _hasErrors = true;
+    if (numAnnotateArguments != 0) {
+      extensionNeeded = true;
+      ProcessAnnotateArguments(context, error, numAnnotateArguments);
+      _hasAnnotations = true;
     }
-    if (_edgeIsTainted != nullptr &&
-        !context.ParseBooleanSwitch("skipTaintedReferences",
-                                    _skipTaintedReferences)) {
-      _hasErrors = true;
-    }
-    if (_edgeIsFavored != nullptr &&
-        !context.ParseBooleanSwitch("skipUnfavoredReferences",
-                                    _skipUnfavoredReferences)) {
-      _hasErrors = true;
-    }
-
-    //  [signature-or-label][@offset-in-member]<direction
-    //  indicator>[signature][@offset-in-signature][:stateLabel]
-    std::regex extensionRegex(
-        "([^@]*)(@([[:xdigit:]]+))?"   // specify the starting members
-        "((->)|(~>)|(<-))"             // extend by outgoing or incoming refs
-        "([^@=]*)(@([[:xdigit:]]+))?"  // constrain the type of extension
-        "(=>(\\w+))?");                // select a new extension state
-    std::smatch extensionSmatch;
-    _stateLabels.push_back("");
-    std::map<std::string, size_t> labelToStateNumber;
-    labelToStateNumber[""] = 0;
-    std::vector<Specification> specifications;
-    specifications.reserve(numExtensionArguments);
-    for (size_t i = 0; i < numExtensionArguments; i++) {
-      const std::string extensionRule = context.Argument("extend", i);
-      if (!std::regex_match(extensionRule, extensionSmatch, extensionRegex)) {
-        error << "Extension specification \"" << extensionRule
-              << "\" is ill formed.\n";
-        _hasErrors = true;
-        continue;
-      }
-      specifications.emplace_back();
-      Specification& spec = specifications.back();
-      spec._memberSignature = extensionSmatch[1];
-      if (extensionSmatch[3].length() > 0) {
-        spec._useOffsetInMember = true;
-        size_t offsetInMember;
-        std::istringstream is(extensionSmatch[3]);
-        is >> std::hex >> offsetInMember;
-        if (!is.fail() && is.eof()) {
-          spec._offsetInMember = offsetInMember;
-        } else {
-          error << "Offset in member \"" << extensionSmatch[3]
-                << " is not well formed as hexadecimal.\n";
-          _hasErrors = true;
-        }
-      }
-      spec._referenceIsOutgoing = (extensionSmatch[5].length() > 0) ||
-                                  (extensionSmatch[6].length() > 0);
-      spec._extensionMustBeLeaked = (extensionSmatch[6].length() > 0);
-      spec._extensionSignature = extensionSmatch[8];
-      if (extensionSmatch[10].length() > 0) {
-        spec._useOffsetInExtension = true;
-        size_t offsetInExtension;
-        std::istringstream is(extensionSmatch[10]);
-        is >> std::hex >> offsetInExtension;
-        if (!is.fail() && is.eof()) {
-          spec._offsetInExtension = offsetInExtension;
-        } else {
-          error << "Offset in extension \"" << extensionSmatch[10]
-                << " is not well formed as hexadecimal.\n";
-          _hasErrors = true;
-        }
-      }
-
-      std::string stateLabel = extensionSmatch[12];
-      size_t stateIndex = 0;
-      std::map<std::string, size_t>::iterator it =
-          labelToStateNumber.find(stateLabel);
-      if (it != labelToStateNumber.end()) {
-        stateIndex = it->second;
-      } else {
-        stateIndex = labelToStateNumber.size();
-        _stateLabels.push_back(stateLabel);
-        labelToStateNumber[stateLabel] = stateIndex;
-      }
-      spec._newState = stateIndex;
-    }
-
-    /*
-     * Now that all the state names are known, identify any cases where a
-     * state label was provided instead of a member signature.  Don't bother
-     * with specifications that were already rejected as ill formed.
-     */
-
-    size_t numStates = labelToStateNumber.size();
-    _stateToBase.resize(numStates + 1, 0);
-    for (typename std::vector<Specification>::iterator it =
-             specifications.begin();
-         it != specifications.end(); ++it) {
-      Specification& spec = *it;
-      if (!spec._memberSignature.empty()) {
-        std::map<std::string, size_t>::const_iterator itState =
-            labelToStateNumber.find(spec._memberSignature);
-        if (itState != labelToStateNumber.end()) {
-          spec._baseState = itState->second;
-          spec._memberSignature = "";
-          _stateToBase[spec._baseState]++;
-          continue;
-        }
-      }
-      _stateToBase[0]++;
-    }
-
-    // Convert contents of _stateToBase from counts to limits.
-    for (size_t i = 1; i <= numStates; ++i) {
-      _stateToBase[i] += _stateToBase[i - 1];
-    }
-
-    /*
-     * Map from rule index to argument index (so the rules are in an
-     * efficient order to process) and convert the contents of _stateToBase
-     * from limits to bases.
-     */
-
-    size_t numSpecs = specifications.size();
-    std::vector<size_t> ruleIndexToArgumentIndex;
-    ruleIndexToArgumentIndex.resize(numSpecs);
-    for (size_t i = numSpecs; i-- > 0;) {
-      ruleIndexToArgumentIndex[--(_stateToBase[specifications[i]._baseState])] =
-          i;
-    }
-
-    const SignatureDirectory<Offset>& signatureDirectory =
-        processImage.GetSignatureDirectory();
-    const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory =
-        processImage.GetTypeInfoDirectory();
-
-    /*
-     * Create the extension rules in the calculated order.
-     */
-
-    _rules.reserve(numSpecs);
-    for (size_t i = 0; i < numSpecs; i++) {
-      _rules.emplace_back(signatureDirectory, typeInfoDirectory,
-                          _patternDescriberRegistry, _addressMap,
-                          specifications[ruleIndexToArgumentIndex[i]]);
-      Rule& rule = _rules.back();
-      if (rule._memberSignatureChecker.UnrecognizedSignature()) {
-        if (!allowMissingSignatures) {
-          error << "Member signature \""
-                << rule._memberSignatureChecker.GetSignature()
-                << "\" is not recognized.\n";
-          _hasErrors = true;
-        }
-      }
-      if (rule._memberSignatureChecker.UnrecognizedPattern()) {
-        error << "Member pattern \""
-              << rule._memberSignatureChecker.GetPatternName()
-              << "\" is not recognized.\n";
-        _hasErrors = true;
-      }
-      if (rule._extensionSignatureChecker.UnrecognizedSignature()) {
-        if (!allowMissingSignatures) {
-          error << "Extension signature \""
-                << rule._extensionSignatureChecker.GetSignature()
-                << "\" is not recognized.\n";
-          _hasErrors = true;
-        }
-      }
-      if (rule._extensionSignatureChecker.UnrecognizedPattern()) {
-        error << "Extension pattern \""
-              << rule._extensionSignatureChecker.GetPatternName()
-              << "\" is not recognized.\n";
-        _hasErrors = true;
-      }
-    }
-    if (!_hasErrors) {
-      if (_rules[0]._baseState != 0) {
-        /*
-         * If all of the rules apply to some extension state other than the
-         * base state, no extensions will be done because it would require
-         * at least one extension from the base state to leave it.  It might
-         * also be valid to let the command just run (and leave extensions
-         * disabled to avoid doing needless checks on each object in the
-         * original
-         * set) but probably the user would prefer to correct the command and
-         * not to wait for a command with broken extension rules to complete
-         * first.
-         */
-        error << "None of the extension rules can be applied to the "
-                 "set to be extended.\n";
-        _hasErrors = true;
-      } else {
-        _isEnabled = true;
+    if (extensionNeeded && !_hasErrors) {
+      if (graphNeeded) {
         _graph = processImage.GetAllocationGraph();
-        _hasErrors = (_graph == 0);
+        if (_graph == nullptr) {
+          _hasErrors = true;
+        }
       }
+      _isEnabled = !_hasErrors;
     }
   }
 
@@ -278,6 +114,7 @@ class ExtendedVisitor {
      * If the extended visitor is disabled, just visit members of the set.
      */
     if (!_isEnabled) {
+      _visited.Add(memberIndex);
       visitor.Visit(memberIndex, allocation);
       return;
     }
@@ -303,6 +140,15 @@ class ExtendedVisitor {
 
     _visited.Add(memberIndex);
     visitor.Visit(memberIndex, allocation);
+
+    if (_hasAnnotations) {
+      Annotate(memberIndex, allocation, 0);
+    }
+
+    if (_rules.empty()) {
+      // There are no extension rules.
+      return;
+    }
 
     std::stack<ExtensionContext> extensionContexts;
     size_t state = 0;
@@ -527,7 +373,11 @@ class ExtendedVisitor {
       memberAllocation = candidateAllocation;
       _visited.Add(memberIndex);
       visitor.Visit(memberIndex, *memberAllocation);
+
       state = rule._newState;
+      if (_hasAnnotations) {
+        Annotate(memberIndex, *memberAllocation, state);
+      }
       ruleIndex = _stateToBase[state];
       ruleIndexLimit = _stateToBase[state + 1];
       if (ruleIndex != ruleIndexLimit) {
@@ -599,6 +449,388 @@ class ExtendedVisitor {
     size_t _baseState;
     size_t _newState;
   };
+  void ProcessExtendArguments(Commands::Context& context,
+                              Commands::Error& error,
+                              size_t numExtendArguments) {
+    if (!context.ParseBooleanSwitch("commentExtensions", _commentExtensions)) {
+      _hasErrors = true;
+    }
+    if (_edgeIsTainted != nullptr &&
+        !context.ParseBooleanSwitch("skipTaintedReferences",
+                                    _skipTaintedReferences)) {
+      _hasErrors = true;
+    }
+    if (_edgeIsFavored != nullptr &&
+        !context.ParseBooleanSwitch("skipUnfavoredReferences",
+                                    _skipUnfavoredReferences)) {
+      _hasErrors = true;
+    }
+
+    //  [signature-or-pattern-or-label][@offset-in-member]<direction
+    //  indicator>[signature][@offset-in-extension][=>stateLabel]
+    std::regex extensionRegex(
+        "([^@]*)(@([[:xdigit:]]+))?"   // specify the starting members
+        "((->)|(~>)|(<-))"             // extend by outgoing or incoming refs
+        "([^@=]*)(@([[:xdigit:]]+))?"  // constrain the type of extension
+        "(=>(\\w+))?");                // select a new extension state
+    std::smatch extensionSmatch;
+    _stateLabels.push_back("");
+    _labelToStateNumber[""] = 0;
+    std::vector<Specification> specifications;
+    specifications.reserve(numExtendArguments);
+    for (size_t i = 0; i < numExtendArguments; i++) {
+      const std::string extensionRule = context.Argument("extend", i);
+      if (!std::regex_match(extensionRule, extensionSmatch, extensionRegex)) {
+        error << "Extension specification \"" << extensionRule
+              << "\" is ill formed.\n";
+        _hasErrors = true;
+        continue;
+      }
+      Specification& spec = specifications.emplace_back();
+      spec._memberSignature = extensionSmatch[1];
+      if (extensionSmatch[3].length() > 0) {
+        spec._useOffsetInMember = true;
+        size_t offsetInMember;
+        std::istringstream is(extensionSmatch[3]);
+        is >> std::hex >> offsetInMember;
+        if (!is.fail() && is.eof()) {
+          spec._offsetInMember = offsetInMember;
+        } else {
+          error << "Offset in member \"" << extensionSmatch[3]
+                << " is not well formed as hexadecimal.\n";
+          _hasErrors = true;
+        }
+      }
+      spec._referenceIsOutgoing = (extensionSmatch[5].length() > 0) ||
+                                  (extensionSmatch[6].length() > 0);
+      spec._extensionMustBeLeaked = (extensionSmatch[6].length() > 0);
+      spec._extensionSignature = extensionSmatch[8];
+      if (extensionSmatch[10].length() > 0) {
+        spec._useOffsetInExtension = true;
+        size_t offsetInExtension;
+        std::istringstream is(extensionSmatch[10]);
+        is >> std::hex >> offsetInExtension;
+        if (!is.fail() && is.eof()) {
+          spec._offsetInExtension = offsetInExtension;
+        } else {
+          error << "Offset in extension \"" << extensionSmatch[10]
+                << " is not well formed as hexadecimal.\n";
+          _hasErrors = true;
+        }
+      }
+
+      std::string stateLabel = extensionSmatch[12];
+      size_t stateIndex = 0;
+      std::map<std::string, size_t>::iterator it =
+          _labelToStateNumber.find(stateLabel);
+      if (it != _labelToStateNumber.end()) {
+        stateIndex = it->second;
+      } else {
+        stateIndex = _labelToStateNumber.size();
+        _stateLabels.push_back(stateLabel);
+        _labelToStateNumber[stateLabel] = stateIndex;
+      }
+      spec._newState = stateIndex;
+    }
+
+    /*
+     * Now that all the state names are known, identify any cases where a
+     * state label was provided instead of a member signature.  Don't bother
+     * with specifications that were already rejected as ill formed.
+     */
+
+    size_t numStates = _labelToStateNumber.size();
+    _stateToBase.resize(numStates + 1, 0);
+    for (typename std::vector<Specification>::iterator it =
+             specifications.begin();
+         it != specifications.end(); ++it) {
+      Specification& spec = *it;
+      if (!spec._memberSignature.empty()) {
+        std::map<std::string, size_t>::const_iterator itState =
+            _labelToStateNumber.find(spec._memberSignature);
+        if (itState != _labelToStateNumber.end()) {
+          spec._baseState = itState->second;
+          spec._memberSignature = "";
+          _stateToBase[spec._baseState]++;
+          continue;
+        }
+      }
+      _stateToBase[0]++;
+    }
+
+    // Convert contents of _stateToBase from counts to limits.
+    for (size_t i = 1; i <= numStates; ++i) {
+      _stateToBase[i] += _stateToBase[i - 1];
+    }
+
+    /*
+     * Map from rule index to argument index (so the rules are in an
+     * efficient order to process) and convert the contents of _stateToBase
+     * from limits to bases.
+     */
+
+    size_t numSpecs = specifications.size();
+    std::vector<size_t> ruleIndexToArgumentIndex;
+    ruleIndexToArgumentIndex.resize(numSpecs);
+    for (size_t i = numSpecs; i-- > 0;) {
+      ruleIndexToArgumentIndex[--(_stateToBase[specifications[i]._baseState])] =
+          i;
+    }
+
+    /*
+     * Create the extension rules in the calculated order.
+     */
+
+    _rules.reserve(numSpecs);
+    for (size_t i = 0; i < numSpecs; i++) {
+      _rules.emplace_back(_signatureDirectory, _typeInfoDirectory,
+                          _patternDescriberRegistry, _addressMap,
+                          specifications[ruleIndexToArgumentIndex[i]]);
+      Rule& rule = _rules.back();
+      if (rule._memberSignatureChecker.UnrecognizedSignature()) {
+        if (!_allowMissingSignatures) {
+          error << "Member signature \""
+                << rule._memberSignatureChecker.GetSignature()
+                << "\" is not recognized.\n";
+          _hasErrors = true;
+        }
+      }
+      if (rule._memberSignatureChecker.UnrecognizedPattern()) {
+        error << "Member pattern \""
+              << rule._memberSignatureChecker.GetPatternName()
+              << "\" is not recognized.\n";
+        _hasErrors = true;
+      }
+      if (rule._extensionSignatureChecker.UnrecognizedSignature()) {
+        if (!_allowMissingSignatures) {
+          error << "Extension signature \""
+                << rule._extensionSignatureChecker.GetSignature()
+                << "\" is not recognized.\n";
+          _hasErrors = true;
+        }
+      }
+      if (rule._extensionSignatureChecker.UnrecognizedPattern()) {
+        error << "Extension pattern \""
+              << rule._extensionSignatureChecker.GetPatternName()
+              << "\" is not recognized.\n";
+        _hasErrors = true;
+      }
+    }
+    if (!_hasErrors) {
+      if (_rules[0]._baseState != 0) {
+        /*
+         * If all of the rules apply to some extension state other than the
+         * base state, no extensions will be done because it would require
+         * at least one extension from the base state to leave it.  It might
+         * also be valid to let the command just run (and leave extensions
+         * disabled to avoid doing needless checks on each object in the
+         * original
+         * set) but probably the user would prefer to correct the command and
+         * not to wait for a command with broken extension rules to complete
+         * first.
+         */
+        error << "None of the extension rules can be applied to the "
+                 "set to be extended.\n";
+        _hasErrors = true;
+      }
+    }
+  }
+
+   /*
+    * Allocators are ordered in the order in which they are added, unless
+    * AddAllAnnotators has been called, in which case they are in the
+    * order that they were registered.
+    */
+
+  class OrderedAnnotators {
+   public:
+    OrderedAnnotators(const AnnotatorRegistry<Offset>& annotatorRegistry)
+      : _usesAllAnnotators(false), _annotatorRegistry(annotatorRegistry) {}
+    void AddAnnotator(const Annotator<Offset>* annotator) {
+      if (!_usesAllAnnotators && _used.insert(annotator).second) {
+        _inOrderAdded.push_back(annotator);
+      }
+    }
+    void AddAllAnnotators() {
+      if (!_usesAllAnnotators) {
+        _used.clear();
+        _inOrderAdded.clear();
+        for (const Annotator<Offset>* annotator :
+             _annotatorRegistry.Annotators()) {
+          _used.insert(annotator);
+          _inOrderAdded.push_back(annotator);
+        }
+        _usesAllAnnotators = true;
+      }
+    }
+
+    const std::vector<const Annotator<Offset>*>& InOrderAdded() const {
+      return _inOrderAdded;
+    }
+
+   private:
+    bool _usesAllAnnotators;
+    std::unordered_set<const Annotator<Offset>*> _used;
+    std::vector<const Annotator<Offset>*> _inOrderAdded;
+    const AnnotatorRegistry<Offset>& _annotatorRegistry;
+  };
+
+  struct AnnotationSequence {
+    AnnotationSequence(const AnnotatorRegistry<Offset>& annotatorRegistry)
+        : _isEmpty(true),
+          _tryAllAnnotationsEverywhere(false),
+          _annotatorRegistry(annotatorRegistry),
+          _allocationWideAnnotators(annotatorRegistry) {}
+
+    void AddAnnotator(const Annotator<Offset>* annotator) {
+      _isEmpty = false;
+      if (_tryAllAnnotationsEverywhere) {
+        return;
+      }
+      if (annotator == nullptr) {
+        _tryAllAnnotationsEverywhere = true;
+        _offsetSpecificAnnotators.clear();
+        _allocationWideAnnotators.AddAllAnnotators();
+      } else {
+        _allocationWideAnnotators.AddAnnotator(annotator);
+      }
+    }
+
+    void AddAnnotator(const Annotator<Offset>* annotator, Offset fieldOffset) {
+      _isEmpty = false;
+      if (_tryAllAnnotationsEverywhere) {
+        return;
+      }
+
+      OrderedAnnotators& orderedAnnotators =
+          _offsetSpecificAnnotators.try_emplace(fieldOffset, _annotatorRegistry)
+              .first->second;
+      if (annotator == nullptr) {
+        orderedAnnotators.AddAllAnnotators();
+      } else {
+        orderedAnnotators.AddAnnotator(annotator);
+      }
+    }
+
+    bool _isEmpty;
+    bool _tryAllAnnotationsEverywhere;
+    const AnnotatorRegistry<Offset>& _annotatorRegistry;
+    OrderedAnnotators _allocationWideAnnotators;
+    std::map<Offset, OrderedAnnotators> _offsetSpecificAnnotators;
+  };
+
+  struct SignatureCheckerWithAnnotationSequence {
+    SignatureCheckerWithAnnotationSequence(
+        const SignatureDirectory<Offset>& signatureDirectory,
+        const CPlusPlus::TypeInfoDirectory<Offset>& typeInfoDirectory,
+        const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
+        const VirtualAddressMap<Offset>& addressMap,
+        const std::string& signature, AnnotationSequence* annotationSequence)
+        : _signatureChecker(signatureDirectory, typeInfoDirectory,
+                            patternDescriberRegistry, addressMap, signature),
+          _annotationSequence(annotationSequence) {}
+
+    SignatureChecker<Offset> _signatureChecker;
+    AnnotationSequence* _annotationSequence;
+  };
+
+  void ProcessAnnotateArguments(Commands::Context& context,
+                                Commands::Error& error,
+                                size_t numAnnotateArguments) {
+    std::regex annotationRegex(
+        "((\\*)|([^@]+))((@([[:xdigit:]]+))?)"  // what to annotate
+        "\\."
+        "((\\*)|([^@.]+))");
+
+    _stateToAnnotationSequence.resize(_labelToStateNumber.size() + 1, nullptr);
+    std::smatch annotationSmatch;
+    for (size_t i = 0; i < numAnnotateArguments; i++) {
+      const std::string annotationRule = context.Argument("annotate", i);
+      if (!std::regex_match(annotationRule, annotationSmatch,
+                            annotationRegex)) {
+        error << "Annotation specification \"" << annotationRule
+              << "\" is ill formed.\n";
+        _hasErrors = true;
+        continue;
+      }
+      std::string constraint = annotationSmatch[1];
+      bool globalAnnotation = annotationSmatch[2].matched;
+      AnnotationSequence& annotationSequence =
+          globalAnnotation ? _globalAnnotationSequence
+                           : _constraintToAnnotationSequence
+                                 .try_emplace(constraint, _annotatorRegistry)
+                                 .first->second;
+      bool fieldOffsetSupplied = annotationSmatch[5].matched;
+      Offset fieldOffset = 0;
+      if (fieldOffsetSupplied) {
+        std::string fieldOffsetString = annotationSmatch[6];
+        std::istringstream is(fieldOffsetString);
+        is >> std::hex >> fieldOffset;
+        if (is.fail() || !is.eof()) {
+          error << "\"" << fieldOffsetString
+                << "\" is not a valid hexadecimal field offset.\n";
+          _hasErrors = true;
+        }
+      }
+      std::string annotatorName = annotationSmatch[7];
+
+      const Annotator<Offset>* annotator = nullptr;
+      if (annotationSmatch[9].matched) {
+        annotator = _annotatorRegistry.FindAnnotator(annotatorName);
+        if (annotator == nullptr) {
+          error << "\"" << annotatorName
+                << "\" is not a valid annotator name.\n";
+          _hasErrors = true;
+        }
+      }
+      if (fieldOffsetSupplied) {
+        annotationSequence.AddAnnotator(annotator, fieldOffset);
+      } else {
+        annotationSequence.AddAnnotator(annotator);
+      }
+
+      if (globalAnnotation) {
+        continue;
+      }
+
+      std::map<std::string, size_t>::iterator it =
+          _labelToStateNumber.find(constraint);
+      if (it != _labelToStateNumber.end()) {
+        _stateToAnnotationSequence[it->second] = &annotationSequence;
+        continue;
+      }
+      _signatureCheckersWithAnnotationSequences.emplace_back(
+          _signatureDirectory, _typeInfoDirectory, _patternDescriberRegistry,
+          _addressMap, constraint, &annotationSequence);
+
+      SignatureChecker<Offset>& signatureChecker =
+         _signatureCheckersWithAnnotationSequences.back()._signatureChecker;
+      if (signatureChecker.UnrecognizedSignature()) {
+        if (!_allowMissingSignatures) {
+          error << "Annotation constraint \""
+                << constraint
+                << "\" is not recognized as a signature.\n";
+          _hasErrors = true;
+        }
+      }
+      if (signatureChecker.UnrecognizedPattern()) {
+        error << "Annotation constraint pattern \"" << constraint
+              << "\" is not recognized.\n";
+        _hasErrors = true;
+      }
+    }
+
+    if (_hasErrors) {
+      return;
+    }
+
+    if (_globalAnnotationSequence._tryAllAnnotationsEverywhere) {
+      _constraintToAnnotationSequence.clear();
+      _signatureCheckersWithAnnotationSequences.clear();
+      _stateToAnnotationSequence.clear();
+    }
+  }
+
   bool AllocationHasAlignedPointer(const Allocation& allocation,
                                    Offset address) {
     Offset base = allocation.Address();
@@ -619,14 +851,121 @@ class ExtendedVisitor {
     }
     return false;
   }
+
+  void Annotate(AllocationIndex memberIndex, const Allocation& allocation,
+                size_t state) {
+    bool tryAllAnnotationsEverywhere = false;
+    std::list<AnnotationSequence*> annotationSequences;
+    if (_globalAnnotationSequence._tryAllAnnotationsEverywhere) {
+      annotationSequences.push_back(&_globalAnnotationSequence);
+      tryAllAnnotationsEverywhere = true;
+    }
+    AnnotationSequence* annotationSequenceForState =
+        _stateToAnnotationSequence[state];
+    if (annotationSequenceForState != nullptr && !tryAllAnnotationsEverywhere &&
+        annotationSequenceForState->_tryAllAnnotationsEverywhere) {
+      annotationSequences.push_back(annotationSequenceForState);
+      tryAllAnnotationsEverywhere = true;
+    }
+
+    if (!tryAllAnnotationsEverywhere) {
+      for (const auto& signatureCheckerWithAnnotationSequence:
+              _signatureCheckersWithAnnotationSequences ) {
+        if (signatureCheckerWithAnnotationSequence._signatureChecker.Check(
+                memberIndex, allocation)) {
+          AnnotationSequence* annotationSequence =
+              signatureCheckerWithAnnotationSequence._annotationSequence;
+          if (annotationSequence->_tryAllAnnotationsEverywhere) {
+            annotationSequences.clear();
+            annotationSequences.push_back(annotationSequence);
+            tryAllAnnotationsEverywhere = true;
+          } else {
+            annotationSequences.push_back(annotationSequence);
+          }
+        }
+      }
+    }
+    if (!tryAllAnnotationsEverywhere) {
+      if (annotationSequenceForState != nullptr &&
+          !annotationSequenceForState->_isEmpty) {
+        annotationSequences.push_front(annotationSequenceForState);
+      }
+      if (!_globalAnnotationSequence._isEmpty) {
+        annotationSequences.push_back(&_globalAnnotationSequence);
+      }
+    }
+    if (annotationSequences.empty()) {
+      return;
+    }
+
+    typename VirtualAddressMap<Offset>::Reader reader(_addressMap);
+    Offset address = allocation.Address();
+    Offset annotateFrom = address;
+    Offset allocationSize = allocation.Size();
+    Offset annotateTo = address + allocationSize;
+
+    typename Annotator<Offset>::WriteHeaderFunction writeHeader = [&](
+        Offset start, Offset limit, const std::string& name) {
+      _context.GetOutput() << " Annotator " << name << " matches [0x"
+                           << std::hex << address << " + 0x"
+                           << (start - address) << ", 0x" << address << " + 0x"
+                           << (limit - address) << ")\n";
+    };
+
+    while (annotateFrom < annotateTo) {
+      bool annotationDone = false;
+      for (const auto annotationSequence : annotationSequences) {
+        auto it = annotationSequence->_offsetSpecificAnnotators.find(
+            annotateFrom - address);
+        if (it != annotationSequence->_offsetSpecificAnnotators.end()) {
+          for (auto annotator : it->second.InOrderAdded()) {
+            Offset endOfAnnotation = annotator->Annotate(
+                _context, reader, writeHeader, annotateFrom, annotateTo, "   ");
+            if (endOfAnnotation != annotateFrom) {
+              annotationDone = true;
+              annotateFrom = endOfAnnotation;
+              _context.GetOutput() << "\n";
+              break;
+            }
+          }
+        }
+        if (annotationDone) {
+          break;
+        }
+        for (auto annotator :
+             annotationSequence->_allocationWideAnnotators.InOrderAdded()) {
+          Offset endOfAnnotation = annotator->Annotate(
+              _context, reader, writeHeader, annotateFrom, annotateTo, "   ");
+          if (endOfAnnotation != annotateFrom) {
+            annotationDone = true;
+            annotateFrom = endOfAnnotation;
+            _context.GetOutput() << "\n";
+            break;
+          }
+        }
+        if (annotationDone) {
+          break;
+        }
+      }
+      if (!annotationDone) {
+        annotateFrom += sizeof(Offset);
+      }
+    }
+  }
+
   Commands::Context& _context;
   bool _isEnabled;
   bool _hasErrors;
-  bool _canRun;
+  bool _hasAnnotations;
+  bool _allowMissingSignatures;
   const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
+  const AnnotatorRegistry<Offset>& _annotatorRegistry;
+  AnnotationSequence _globalAnnotationSequence;
   const Graph<Offset>* _graph;
   const Directory<Offset>& _directory;
   const VirtualAddressMap<Offset>& _addressMap;
+  const SignatureDirectory<Offset>& _signatureDirectory;
+  const CPlusPlus::TypeInfoDirectory<Offset>& _typeInfoDirectory;
   const TagHolder<Offset>* _tagHolder;
   const EdgePredicate<Offset>* _edgeIsTainted;
   const EdgePredicate<Offset>* _edgeIsFavored;
@@ -638,6 +977,13 @@ class ExtendedVisitor {
   bool _skipTaintedReferences;
   bool _skipUnfavoredReferences;
   std::vector<std::string> _stateLabels;
+  std::map<std::string, size_t> _labelToStateNumber;
+  std::list<SignatureCheckerWithAnnotationSequence>
+      _signatureCheckersWithAnnotationSequences;
+
+  std::unordered_map<std::string, AnnotationSequence>
+      _constraintToAnnotationSequence;
+  std::vector<AnnotationSequence*> _stateToAnnotationSequence;
 };
 }  // namespace Allocations
 }  // namespace chap

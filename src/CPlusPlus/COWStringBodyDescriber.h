@@ -1,8 +1,9 @@
-// Copyright (c) 2017-2020,2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020,2022,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include <string.h>
+#include <string_view>
 #include "../Allocations/ContiguousImage.h"
 #include "../Allocations/PatternDescriber.h"
 #include "../ProcessImage.h"
@@ -44,7 +45,8 @@ class COWStringBodyDescriber : public Allocations::PatternDescriber<Offset> {
     if (explain || stringLength < 77) {
       output << " containing\n\"" << stringStart << "\".\n";
     } else {
-      output << " starting with\n\"" << std::string(stringStart, 77) << "\",\n";
+      output << " starting with\n\"" << std::string_view(stringStart, 77)
+             << "\",\n";
     }
     if (explain) {
       /*

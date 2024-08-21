@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -18,6 +19,7 @@
 #include "CPlusPlus/VectorAllocationsTagger.h"
 #include "FileMappedRangeDirectory.h"
 #include "FollyFibers/InfrastructureFinder.h"
+#include "GoLang/AllocationsTagger.h"
 #include "GoLang/FinderGroup.h"
 #include "ModuleDirectory.h"
 #include "ModuleImageFactory.h"
@@ -27,6 +29,7 @@
 #include "Python/FinderGroup.h"
 #include "Python/InfrastructureFinder.h"
 #include "StackRegistry.h"
+#include "TCMalloc/FinderGroup.h"
 #include "ThreadMap.h"
 #include "UnfilledImages.h"
 #include "VirtualAddressMap.h"
@@ -58,6 +61,8 @@ class ProcessImage {
         _goLangFinderGroup(_virtualMemoryPartition, _moduleDirectory,
                            _allocationDirectory, _unfilledImages,
                            _stackRegistry),
+        _TCMallocFinderGroup(_virtualMemoryPartition, _moduleDirectory,
+                             _allocationDirectory, _unfilledImages),
         _pThreadInfrastructureFinder(_moduleDirectory, _virtualMemoryPartition,
                                      _stackRegistry),
         _follyFibersInfrastructureFinder(
@@ -177,6 +182,7 @@ class ProcessImage {
   Allocations::AnchorDirectory<Offset> _anchorDirectory;
   Python::FinderGroup<Offset> _pythonFinderGroup;
   GoLang::FinderGroup<Offset> _goLangFinderGroup;
+  TCMalloc::FinderGroup<Offset> _TCMallocFinderGroup;
   PThread::InfrastructureFinder<Offset> _pThreadInfrastructureFinder;
   FollyFibers::InfrastructureFinder<Offset> _follyFibersInfrastructureFinder;
   CPlusPlus::TypeInfoDirectory<Offset> _typeInfoDirectory;
@@ -236,6 +242,12 @@ class ProcessImage {
     runner.RegisterTagger(new Python::AllocationsTagger<Offset>(
         *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
         *_edgeIsFavored, _pythonFinderGroup.GetInfrastructureFinder(),
+        _virtualAddressMap));
+
+    runner.RegisterTagger(new GoLang::AllocationsTagger<Offset>(
+        *_allocationGraph, *_allocationTagHolder, *_edgeIsTainted,
+        *_edgeIsFavored, _goLangFinderGroup.GetInfrastructureFinder(),
+        _goLangFinderGroup.GetMappedPageRangeAllocationFinderIndex(),
         _virtualAddressMap));
 
     runner.ResolveAllAllocationTags();

@@ -1,0 +1,17 @@
+set logging file core.193373.symdefs
+set logging overwrite 1
+set logging redirect 1
+set logging on
+set height 0
+printf "ANCHOR 7ffff7dcc228\n"
+info symbol 0x7ffff7dcc228
+printf "ANCHOR 7ffff7dcc230\n"
+info symbol 0x7ffff7dcc230
+printf "ANCHOR 80e060\n"
+info symbol 0x80e060
+printf "ANCHOR 61e640\n"
+info symbol 0x61e640
+set logging off
+set logging overwrite 0
+set logging redirect 0
+printf "output written to core.193373.symdefs\n"

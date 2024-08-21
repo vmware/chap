@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -131,10 +132,7 @@ class InfrastructureFinder {
           bool isContiguous =
               (reader.ReadU32(nextArena + sizeof(uint32_t)) & 2) == 0;
           ArenaMapIterator itMainArena =
-              _arenas
-                  .insert(std::make_pair(_mainArenaAddress,
-                                         Arena(_mainArenaAddress)))
-                  .first;
+              _arenas.emplace(_mainArenaAddress, _mainArenaAddress).first;
           Arena& mainArena = itMainArena->second;
           mainArena._nextArena = nextArena;
           mainArena._top = top;
@@ -400,13 +398,10 @@ class InfrastructureFinder {
             ((headers[0] & ~(_maxHeapSize - 1)) == heapStart) ==
                 (headers[1] == 0)) {
           if (arenaAddress == heapStart + (_heapHeaderSize)) {
-            (void)_arenas
-                .insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
-                .first;
+            (void)_arenas.emplace(arenaAddress, arenaAddress);
           }
-          _heaps.insert(std::make_pair(
-              heapStart,
-              Heap(heapStart, headers[0], headers[2], headers[3], headers[1])));
+          (void)_heaps.try_emplace(heapStart, heapStart, headers[0], headers[2],
+                                   headers[3], headers[1]);
         }
       }
     }
@@ -548,9 +543,8 @@ class InfrastructureFinder {
             ((headers[0] & ~(_maxHeapSize - 1)) == heapStart) ==
                 (headers[1] == 0) &&
             _arenas.find(arenaAddress) != _arenas.end()) {
-          _heaps.insert(std::make_pair(
-              heapStart,
-              Heap(heapStart, headers[0], headers[2], headers[3], headers[1])));
+          (void)_heaps.try_emplace(heapStart, heapStart, headers[0], headers[2],
+                                   headers[3], headers[1]);
           addedHeapSizes += headers[2];
           newlyFoundHeaps.push_back(heapStart);
         }
@@ -564,12 +558,8 @@ class InfrastructureFinder {
     _heaps.clear();
     _arenas.clear();
     _mainArenaAddress = mainArenaAddress;
-    ArenaMapIterator it =
-        _arenas
-            .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
-            .first;
-    Arena& mainArena = it->second;
-    mainArena._nextArena = _mainArenaAddress;
+    _arenas.emplace(_mainArenaAddress, _mainArenaAddress)
+        .first->second._nextArena = _mainArenaAddress;
     _completeArenaRingFound = true;
     if (!DeriveArenaOffsets(false)) {
       // Note that this will fill in various values (_top, _size ...)
@@ -586,12 +576,8 @@ class InfrastructureFinder {
     size_t numArenas = arenaAddresses.size();
     for (size_t i = 0; i < numArenas; i++) {
       Offset arenaAddress = arenaAddresses[i];
-      ArenaMapIterator it =
-          _arenas.insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
-              .first;
-
-      Arena& arena = it->second;
-      arena._nextArena = arenaAddresses[(i + 1) % numArenas];
+      _arenas.emplace(arenaAddress, arenaAddress).first->second._nextArena =
+          arenaAddresses[(i + 1) % numArenas];
     }
 
     /*
@@ -847,9 +833,7 @@ class InfrastructureFinder {
       return false;
     }
     _mainArenaAddress = bestMainArenaCandidate;
-    (void)_arenas
-        .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
-        .first;
+    (void)_arenas.emplace(_mainArenaAddress, _mainArenaAddress);
 
     Offset arenaAddress = _mainArenaAddress;
     std::vector<Offset> inRing;
@@ -1268,7 +1252,7 @@ class InfrastructureFinder {
           sizeAndFlags = reader.ReadOffset(chunkAddr, 0);
         }
         if (numSizesOk == 10 || bytesLeft < 2 * OFFSET_SIZE) {
-          _arenas.insert(std::make_pair(arenaAddress, Arena(arenaAddress)))
+          _arenas.emplace(arenaAddress, arenaAddress)
               .first->second._missingOrUnfilledHeader = true;
           if (!CheckUnfilledArenaStart(arenaAddress)) {
             /*
@@ -1534,6 +1518,24 @@ class InfrastructureFinder {
             break;
           }
           mainArenaCandidate = 0;
+        } else {
+          /*
+           * Perhaps the top was clobbered, for example by a an overrun of
+           * the last used buffer.  We can forgive this if somewhere near
+           * the run limit there is a pointer to shortly before the run base.
+           */
+          Offset guess1 = runBase - 12 * OFFSET_SIZE - 2 * sizeof(int);
+          Offset guess2 = runBase - 10 * OFFSET_SIZE - 2 * sizeof(int);
+          Offset checkLimit = runLimit + 8 * OFFSET_SIZE;
+          for (Offset selfPointerCheck = runLimit;
+               selfPointerCheck < checkLimit;
+               selfPointerCheck += sizeof(Offset)) {
+            Offset selfPointer = reader.ReadOffset(selfPointerCheck, 0);
+            if (selfPointer == guess1 || selfPointer == guess2) {
+              mainArenaCandidate = selfPointer;
+              break;
+            }
+          }
         }
       }
       listAddr = runLimit;
@@ -1606,10 +1608,7 @@ class InfrastructureFinder {
                               ? mainArenaCandidate
                               : altMainArenaCandidate;
     }
-    ArenaMapIterator it =
-        _arenas
-            .insert(std::make_pair(_mainArenaAddress, Arena(_mainArenaAddress)))
-            .first;
+    (void) _arenas.emplace(_mainArenaAddress, _mainArenaAddress);
     _mainArenaIsContiguous =
         (reader.ReadU32(_mainArenaAddress + sizeof(int)) & 2) == 0;
     return true;
@@ -1862,8 +1861,9 @@ class InfrastructureFinder {
 
     if ((topLimit & 0xFFF) != 0) {
       std::cerr << "Main arena top chunk at " << std::hex << top
-                << " has corrupt size value " << topSize;
-      return false;
+                << " has corrupt size/status value 0x" << std::hex << topSize
+                << "\n ";
+          return false;
     }
 
     Offset base = topLimit - mainArena._size;

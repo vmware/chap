@@ -1,4 +1,5 @@
-// Copyright (c) 2020-2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2020-2021,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -10,6 +11,7 @@
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
 #include "InfrastructureFinder.h"
+#include "MappedPageRangeAllocationFinder.h"
 
 namespace chap {
 namespace GoLang {
@@ -27,18 +29,27 @@ class FinderGroup {
         _allocationDirectory(allocationDirectory),
         _unfilledImages(unfilledImages),
         _infrastructureFinder(moduleDirectory, virtualMemoryPartition,
-                              stackRegistry) {}
+                              stackRegistry),
+        _mappedPageRangeAllocationFinderIndex(~0) {}
 
   void Resolve() {
     _infrastructureFinder.Resolve();
-    // ??? mheap_ was found
-    //    Create a finder for allocations in spans
-    //    Add that finder to the allocation directory.
-    //    Create any region describers
+    if (_infrastructureFinder.FoundRangesAndSizes()) {
+      _mappedPageRangeAllocationFinder.reset(
+          new MappedPageRangeAllocationFinder<Offset>(
+              _virtualAddressMap, _infrastructureFinder, _allocationDirectory));
+      _mappedPageRangeAllocationFinderIndex = _allocationDirectory.AddFinder(
+          _mappedPageRangeAllocationFinder.get());
+      // TODO: create any region describers
+    }
   }
 
   const InfrastructureFinder<Offset>& GetInfrastructureFinder() const {
     return _infrastructureFinder;
+  }
+
+  size_t GetMappedPageRangeAllocationFinderIndex() const {
+    return _mappedPageRangeAllocationFinderIndex;
   }
 
   void AddDescribers(CompoundDescriber<Offset>& /* compoundDescriber */) const {
@@ -55,6 +66,9 @@ class FinderGroup {
   Allocations::Directory<Offset>& _allocationDirectory;
   UnfilledImages<Offset>& _unfilledImages;
   InfrastructureFinder<Offset> _infrastructureFinder;
+  std::unique_ptr<MappedPageRangeAllocationFinder<Offset> >
+      _mappedPageRangeAllocationFinder;
+  size_t _mappedPageRangeAllocationFinderIndex;
 };
 
 }  // namespace GoLang

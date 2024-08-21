@@ -1,10 +1,12 @@
-// Copyright (c) 2017-2021,2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2021,2023,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include "../../AnnotatorRegistry.h"
 #include "../../CPlusPlus/TypeInfoDirectory.h"
 #include "../../Commands/Runner.h"
 #include "../../Commands/Subcommand.h"
@@ -28,12 +30,14 @@ class Subcommand : public Commands::Subcommand {
              typename Visitor::Factory& visitorFactory,
              typename Iterator::Factory& iteratorFactory,
              const PatternDescriberRegistry<Offset>& patternDescriberRegistry,
+             const AnnotatorRegistry<Offset>& annotatorRegistry,
              SetCache<Offset>& setCache)
       : Commands::Subcommand(visitorFactory.GetCommandName(),
                              iteratorFactory.GetSetName()),
         _visitorFactory(visitorFactory),
         _iteratorFactory(iteratorFactory),
         _patternDescriberRegistry(patternDescriberRegistry),
+        _annotatorRegistry(annotatorRegistry),
         _setCache(setCache),
         _processImage(processImage) {}
 
@@ -272,7 +276,7 @@ class Subcommand : public Commands::Subcommand {
     }
 
     ExtendedVisitor<Offset, Visitor> extendedVisitor(
-        context, _processImage, _patternDescriberRegistry,
+        context, _processImage, _patternDescriberRegistry, _annotatorRegistry,
         allowMissingSignatures, visited);
     if (extendedVisitor.HasErrors() || switchError || signatureOrPatternError) {
       return;
@@ -283,8 +287,6 @@ class Subcommand : public Commands::Subcommand {
       return;
     }
     Visitor& visitorRef = *(visitor.get());
-
-    bool extendedVisitorIsEnabled = extendedVisitor.IsEnabled();
 
     const std::vector<std::string>& taints = _iteratorFactory.GetTaints();
     if (!taints.empty()) {
@@ -341,12 +343,7 @@ class Subcommand : public Commands::Subcommand {
         nextInGeometricSample *= geometricSampleBase;
       }
 
-      if (extendedVisitorIsEnabled) {
-        extendedVisitor.Visit(index, *allocation, visitorRef);
-      } else {
-        visited.Add(index);
-        visitorRef.Visit(index, *allocation);
-      }
+      extendedVisitor.Visit(index, *allocation, visitorRef);
     }
     if (assignDefault) {
       _setCache.GetDerived().Assign(visited);
@@ -398,6 +395,7 @@ class Subcommand : public Commands::Subcommand {
   typename Visitor::Factory& _visitorFactory;
   typename Iterator::Factory& _iteratorFactory;
   const PatternDescriberRegistry<Offset>& _patternDescriberRegistry;
+  const AnnotatorRegistry<Offset>& _annotatorRegistry;
   SetCache<Offset>& _setCache;
   const ProcessImage<Offset>& _processImage;
 

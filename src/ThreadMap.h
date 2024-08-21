@@ -1,4 +1,5 @@
-// Copyright (c) 2017,2021 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2021,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -13,16 +14,16 @@ class ThreadMap {
 
   struct ThreadInfo {
     ThreadInfo() : _registers(0){};
+    ThreadInfo(Offset *registers, size_t threadNum, Offset stackPointer)
+        : _registers(registers),
+          _threadNum(threadNum),
+          _stackPointer(stackPointer) {}
     Offset *_registers;
     size_t _threadNum;
     Offset _stackPointer;
   };
   void AddThread(Offset *registers, size_t threadNum, Offset stackPointer) {
-    _threads.push_back(ThreadInfo());
-    ThreadInfo &threadInfo = _threads.back();
-    threadInfo._registers = registers;
-    threadInfo._threadNum = threadNum;
-    threadInfo._stackPointer = stackPointer;
+    _threads.emplace_back(registers, threadNum, stackPointer);
   }
   typedef typename std::vector<ThreadInfo>::const_iterator const_iterator;
   const_iterator begin() const { return _threads.begin(); }

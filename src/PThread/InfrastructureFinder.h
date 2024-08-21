@@ -1,4 +1,5 @@
-// Copyright (c) 2021,2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2021,2022,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -44,38 +45,33 @@ class InfrastructureFinder {
       abort();
     }
 
-    typename ModuleDirectory<Offset>::const_iterator itEnd =
-        _moduleDirectory.end();
-    typename ModuleDirectory<Offset>::const_iterator it =
-        _moduleDirectory.begin();
-    for (; it != _moduleDirectory.end(); ++it) {
-      if ((it->first.find("ld-linux") == std::string::npos)) {
+    for (const auto& modulePathAndInfo : _moduleDirectory) {
+      if ((modulePathAndInfo.first.find("ld-linux") == std::string::npos)) {
         continue;
       }
       _pthreadLibraryPresent = true;
-      FindStacks(it->second);
+      FindStacks(modulePathAndInfo.second);
       if (_stacksFound) {
         _isResolved = true;
         return;
       }
     }
-    it = _moduleDirectory.begin();
-    for (; it != _moduleDirectory.end(); ++it) {
-      if ((it->first.find("pthread") == std::string::npos)) {
+    for (const auto& modulePathAndInfo : _moduleDirectory) {
+      if ((modulePathAndInfo.first.find("pthread") == std::string::npos)) {
         continue;
       }
       _pthreadLibraryPresent = true;
-      FindStacks(it->second);
+      FindStacks(modulePathAndInfo.second);
       if (_stacksFound) {
         _isResolved = true;
         return;
       }
     }
-    for (; it != _moduleDirectory.end(); ++it) {
-      if (it->first.find(".so") != std::string::npos) {
+    for (const auto& modulePathAndInfo : _moduleDirectory) {
+      if (modulePathAndInfo.first.find(".so") != std::string::npos) {
         continue;
       }
-      FindStacks(it->second);
+      FindStacks(modulePathAndInfo.second);
       if (_stacksFound) {
         _isResolved = true;
         return;

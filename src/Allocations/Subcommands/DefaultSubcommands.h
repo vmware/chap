@@ -1,7 +1,9 @@
-// Copyright (c) 2017-2019 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2019,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
+#include "../../AnnotatorRegistry.h"
 #include "../../Commands/Runner.h"
 #include "../../Commands/SetBasedCommand.h"
 #include "../../ProcessImage.h"
@@ -45,87 +47,105 @@ class DefaultSubcommands {
   DefaultSubcommands(
       const ProcessImage<Offset> &processImage,
       const Describer<Offset> &describer,
-      const PatternDescriberRegistry<Offset> &patternDescriberRegistry)
+      const PatternDescriberRegistry<Offset> &patternDescriberRegistry,
+      const AnnotatorRegistry<Offset> &annotatorRegistry)
       : _defaultVisitorFactories(describer),
         _setCache(processImage.GetAllocationDirectory().NumAllocations()),
         _singleAllocationSubcommands(
             processImage, _singleAllocationIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
-        _allocationsSubcommands(processImage, _allocationsIteratorFactory,
-                                _defaultVisitorFactories,
-                                patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
+        _allocationsSubcommands(
+            processImage, _allocationsIteratorFactory, _defaultVisitorFactories,
+            patternDescriberRegistry, annotatorRegistry, _setCache),
         _usedSubcommands(processImage, _usedIteratorFactory,
                          _defaultVisitorFactories, patternDescriberRegistry,
-                         _setCache),
+                         annotatorRegistry, _setCache),
         _freeSubcommands(processImage, _freeIteratorFactory,
                          _defaultVisitorFactories, patternDescriberRegistry,
-                         _setCache),
+                         annotatorRegistry, _setCache),
         _threadCachedSubcommands(processImage, _threadCachedIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry, _setCache),
+                                 patternDescriberRegistry, annotatorRegistry,
+                                 _setCache),
         _leakedSubcommands(processImage, _leakedIteratorFactory,
                            _defaultVisitorFactories, patternDescriberRegistry,
-                           _setCache),
+                           annotatorRegistry, _setCache),
         _unreferencedSubcommands(processImage, _unreferencedIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry, _setCache),
+                                 patternDescriberRegistry, annotatorRegistry,
+                                 _setCache),
         _anchoredSubcommands(processImage, _anchoredIteratorFactory,
                              _defaultVisitorFactories, patternDescriberRegistry,
-                             _setCache),
+                             annotatorRegistry, _setCache),
         _anchorPointsSubcommands(processImage, _anchorPointsIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry, _setCache),
+                                 patternDescriberRegistry, annotatorRegistry,
+                                 _setCache),
         _staticAnchoredSubcommands(processImage, _staticAnchoredIteratorFactory,
                                    _defaultVisitorFactories,
-                                   patternDescriberRegistry, _setCache),
+                                   patternDescriberRegistry, annotatorRegistry,
+                                   _setCache),
         _staticAnchorPointsSubcommands(
             processImage, _staticAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _stackAnchoredSubcommands(processImage, _stackAnchoredIteratorFactory,
                                   _defaultVisitorFactories,
-                                  patternDescriberRegistry, _setCache),
+                                  patternDescriberRegistry, annotatorRegistry,
+                                  _setCache),
         _stackAnchorPointsSubcommands(
             processImage, _stackAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _registerAnchoredSubcommands(
             processImage, _registerAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _registerAnchorPointsSubcommands(
             processImage, _registerAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _externalAnchoredSubcommands(
             processImage, _externalAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _externalAnchorPointsSubcommands(
             processImage, _externalAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _threadOnlyAnchoredSubcommands(
             processImage, _threadOnlyAnchoredIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _threadOnlyAnchorPointsSubcommands(
             processImage, _threadOnlyAnchorPointsIteratorFactory,
-            _defaultVisitorFactories, patternDescriberRegistry, _setCache),
+            _defaultVisitorFactories, patternDescriberRegistry,
+            annotatorRegistry, _setCache),
         _incomingSubcommands(processImage, _incomingIteratorFactory,
                              _defaultVisitorFactories, patternDescriberRegistry,
-                             _setCache),
+                             annotatorRegistry, _setCache),
         _exactIncomingSubcommands(processImage, _exactIncomingIteratorFactory,
                                   _defaultVisitorFactories,
-                                  patternDescriberRegistry, _setCache),
+                                  patternDescriberRegistry, annotatorRegistry,
+                                  _setCache),
         _outgoingSubcommands(processImage, _outgoingIteratorFactory,
                              _defaultVisitorFactories, patternDescriberRegistry,
-                             _setCache),
+                             annotatorRegistry, _setCache),
         _freeOutgoingSubcommands(processImage, _freeOutgoingIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry, _setCache),
+                                 patternDescriberRegistry, annotatorRegistry,
+                                 _setCache),
         _chainSubcommands(processImage, _chainIteratorFactory,
                           _defaultVisitorFactories, patternDescriberRegistry,
-                          _setCache),
+                          annotatorRegistry, _setCache),
         _reverseChainSubcommands(processImage, _reverseChainIteratorFactory,
                                  _defaultVisitorFactories,
-                                 patternDescriberRegistry, _setCache),
+                                 patternDescriberRegistry, annotatorRegistry,
+                                 _setCache),
         _derivedSubcommands(processImage, _derivedIteratorFactory,
                             _defaultVisitorFactories, patternDescriberRegistry,
-                            _setCache) {}
+                            annotatorRegistry, _setCache) {}
 
   void RegisterSubcommands(Commands::Runner &runner) {
     _singleAllocationSubcommands.RegisterSubcommands(runner);

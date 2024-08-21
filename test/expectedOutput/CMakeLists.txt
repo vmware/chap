@@ -1,4 +1,5 @@
-# Copyright (c) 2017-2020 VMware, Inc. All Rights Reserved.
+# Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 # SPDX-License-Identifier: GPL-2.0
 
 # Configure expectedOutput tests.
@@ -99,3 +100,7 @@ exout_test(PATH ELF64/LibcMalloc/HasInheritance FILES core.HasInheritance.37)
 exout_test(PATH ELF64/LibcMalloc/SpinningThreads FILES core.SpinningThreads.bz2)
 exout_test(PATH ELF64/LibcMalloc/SpinningThreads_longHeapHeader
            FILES core.SpinningThreads.bz2)
+exout_test(PATH ELF64/gperftools/gperftools-2.10/OneAllocated
+           FILES core.193373)
+exout_test(PATH ELF64/gperftools/gperftools-2.15/OneAllocated
+           FILES core.591414)

@@ -1,4 +1,5 @@
-// Copyright (c) 2018-2020,2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2018-2020,2022,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -57,11 +58,11 @@ class VectorBodyDescriber : public Allocations::PatternDescriber<Offset> {
       const Offset* candidates = (const Offset*)(image);
       for (size_t candidateIndex = 0; candidateIndex < numCandidates;
            ++candidateIndex) {
-        if (candidates[candidateIndex] == allocationAddress &&
-            candidates[candidateIndex + 1] >= allocationAddress &&
-            candidates[candidateIndex + 2] >= candidates[candidateIndex + 1] &&
-            candidates[candidateIndex + 2] > allocationAddress &&
-            candidates[candidateIndex + 2] <= allocationLimit) {
+        if ((candidates[candidateIndex] == allocationAddress) &&
+            (candidates[candidateIndex + 1] >= allocationAddress) &&
+            (candidates[candidateIndex + 2] >= candidates[candidateIndex + 1]) &&
+            (candidates[candidateIndex + 2] > allocationAddress) &&
+            (candidates[candidateIndex + 2] <= allocationLimit)) {
           vectors.emplace_back(
               InAllocation, incomingAddress,
               candidates[candidateIndex + 1] - allocationAddress,

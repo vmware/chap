@@ -1,4 +1,5 @@
-// Copyright (c) 2019-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2023,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -166,7 +167,7 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     switch (phase) {
       case Tagger::QUICK_INITIAL_CHECK:
         // Fast initial check, match must be solid
-        if (size < 2 * sizeof(Offset)) {
+        if (size <= 2 * sizeof(Offset)) {
           return true;
         }
         break;

@@ -1,8 +1,9 @@
-// Copyright (c) 2019,2020,2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019,2020,2022,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
-#include <string.h>
+#include <string_view>
 #include "../Allocations/PatternDescriber.h"
 #include "../ProcessImage.h"
 
@@ -29,13 +30,14 @@ class LongStringDescriber : public Allocations::PatternDescriber<Offset> {
     Offset numBytesFound = Base::_addressMap.FindMappedMemoryImage(
         allocation.Address(), &allocationImage);
     if (numBytesFound >= allocation.Size()) {
-      Offset stringLength = (Offset)(strlen(allocationImage));
+      std::string_view longString(allocationImage);
       output << "This allocation matches pattern LongString.\n";
-      output << "The string has 0x" << std::hex << stringLength << " bytes, ";
-      if (explain || stringLength < 77) {
-        output << "containing\n\"" << allocationImage << "\".\n";
+      output << "The string has 0x" << std::hex << longString.size()
+             << " bytes, ";
+      if (explain || longString.size() < 77) {
+        output << "containing\n\"" << longString << "\".\n";
       } else {
-        output << "starting with\n\"" << std::string(allocationImage, 77)
+        output << "starting with\n\"" << longString.substr(0, 77)
                << "\".\n";
       }
     }

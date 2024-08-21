@@ -1,4 +1,5 @@
-// Copyright (c) 2019-2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2019-2022,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -254,6 +255,11 @@ class ListAllocationsTagger : public Allocations::Tagger<Offset> {
       while (node != listHead) {
         AllocationIndex nodeIndex =
             _graph.SourceAllocationIndex(targetIndex, node);
+        if (nodeIndex == _numAllocations) {
+          std::cerr << "Warning: List headed at 0x" << std::hex << listHead
+                    << " has broken backwards chain near 0x" << node << "\n";
+          return;
+        }
         _tagHolder.TagAllocation(nodeIndex, _nodeTagIndex);
         _edgeIsFavored.Set(nodeIndex, targetIndex, true);
         targetIndex = nodeIndex;

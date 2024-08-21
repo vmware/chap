@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -60,6 +61,7 @@ class LinuxProcessImage : public ProcessImage<typename ElfImage::Offset> {
 
     Base::_pythonFinderGroup.Resolve();
     Base::_goLangFinderGroup.Resolve();
+    Base::_TCMallocFinderGroup.Resolve();
     Base::_pThreadInfrastructureFinder.Resolve();
     Base::_follyFibersInfrastructureFinder.Resolve();
 

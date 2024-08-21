@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -42,6 +43,9 @@ class ModuleFinder {
       }
 
       FindModulesByLinkMapChain();
+    }
+    if (_moduleDirectory.empty() && !TreatFirstMappedFileAsModule()) {
+      std::cerr << "Warning: No modules were found.\n";
     }
 
     _moduleDirectory.Resolve();
@@ -140,20 +144,54 @@ class ModuleFinder {
 
   bool FindLinkMapChainByMappedFiles() {
     for (const auto& range : _fileMappedRangeDirectory) {
-      const std::string& path = range._value._path;
-      if (path.find("/ld") == std::string::npos) {
+      if (range._value._path.find("/ld") == std::string::npos) {
         continue;
       }
-      Offset base = range._base;
-      Offset limit = range._limit;
       if ((range._value._flags & RangeAttributes::IS_WRITABLE) == 0) {
         continue;
       }
-      if (FindLinkMapChainFromRange(base, limit)) {
+      if (FindLinkMapChainFromRange(range._base, range._limit)) {
         return true;
       }
     }
     return false;
+  }
+
+  bool TreatFirstMappedFileAsModule() {
+    if (_fileMappedRangeDirectory.empty()) {
+      return false;
+    }
+    auto it = _fileMappedRangeDirectory.begin();
+    const std::string& path = it->_value._path;
+    if (path.empty()) {
+      return false;
+    }
+
+    // TODO: Fix this next statement so that it is possible to look at the
+    // corresponding executable if it is present is consistent with what
+    // is mapped in the core.
+    _moduleDirectory.AddModule(path,
+                               [](ModuleImage<Offset>&) { return false; });
+
+    const char* image;
+    Offset numImageBytes =
+        _virtualAddressMap.FindMappedMemoryImage(it->_base, &image);
+    if (FindRangesForModuleByMappedProgramHeaders(image, numImageBytes, path, 0,
+                                                  it->_base, it->_limit)) {
+      return true;
+    }
+
+    for (const auto& range : _fileMappedRangeDirectory) {
+      if (range._value._path != path) {
+        break;
+      }
+      // TODO: Try to extend the range if it is writable and the mapped
+      // range from the file mapping doesn't reflect the full range (for
+      // example, because some of the bss area is missing).
+      _moduleDirectory.AddRange(range._base, range._limit - range._base, 0,
+                                range._value._path, range._value._flags);
+    }
+    return true;
   }
 
   bool FindLinkMapChainByShortUnclaimedWritableRanges() {

@@ -1,4 +1,5 @@
-// Copyright (c) 2017 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -19,7 +20,7 @@ class SetBasedCommand : public Command {
                 << "\" as subcommand of \"" << GetName() << "\".\n";
       return;
     }
-    if (!_subcommands.insert(std::make_pair(setName, &subcommand)).second) {
+    if (!_subcommands.try_emplace(setName, &subcommand).second) {
       std::cerr << "Attempted to register subcommand " << GetName() << " "
                 << setName << "\" more than once.\n";
     }
@@ -60,9 +61,8 @@ class SetBasedCommand : public Command {
            it != _subcommands.end(); ++it) {
         output << it->first << "\n";
       }
-      output << "Try \"help " << GetName()
-             << " <setname>\" for more"
-                " information.\n";
+      output << "Try \"help " << GetName() << " <setname>\" for more"
+                                              " information.\n";
     }
   }
 

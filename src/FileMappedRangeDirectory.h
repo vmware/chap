@@ -1,4 +1,5 @@
-// Copyright (c) 2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2023,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -25,6 +26,11 @@ class FileMappedRangeDirectory {
     RangeInfo(const std::string& path, Offset offsetInFile, int flags)
         : _path(path), _offsetInFile(offsetInFile), _flags(flags) {}
     RangeInfo() : _offsetInFile(0), _flags(0) {}
+    RangeInfo(const RangeInfo& other) {
+      _path = other._path;
+      _offsetInFile = other._offsetInFile;
+      _flags = other._flags;
+    }
     RangeInfo& operator=(const RangeInfo& other) {
       if (this != &other) {
         _path = other._path;

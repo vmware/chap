@@ -1,4 +1,5 @@
-// Copyright (c) 2017,2020 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017,2020,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -26,8 +27,8 @@ class Describer {
       bool switchError = false;
       size_t numShowUpToArguments = context.GetNumArguments("showUpTo");
       for (size_t i = 0; i < numShowUpToArguments; i++) {
-        // We really expect at most one, but just pick the largest if
-        // not.
+        // We really expect at most one.  Pick the largest if not, but
+        // require any arguments to be well formed.
         Offset upTo;
         if (!context.ParseArgument("showUpTo", i, upTo)) {
           switchError = true;

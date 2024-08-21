@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2023 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -6,12 +7,14 @@
 #include "Allocations/PatternDescriberRegistry.h"
 #include "Allocations/Subcommands/DefaultSubcommands.h"
 #include "Allocations/Subcommands/SummarizeSignatures.h"
+#include "AnnotatorRegistry.h"
 #include "CPlusPlus/COWStringBodyDescriber.h"
 #include "CPlusPlus/DequeBlockDescriber.h"
 #include "CPlusPlus/DequeMapDescriber.h"
 #include "CPlusPlus/ListNodeDescriber.h"
 #include "CPlusPlus/LongStringDescriber.h"
 #include "CPlusPlus/MapOrSetNodeDescriber.h"
+#include "CPlusPlus/SSOStringAnnotator.h"
 #include "CPlusPlus/Subcommands/SummarizeStringUsers.h"
 #include "CPlusPlus/UnorderedMapOrSetBucketsDescriber.h"
 #include "CPlusPlus/UnorderedMapOrSetNodeDescriber.h"
@@ -25,6 +28,10 @@
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
 #include "CompoundDescriber.h"
+#include "GoLang/GoChannelDescriber.h"
+#include "GoLang/GoChannelBufferDescriber.h"
+#include "GoLang/GoRoutineDescriber.h"
+#include "GoLang/GoRoutineStackDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
 #include "ModuleAlignmentGapDescriber.h"
@@ -195,7 +202,8 @@ class ProcessImageCommandHandler {
         _summarizeSignaturesSubcommand(processImage),
         _summarizeStringUsersSubcommand(processImage),
         _defaultAllocationsSubcommands(processImage, _allocationDescriber,
-                                       _patternDescriberRegistry),
+                                       _patternDescriberRegistry,
+                                       _annotatorRegistry),
         _dequeMapDescriber(processImage),
         _dequeBlockDescriber(processImage),
         _unorderedMapOrSetBucketsDescriber(processImage),
@@ -205,6 +213,7 @@ class ProcessImageCommandHandler {
         _listNodeDescriber(processImage),
         _longStringDescriber(processImage),
         _COWStringBodyDescriber(processImage),
+        _SSOStringAnnotator(processImage),
         _SSL_CTXDescriber(processImage),
         _SSLDescriber(processImage),
         _pyDictKeysObjectDescriber(processImage),
@@ -214,7 +223,11 @@ class ProcessImageCommandHandler {
         _pythonArenaStructArrayDescriber(processImage),
         _pythonMallocedArenaDescriber(processImage),
         _pythonDequeBlockDescriber(processImage),
-        _pythonListItemsDescriber(processImage) {
+        _pythonListItemsDescriber(processImage),
+        _goChannelDescriber(processImage),
+        _goChannelBufferDescriber(processImage),
+        _goRoutineDescriber(processImage),
+        _goRoutineStackDescriber(processImage) {
     _patternDescriberRegistry.Register(_dequeMapDescriber);
     _patternDescriberRegistry.Register(_dequeBlockDescriber);
     _patternDescriberRegistry.Register(_unorderedMapOrSetBucketsDescriber);
@@ -234,6 +247,10 @@ class ProcessImageCommandHandler {
     _patternDescriberRegistry.Register(_pythonMallocedArenaDescriber);
     _patternDescriberRegistry.Register(_pythonDequeBlockDescriber);
     _patternDescriberRegistry.Register(_pythonListItemsDescriber);
+    _patternDescriberRegistry.Register(_goChannelDescriber);
+    _patternDescriberRegistry.Register(_goChannelBufferDescriber);
+    _patternDescriberRegistry.Register(_goRoutineDescriber);
+    _patternDescriberRegistry.Register(_goRoutineStackDescriber);
     // Leave it to any derived class to add any describers.
   }
 
@@ -279,6 +296,7 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _summarizeSignaturesSubcommand);
     RegisterSubcommand(r, _summarizeStringUsersSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
+    _annotatorRegistry.RegisterAnnotator(_SSOStringAnnotator);
   }
 
  protected:
@@ -291,6 +309,7 @@ class ProcessImageCommandHandler {
   PThread::StackOverflowGuardDescriber<Offset> _stackOverflowGuardDescriber;
   Allocations::Describer<Offset> _allocationDescriber;
   CompoundDescriber<Offset> _compoundDescriber;
+  AnnotatorRegistry<Offset> _annotatorRegistry;
   Commands::CountCommand _countCommand;
   Commands::SummarizeCommand _summarizeCommand;
   Commands::EnumerateCommand _enumerateCommand;
@@ -381,6 +400,7 @@ class ProcessImageCommandHandler {
   CPlusPlus::ListNodeDescriber<Offset> _listNodeDescriber;
   CPlusPlus::LongStringDescriber<Offset> _longStringDescriber;
   CPlusPlus::COWStringBodyDescriber<Offset> _COWStringBodyDescriber;
+  CPlusPlus::SSOStringAnnotator<Offset> _SSOStringAnnotator;
   SSL_CTXDescriber<Offset> _SSL_CTXDescriber;
   SSLDescriber<Offset> _SSLDescriber;
   Python::PyDictKeysObjectDescriber<Offset> _pyDictKeysObjectDescriber;
@@ -392,6 +412,10 @@ class ProcessImageCommandHandler {
   Python::MallocedArenaDescriber<Offset> _pythonMallocedArenaDescriber;
   Python::DequeBlockDescriber<Offset> _pythonDequeBlockDescriber;
   Python::ListItemsDescriber<Offset> _pythonListItemsDescriber;
+  GoLang::GoChannelDescriber<Offset> _goChannelDescriber;
+  GoLang::GoChannelBufferDescriber<Offset> _goChannelBufferDescriber;
+  GoLang::GoRoutineDescriber<Offset> _goRoutineDescriber;
+  GoLang::GoRoutineStackDescriber<Offset> _goRoutineStackDescriber;
 };
 
 }  // namespace chap

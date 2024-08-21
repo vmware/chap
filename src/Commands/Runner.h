@@ -1,4 +1,5 @@
-// Copyright (c) 2017-2020,2022 VMware, Inc. All Rights Reserved.
+// Copyright (c) 2017-2020,2022,2024 Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
@@ -43,7 +44,7 @@ class Input {
       return false;
     }
     _inputStack.push(input);
-    _scriptContext.push_back(LineInfo(inputPath, 0));
+    _scriptContext.emplace_back(inputPath, 0);
     return true;
   }
   void TerminateAllScripts() {
@@ -747,7 +748,7 @@ class Runner {
   }
 
   void AddCommand(Command& command) {
-    if (!_commands.insert(std::make_pair(command.GetName(), &command)).second) {
+    if (!_commands.try_emplace(command.GetName(), &command).second) {
       std::cerr << "Warning: Attempted to declare " << command.GetName()
                 << " multiple times.\n";
     }
