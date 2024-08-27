@@ -23,8 +23,8 @@ any questions about the CLA process, please refer to our
 * __Linux__ - Linux is the only supported platform for building and running
   `chap`. The primary testing distribution is [Ubuntu](www.ubuntu.com) LTS.
 
-* __C++17__ - Currently supported compilers are:
-  * __GCC 9__ 
+* __C++17__ - Some features of c++17 are used.  It is known to compile with
+   gcc9 and gcc11 but probably works with gcc9 or later.
 
 * __CMake__ - We require CMake 3.5.
 
