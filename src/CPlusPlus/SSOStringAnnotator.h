@@ -106,13 +106,14 @@ class SSOStringAnnotator : public Annotator<Offset> {
      * The caller will put the header line, with the relevant addresses
      * and the annotator name.
      */
-    std::cerr << prefix << "SSO string with length 0x" << std::hex << length
+    Commands::Output& output = context.GetOutput();
+    output << prefix << "SSO string with length 0x" << std::hex << length
               << " and  contents";
     size_t charsAvailable = 80 - prefix.size() - 2;
     if (length <= charsAvailable) {
-      std::cerr << "\n" << prefix << "\"" << chars << "\"\n";
+      output << "\n" << prefix << "\"" << chars << "\"\n";
     } else {
-      std::cerr << " starting with\n"
+      output << " starting with\n"
                 << prefix << "\"" << std::string_view(chars, charsAvailable)
                 << "\"\n";
     }
