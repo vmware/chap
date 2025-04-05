@@ -1,9 +1,10 @@
-// Copyright (c) 2019-2023,2024 Broadcom. All Rights Reserved.
+// Copyright (c) 2019-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+
 #include "../Allocations/EdgePredicate.h"
 #include "../Allocations/Graph.h"
 #include "../Allocations/TagHolder.h"
@@ -223,7 +224,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
                                  minCapacity, maxCapacity, staticAnchors,
                                  _staticAnchorReader)) {
       CheckLongStringAnchorIn(contiguousImage, index, address, stringLength,
-                              minCapacity, maxCapacity, stackAnchors, _stackAnchorReader);
+                              minCapacity, maxCapacity, stackAnchors,
+                              _stackAnchorReader);
     }
   }
   bool CheckLongStringAnchorIn(const ContiguousImage& charsImage,
@@ -248,7 +250,8 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         }
 
         if ((stringLength < 2 * sizeof(Offset)) &&
-            _addressMap.find(*(charsImage.FirstOffset())) != _addressMap.end()) {
+            _addressMap.find(*(charsImage.FirstOffset())) !=
+                _addressMap.end()) {
           /* A string short enough to fit in the header is also a sufficiently
            * week pattern that if we have something that looks like a pointer at
            * the start, the match is probably a coincidence.
