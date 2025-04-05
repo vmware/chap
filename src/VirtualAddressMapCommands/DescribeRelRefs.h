@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Broadcom. All Rights Reserved.
+// Copyright (c) 2019,2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
@@ -44,10 +44,14 @@ class DescribeRelRefs : public Commands::Subcommand {
         const unsigned char* nextCandidate = (const unsigned char*)(rangeImage);
 
         Offset addr = it.Base();
+        Offset valueToMatchMinusSizeofInt = valueToMatch - sizeof(int);
         for (const unsigned char* limit =
                  nextCandidate + it.Size() - sizeof(int) + 1;
              nextCandidate < limit; nextCandidate++) {
-          if (addr + sizeof(int) + *(int*)(nextCandidate) == valueToMatch) {
+          if (addr == valueToMatchMinusSizeofInt) {
+            continue;
+          }
+          if (addr + *(int*)(nextCandidate) == valueToMatchMinusSizeofInt) {
             output << std::hex << addr << "\n";
             _describer.Describe(context, addr, false, true);
             output << "\n";
