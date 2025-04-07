@@ -1,9 +1,10 @@
-// Copyright (c) 2019-2022 Broadcom. All Rights Reserved.
+// Copyright (c) 2019-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+
 #include "../Allocations/EdgePredicate.h"
 #include "../Allocations/Graph.h"
 #include "../Allocations/TagHolder.h"
@@ -54,6 +55,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
         _intType(infrastructureFinder.IntType()),
         _bytesType(infrastructureFinder.BytesType()),
         _floatType(infrastructureFinder.FloatType()),
+        _setType(infrastructureFinder.SetType()),
+        _frozensetType(infrastructureFinder.FrozenSetType()),
         _dequeType(infrastructureFinder.DequeType()),
         _firstBlockInDeque(infrastructureFinder.FirstBlockInDeque()),
         _lastBlockInDeque(infrastructureFinder.LastBlockInDeque()),
@@ -74,6 +77,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
             _tagHolder.RegisterTag("%PyDictKeysObject", true, true)),
         _dictValuesArrayTagIndex(
             _tagHolder.RegisterTag("%PyDictValuesArray", true, true)),
+        _setEntryArrayTagIndex(
+            _tagHolder.RegisterTag("%PySetEntryArray", true, true)),
         _listItemsTagIndex(
             _tagHolder.RegisterTag("%PythonListItems", true, true)),
         _dequeBlockTagIndex(
@@ -173,6 +178,8 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   const Offset _intType;
   const Offset _bytesType;
   const Offset _floatType;
+  const Offset _setType;
+  const Offset _frozensetType;
   const Offset _dequeType;
   const Offset _firstBlockInDeque;
   const Offset _lastBlockInDeque;
@@ -186,6 +193,7 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   TagIndex _containerPythonObjectTagIndex;
   TagIndex _dictKeysObjectTagIndex;
   TagIndex _dictValuesArrayTagIndex;
+  TagIndex _setEntryArrayTagIndex;
   TagIndex _listItemsTagIndex;
   TagIndex _dequeBlockTagIndex;
   TagIndex _arenaStructArrayTagIndex;
@@ -350,6 +358,43 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
                   _edgeIsFavored.Set(index, valuesIndex, true);
                 }
               }
+            } else if (typeCandidate == _setType ||
+                       typeCandidate == _frozensetType) {
+              Offset mask = reader.ReadOffset(
+                  node + _garbageCollectionHeaderSize +
+                      InfrastructureFinder<Offset>::MASK_IN_PYSETOBJECT,
+                  0);
+              if (((mask + 1) & mask) != 0) {
+                std::cerr << "Warning: Python set or frozenset allocation at 0x"
+                          << std::hex << node << " has unexpected mask 0x"
+                          << mask << ".\n";
+                continue;
+              }
+              Offset table = reader.ReadOffset(
+                  node + _garbageCollectionHeaderSize +
+                      InfrastructureFinder<Offset>::TABLE_IN_PYSETOBJECT,
+                  0);
+              if (mask == InfrastructureFinder<Offset>::MIN_PYSETOBJECT_MASK) {
+              } else {
+                AllocationIndex tableIndex =
+                    _directory.AllocationIndexOf(table);
+                if (tableIndex == _numAllocations) {
+                  std::cerr
+                      << "Warning: Python set or frozenset allocation at 0x"
+                      << std::hex << node << " has unexpected table 0x" << table
+                      << ".\n";
+                  continue;
+                }
+                _tagHolder.TagAllocation(tableIndex, _setEntryArrayTagIndex);
+                // All edges except the one to the entry array are considered
+                // tainted.  For example there may be stale references from
+                // small_table.
+                _edgeIsTainted.SetAllOutgoing(index, true);
+                _edgeIsTainted.Set(index, tableIndex, false);
+                // The reference via the table field is considered favored
+                // as it holds the entry array.
+                _edgeIsFavored.Set(index, tableIndex, true);
+              }
             } else if (typeCandidate == _listType) {
               Offset itemsAddr = reader.ReadOffset(
                   node + _garbageCollectionHeaderSize + _itemsInList, ~0);
@@ -415,10 +460,10 @@ class AllocationsTagger : public Allocations::Tagger<Offset> {
   }
 
   /*
-  * Check if the allocation contains a garbage collection header for
-  * an untracked python object followed by a PyObject and tag it
-  * as a ContainerPythonObject if so.
-  */
+   * Check if the allocation contains a garbage collection header for
+   * an untracked python object followed by a PyObject and tag it
+   * as a ContainerPythonObject if so.
+   */
 
   bool TagAsUntrackedContainerPythonObject(
       const ContiguousImage& contiguousImage, AllocationIndex index,
