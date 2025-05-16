@@ -47,6 +47,7 @@ class EnumerateRelRefs : public Commands::Subcommand {
                  nextCandidate + it.Size() - sizeof(int) + 1;
              nextCandidate < limit; nextCandidate++) {
           if (addr == valueToMatchMinusSizeofInt) {
+            addr++;
             continue;
           }
           if (addr + *(int*)(nextCandidate) == valueToMatchMinusSizeofInt) {
