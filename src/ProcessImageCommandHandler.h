@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// Copyright (c) 2017-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
@@ -28,12 +28,13 @@
 #include "Commands/ShowCommand.h"
 #include "Commands/SummarizeCommand.h"
 #include "CompoundDescriber.h"
-#include "GoLang/GoChannelDescriber.h"
 #include "GoLang/GoChannelBufferDescriber.h"
+#include "GoLang/GoChannelDescriber.h"
 #include "GoLang/GoRoutineDescriber.h"
 #include "GoLang/GoRoutineStackDescriber.h"
 #include "InModuleDescriber.h"
 #include "KnownAddressDescriber.h"
+#include "ModuleAddressAnnotator.h"
 #include "ModuleAlignmentGapDescriber.h"
 #include "ModuleCommands/DescribeModules.h"
 #include "ModuleCommands/ListModules.h"
@@ -214,6 +215,7 @@ class ProcessImageCommandHandler {
         _longStringDescriber(processImage),
         _COWStringBodyDescriber(processImage),
         _SSOStringAnnotator(processImage),
+        _moduleAddressAnnotator(processImage),
         _SSL_CTXDescriber(processImage),
         _SSLDescriber(processImage),
         _pyDictKeysObjectDescriber(processImage),
@@ -297,6 +299,7 @@ class ProcessImageCommandHandler {
     RegisterSubcommand(r, _summarizeStringUsersSubcommand);
     _defaultAllocationsSubcommands.RegisterSubcommands(r);
     _annotatorRegistry.RegisterAnnotator(_SSOStringAnnotator);
+    _annotatorRegistry.RegisterAnnotator(_moduleAddressAnnotator);
   }
 
  protected:
@@ -401,6 +404,7 @@ class ProcessImageCommandHandler {
   CPlusPlus::LongStringDescriber<Offset> _longStringDescriber;
   CPlusPlus::COWStringBodyDescriber<Offset> _COWStringBodyDescriber;
   CPlusPlus::SSOStringAnnotator<Offset> _SSOStringAnnotator;
+  ModuleAddressAnnotator<Offset> _moduleAddressAnnotator;
   SSL_CTXDescriber<Offset> _SSL_CTXDescriber;
   SSLDescriber<Offset> _SSLDescriber;
   Python::PyDictKeysObjectDescriber<Offset> _pyDictKeysObjectDescriber;
