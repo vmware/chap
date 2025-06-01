@@ -26,6 +26,7 @@ class Subcommand : public Commands::Subcommand {
  public:
   typedef typename Directory<Offset>::AllocationIndex AllocationIndex;
   typedef typename Directory<Offset>::Allocation Allocation;
+  enum SetOperationType { ASSIGN, ADD, SUBTRACT };
   Subcommand(const ProcessImage<Offset>& processImage,
              typename Visitor::Factory& visitorFactory,
              typename Iterator::Factory& iteratorFactory,
@@ -181,8 +182,7 @@ class Subcommand : public Commands::Subcommand {
       }
     }
 
-    bool assignDefault = false;
-    bool subtractFromDefault = false;
+    SetOperationType setOperationType;
 
     size_t numSetOperationArguments = context.GetNumArguments("setOperation");
     if (numSetOperationArguments > 0) {
@@ -192,9 +192,11 @@ class Subcommand : public Commands::Subcommand {
       }
       const std::string& operation = context.Argument("setOperation", 0);
       if (operation == "assign") {
-        assignDefault = true;
+        setOperationType = SetOperationType::ASSIGN;
+      } else if (operation == "add") {
+        setOperationType = SetOperationType::ADD;
       } else if (operation == "subtract") {
-        subtractFromDefault = true;
+        setOperationType = SetOperationType::SUBTRACT;
       } else {
         std::cerr << "Set operation " << operation << " is not supported.\n";
         switchError = true;
@@ -345,10 +347,16 @@ class Subcommand : public Commands::Subcommand {
 
       extendedVisitor.Visit(index, *allocation, visitorRef);
     }
-    if (assignDefault) {
-      _setCache.GetDerived().Assign(visited);
-    } else if (subtractFromDefault) {
-      _setCache.GetDerived().Subtract(visited);
+    switch (setOperationType) {
+      case SetOperationType::ASSIGN:
+        _setCache.GetDerived().Assign(visited);
+        break;
+      case SetOperationType::ADD:
+        _setCache.GetDerived().Add(visited);
+        break;
+      case SetOperationType::SUBTRACT:
+        _setCache.GetDerived().Subtract(visited);
+        break;
     }
   }
 
@@ -386,6 +394,10 @@ class Subcommand : public Commands::Subcommand {
            " be used for automated bug detection.\n\n"
            "/geometricSample <base-in-decimal> causes only entries 1, b, "
            "b**2, b**3...\n to be visited.\n\n"
+           "use \"/setOperation <operation>\" to derive a custome set.\n"
+           " assign: initialize the derived set based on some calculated set.\n"
+           " add: add some calculated set to the derived set.\n"
+           " subtrace: subtract some calculated set from the derived set.\n\n"
            "After restrictions have been applied, the /extend switch can be"
            " used to extend\n"
            " the set to adjacent allocations.  See USERGUIDE.md for details.\n";
