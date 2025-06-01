@@ -1,13 +1,10 @@
-// Copyright (c) 2017-2024 Broadcom. All Rights Reserved.
+// Copyright (c) 2017-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
-#include <map>
-#include <regex>
-#include "../Allocations/TaggerRunner.h"
-#include "../CPlusPlus/Unmangler.h"
+
 #include "../FileMappedRangeDirectory.h"
 #include "../LibcMalloc/FinderGroup.h"
 #include "../ModuleDirectory.h"
@@ -103,6 +100,9 @@ class ModuleFinder {
         size_t chainLength = 1;
 
         Offset link = reader.ReadOffset(candidate + PREV_IN_LINK_MAP, 0xbad);
+        if (link == 0) {
+          continue;
+        }
         Offset prev = candidate;
         while (link != 0 && ++chainLength < 1000) {
           if ((linkReader.ReadOffset(link + REAL_LINK_MAP_IN_LINK_MAP, 0xbad) !=
@@ -249,7 +249,7 @@ class ModuleFinder {
         }
       }
     }
-    if (bestNumVotes + 1 < chainLength) {
+    if (bestNumVotes == 0 || bestNumVotes + 1 < chainLength) {
       return false;
     }
     _baseInLinkMap = bestCandidate;
