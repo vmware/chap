@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Broadcom. All Rights Reserved.
+// Copyright (c) 2020-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <regex>
 #include <unordered_set>
+
 #include "../ModuleDirectory.h"
 #include "../VirtualAddressMap.h"
 #include "../VirtualMemoryPartition.h"
@@ -19,6 +20,9 @@ class InfrastructureFinder {
   static constexpr Offset TYPE_IN_PYOBJECT = sizeof(Offset);
   static constexpr Offset LENGTH_IN_STR = 2 * sizeof(Offset);
   static constexpr Offset UNKNOWN_OFFSET = ~0;
+  static constexpr Offset MASK_IN_PYSETOBJECT = 4 * sizeof(Offset);
+  static constexpr Offset TABLE_IN_PYSETOBJECT = 5 * sizeof(Offset);
+  static constexpr Offset MIN_PYSETOBJECT_MASK = 7;
   enum MajorVersion { Version2, Version3, VersionUnknownOrOther };
   InfrastructureFinder(const ModuleDirectory<Offset>& moduleDirectory,
                        VirtualMemoryPartition<Offset>& partition,
@@ -70,6 +74,8 @@ class InfrastructureFinder {
         _intType(0),
         _bytesType(0),
         _floatType(0),
+        _setType(0),
+        _frozensetType(0),
         _dequeType(0),
         _firstBlockInDeque(2 * sizeof(Offset)),
         _lastBlockInDeque(3 * sizeof(Offset)),
@@ -137,12 +143,10 @@ class InfrastructureFinder {
         FindArenaStructArrayAndTypes(*exeModuleInfo);
       }
     }
-    _garbageCollectionRefcntShift =
-        (_majorVersion == Version2)
-            ? 0
-            : (_majorVersion == Version3)
-                  ? 1
-                  : (_keysInDict == PYTHON2_KEYS_IN_DICT) ? 0 : 1;
+    _garbageCollectionRefcntShift = (_majorVersion == Version2)             ? 0
+                                    : (_majorVersion == Version3)           ? 1
+                                    : (_keysInDict == PYTHON2_KEYS_IN_DICT) ? 0
+                                                                            : 1;
     _isResolved = true;
   }
 
@@ -212,6 +216,8 @@ class InfrastructureFinder {
   Offset IntType() const { return _intType; }
   Offset BytesType() const { return _bytesType; }
   Offset FloatType() const { return _floatType; }
+  Offset SetType() const { return _setType; }
+  Offset FrozenSetType() const { return _frozensetType; }
   Offset DequeType() const { return _dequeType; }
   Offset FirstBlockInDeque() const { return _firstBlockInDeque; }
   Offset LastBlockInDeque() const { return _lastBlockInDeque; }
@@ -312,12 +318,10 @@ class InfrastructureFinder {
     }
     triples = keys + _dictKeysHeaderSize;
     if (_dictKeysHaveIndex) {
-      triples += (capacity * ((capacity < 0x80) ? ((Offset)(1))
-                                                : (capacity < 0x8000)
-                                                      ? ((Offset)(2))
-                                                      : (capacity < 0x80000000)
-                                                            ? ((Offset)(4))
-                                                            : ((Offset)(8))));
+      triples += (capacity * ((capacity < 0x80)         ? ((Offset)(1))
+                              : (capacity < 0x8000)     ? ((Offset)(2))
+                              : (capacity < 0x80000000) ? ((Offset)(4))
+                                                        : ((Offset)(8))));
       Offset numElements = reader.ReadOffset(keys + _numElementsInDictKeys, 0);
       limit = triples + numElements * entrySize;
     } else {
@@ -425,6 +429,8 @@ class InfrastructureFinder {
   Offset _intType;
   Offset _bytesType;
   Offset _floatType;
+  Offset _setType;
+  Offset _frozensetType;
   Offset _dequeType;
   Offset _firstBlockInDeque;
   Offset _lastBlockInDeque;
@@ -652,15 +658,16 @@ class InfrastructureFinder {
         }
       }
     }
-    std::sort(_activeIndices.begin(), _activeIndices.end(), [&](uint32_t i0,
-                                                                uint32_t i1) {
-      return reader.ReadOffset(this->_arenaStructArray +
-                                   ((Offset)(i0)) * this->_arenaStructSize,
-                               0xbad) <
-             reader.ReadOffset(this->_arenaStructArray +
-                                   ((Offset)(i1)) * this->_arenaStructSize,
-                               0xbad);
-    });
+    std::sort(
+        _activeIndices.begin(), _activeIndices.end(),
+        [&](uint32_t i0, uint32_t i1) {
+          return reader.ReadOffset(this->_arenaStructArray +
+                                       ((Offset)(i0)) * this->_arenaStructSize,
+                                   0xbad) <
+                 reader.ReadOffset(this->_arenaStructArray +
+                                       ((Offset)(i1)) * this->_arenaStructSize,
+                                   0xbad);
+        });
     if (_arenaStructCount != 0) {
       FindTypes(moduleBase, moduleLimit, bestBase, bestLimit, reader);
       if (_typeType != 0) {
@@ -917,6 +924,14 @@ class InfrastructureFinder {
     }
     if (_floatType == 0 && currentName == "float") {
       _floatType = pythonType;
+      return;
+    }
+    if (_setType == 0 && currentName == "set") {
+      _setType = pythonType;
+      return;
+    }
+    if (_frozensetType == 0 && currentName == "frozenset") {
+      _frozensetType = pythonType;
       return;
     }
     if (_dequeType == 0 && currentName == "collections.deque") {

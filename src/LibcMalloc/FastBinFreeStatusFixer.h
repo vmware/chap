@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2023 Broadcom. All Rights Reserved.
+// Copyright (c) 2017-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
@@ -114,7 +114,7 @@ class FastBinFreeStatusFixer {
                                 "not in the core", corruptionReported);
       }
     }
-    if ((reader.ReadOffset(arenaAddress, 0) & 1) != 0) {
+    if (reader.ReadU32(arenaAddress, 0) != 0) {
       size_t maxChainLength = 0;
       Offset longestChainStart = 0;
       Offset stopMarkingLongestChainAt = 0;

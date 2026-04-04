@@ -1,9 +1,10 @@
-// Copyright (c) 2019-2023,2024 Broadcom. All Rights Reserved.
+// Copyright (c) 2019-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string.h>
+
 #include "../Allocations/EdgePredicate.h"
 #include "../Allocations/Graph.h"
 #include "../Allocations/TagHolder.h"
@@ -219,14 +220,16 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
     }
     Offset maxCapacity = size - 1;
 
-    if (!CheckLongStringAnchorIn(index, address, stringLength, minCapacity,
-                                 maxCapacity, staticAnchors,
+    if (!CheckLongStringAnchorIn(contiguousImage, index, address, stringLength,
+                                 minCapacity, maxCapacity, staticAnchors,
                                  _staticAnchorReader)) {
-      CheckLongStringAnchorIn(index, address, stringLength, minCapacity,
-                              maxCapacity, stackAnchors, _stackAnchorReader);
+      CheckLongStringAnchorIn(contiguousImage, index, address, stringLength,
+                              minCapacity, maxCapacity, stackAnchors,
+                              _stackAnchorReader);
     }
   }
-  bool CheckLongStringAnchorIn(AllocationIndex charsIndex, Offset charsAddress,
+  bool CheckLongStringAnchorIn(const ContiguousImage& charsImage,
+                               AllocationIndex charsIndex, Offset charsAddress,
                                Offset stringLength, Offset minCapacity,
                                Offset maxCapacity,
                                const std::vector<Offset>* anchors,
@@ -246,6 +249,15 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
           continue;
         }
 
+        if ((stringLength < 2 * sizeof(Offset)) &&
+            _addressMap.find(*(charsImage.FirstOffset())) !=
+                _addressMap.end()) {
+          /* A string short enough to fit in the header is also a sufficiently
+           * week pattern that if we have something that looks like a pointer at
+           * the start, the match is probably a coincidence.
+           */
+          continue;
+        }
         _tagHolder.TagAllocation(charsIndex, _tagIndex);
         _edgeIsTainted.SetAllOutgoing(charsIndex, true);
 
@@ -364,6 +376,14 @@ class LongStringAllocationsTagger : public Allocations::Tagger<Offset> {
         if (_signatureDirectory.IsMapped(signatureCandidate)) {
           continue;
         }
+      }
+      if ((stringLength < 2 * sizeof(Offset)) &&
+          _addressMap.find(*(_charsImage.FirstOffset())) != _addressMap.end()) {
+        /* A string short enough to fit in the header is also a sufficiently
+         * week pattern that if we have something that looks like a pointer at
+         * the start, the match is probably a coincidence.
+         */
+        continue;
       }
       _tagHolder.TagAllocation(charsIndex, _tagIndex);
       _edgeIsTainted.SetAllOutgoing(charsIndex, true);

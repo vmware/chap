@@ -1,9 +1,10 @@
-// Copyright (c) 2024 Broadcom. All Rights Reserved.
+// Copyright (c) 2024-2025 Broadcom. All Rights Reserved.
 // The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: GPL-2.0
 
 #pragma once
 #include <string_view>
+
 #include "../Allocations/ContiguousImage.h"
 #include "../Allocations/Directory.h"
 #include "../Annotator.h"
@@ -24,7 +25,9 @@ class SSOStringAnnotator : public Annotator<Offset> {
         _processImage(processImage),
         _addressMap(processImage.GetVirtualAddressMap()),
         _directory(processImage.GetAllocationDirectory()),
-        _numAllocations(_directory.NumAllocations()) {}
+        _numAllocations(_directory.NumAllocations()),
+        _tagHolder(*(processImage.GetAllocationTagHolder())),
+        _tagIndices(_tagHolder.GetTagIndices("%LongString")) {}
 
   /*
    * Provide the actual annotation lines, excluding the information about the
@@ -44,7 +47,8 @@ class SSOStringAnnotator : public Annotator<Offset> {
     }
     Offset length = reader.ReadOffset(address + sizeof(Offset), ~0);
     Offset contents[2];
-    const char *chars = (char *)(contents);
+    const char* chars = (char*)(contents);
+    AllocationIndex index = _numAllocations;
     if (buffer == address + 2 * sizeof(Offset)) {
       if (length > 15) {
         return address;
@@ -63,8 +67,6 @@ class SSOStringAnnotator : public Annotator<Offset> {
       if (index == _numAllocations) {
         return address;
       }
-
-      // ??? check tag
 
       const Allocation* allocation = _directory.AllocationAt(index);
       if (allocation == nullptr) {
@@ -95,6 +97,15 @@ class SSOStringAnnotator : public Annotator<Offset> {
       return address;
     }
 
+    if (index != _numAllocations) {
+      // This check is deferred to this point because it is relatively
+      // expensive.
+      if ((_tagIndices == nullptr) || (_tagIndices->find(_tagHolder.GetTagIndex(
+                                           index)) == _tagIndices->end())) {
+        return address;
+      }
+    }
+
     /*
      * Put the header for the annotation, showing the range covered and
      * the annotator name.
@@ -108,23 +119,25 @@ class SSOStringAnnotator : public Annotator<Offset> {
      */
     Commands::Output& output = context.GetOutput();
     output << prefix << "SSO string with length 0x" << std::hex << length
-              << " and  contents";
+           << " and  contents";
     size_t charsAvailable = 80 - prefix.size() - 2;
     if (length <= charsAvailable) {
       output << "\n" << prefix << "\"" << chars << "\"\n";
     } else {
       output << " starting with\n"
-                << prefix << "\"" << std::string_view(chars, charsAvailable)
-                << "\"\n";
+             << prefix << "\"" << std::string_view(chars, charsAvailable)
+             << "\"\n";
     }
     return address + 4 * sizeof(Offset);
   }
 
  private:
   const ProcessImage<Offset>& _processImage;
-  const VirtualAddressMap<Offset> &_addressMap;
+  const VirtualAddressMap<Offset>& _addressMap;
   const Directory& _directory;
   AllocationIndex _numAllocations;
+  const Allocations::TagHolder<Offset>& _tagHolder;
+  const typename Allocations::TagHolder<Offset>::TagIndices* _tagIndices;
 };
 }  // namespace CPlusPlus
 }  // namespace chap
