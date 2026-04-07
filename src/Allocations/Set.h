@@ -60,6 +60,13 @@ class Set {
       *to++ = *from++;
     }
   }
+  void Add(const Set<Offset> &other) {
+    uint64_t *to = _asU64.get();
+    const uint64_t *from = other._asU64.get();
+    for (AllocationIndex i = 0; i < _numU64; i++) {
+      *to++ |= *from++;
+    }
+  }
   void Subtract(const Set<Offset> &other) {
     uint64_t *to = _asU64.get();
     const uint64_t *from = other._asU64.get();
